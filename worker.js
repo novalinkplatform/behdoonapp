@@ -13,24 +13,7 @@ export default {
     <meta name="description" content="تشخیص ترکیدگی لوله با دستگاه نقطه زن، لوله بازکنی و تعمیرات تاسیسات با ضمانت کتبی در تهران.">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><rect width=%2224%22 height=%2224%22 rx=%226%22 fill=%22%23133458%22/><path stroke=%22%23ffffff%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 fill=%22none%22 d=%22M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4%22/></svg>">
     
-    <script src="https://cdn.tailwindcss.com">
-async function updateStatus(id, newStatus) {
-    try {
-        const res = await fetch('/api/requests/update', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id, status: newStatus })
-        });
-        if(res.ok) {
-            window.location.reload();
-        } else {
-            alert('خطا در بروزرسانی وضعیت');
-        }
-    } catch(e) {
-        alert('خطای ارتباط با سرور');
-    }
-}
-</script>
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     
@@ -362,63 +345,7 @@ async function updateStatus(id, newStatus) {
             </div>
         </section>
     </main>\n
-<script>
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const res = await fetch('/api/requests');
-        const requests = await res.json();
-        
-        const tbody = document.querySelector('tbody');
-        tbody.innerHTML = '';
-        
-        if (!requests || requests.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-slate-500">هیچ درخواستی ثبت نشده است.</td></tr>';
-            return;
-        }
-        
-        let pending = 0;
-        let completed = 0;
-        
-        requests.forEach(req => {
-            if (req.status === 'pending') pending++;
-            if (req.status === 'completed') completed++;
-            
-            const date = new Date(req.created_at).toLocaleString('fa-IR');
-            
-            const tr = document.createElement('tr');
-            tr.className = 'hover:bg-slate-50 border-b border-slate-50 transition-colors';
-            
-            let statusBadge = '';
-            if (req.status === 'pending') statusBadge = '<span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-bold">در انتظار بررسی</span>';
-            else if (req.status === 'in_progress') statusBadge = '<span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">در حال انجام</span>';
-            else statusBadge = '<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold">تکمیل شده</span>';
-            
-            tr.innerHTML = \`
-                <td class="p-4 font-bold text-slate-700">\\${req.name}</td>
-                <td class="p-4 text-slate-600 dir-ltr text-left">\\${req.phone}</td>
-                <td class="p-4 text-slate-600">\\${req.service_id}</td>
-                <td class="p-4 text-slate-500 dir-ltr text-right text-xs">\\${date}</td>
-                <td class="p-4">\\${statusBadge}</td>
-                <td class="p-4">
-                    <select onchange="updateStatus(\\${req.id}, this.value)" class="text-sm border border-slate-200 rounded-lg px-2 py-1 bg-white focus:outline-none focus:border-[#8B1C31]">
-                        <option value="pending" \\${req.status === 'pending' ? 'selected' : ''}>در انتظار</option>
-                        <option value="in_progress" \\${req.status === 'in_progress' ? 'selected' : ''}>در حال انجام</option>
-                        <option value="completed" \\${req.status === 'completed' ? 'selected' : ''}>تکمیل شده</option>
-                    </select>
-                </td>
-            \`;
-            tbody.appendChild(tr);
-        });
-        
-        document.getElementById('totalCount').innerText = requests.length;
-        document.getElementById('pendingCount').innerText = pending;
-        document.getElementById('completedCount').innerText = completed;
-        
-    } catch (e) {
-        console.error('Error fetching requests', e);
-    }
-});
-</script>
+
 
 
     <!-- General FAQ Section -->
