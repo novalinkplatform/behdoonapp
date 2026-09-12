@@ -13,7 +13,25 @@ export default {
     <meta name="description" content="تشخیص ترکیدگی لوله با دستگاه نقطه زن، لوله بازکنی و تعمیرات تاسیسات با ضمانت کتبی در تهران.">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><rect width=%2224%22 height=%2224%22 rx=%226%22 fill=%22%23133458%22/><path stroke=%22%23ffffff%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 fill=%22none%22 d=%22M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4%22/></svg>">
     
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com">
+async function updateStatus(id, newStatus) {
+    try {
+        const res = await fetch('/api/requests/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, status: newStatus })
+        });
+        if(res.ok) {
+            window.location.reload();
+        } else {
+            alert('خطا در بروزرسانی وضعیت');
+        }
+    } catch(e) {
+        alert('خطای ارتباط با سرور');
+    }
+}
+</script>
+
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     
     <script>
@@ -381,7 +399,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <td class="p-4 text-slate-600">${req.service_id}</td>
                 <td class="p-4 text-slate-500 dir-ltr text-right text-xs">${date}</td>
                 <td class="p-4">${statusBadge}</td>
-                <td class="p-4"><button class="text-[#8B1C31] font-bold hover:underline">بررسی</button></td>
+                <td class="p-4">
+                    <select onchange="updateStatus(${req.id}, this.value)" class="text-sm border border-slate-200 rounded-lg px-2 py-1 bg-white focus:outline-none focus:border-[#8B1C31]">
+                        <option value="pending" ${req.status === 'pending' ? 'selected' : ''}>در انتظار</option>
+                        <option value="in_progress" ${req.status === 'in_progress' ? 'selected' : ''}>در حال انجام</option>
+                        <option value="completed" ${req.status === 'completed' ? 'selected' : ''}>تکمیل شده</option>
+                    </select>
+                </td>
             \`;
             tbody.appendChild(tr);
         });
@@ -1765,7 +1789,30 @@ function renderServicePage(serviceId) {
         }
     }
     
+    
+    if (url.pathname === '/api/requests/update' && request.method === 'POST') {
+        const authHeader = request.headers.get('Authorization');
+        if (authHeader !== 'Basic YWRtaW46MTIz') return new Response('Unauthorized', { status: 401 });
+        
+        try {
+            const body = await request.json();
+            const { id, status } = body;
+            if (!id || !status) return new Response('Missing fields', { status: 400 });
+            
+            if (env.DB) {
+                await env.DB.prepare("UPDATE requests SET status = ? WHERE id = ?").bind(status, id).run();
+                return new Response(JSON.stringify({ success: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            }
+        } catch (e) {
+            return new Response(JSON.stringify({ error: e.message }), { status: 500 });
+        }
+    }
+
     if (url.pathname === '/api/requests' && request.method === 'GET') {
+        const authHeader = request.headers.get('Authorization');
+        if (authHeader !== 'Basic YWRtaW46MTIz') {
+            return new Response('Unauthorized', { status: 401 });
+        }
         try {
             if (env.DB) {
                 const { results } = await env.DB.prepare("SELECT * FROM requests ORDER BY id DESC LIMIT 50").all();
@@ -1780,6 +1827,17 @@ function renderServicePage(serviceId) {
 
     let htmlResponse = '';
     if (path === '/admin' || path === '/admin/') {
+        const authHeader = request.headers.get('Authorization');
+        // Username: admin, Password: 123
+        if (authHeader !== 'Basic YWRtaW46MTIz') {
+            return new Response('دسترسی غیرمجاز. لطفاً نام کاربری و رمز عبور را وارد کنید.', {
+                status: 401,
+                headers: { 
+                    'WWW-Authenticate': 'Basic realm="Admin Panel"',
+                    'Content-Type': 'text/plain; charset=utf-8'
+                }
+            });
+        }
         htmlResponse = html.replace('</head>', '<style>body{background-color:#f8fafc;}</style></head>').replace(/<body[^>]*>[\s\S]*<\/body>/i, '<body class="text-slate-700">' + adminHTML + '</body>');
     } else if (path === '/magazine' || path === '/magazine/') {
         htmlResponse = headerHTML + magazineHTML + footerHTML;
