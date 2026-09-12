@@ -1,0 +1,8 @@
+name = "home-repair-site"
+main = "worker.js"
+compatibility_date = "2024-03-20"
+
+routes = [
+  { pattern = "behdoon.ir", custom_domain = true },
+  { pattern = "www.behdoon.ir", custom_domain = true }
+]

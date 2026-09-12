@@ -1,0 +1,10 @@
+node_modules/
+.wrangler/
+*.log
+.DS_Store
+*.html
+*.js
+!worker.js
+!wrangler.toml
+!package.json
+!package-lock.json
