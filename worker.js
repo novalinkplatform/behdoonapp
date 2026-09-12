@@ -1413,7 +1413,9 @@ function renderServicePage(serviceId) {
     `;
 
     let htmlResponse = '';
-    if (path === '/magazine' || path === '/magazine/') {
+    if (path === '/admin' || path === '/admin/') {
+        htmlResponse = html.replace('</head>', '<style>body{background-color:#f8fafc;}</style></head>').replace(/<body[^>]*>[\s\S]*<\/body>/i, '<body class="text-slate-700">' + adminHTML + '</body>');
+    } else if (path === '/magazine' || path === '/magazine/') {
         htmlResponse = headerHTML + magazineHTML + footerHTML;
     } else if (path.startsWith('/magazine/')) {
         htmlResponse = headerHTML + singleArticleHTML + footerHTML;
