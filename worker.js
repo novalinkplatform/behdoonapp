@@ -1742,7 +1742,7 @@ function renderServicePage(serviceId) {
 
     
     // Handle API requests
-    const url = new URL(request.url);
+    // deleted duplicate url
     if (url.pathname === '/api/requests' && request.method === 'POST') {
         try {
             const body = await request.json();
