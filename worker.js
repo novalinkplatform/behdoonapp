@@ -3,7 +3,7 @@ export default {
 
     
 
-    // --- API ROUTES ---
+    const url = new URL(request.url);\n    const path = url.pathname;\n\n    // --- API ROUTES ---
     if (path.startsWith('/api/')) {
         try {
             if (path === '/api/requests' && request.method === 'POST') {
@@ -1143,8 +1143,7 @@ function renderServicePage(serviceId) {
 }
 // --- END INJECTED SERVICE PAGES ---
 
-    const url = new URL(request.url);
-    const path = url.pathname;
+    
 
     const headerHTML = `<!DOCTYPE html>
 <html lang="fa" dir="rtl">
