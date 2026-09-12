@@ -343,7 +343,59 @@ export default {
                 </div>
             </div>
         </section>
-    </main>
+    </main>\n
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const res = await fetch('/api/requests');
+        const requests = await res.json();
+        
+        const tbody = document.querySelector('tbody');
+        tbody.innerHTML = '';
+        
+        if (!requests || requests.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-slate-500">هیچ درخواستی ثبت نشده است.</td></tr>';
+            return;
+        }
+        
+        let pending = 0;
+        let completed = 0;
+        
+        requests.forEach(req => {
+            if (req.status === 'pending') pending++;
+            if (req.status === 'completed') completed++;
+            
+            const date = new Date(req.created_at).toLocaleString('fa-IR');
+            
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-slate-50 border-b border-slate-50 transition-colors';
+            
+            let statusBadge = '';
+            if (req.status === 'pending') statusBadge = '<span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-bold">در انتظار بررسی</span>';
+            else if (req.status === 'in_progress') statusBadge = '<span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">در حال انجام</span>';
+            else statusBadge = '<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold">تکمیل شده</span>';
+            
+            tr.innerHTML = \`
+                <td class="p-4 font-bold text-slate-700">${req.name}</td>
+                <td class="p-4 text-slate-600 dir-ltr text-left">${req.phone}</td>
+                <td class="p-4 text-slate-600">${req.service_id}</td>
+                <td class="p-4 text-slate-500 dir-ltr text-right text-xs">${date}</td>
+                <td class="p-4">${statusBadge}</td>
+                <td class="p-4"><button class="text-[#8B1C31] font-bold hover:underline">بررسی</button></td>
+            \`;
+            tbody.appendChild(tr);
+        });
+        
+        document.getElementById('totalCount').innerText = requests.length;
+        document.getElementById('pendingCount').innerText = pending;
+        document.getElementById('completedCount').innerText = completed;
+        
+    } catch (e) {
+        console.error('Error fetching requests', e);
+    }
+});
+</script>
+
 
     <!-- General FAQ Section -->
     <div class="py-20 bg-white border-t border-slate-100 relative" id="faq">
@@ -575,6 +627,172 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+
+<!-- Submit Request Modal -->
+<div id="requestModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm modal-backdrop transition-opacity opacity-0" onclick="closeModal()"></div>
+    
+    <!-- Modal Content -->
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md relative z-10 modal-content transform scale-95 opacity-0 transition-all duration-300">
+        <button onclick="closeModal()" class="absolute top-4 left-4 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        
+        <div class="p-6 md:p-8">
+            <div class="w-12 h-12 bg-rose-100 rounded-2xl flex items-center justify-center text-[#8B1C31] mb-6">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            </div>
+            <h3 class="text-xl font-black text-slate-800 mb-2">ثبت درخواست خدمات</h3>
+            <p class="text-sm text-slate-500 mb-8">لطفاً مشخصات خود را وارد کنید تا کارشناسان ما در کمترین زمان با شما تماس بگیرند.</p>
+            
+            <form id="requestForm" onsubmit="submitRequest(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1.5">نام و نام خانوادگی</label>
+                        <input type="text" id="reqName" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#8B1C31] focus:ring-2 focus:ring-rose-100 outline-none transition-all text-slate-700 placeholder-slate-400" placeholder="مثال: علی رضایی">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1.5">شماره موبایل</label>
+                        <input type="tel" id="reqPhone" required pattern="^09[0-9]{9}$" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#8B1C31] focus:ring-2 focus:ring-rose-100 outline-none transition-all text-slate-700 placeholder-slate-400 text-left dir-ltr" placeholder="0912 345 6789">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1.5">نوع خدمت</label>
+                        <select id="reqService" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#8B1C31] focus:ring-2 focus:ring-rose-100 outline-none transition-all text-slate-700 bg-white">
+                            <option value="سرمایش و گرمایش">سرمایش و گرمایش</option>
+                            <option value="لوله کشی">لوله کشی</option>
+                            <option value="برقکاری">برقکاری</option>
+                            <option value="تعمیرات و بازسازی">تعمیرات و بازسازی ساختمان</option>
+                            <option value="سایر">سایر موارد</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button type="submit" id="reqSubmitBtn" class="w-full mt-8 bg-[#8B1C31] hover:bg-[#701627] text-white font-bold py-3.5 px-4 rounded-xl transition-colors shadow-md shadow-rose-900/20 flex justify-center items-center gap-2">
+                    <span>ثبت نهایی درخواست</span>
+                    <svg class="w-5 h-5 hidden spinner" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                </button>
+            </form>
+
+            <div id="reqSuccessMsg" class="hidden flex-col items-center justify-center text-center py-6">
+                <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <h4 class="text-xl font-bold text-slate-800 mb-2">درخواست ثبت شد!</h4>
+                <p class="text-sm text-slate-500">کارشناسان بهدون به زودی با شما تماس خواهند گرفت.</p>
+                <button onclick="closeModal()" class="mt-6 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors">بستن پنجره</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.spinner { animation: spin 1s linear infinite; }
+</style>
+
+<script>
+function openModal(serviceName = null) {
+    const modal = document.getElementById('requestModal');
+    const backdrop = modal.querySelector('.modal-backdrop');
+    const content = modal.querySelector('.modal-content');
+    
+    // Reset form state
+    document.getElementById('requestForm').style.display = 'block';
+    document.getElementById('reqSuccessMsg').classList.add('hidden');
+    document.getElementById('reqSuccessMsg').classList.remove('flex');
+    document.getElementById('requestForm').reset();
+    
+    if(serviceName) {
+        const select = document.getElementById('reqService');
+        for(let i=0; i<select.options.length; i++){
+            if(select.options[i].value === serviceName) {
+                select.selectedIndex = i;
+                break;
+            }
+        }
+    }
+    
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        backdrop.classList.remove('opacity-0');
+        content.classList.remove('opacity-0', 'scale-95');
+    }, 10);
+}
+
+function closeModal() {
+    const modal = document.getElementById('requestModal');
+    const backdrop = modal.querySelector('.modal-backdrop');
+    const content = modal.querySelector('.modal-content');
+    
+    backdrop.classList.add('opacity-0');
+    content.classList.add('opacity-0', 'scale-95');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
+
+async function submitRequest(e) {
+    e.preventDefault();
+    const btn = document.getElementById('reqSubmitBtn');
+    const spinner = btn.querySelector('.spinner');
+    const span = btn.querySelector('span');
+    
+    const name = document.getElementById('reqName').value;
+    const phone = document.getElementById('reqPhone').value;
+    const service = document.getElementById('reqService').value;
+    
+    span.textContent = 'در حال ثبت...';
+    spinner.classList.remove('hidden');
+    btn.disabled = true;
+    btn.classList.add('opacity-70');
+    
+    try {
+        const res = await fetch('/api/requests', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, phone, service_id: service })
+        });
+        
+        if (res.ok) {
+            document.getElementById('requestForm').style.display = 'none';
+            const successMsg = document.getElementById('reqSuccessMsg');
+            successMsg.classList.remove('hidden');
+            successMsg.classList.add('flex');
+        } else {
+            alert('خطا در ثبت درخواست. لطفاً مجدداً تلاش کنید.');
+        }
+    } catch (err) {
+        alert('خطای اتصال. لطفاً اینترنت خود را بررسی کنید.');
+    } finally {
+        span.textContent = 'ثبت نهایی درخواست';
+        spinner.classList.add('hidden');
+        btn.disabled = false;
+        btn.classList.remove('opacity-70');
+    }
+}
+
+// Intercept all links that contain "ثبت درخواست" or point to /#services to open the modal instead
+document.addEventListener('DOMContentLoaded', () => {
+    const links = document.querySelectorAll('a');
+    links.forEach(link => {
+        if(link.textContent.includes('ثبت درخواست') || link.getAttribute('href') === '/#services') {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Find nearest service name if possible (from card title)
+                let serviceName = null;
+                const card = link.closest('.group');
+                if (card) {
+                    const title = card.querySelector('h3');
+                    if (title) serviceName = title.textContent.trim();
+                }
+                openModal(serviceName);
+            });
+        }
+    });
+});
+</script>
+
 </body>
 </html>
     `;
@@ -1473,7 +1691,7 @@ function renderServicePage(serviceId) {
                     </div>
                     <div>
                         <div class="text-slate-500 text-sm mb-1">کل درخواست‌ها</div>
-                        <div class="text-3xl font-black text-slate-800">۱۲۸</div>
+                        <div id="totalCount" class="text-3xl font-black text-slate-800">0</div>
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-6">
@@ -1482,7 +1700,7 @@ function renderServicePage(serviceId) {
                     </div>
                     <div>
                         <div class="text-slate-500 text-sm mb-1">درخواست‌های در انتظار</div>
-                        <div class="text-3xl font-black text-slate-800">۱۲</div>
+                        <div id="pendingCount" class="text-3xl font-black text-slate-800">0</div>
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-6">
@@ -1491,7 +1709,7 @@ function renderServicePage(serviceId) {
                     </div>
                     <div>
                         <div class="text-slate-500 text-sm mb-1">انجام شده (این ماه)</div>
-                        <div class="text-3xl font-black text-slate-800">۴۵</div>
+                        <div id="completedCount" class="text-3xl font-black text-slate-800">0</div>
                     </div>
                 </div>
             </div>
@@ -1514,38 +1732,51 @@ function renderServicePage(serviceId) {
                                 <th class="p-4 font-medium border-b border-slate-100">عملیات</th>
                             </tr>
                         </thead>
-                        <tbody class="text-sm">
-                            <tr class="hover:bg-slate-50 border-b border-slate-50 transition-colors">
-                                <td class="p-4 font-bold text-slate-700">علی رضایی</td>
-                                <td class="p-4 text-slate-600 dir-ltr text-left">0912 345 6789</td>
-                                <td class="p-4 text-slate-600">تعمیر پکیج دیواری</td>
-                                <td class="p-4 text-slate-500">امروز - ۱۰:۳۰</td>
-                                <td class="p-4"><span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-bold">در انتظار بررسی</span></td>
-                                <td class="p-4"><button class="text-[#8B1C31] font-bold hover:underline">مشاهده</button></td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 border-b border-slate-50 transition-colors">
-                                <td class="p-4 font-bold text-slate-700">سارا احمدی</td>
-                                <td class="p-4 text-slate-600 dir-ltr text-left">0933 123 4567</td>
-                                <td class="p-4 text-slate-600">لوله کشی و رفع نم</td>
-                                <td class="p-4 text-slate-500">دیروز - ۱۶:۴۵</td>
-                                <td class="p-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">در حال انجام</span></td>
-                                <td class="p-4"><button class="text-[#8B1C31] font-bold hover:underline">مشاهده</button></td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 border-b border-slate-50 transition-colors">
-                                <td class="p-4 font-bold text-slate-700">رضا کریمی</td>
-                                <td class="p-4 text-slate-600 dir-ltr text-left">0921 987 6543</td>
-                                <td class="p-4 text-slate-600">نصب لوستر و نورپردازی</td>
-                                <td class="p-4 text-slate-500">دو روز پیش</td>
-                                <td class="p-4"><span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold">تکمیل شده</span></td>
-                                <td class="p-4"><button class="text-[#8B1C31] font-bold hover:underline">مشاهده</button></td>
-                            </tr>
-                        </tbody>
+                        <tbody class="text-sm"><tr><td colspan="6" class="p-8 text-center text-slate-500">در حال دریافت اطلاعات...</td></tr></tbody>
                     </table>
                 </div>
             </div>
         </div>
     </main>
 `;
+
+    
+    // Handle API requests
+    const url = new URL(request.url);
+    if (url.pathname === '/api/requests' && request.method === 'POST') {
+        try {
+            const body = await request.json();
+            const { name, phone, service_id } = body;
+            
+            if (!name || !phone || !service_id) {
+                return new Response(JSON.stringify({ error: 'Missing fields' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+            }
+            
+            if (env.DB) {
+                const result = await env.DB.prepare(
+                    "INSERT INTO requests (name, phone, service_id) VALUES (?, ?, ?)"
+                ).bind(name, phone, service_id).run();
+                return new Response(JSON.stringify({ success: true, id: result.lastRowId }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            } else {
+                return new Response(JSON.stringify({ error: 'DB not configured' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+            }
+        } catch (e) {
+            return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+        }
+    }
+    
+    if (url.pathname === '/api/requests' && request.method === 'GET') {
+        try {
+            if (env.DB) {
+                const { results } = await env.DB.prepare("SELECT * FROM requests ORDER BY id DESC LIMIT 50").all();
+                return new Response(JSON.stringify(results), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            } else {
+                return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            }
+        } catch (e) {
+            return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+        }
+    }
 
     let htmlResponse = '';
     if (path === '/admin' || path === '/admin/') {
