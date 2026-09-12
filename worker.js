@@ -1,5 +1,73 @@
 export default {
   async fetch(request, env, ctx) {
+
+    
+
+    // --- API ROUTES ---
+    if (path.startsWith('/api/')) {
+        try {
+            if (path === '/api/requests' && request.method === 'POST') {
+                const data = await request.json();
+                if (env.DB) {
+                    await env.DB.prepare("INSERT INTO requests (name, phone, service_id) VALUES (?, ?, ?)")
+                        .bind(data.name, data.phone, data.service_id).run();
+                }
+                return new Response(JSON.stringify({ success: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            }
+            if (path === '/api/requests' && request.method === 'GET') {
+                if (env.DB) {
+                    const { results } = await env.DB.prepare("SELECT * FROM requests ORDER BY id DESC").all();
+                    return new Response(JSON.stringify(results), { status: 200, headers: { 'Content-Type': 'application/json' } });
+                }
+                return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            }
+            if (path === '/api/requests/update' && request.method === 'POST') {
+                const data = await request.json();
+                if (env.DB) {
+                    await env.DB.prepare("UPDATE requests SET status = ? WHERE id = ?").bind(data.status, data.id).run();
+                }
+                return new Response(JSON.stringify({ success: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            }
+            if (path === '/api/requests/track' && request.method === 'GET') {
+                const phone = url.searchParams.get('phone');
+                if (!phone) {
+                    return new Response(JSON.stringify({ error: 'شماره موبایل الزامی است' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+                }
+                if (env.DB) {
+                    const { results } = await env.DB.prepare("SELECT * FROM requests WHERE phone = ? ORDER BY id DESC").bind(phone).all();
+                    return new Response(JSON.stringify(results), { status: 200, headers: { 'Content-Type': 'application/json' } });
+                }
+                return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            }
+            if (path === '/api/settings' && request.method === 'GET') {
+                if (env.DB) {
+                    const { results } = await env.DB.prepare("SELECT key, value FROM settings").all();
+                    let settings = {};
+                    results.forEach(row => settings[row.key] = row.value);
+                    return new Response(JSON.stringify(settings), { status: 200, headers: { 'Content-Type': 'application/json' } });
+                }
+                return new Response(JSON.stringify({}), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            }
+            if (path === '/api/settings' && request.method === 'POST') {
+                const authHeader = request.headers.get('Authorization');
+                if (authHeader !== 'Basic YWRtaW46MTIz') {
+                    return new Response('Unauthorized', { status: 401 });
+                }
+                const data = await request.json();
+                if (env.DB) {
+                    for (const [k, v] of Object.entries(data)) {
+                        await env.DB.prepare("INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").bind(k, v).run();
+                    }
+                }
+                return new Response(JSON.stringify({ success: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            }
+            return new Response('Not Found', { status: 404 });
+        } catch (e) {
+            return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+        }
+    }
+    // --- END API ROUTES ---
+
     const PHONE = "09333256885"; 
     const PHONE_DISPLAY = "0933 325 6885"; 
     const WHATSAPP = "989333256885"; 
@@ -520,6 +588,43 @@ export default {
         <!-- Mobile Bottom Spacing for fixed CTAs if any -->
         <div class="h-24 md:hidden"></div>
     </footer>
+
+    <!-- Mobile Bottom Navigation (Visible only on md and smaller) -->
+    <nav class="md:hidden fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-xl border-t border-slate-200 shadow-[0_-10px_30px_rgba(23,22,20,0.05)] z-50 flex justify-between px-6 py-3 pb-[env(safe-area-inset-bottom,12px)]">
+        <a href="/" id="bn-home" class="flex flex-col items-center gap-1 text-slate-500 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            <span class="text-[10px] font-bold">خانه</span>
+        </a>
+        <a href="/track" id="bn-track" class="flex flex-col items-center gap-1 text-slate-500 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+            <span class="text-[10px] font-bold">پیگیری</span>
+        </a>
+        <a href="/magazine" id="bn-mag" class="flex flex-col items-center gap-1 text-slate-500 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+            <span class="text-[10px] font-bold">مجله</span>
+        </a>
+        <a href="/#about-us" id="bn-about" class="flex flex-col items-center gap-1 text-slate-500 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span class="text-[10px] font-bold">درباره ما</span>
+        </a>
+    </nav>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const path = window.location.pathname;
+            const setBtn = (id) => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.classList.remove('text-slate-500');
+                    el.classList.add('text-[#8B1C31]');
+                }
+            };
+            if(path === '/') setBtn('bn-home');
+            else if(path.startsWith('/track')) setBtn('bn-track');
+            else if(path.startsWith('/magazine')) setBtn('bn-mag');
+        });
+    </script>
+
 
 
 
@@ -1616,129 +1721,210 @@ function renderServicePage(serviceId) {
         </main>
     `;
 
-        const adminHTML = `
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <main class="min-h-screen bg-slate-50 flex" dir="rtl">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-white border-l border-slate-200 flex flex-col hidden md:flex fixed h-full z-10 shadow-sm">
-            <div class="p-6 border-b border-slate-100 flex items-center justify-center">
-                <span class="text-2xl font-black text-[#8B1C31] tracking-tight">بهدون <span class="text-sm text-slate-400 font-normal">| مدیر</span></span>
-            </div>
-            <nav class="flex-1 p-4 space-y-2">
-                <button onclick="switchAdminTab('requests')" id="nav-requests" class="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 bg-rose-50 text-[#8B1C31] font-bold rounded-xl transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                    <span>درخواست‌ها</span>
-                </button>
-                <button onclick="switchAdminTab('settings')" id="nav-settings" class="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-bold rounded-xl transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    <span>تنظیمات سایت</span>
-                </button>
-            </nav>
-            <div class="p-4 border-t border-slate-100">
-                <a href="/" target="_blank" class="flex items-center justify-center space-x-2 space-x-reverse text-sm text-slate-500 hover:text-slate-800">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                    <span>مشاهده سایت</span>
-                </a>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <div class="flex-1 md:mr-64 flex flex-col h-screen overflow-hidden">
-            <!-- Header -->
-            <header class="bg-white border-b border-slate-200 p-4 lg:p-6 flex justify-between items-center z-10 sticky top-0 shadow-sm">
-                <h1 id="page-title" class="text-2xl font-black text-slate-800">مدیریت درخواست‌ها</h1>
-            </header>
-
-            <!-- Scrollable Body -->
-            <div class="flex-1 overflow-auto p-4 lg:p-8 relative">
+        
+const trackHTML = `
+    <main class="min-h-screen bg-slate-50 pt-10 pb-32" dir="rtl">
+        <div class="container mx-auto px-4 max-w-2xl">
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200">
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                    </div>
+                    <h1 class="text-2xl font-black text-slate-800">پیگیری درخواست</h1>
+                    <p class="text-slate-500 mt-2 text-sm leading-relaxed">برای مشاهده وضعیت درخواست‌های خود، شماره موبایلی که با آن ثبت سفارش کرده‌اید را وارد کنید.</p>
+                </div>
                 
-                <!-- TAB 1: Requests -->
-                <div id="tab-requests" class="block max-w-6xl mx-auto space-y-6">
-                    <!-- Stats -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
-                            <div>
-                                <p class="text-slate-500 text-sm font-bold mb-1">کل درخواست‌ها</p>
-                                <div id="totalCount" class="text-3xl font-black text-slate-800">0</div>
-                            </div>
-                            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg></div>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
-                            <div>
-                                <p class="text-slate-500 text-sm font-bold mb-1">در انتظار بررسی</p>
-                                <div id="pendingCount" class="text-3xl font-black text-slate-800">0</div>
-                            </div>
-                            <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
-                            <div>
-                                <p class="text-slate-500 text-sm font-bold mb-1">تکمیل شده</p>
-                                <div id="completedCount" class="text-3xl font-black text-slate-800">0</div>
-                            </div>
-                            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div>
-                        </div>
+                <form id="trackForm" onsubmit="trackOrder(event)" class="flex flex-col gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">شماره موبایل</label>
+                        <input type="tel" id="trackPhone" dir="ltr" placeholder="09123456789" required pattern="^09\d{9}$" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#8B1C31] outline-none transition-all text-center tracking-widest text-lg font-bold text-slate-700">
                     </div>
-                    
-                    <!-- Table -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-right">
-                                <thead class="bg-slate-50 text-slate-600 text-sm border-b border-slate-200">
-                                    <tr>
-                                        <th class="p-4 font-bold">نام مشتری</th>
-                                        <th class="p-4 font-bold">موبایل</th>
-                                        <th class="p-4 font-bold">نوع خدمت</th>
-                                        <th class="p-4 font-bold">تاریخ ثبت</th>
-                                        <th class="p-4 font-bold">وضعیت</th>
-                                        <th class="p-4 font-bold">عملیات</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="text-sm" id="requests-tbody">
-                                    <tr><td colspan="6" class="p-8 text-center text-slate-500">در حال دریافت اطلاعات...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <button type="submit" id="trackBtn" class="w-full bg-[#8B1C31] hover:bg-[#701627] text-white font-bold py-3.5 px-4 rounded-xl transition-colors shadow-md">
+                        بررسی وضعیت
+                    </button>
+                </form>
+                
+                <div id="trackResults" class="mt-8 space-y-4 hidden">
+                    <h3 class="text-lg font-bold text-slate-800 border-b border-slate-100 pb-2 mb-4">لیست درخواست‌های شما</h3>
+                    <div id="resultsList" class="space-y-4"></div>
                 </div>
-
-                <!-- TAB 2: Settings -->
-                <div id="tab-settings" class="hidden max-w-4xl mx-auto space-y-6 pb-20">
-                    <form id="settingsForm" onsubmit="saveSettings(event)" class="space-y-6">
-                        
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
-                            <h3 class="text-lg font-black text-slate-800 border-b border-slate-100 pb-3">تنظیمات فوتر</h3>
-                            <div>
-                                <label class="block text-sm font-bold text-slate-700 mb-1.5">متن درباره ما (فوتر)</label>
-                                <textarea id="set_footer_about" rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#8B1C31] outline-none transition-all text-slate-700"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold text-slate-700 mb-1.5">آدرس (فوتر)</label>
-                                <input type="text" id="set_footer_address" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#8B1C31] outline-none transition-all text-slate-700">
-                            </div>
-                        </div>
-
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
-                            <h3 class="text-lg font-black text-slate-800 border-b border-slate-100 pb-3 flex justify-between items-center">
-                                <span>تنظیمات نقشه (OpenStreetMap)</span>
-                                <span class="text-xs text-slate-400 font-normal">برای تغییر لوکیشن، پین را جابجا کنید</span>
-                            </h3>
-                            <div class="grid grid-cols-2 gap-4 hidden">
-                                <div><input type="text" id="set_map_lat" class="w-full"></div>
-                                <div><input type="text" id="set_map_lng" class="w-full"></div>
-                            </div>
-                            <div id="admin-map" class="w-full h-80 rounded-xl border border-slate-200 z-0 relative"></div>
-                        </div>
-
-                        <button type="submit" id="saveSettingsBtn" class="w-full bg-[#8B1C31] hover:bg-[#701627] text-white font-bold py-3.5 px-4 rounded-xl transition-colors shadow-md">
-                            ذخیره تنظیمات
-                        </button>
-                    </form>
-                </div>
-
             </div>
         </div>
     </main>
+    <script>
+        async function trackOrder(e) {
+            e.preventDefault();
+            const phone = document.getElementById('trackPhone').value;
+            const btn = document.getElementById('trackBtn');
+            const resultsDiv = document.getElementById('trackResults');
+            const list = document.getElementById('resultsList');
+            
+            btn.innerText = 'در حال جستجو...';
+            
+            try {
+                const res = await fetch('/api/requests/track?phone=' + phone);
+                const data = await res.json();
+                
+                list.innerHTML = '';
+                resultsDiv.classList.remove('hidden');
+                
+                if(!data || data.length === 0) {
+                    list.innerHTML = '<div class="p-6 bg-slate-50 rounded-2xl text-center text-slate-500 text-sm">هیچ درخواستی با این شماره یافت نشد.</div>';
+                } else {
+                    data.forEach(req => {
+                        let statusColor, statusText;
+                        if(req.status === 'pending') { statusColor = 'bg-amber-100 text-amber-700 border-amber-200'; statusText = 'در انتظار بررسی'; }
+                        else if(req.status === 'in_progress') { statusColor = 'bg-blue-100 text-blue-700 border-blue-200'; statusText = 'در حال انجام'; }
+                        else { statusColor = 'bg-emerald-100 text-emerald-700 border-emerald-200'; statusText = 'تکمیل شده'; }
+                        
+                        const date = new Date(req.created_at).toLocaleDateString('fa-IR');
+                        list.innerHTML += '<div class="p-4 border border-slate-100 rounded-2xl shadow-sm bg-white flex flex-col md:flex-row md:items-center justify-between gap-4">' +
+'<div><h4 class="font-bold text-slate-800">' + req.service_id + '</h4>' +
+'<div class="text-xs text-slate-400 mt-1">ثبت شده در: ' + date + '</div></div>' +
+'<div class="px-4 py-1.5 rounded-full text-xs font-bold border ' + statusColor + ' whitespace-nowrap text-center">' +
+statusText + '</div></div>';
+                    });
+                }
+            } catch(err) {
+                alert('خطا در ارتباط با سرور');
+            }
+            
+            btn.innerText = 'بررسی وضعیت';
+        }
+    </script>
+`;
+
+const adminHTML = `
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <main class="min-h-screen bg-slate-50 flex flex-col" dir="rtl">
+        
+        <!-- Glassmorphism Topbar -->
+        <header class="sticky top-4 z-50 mx-4 md:mx-8 bg-white/60 backdrop-blur-xl border border-white/70 rounded-2xl shadow-[0_10px_30px_rgba(23,22,20,0.12),inset_0_1px_0_rgba(255,255,255,0.9)] p-3 md:px-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 bg-white/80 p-2 px-3 rounded-xl shadow-sm">
+                    <svg class="w-6 h-6 text-[#8B1C31]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    <span class="text-xl font-black text-[#8B1C31] tracking-tight">بهدون</span>
+                </div>
+
+                <!-- Tabs -->
+                <nav class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 hide-scroll">
+                    <button onclick="switchAdminTab('requests')" id="nav-requests" class="flex items-center gap-2 px-4 py-2 bg-[#8B1C31] text-white font-bold rounded-xl shadow-sm whitespace-nowrap transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                        درخواست‌ها
+                    </button>
+                    <button onclick="switchAdminTab('settings')" id="nav-settings" class="flex items-center gap-2 px-4 py-2 text-slate-600 hover:bg-white/80 font-bold rounded-xl whitespace-nowrap transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        تنظیمات سایت
+                    </button>
+                </nav>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="hidden md:flex items-center px-4 py-2 bg-white/80 rounded-xl font-bold text-slate-700 shadow-sm border border-slate-100">
+                    مدیر سیستم
+                </div>
+                <a href="/" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-700 transition-colors shadow-md">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    مشاهده سایت
+                </a>
+            </div>
+            
+        </header>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto p-4 lg:p-8 mt-4 relative z-0">
+            
+            <!-- TAB 1: Requests -->
+            <div id="tab-requests" class="block max-w-6xl mx-auto space-y-6">
+                <!-- Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-slate-500 text-sm font-bold mb-1">کل درخواست‌ها</p>
+                            <div id="totalCount" class="text-3xl font-black text-slate-800">0</div>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-slate-500 text-sm font-bold mb-1">در انتظار بررسی</p>
+                            <div id="pendingCount" class="text-3xl font-black text-slate-800">0</div>
+                        </div>
+                        <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-slate-500 text-sm font-bold mb-1">تکمیل شده</p>
+                            <div id="completedCount" class="text-3xl font-black text-slate-800">0</div>
+                        </div>
+                        <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div>
+                    </div>
+                </div>
+                
+                <!-- Table -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right">
+                            <thead class="bg-slate-50 text-slate-600 text-sm border-b border-slate-200">
+                                <tr>
+                                    <th class="p-4 font-bold">نام مشتری</th>
+                                    <th class="p-4 font-bold">موبایل</th>
+                                    <th class="p-4 font-bold">نوع خدمت</th>
+                                    <th class="p-4 font-bold">تاریخ ثبت</th>
+                                    <th class="p-4 font-bold">وضعیت</th>
+                                    <th class="p-4 font-bold">عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm" id="requests-tbody">
+                                <tr><td colspan="6" class="p-8 text-center text-slate-500">در حال دریافت اطلاعات...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: Settings -->
+            <div id="tab-settings" class="hidden max-w-4xl mx-auto space-y-6 pb-20">
+                <form id="settingsForm" onsubmit="saveSettings(event)" class="space-y-6">
+                    
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                        <h3 class="text-lg font-black text-slate-800 border-b border-slate-100 pb-3">تنظیمات فوتر</h3>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1.5">متن درباره ما (فوتر)</label>
+                            <textarea id="set_footer_about" rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#8B1C31] outline-none transition-all text-slate-700"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1.5">آدرس (فوتر)</label>
+                            <input type="text" id="set_footer_address" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#8B1C31] outline-none transition-all text-slate-700">
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                        <h3 class="text-lg font-black text-slate-800 border-b border-slate-100 pb-3 flex justify-between items-center">
+                            <span>تنظیمات نقشه (OpenStreetMap)</span>
+                            <span class="text-xs text-slate-400 font-normal">برای تغییر لوکیشن، پین را جابجا کنید</span>
+                        </h3>
+                        <div class="grid grid-cols-2 gap-4 hidden">
+                            <div><input type="text" id="set_map_lat" class="w-full"></div>
+                            <div><input type="text" id="set_map_lng" class="w-full"></div>
+                        </div>
+                        <div id="admin-map" class="w-full h-80 rounded-xl border border-slate-200 z-0 relative"></div>
+                    </div>
+
+                    <button type="submit" id="saveSettingsBtn" class="w-full bg-[#8B1C31] hover:bg-[#701627] text-white font-bold py-3.5 px-4 rounded-xl transition-colors shadow-md">
+                        ذخیره تنظیمات
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </main>
+    <style>
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
     <script>
         let adminMap = null;
         let adminMarker = null;
@@ -1749,21 +1935,17 @@ function renderServicePage(serviceId) {
             document.getElementById('tab-settings').classList.add('hidden');
             document.getElementById('tab-settings').classList.remove('block');
             
-            document.getElementById('nav-requests').className = 'w-full flex items-center space-x-3 space-x-reverse px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-bold rounded-xl transition-colors';
-            document.getElementById('nav-settings').className = 'w-full flex items-center space-x-3 space-x-reverse px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-bold rounded-xl transition-colors';
+            document.getElementById('nav-requests').className = 'flex items-center gap-2 px-4 py-2 text-slate-600 hover:bg-white/80 font-bold rounded-xl whitespace-nowrap transition-all';
+            document.getElementById('nav-settings').className = 'flex items-center gap-2 px-4 py-2 text-slate-600 hover:bg-white/80 font-bold rounded-xl whitespace-nowrap transition-all';
             
             if(tab === 'requests') {
                 document.getElementById('tab-requests').classList.add('block');
                 document.getElementById('tab-requests').classList.remove('hidden');
-                document.getElementById('nav-requests').classList.add('bg-rose-50', 'text-[#8B1C31]');
-                document.getElementById('nav-requests').classList.remove('text-slate-600', 'hover:bg-slate-50');
-                document.getElementById('page-title').innerText = 'مدیریت درخواست‌ها';
+                document.getElementById('nav-requests').className = 'flex items-center gap-2 px-4 py-2 bg-[#8B1C31] text-white font-bold rounded-xl shadow-sm whitespace-nowrap transition-all';
             } else {
                 document.getElementById('tab-settings').classList.add('block');
                 document.getElementById('tab-settings').classList.remove('hidden');
-                document.getElementById('nav-settings').classList.add('bg-rose-50', 'text-[#8B1C31]');
-                document.getElementById('nav-settings').classList.remove('text-slate-600', 'hover:bg-slate-50');
-                document.getElementById('page-title').innerText = 'تنظیمات سایت';
+                document.getElementById('nav-settings').className = 'flex items-center gap-2 px-4 py-2 bg-[#8B1C31] text-white font-bold rounded-xl shadow-sm whitespace-nowrap transition-all';
                 
                 if(!adminMap) {
                     setTimeout(() => {
@@ -1822,8 +2004,6 @@ function renderServicePage(serviceId) {
                         : req.status === 'in_progress' ? '<span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">در حال انجام</span>'
                         : '<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold">تکمیل شده</span>';
                     
-                    // We must escape backticks and dollar signs if this is a template string inside node string!
-                    // Wait, this is a plain text file, we don't need to escape anything!
                     tr.innerHTML = \\\`
                         <td class="p-4 font-bold text-slate-700">\\\${req.name}</td>
                         <td class="p-4 text-slate-600 dir-ltr text-left">\\\${req.phone}</td>
@@ -1894,7 +2074,9 @@ function renderServicePage(serviceId) {
 `;
 
         let htmlResponse = '';
-    if (path === '/admin' || path === '/admin/') {
+    if (path === '/track' || path === '/track/') {
+        htmlResponse = headerHTML + trackHTML + footerHTML;
+    } else if (path === '/admin' || path === '/admin/') {
         const authHeader = request.headers.get('Authorization');
         // Username: admin, Password: 123
         if (authHeader !== 'Basic YWRtaW46MTIz') {
