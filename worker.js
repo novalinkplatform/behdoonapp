@@ -3,19 +3,7 @@ export default {
     const PHONE = "09333256885"; 
     const PHONE_DISPLAY = "0933 325 6885"; 
     const WHATSAPP = "989333256885"; 
-    
-    export default {
-  async fetch(request, env, ctx) {
-    const PHONE = "09333256885"; 
-    const PHONE_DISPLAY = "0933 325 6885"; 
-    const WHATSAPP = "989333256885"; 
-    
-    export default {
-  async fetch(request, env, ctx) {
-    const PHONE = "09333256885"; 
-    const PHONE_DISPLAY = "0933 325 6885"; 
-    const WHATSAPP = "989333256885"; 
-    
+
     const html = `<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
