@@ -3,7 +3,10 @@ export default {
 
     
 
-    const url = new URL(request.url);\n    const path = url.pathname;\n\n    // --- API ROUTES ---
+    const url = new URL(request.url);
+    const path = url.pathname;
+
+    // --- API ROUTES ---
     if (path.startsWith('/api/')) {
         try {
             if (path === '/api/requests' && request.method === 'POST') {
