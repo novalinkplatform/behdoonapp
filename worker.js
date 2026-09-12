@@ -394,16 +394,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             else statusBadge = '<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold">تکمیل شده</span>';
             
             tr.innerHTML = \`
-                <td class="p-4 font-bold text-slate-700">${req.name}</td>
-                <td class="p-4 text-slate-600 dir-ltr text-left">${req.phone}</td>
-                <td class="p-4 text-slate-600">${req.service_id}</td>
-                <td class="p-4 text-slate-500 dir-ltr text-right text-xs">${date}</td>
-                <td class="p-4">${statusBadge}</td>
+                <td class="p-4 font-bold text-slate-700">\${req.name}</td>
+                <td class="p-4 text-slate-600 dir-ltr text-left">\${req.phone}</td>
+                <td class="p-4 text-slate-600">\${req.service_id}</td>
+                <td class="p-4 text-slate-500 dir-ltr text-right text-xs">\${date}</td>
+                <td class="p-4">\${statusBadge}</td>
                 <td class="p-4">
-                    <select onchange="updateStatus(${req.id}, this.value)" class="text-sm border border-slate-200 rounded-lg px-2 py-1 bg-white focus:outline-none focus:border-[#8B1C31]">
-                        <option value="pending" ${req.status === 'pending' ? 'selected' : ''}>در انتظار</option>
-                        <option value="in_progress" ${req.status === 'in_progress' ? 'selected' : ''}>در حال انجام</option>
-                        <option value="completed" ${req.status === 'completed' ? 'selected' : ''}>تکمیل شده</option>
+                    <select onchange="updateStatus(\${req.id}, this.value)" class="text-sm border border-slate-200 rounded-lg px-2 py-1 bg-white focus:outline-none focus:border-[#8B1C31]">
+                        <option value="pending" \${req.status === 'pending' ? 'selected' : ''}>در انتظار</option>
+                        <option value="in_progress" \${req.status === 'in_progress' ? 'selected' : ''}>در حال انجام</option>
+                        <option value="completed" \${req.status === 'completed' ? 'selected' : ''}>تکمیل شده</option>
                     </select>
                 </td>
             \`;
