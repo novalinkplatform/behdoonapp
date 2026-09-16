@@ -1,0 +1,9 @@
+/demo  /sale  301
+/demo/  /sale  301
+/preview  /sale  301
+/track  /orders  301
+/services  /#services  301
+/services/:slug  /magazine/:slug  301
+/magazine/:slug  /article-template  200
+/p/:slug  /page-template  200
+/page/:slug  /page-template  200

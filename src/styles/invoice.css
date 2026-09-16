@@ -1,0 +1,348 @@
+/* ==========================================================================
+   Behbar Itemized Invoice & Breakdown Styles
+   ========================================================================== */
+
+/* Step 10 Itemized Breakdown Table in Request Wizard */
+.wizard-invoice-breakdown {
+  margin-top: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+}
+
+.wizard-invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+}
+
+.wizard-invoice-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.wizard-invoice-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.wizard-invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+}
+
+.wizard-invoice-table th {
+  padding: 10px 14px;
+  background: #fafafa;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.8rem;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+}
+
+.wizard-invoice-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.wizard-invoice-table tfoot td {
+  padding: 14px;
+  background: #f0fdf4;
+  border-bottom: none;
+  font-size: 0.95rem;
+}
+
+.invoice-breakdown-row {
+  transition: background 0.15s ease;
+}
+
+.invoice-breakdown-row:hover {
+  background-color: #f9fafb;
+}
+
+.invoice-breakdown-zero td {
+  opacity: 0.7;
+}
+
+.invoice-item-desc strong {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.invoice-item-desc small {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.invoice-item-amount {
+  font-weight: 700;
+  color: var(--primary);
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Full Official Invoice Modal & Printable Sheet
+   ========================================================================== */
+
+.invoice-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overflow-y: auto;
+  animation: invoiceFadeIn 0.2s ease-out;
+}
+
+@keyframes invoiceFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.invoice-modal-dialog {
+  background: #f8fafc;
+  width: 100%;
+  max-width: 820px;
+  border-radius: 18px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 92vh;
+}
+
+.invoice-modal-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.invoice-modal-close-btn {
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.2s;
+}
+
+.invoice-modal-close-btn:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+.invoice-modal-close-btn .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.invoice-modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.invoice-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: white;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* Printable Official Sheet */
+.behbar-invoice-sheet {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 28px;
+  max-width: 760px;
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.behbar-invoice-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #059669;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.behbar-invoice-meta {
+  text-align: left;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+.invoice-badge-status {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.behbar-invoice-parties {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  background: #f9fafb;
+  padding: 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 0.85rem;
+}
+
+.behbar-invoice-route {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: #ecfdf5;
+  border: 1px solid #d1fae5;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 0.84rem;
+}
+
+.behbar-invoice-route > div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.behbar-invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  font-size: 0.86rem;
+}
+
+.behbar-invoice-table th {
+  background: #f3f4f6;
+  color: #374151;
+  font-weight: 700;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  text-align: right;
+}
+
+.behbar-invoice-table td {
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  text-align: right;
+  vertical-align: middle;
+}
+
+.behbar-invoice-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  margin-bottom: 24px;
+}
+
+.behbar-invoice-footer-sign {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+@media (max-width: 640px) {
+  .behbar-invoice-parties {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .behbar-invoice-sheet {
+    padding: 16px;
+  }
+  .behbar-invoice-head {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .behbar-invoice-meta {
+    text-align: right;
+  }
+  .behbar-invoice-footer-sign {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
+
+/* Print Handling */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #behbar-invoice-modal-overlay,
+  #behbar-invoice-modal-overlay * {
+    visibility: visible;
+  }
+  .invoice-modal-overlay {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+  .invoice-modal-dialog {
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+  .invoice-modal-topbar,
+  .invoice-modal-actions {
+    display: none !important;
+  }
+  .behbar-invoice-sheet {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+}

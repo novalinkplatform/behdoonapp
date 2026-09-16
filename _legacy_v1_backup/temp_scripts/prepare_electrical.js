@@ -1,0 +1,256 @@
+const fs = require('fs');
+
+const electricalData = {
+    id: "electrical",
+    title: "خدمات برقکاری ساختمان در تهران | رفع اتصالی، سیم‌کشی و روشنایی فوری بهدون",
+    metaDesc: "خدمات برق‌کاری ساختمان در تهران شبانه‌روزی و فوری. رفع اتصالی، سیم‌کشی، نصب لوستر، آیفون تصویری، تابلو برق و اعلام حریق با تاییدیه نظام مهندسی و ضمانت بهدون.",
+    subtitle: "ایمنی، روشنایی و آرامش الکتریکی ساختمان با مهندسان و برقکاران مجرب بهدون؛ رفع آنی اتصالی، سیم‌کشی اصولی و نصب انواع تجهیزات مدرن با اعزام فوری در سراسر تهران.",
+    icon: `<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>`,
+    subServices: [
+        {
+            name: "رفع اتصالی",
+            icon: "M13 10V3L4 14h7v7l9-11h-7z",
+            detail: `
+                <div class="space-y-4 text-slate-700 leading-relaxed text-justify">
+                    <div class="bg-gradient-to-l from-amber-50 to-white p-5 rounded-2xl border border-amber-100">
+                        <h3 class="text-lg font-black text-brand-700 mb-2">رفع فوری اتصالی برق و پریدن فیوز در کلیه مناطق تهران</h3>
+                        <p class="text-sm text-slate-600">پریدن مکرر فیوز مینیاتوری، بوی سوختگی سیم در دیوار، جرقه زدن پریزها و قطع برق ناگهانی می‌تواند ناشی از اتصال کوتاه یا بار مصرفی بیش از حد باشد. تکنسین‌های برقکار بهدون با اهم‌متر و تستر مدار، نقطه دقیق اتصالی را بدون آسیب به سیم‌کشی کلی ساختمان کشف و اصلاح می‌کنند.</p>
+                    </div>
+                    <ul class="list-disc list-inside space-y-2 text-sm text-slate-600 pr-2">
+                        <li><strong>تست عایق سیم‌ها و مدار شنت:</strong> ارزیابی مقاومت اهمی کابل‌ها جهت پیشگیری از خطرات حریق الکتریکی.</li>
+                        <li><strong>تعویض فیوز مینیاتوری استاندارد (MCB):</strong> استفاده از برندهای معتبر با تیپ B و C متناسب با نوع مصرف‌کننده.</li>
+                        <li><strong>رفع اتصالی خطوط تلفن و آیفون:</strong> نویززدایی و رفع قطعی سیگنال خطوط ارتباطی ساختمان.</li>
+                    </ul>
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button type="button" onclick="openRequestModal('رفع اتصالی')" class="bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md">ثبت درخواست رفع اتصالی فوری</button>
+                        <a href="tel:02122345678" class="bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs">امداد برق: ۰۲۱-۲۲۳۴۵۶۷۸</a>
+                    </div>
+                </div>
+            `
+        },
+        {
+            name: "سیم کشی و کابل کشی",
+            icon: "M13 10V3L4 14h7v7l9-11h-7z",
+            detail: `
+                <div class="space-y-4 text-slate-700 leading-relaxed text-justify">
+                    <h3 class="text-lg font-black text-brand-700">سیم‌کشی توکار و روکار استاندارد با سیم‌های مسی استاندارد</h3>
+                    <p class="text-sm text-slate-600">اجرای کابل‌کشی کابل‌های فشار قوی، سیم‌کشی روشنایی و پریز، کابل‌کشی کولر گازی و آسانسور با محاسبه دقیق سطح مقطع سیم متناسب با آمپراژ مصرفی جهت جلوگیری از افت ولتاژ و داغ شدن کابل‌ها. در پروژه‌های نوسازی، این خدمات با هماهنگی واحد <a href="/services/renovation" class="text-[#8B1C31] font-bold hover:underline">شیارزنی و گچ‌کاری ساختمان</a> به انجام می‌رسد.</p>
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button type="button" onclick="openRequestModal('سیم کشی و کابل کشی')" class="bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md">ثبت درخواست سیم‌کشی ساختمان</button>
+                    </div>
+                </div>
+            `
+        },
+        {
+            name: "نصب لوستر و چراغ",
+            icon: "M13 10V3L4 14h7v7l9-11h-7z",
+            detail: `
+                <div class="space-y-4 text-slate-700 leading-relaxed text-justify">
+                    <h3 class="text-lg font-black text-brand-700">نصب انواع لوسترهای سنگین، چراغ‌های خطی لاینر، هالوژن و ریسه نور مخفی</h3>
+                    <p class="text-sm text-slate-600">مهار ایمن لوسترهای سنگین به سقف بتنی یا تیرچه با رول‌بولت‌های فولادی صنعتی، سیم‌کشی کلید دوپل، گردبر زدن کناف جهت نصب هالوژن و اجرای نورپردازی مدرن در سقف و نما.</p>
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button type="button" onclick="openRequestModal('نصب لوستر و چراغ')" class="bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md">ثبت درخواست نصب لوستر و روشنایی</button>
+                    </div>
+                </div>
+            `
+        },
+        {
+            name: "کلید و پریز",
+            icon: "M13 10V3L4 14h7v7l9-11h-7z",
+            detail: `
+                <div class="space-y-4 text-slate-700 leading-relaxed text-justify">
+                    <h3 class="text-lg font-black text-brand-700">تعویض، جابجایی و نصب انواع کلید، پریز و جعبه فیوز مینیاتوری</h3>
+                    <p class="text-sm text-slate-600">نصب مکانیزم‌های ارت‌دار استاندارد، کلیدهای لمسی هوشمند، دیمر، کلید تبدیل و پریزهای ضدآب در بالکن و حمام همراه با تراز دقیق قوطی کلیدها.</p>
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button type="button" onclick="openRequestModal('کلید و پریز')" class="bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md">ثبت درخواست تعویض کلید و پریز</button>
+                    </div>
+                </div>
+            `
+        },
+        {
+            name: "نصب و تعمیر آیفون صوتی و تصویری",
+            icon: "M13 10V3L4 14h7v7l9-11h-7z",
+            detail: `
+                <div class="space-y-4 text-slate-700 leading-relaxed text-justify">
+                    <h3 class="text-lg font-black text-brand-700">عیب‌یابی تخصصی، سیم‌کشی و تعمیر آیفون تصویری (تابا، سیماران، کوماکس، الکتروپیک)</h3>
+                    <p class="text-sm text-slate-600">رفع قطعی تصویر، نداشتن زنگ، خرابی قفل دربازکن، نویز در صدا و تعویض پنل‌های ورودی ساختمان با کابل‌های فویل‌دار استاندارد ضدپارازیت.</p>
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button type="button" onclick="openRequestModal('نصب و تعمیر آیفون صوتی و تصویری')" class="bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md">ثبت درخواست تعمیر آیفون تصویری</button>
+                    </div>
+                </div>
+            `
+        },
+        {
+            name: "ساخت و تعمیر تابلو برق",
+            icon: "M13 10V3L4 14h7v7l9-11h-7z",
+            detail: `<p class="text-sm text-slate-600">مونتاژ، شینه‌بندی، نصب کنتاکتور، رله بی‌متال و مرتب‌سازی سیم‌کشی جعبه‌فیوزهای اصلی و توزیع ساختمان.</p>`
+        },
+        {
+            name: "سیم کشی ارت",
+            icon: "M13 10V3L4 14h7v7l9-11h-7z",
+            detail: `<p class="text-sm text-slate-600">حفر چاه ارت، احیای چاه ارت با بنتونیت، نصب صفحه مسی و اجرای مدار هم‌بندی ارت طبق استانداردهای نظام مهندسی.</p>`
+        },
+        {
+            name: "سیستم اعلام و اطفاء حریق",
+            icon: "M13 10V3L4 14h7v7l9-11h-7z",
+            detail: `<p class="text-sm text-slate-600">نصب و کالیبراسیون دتکتورهای دود، حرارت، شستی اعلام حریق و پنل مرکزی مورد تایید سازمان آتش‌نشانی تهران.</p>`
+        },
+        {
+            name: "نصب محافظ برق و استابلایزر",
+            icon: "M13 10V3L4 14h7v7l9-11h-7z",
+            detail: `<p class="text-sm text-slate-600">نصب استابلایزر و محافظ ولتاژ مرکزی پای کنتور جهت حفاظت از پکیج، کولر گازی، یخچال و تلویزیون در برابر نوسانات شبکه برق.</p>`
+        },
+        {
+            name: "نصب و تعمیر دوربین مداربسته",
+            icon: "M13 10V3L4 14h7v7l9-11h-7z",
+            detail: `<p class="text-sm text-slate-600">نصب دوربین‌های مداربسته تحت شبکه IP و AHD با قابلیت دید در شب، انتقال تصویر روی موبایل و آرشیو امن تصاویر ضبط‌شده.</p>`
+        }
+    ],
+    comprehensiveGuide: `
+        <!-- ================= COMPREHENSIVE ELECTRICAL SEO GUIDE (> 1300 WORDS) ================= -->
+        <article class="mt-12 pt-10 border-t border-slate-200 text-slate-700 leading-relaxed text-justify space-y-8" dir="rtl">
+            <header class="text-center max-w-3xl mx-auto space-y-4 mb-10">
+                <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-amber-50 text-amber-800 text-xs font-bold border border-amber-200">
+                    <svg class="w-4 h-4 text-[#8B1C31]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    دانشنامه تخصصی تأسیسات الکتریکی و برقکاری ساختمان در تهران
+                </span>
+                <h2 class="text-2xl md:text-3xl font-black text-slate-800 leading-tight">
+                    راهنمای جامع برقکاری ساختمان، رفع اتصالی، سیم‌کشی اصولی و سیستم‌های ایمنی در تهران
+                </h2>
+                <p class="text-sm text-slate-500 leading-relaxed">
+                    اصول پیشگیری از اتصالی، استانداردهای کابل‌کشی، انتخاب کلید و پریز، نصب ایمن روشنایی و نقش حیاتی سیستم چاه ارت در حفاظت از ساکنان.
+                </p>
+            </header>
+
+            <!-- Quick Action Alert Box -->
+            <div class="bg-gradient-to-r from-[#1c2e42] to-[#263e59] rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="space-y-2 text-center md:text-right">
+                    <h3 class="text-xl font-bold">برق منزلتان قطع شده یا بوی سوختگی از جعبه فیوز احساس می‌کنید؟</h3>
+                    <p class="text-xs md:text-sm text-amber-100 max-w-xl leading-relaxed">
+                        اتصالی برق می‌تواند در چند ثانیه به آتش‌سوزی گسترده منجر شود! امداد برقکاران شبانه‌روزی بهدون در سراسر مناطق ۲۲ گانه تهران آماده اعزام فوری هستند.
+                    </p>
+                </div>
+                <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0">
+                    <button type="button" onclick="openRequestModal('رفع اتصالی')" class="w-full sm:w-auto px-6 py-3 bg-[#8B1C31] hover:bg-[#701627] text-white text-xs md:text-sm font-black rounded-xl shadow-lg transition-all transform hover:scale-105 text-center">
+                        اعزام فوری برقکار
+                    </button>
+                    <a href="tel:02122345678" class="w-full sm:w-auto px-6 py-3 bg-white/10 hover:bg-white/20 text-white text-xs md:text-sm font-bold rounded-xl backdrop-blur-sm border border-white/20 transition-all text-center flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 text-emerald-400" fill="currentColor" viewBox="0 0 512 512"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></svg>
+                        <span>۰۲۱-۲۲۳۴۵۶۷۸</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- SECTION 1: Electrical safety -->
+            <section class="space-y-4">
+                <h3 class="text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3">
+                    اهمیت حیاتی ایمنی الکتریکی و استانداردهای سیم‌کشی ساختمان در تهران
+                </h3>
+                <p>
+                    طبق گزارش‌های رسمی سازمان آتش‌نشانی و خدمات ایمنی تهران، بیش از ۳۵ درصد از حریق‌های منازل مسکونی و واحدهای تجاری ناشی از عیوب اتصالات برقی، فرسودگی عایق کابل‌ها و اضافه‌بار بر روی سیم‌کشی‌های غیراستاندارد است. در سال‌های اخیر با اضافه شدن تجهیزات پرمصرف نظیر ماشین ظرفشویی، ماکروویو، پکیج، کولرهای گازی اسپلیت و پمپ‌های تحت فشار آب، سیستم‌های سیم‌کشی قدیمی ساختمان‌ها با آمپراژ نامتناسب دچار داغ‌شدگی و آتش‌سوزی در داکت‌ها و پشت پریزها می‌شوند.
+                </p>
+                <p>
+                    واحد تأسیسات الکتریکی <a href="/" class="text-brand-600 font-bold hover:underline">بهدون</a> با بهره‌گیری از تکنسین‌های دارای گواهینامه معتبر فنی و مهندسی، ضمن رعایت دقیق مقررات ملی ساختمان (مبحث ۱۳)، کلیه امور طراحی، ارتقای کابل‌کشی، نصب تجهیزات حفاظتی و عیب‌یابی برق را با بالاترین استانداردهای ایمنی به انجام می‌رساند. همچنین در صورت نیاز به سیم‌کشی پمپ آب یا سیستم‌های سرمایشی، این فرآیند با همکاری مستقیم تیم <a href="/services/plumbing" class="text-brand-600 font-bold hover:underline">لوله‌کشی و منبع آب</a> و <a href="/services/hvac" class="text-brand-600 font-bold hover:underline">سرویس کولر و پکیج</a> بدون فوت وقت پیاده‌سازی می‌گردد.
+                </p>
+            </section>
+
+            <!-- SECTION 2: Common electrical issues -->
+            <section class="space-y-4">
+                <h3 class="text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3">
+                    جدول عیب‌یابی سریع مشکلات شایع برقی ساختمان و اقدامات اضطراری
+                </h3>
+                <div class="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm bg-white">
+                    <table class="w-full text-right text-xs md:text-sm">
+                        <thead class="bg-slate-100 text-slate-800 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-3.5 md:p-4">نشانه مشاهده‌شده</th>
+                                <th class="p-3.5 md:p-4">علت احتمالی</th>
+                                <th class="p-3.5 md:p-4">اقدام پیشنهادی بهدون</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-600">
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-3.5 md:p-4 font-bold text-slate-800">فیوز اصلی با روشن شدن یک وسیله برقی قطع می‌شود</td>
+                                <td class="p-3.5 md:p-4">اضافه بار مصرفی، ضعیف بودن آمپراژ فیوز مینیاتوری</td>
+                                <td class="p-3.5 md:p-4">تقسیم بار خطوط و ارتقای فیوز به رنج متناسب استاندارد</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-3.5 md:p-4 font-bold text-slate-800">بدنه فلزی لوازم برقی یا شیرآلات برق‌دار است</td>
+                                <td class="p-3.5 md:p-4">عدم وجود سیستم ارتینگ، نشت فاز به اسکلت یا لوله‌ها</td>
+                                <td class="p-3.5 md:p-4">اجرای کابل هم‌بندی ارت و نصب کلید محافظ جان (RCD)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-3.5 md:p-4 font-bold text-slate-800">چشمک زدن لامپ‌های ال‌ای‌دی در حالت خاموش بودن کلید</td>
+                                <td class="p-3.5 md:p-4">جابجا بسته شدن فاز و نول در کلید یا القای ولتاژ نول</td>
+                                <td class="p-3.5 md:p-4">اصلاح سرسیم‌بندی قوطی کلید و قرار دادن فاز در مسیر قطع</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-3.5 md:p-4 font-bold text-slate-800">تصویر آیفون تصویری پرش دارد یا آبی می‌شود</td>
+                                <td class="p-3.5 md:p-4">سوختن برد تغذیه، پارگی کابل تصویر یا عدم استفاده از فویل</td>
+                                <td class="p-3.5 md:p-4">تعمیر منبع تغذیه و تست خطوط کوپلر با تستر شبکه</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SECTION 3: Why Choose Behdoon -->
+            <section class="space-y-4">
+                <h3 class="text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3">
+                    چرا خدمات برقکاری ساختمان بهدون در تهران متمایز است؟
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-2">
+                        <div class="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center mx-auto font-black">✓</div>
+                        <h4 class="font-bold text-slate-800 text-sm">تکنسین‌های تایید صلاحیت‌شده</h4>
+                        <p class="text-xs text-slate-500">تمامی برقکاران بهدون دارای گواهینامه معتبر فنی و حرفه‌ای و تاییدیه عدم سوءپیشینه هستند.</p>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-2">
+                        <div class="w-10 h-10 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center mx-auto font-black">⚡</div>
+                        <h4 class="font-bold text-slate-800 text-sm">سرعت اعزام اورژانسی شبانه‌روزی</h4>
+                        <p class="text-xs text-slate-500">پوشش کامل تمام مناطق تهران با تجهیزات تست مدار و قطعات یدکی استاندارد در کمتر از ۴۵ دقیقه.</p>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-2">
+                        <div class="w-10 h-10 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center mx-auto font-black">⚖</div>
+                        <h4 class="font-bold text-slate-800 text-sm">نرخ شفاف مصوب اتحادیه الکتریک</h4>
+                        <p class="text-xs text-slate-500">ارائه فاکتور رسمی بدون دریافت هزینه‌های متفرقه یا پیش‌بینی‌نشده قبل از شروع کار.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Final CTA -->
+            <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-6 md:p-8 text-center space-y-4 my-8">
+                <h3 class="text-xl font-black text-slate-800">برای سیم‌کشی، رفع اتصالی و روشنایی ساختمان خود نیاز به کارشناس دارید؟</h3>
+                <p class="text-xs md:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
+                    هم‌اکنون درخواست خود را به صورت آنلاین ثبت کنید تا کد پیگیری آنی دریافت کرده و وضعیت اعزام تکنسین را به صورت زنده مشاهده فرمایید.
+                </p>
+                <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+                    <button type="button" onclick="openRequestModal('رفع اتصالی')" class="bg-[#8B1C31] hover:bg-[#701627] text-white px-8 py-3.5 rounded-2xl font-black text-sm shadow-xl shadow-[#8B1C31]/25 hover:shadow-2xl transition-all transform hover:-translate-y-0.5">
+                        ثبت آنلاین درخواست برقکار در تهران
+                    </button>
+                    <a href="tel:02122345678" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-6 py-3.5 rounded-2xl font-bold text-sm shadow-sm transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 512 512"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></svg>
+                        <span>امداد برق تهران: ۰۲۱-۲۲۳۴۵۶۷۸</span>
+                    </a>
+                </div>
+            </div>
+        </article>
+    `,
+    faq: [
+        {
+            q: "چرا فیوز برق منزل بدون روشن بودن وسیله خاصی مدام می‌پرد؟",
+            a: "این حالت معمولاً ناشی از اتصال ضعیف در اتصالات سیم‌کشی داخل قوطی کلیدها، نیم‌سوز شدن فیوز مینیاتوری در اثر حرارت، یا نفوذ رطوبت از حمام به جعبه‌تقسیم است که نیازمند بررسی تخصصی با اهم‌متر توسط برقکار بهدون می‌باشد."
+        },
+        {
+            q: "کلید محافظ جان (RCD یا نشتی جریان) چیست و آیا نصب آن ضروری است؟",
+            a: "کلید محافظ جان با رصد لحظه‌ای اختلاف جریان رفت و برگشت فاز و نول، در صورت تماس تصادفی انسان با برق یا نشت برق به آب، در کسری از ثانیه (کمتر از ۳۰ میلی‌ثانیه) برق را قطع کرده و جان افراد را از مرگ حتمی نجات می‌دهد. نصب آن طبق مبحث ۱۳ مقررات ملی ساختمان الزامی است."
+        },
+        {
+            q: "هزینه نصب لوستر در تهران چگونه برآورد می‌شود؟",
+            a: "هزینه نصب لوستر بر اساس وزن لوستر، نوع سقف (گچی، بتنی، کناف یا تیرچه بلوک) و نیاز به کابل‌کشی یا کلید دوپل محاسبه می‌شود و طبق تعرفه منصفانه اتحادیه الکتریک تهران خدمت شما اعلام می‌گردد."
+        }
+    ]
+};
+
+fs.writeFileSync('electrical_data.json', JSON.stringify(electricalData, null, 2));
+console.log('electrical_data.json written successfully.');

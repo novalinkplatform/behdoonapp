@@ -1,0 +1,145 @@
+const fs = require('fs');
+
+const adminHTML = `
+    <main class="min-h-screen bg-slate-50 flex" dir="rtl">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-l border-slate-200 flex flex-col hidden md:flex fixed h-full z-10">
+            <div class="p-6 border-b border-slate-100 flex items-center justify-center">
+                <span class="text-2xl font-black text-[#8B1C31] tracking-tight">بهدون <span class="text-sm text-slate-400 font-normal">| پنل مدیریت</span></span>
+            </div>
+            <nav class="flex-1 p-4 space-y-2">
+                <a href="/admin" class="flex items-center gap-3 bg-rose-50 text-[#8B1C31] px-4 py-3 rounded-xl font-bold transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    داشبورد
+                </a>
+                <a href="#requests" class="flex items-center gap-3 text-slate-600 hover:bg-slate-50 px-4 py-3 rounded-xl font-medium transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    درخواست‌ها
+                    <span class="mr-auto bg-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">12</span>
+                </a>
+                <a href="#services" class="flex items-center gap-3 text-slate-600 hover:bg-slate-50 px-4 py-3 rounded-xl font-medium transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    مدیریت خدمات
+                </a>
+                <a href="#users" class="flex items-center gap-3 text-slate-600 hover:bg-slate-50 px-4 py-3 rounded-xl font-medium transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    مشتریان
+                </a>
+            </nav>
+            <div class="p-4 border-t border-slate-100">
+                <a href="/" class="flex items-center gap-3 text-slate-500 hover:text-slate-800 px-4 py-3 rounded-xl font-medium transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    خروج / بازگشت
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 md:mr-64 p-6 md:p-10">
+            <header class="flex justify-between items-center mb-10 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                <h1 class="text-2xl font-black text-slate-800">داشبورد</h1>
+                <div class="flex items-center gap-4">
+                    <button class="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 relative">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full"></span>
+                    </button>
+                    <div class="flex items-center gap-3">
+                        <div class="text-left hidden md:block">
+                            <div class="text-sm font-bold text-slate-800">مدیر سیستم</div>
+                            <div class="text-xs text-slate-500">admin@behdoon.ir</div>
+                        </div>
+                        <div class="w-10 h-10 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center font-bold">M</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-6">
+                    <div class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                    </div>
+                    <div>
+                        <div class="text-slate-500 text-sm mb-1">کل درخواست‌ها</div>
+                        <div class="text-3xl font-black text-slate-800">۱۲۸</div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-6">
+                    <div class="w-16 h-16 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <div class="text-slate-500 text-sm mb-1">درخواست‌های در انتظار</div>
+                        <div class="text-3xl font-black text-slate-800">۱۲</div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-6">
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <div class="text-slate-500 text-sm mb-1">انجام شده (این ماه)</div>
+                        <div class="text-3xl font-black text-slate-800">۴۵</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Requests Table -->
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-slate-800">آخرین درخواست‌ها</h2>
+                    <a href="#" class="text-sm font-bold text-[#8B1C31] hover:text-[#701627]">مشاهده همه</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-sm">
+                                <th class="p-4 font-medium border-b border-slate-100">نام مشتری</th>
+                                <th class="p-4 font-medium border-b border-slate-100">شماره تماس</th>
+                                <th class="p-4 font-medium border-b border-slate-100">نوع خدمت</th>
+                                <th class="p-4 font-medium border-b border-slate-100">تاریخ ثبت</th>
+                                <th class="p-4 font-medium border-b border-slate-100">وضعیت</th>
+                                <th class="p-4 font-medium border-b border-slate-100">عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <tr class="hover:bg-slate-50 border-b border-slate-50 transition-colors">
+                                <td class="p-4 font-bold text-slate-700">علی رضایی</td>
+                                <td class="p-4 text-slate-600 dir-ltr text-left">0912 345 6789</td>
+                                <td class="p-4 text-slate-600">تعمیر پکیج دیواری</td>
+                                <td class="p-4 text-slate-500">امروز - ۱۰:۳۰</td>
+                                <td class="p-4"><span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-bold">در انتظار بررسی</span></td>
+                                <td class="p-4"><button class="text-[#8B1C31] font-bold hover:underline">مشاهده</button></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 border-b border-slate-50 transition-colors">
+                                <td class="p-4 font-bold text-slate-700">سارا احمدی</td>
+                                <td class="p-4 text-slate-600 dir-ltr text-left">0933 123 4567</td>
+                                <td class="p-4 text-slate-600">لوله کشی و رفع نم</td>
+                                <td class="p-4 text-slate-500">دیروز - ۱۶:۴۵</td>
+                                <td class="p-4"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">در حال انجام</span></td>
+                                <td class="p-4"><button class="text-[#8B1C31] font-bold hover:underline">مشاهده</button></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 border-b border-slate-50 transition-colors">
+                                <td class="p-4 font-bold text-slate-700">رضا کریمی</td>
+                                <td class="p-4 text-slate-600 dir-ltr text-left">0921 987 6543</td>
+                                <td class="p-4 text-slate-600">نصب لوستر و نورپردازی</td>
+                                <td class="p-4 text-slate-500">دو روز پیش</td>
+                                <td class="p-4"><span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold">تکمیل شده</span></td>
+                                <td class="p-4"><button class="text-[#8B1C31] font-bold hover:underline">مشاهده</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+`;
+
+let currentWorker = fs.readFileSync('worker.js', 'utf8');
+
+const insertPos = currentWorker.indexOf("let htmlResponse = '';");
+
+currentWorker = currentWorker.substring(0, insertPos) + '    const adminHTML = `' + adminHTML.replace(/\`/g, '\\`') + '`;\n\n    ' + currentWorker.substring(insertPos);
+
+fs.writeFileSync('worker.js', currentWorker);
+console.log('adminHTML injected successfully.');

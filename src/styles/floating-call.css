@@ -1,0 +1,334 @@
+.header-quick-actions {
+  position: fixed;
+  top: 14px;
+  inset-inline-end: 20px;
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* حالت «فیکس»: دکمه‌ها بخشی ثابت از بالای صفحه‌اند و با اسکرول همراه صفحه جابه‌جا می‌شوند،
+   نه اینکه مثل حالت پیش‌فرض «شناور» همیشه روی صفحه بمانند. فقط روی دسکتاپ معنا دارد — موبایل
+   چیدمان مستقل خودش (نوار پایین) را دارد و تحت تأثیر این تنظیم قرار نمی‌گیرد. */
+.quick-actions-fixed .header-quick-actions {
+  position: absolute;
+}
+
+
+.quick-actions-side-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: var(--radius-full);
+  background: var(--surface);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  opacity: 0.75;
+  transition: opacity var(--transition-fast), background var(--transition-fast), transform var(--transition-fast), color var(--transition-fast);
+}
+
+.quick-actions-side-toggle:hover {
+  opacity: 1;
+  color: var(--primary);
+  background: var(--surface-alt);
+  transform: scale(1.08);
+}
+
+.quick-actions-side-toggle .icon {
+  width: 14px;
+  height: 14px;
+}
+
+@media (max-width: 768px) {
+  .quick-actions-side-toggle {
+    display: none !important;
+  }
+}
+
+/* روی دسکتاپ، هدر شناور یک قرص وسط‌چین با عرض متغیر است (بسته به زبان، طول نام هر خریدار،
+   تعداد آیتم‌های منو...) و آیکن‌های تماس/چت هم مستقل از آن در گوشه‌ی صفحه ثابت شده‌اند — یعنی
+   همیشه یک عرض ویوپورت (یا حتی یک breakpoint دیگر مثل شماره‌ی تلفن که از ۱۳۲۰px به بعد
+   دکمه‌ی تماس را عریض‌تر می‌کند) پیدا می‌شود که این دو روی هم بیفتند. به‌جای شکار تک‌تک این
+   بازه‌ها، برای هر عرض دسکتاپ/تبلتی از کنار هدر بیرون آورده می‌شوند تا اصلاً هیچ‌وقت با آن
+   رقابتی روی یک باند افقی نداشته باشند. */
+@media (min-width: 769px) {
+  /* دکمه‌ی چت بالا، دکمه‌ی تماس زیرش */
+  .header-quick-actions {
+    flex-direction: column-reverse;
+  }
+
+  /* چیدمان سمت راست (پیش‌فرض یا کلاس quick-actions-right) */
+  html.quick-actions-right .header-quick-actions,
+  html:not(.quick-actions-left) .header-quick-actions {
+    inset-inline-start: 20px !important;
+    inset-inline-end: auto !important;
+    right: 20px !important;
+    left: auto !important;
+    align-items: flex-end;
+  }
+
+  /* چیدمان سمت چپ (کلاس quick-actions-left) */
+  html.quick-actions-left .header-quick-actions {
+    inset-inline-end: 20px !important;
+    inset-inline-start: auto !important;
+    left: 20px !important;
+    right: auto !important;
+    align-items: flex-start;
+  }
+
+  /* حالت پیش‌فرض «شناور» (position:fixed): با اسکرول هم جابه‌جا نمی‌شود، پس تداخل با هدر
+     همیشگی است — همیشه به گوشه‌ی پایین صفحه منتقل می‌شود، دور از هدر. */
+  html:not(.quick-actions-fixed) .header-quick-actions {
+    top: auto;
+    bottom: 20px;
+  }
+
+  /* حالت «فیکس» (position:absolute): با اسکرول از زیر هدر رد می‌شود و دیگر تداخلی ندارد؛
+     فقط در همان لحظه‌ی اول (اسکرول صفر) با هدر تداخل دارد، پس تا اولین اسکرول مخفی می‌ماند. */
+  html.quick-actions-fixed .header-quick-actions {
+    opacity: 0;
+    transform: translateY(-6px);
+    pointer-events: none;
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+  }
+
+  html.quick-actions-fixed body.page-scrolled .header-quick-actions {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+}
+
+.floating-call {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  background-color: var(--call-green);
+  color: #ffffff;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-lg);
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.floating-call:hover {
+  background-color: var(--call-green-dark);
+  transform: translateY(-2px);
+}
+
+/* هم‌راستا با دکمه چت: کنار هدر، روی صفحه‌های باریک‌تر جمع‌وجور و فقط از یک عرض معین به بعد با شماره کامل. */
+.floating-call-number {
+  display: none;
+}
+
+@media (min-width: 1320px) {
+  .floating-call {
+    width: auto;
+    height: auto;
+    padding: 0.7rem 1.1rem 0.7rem 0.7rem;
+    justify-content: flex-start;
+  }
+
+  .floating-call-number {
+    display: inline;
+  }
+}
+
+.floating-call-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.floating-call-wave {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  animation: floating-call-ping 2.2s ease-out infinite;
+}
+
+.floating-call-wave-delay {
+  animation-delay: 1.1s;
+}
+
+@keyframes floating-call-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2.1);
+    opacity: 0;
+  }
+}
+
+.floating-call .icon {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.floating-call-number {
+  white-space: nowrap;
+  unicode-bidi: isolate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-call-wave {
+    animation: none;
+    display: none;
+  }
+}
+
+
+/* دکمه‌ی شناور واتس‌اپ — دقیقاً همان الگوی .floating-call (موج، ابعاد، حالت موبایل) فقط بدون متن؛
+   چون مقصدش لینک واتس‌اپ است نه یک شماره‌ی قابل‌نمایش، همیشه فقط آیکون است، در هیچ عرضی بزرگ نمی‌شود. */
+.floating-whatsapp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: auto;
+  height: auto;
+  min-height: 48px;
+  padding: 0.65rem 1.1rem 0.65rem 0.8rem;
+  background-color: #25d366;
+  color: #ffffff;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-lg);
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.floating-whatsapp:hover {
+  background-color: #1ebc59;
+  transform: translateY(-2px);
+}
+
+.floating-whatsapp-label {
+  display: inline;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.floating-whatsapp-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.floating-whatsapp-wave {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  animation: floating-call-ping 2.2s ease-out infinite;
+}
+
+.floating-whatsapp-wave-delay {
+  animation-delay: 1.1s;
+}
+
+.floating-whatsapp .icon {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-whatsapp-wave {
+    animation: none;
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-quick-actions {
+    position: fixed !important;
+    bottom: 86px !important;
+    top: auto !important;
+    z-index: 150 !important;
+    display: flex !important;
+    flex-direction: column-reverse !important;
+    gap: 10px !important;
+    pointer-events: none !important;
+  }
+
+  /* چیدمان سمت راست یا چپ طبق تنظیمات مدیریت */
+  html.quick-actions-right .header-quick-actions,
+  html:not(.quick-actions-left) .header-quick-actions {
+    right: 14px !important;
+    left: auto !important;
+    align-items: flex-end !important;
+  }
+
+  html.quick-actions-left .header-quick-actions {
+    left: 14px !important;
+    right: auto !important;
+    align-items: flex-start !important;
+  }
+
+  .floating-call,
+  .floating-whatsapp {
+    pointer-events: auto !important;
+    position: static !important;
+    width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22) !important;
+    transition: transform var(--transition-fast), background-color var(--transition-fast) !important;
+  }
+
+  .floating-call-number,
+  .floating-whatsapp-label {
+    display: none !important;
+  }
+
+  .floating-call-icon-wrap,
+  .floating-whatsapp-icon-wrap {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .floating-call .icon,
+  .floating-whatsapp .icon {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  /* دکمه چت داخل نوار ناوبری پایین صفحه قرار دارد */
+  .header-quick-actions .chat-widget-button {
+    display: none !important;
+  }
+}
+

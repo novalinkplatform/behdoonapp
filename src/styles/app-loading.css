@@ -1,0 +1,45 @@
+/* تا وقتی جاوااسکریپت صفحه را با محتوای واقعی و استایل‌شده پر نکرده، نسخه‌ی خام متنی که
+   میان‌افزار سرور برای خزنده‌ها داخل #app تزریق می‌کند (فقط h1/h2/p/ul بدون کلاس) نباید یک لحظه
+   به‌صورت متن بی‌قواره روی صفحه‌ی کاربر واقعی چشمک بزند؛ به‌جایش یک لودینگ ساده و برندی نشان داده
+   می‌شود تا markAppReady() صدا زده شود. چون این قانون داخل main.css است و لینک آن در <head> است،
+   قبل از هر رندری از HTML بدنه اعمال می‌شود — نیازی به CSS بحرانی درون‌خطی جداگانه نیست. */
+#app:not(.app-ready) {
+  visibility: hidden;
+}
+
+.app-loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--background);
+  transition: opacity 0.2s ease;
+}
+
+.app-ready ~ .app-loading-overlay {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.app-loading-spinner {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  animation: app-loading-spin 0.75s linear infinite;
+}
+
+@keyframes app-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-loading-spinner {
+    animation: none;
+  }
+}

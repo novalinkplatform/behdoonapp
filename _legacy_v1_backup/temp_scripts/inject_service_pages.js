@@ -1,0 +1,321 @@
+const fs = require('fs');
+
+const serviceData = `
+const servicesData = {
+    'tasisat': {
+        id: 'tasisat',
+        title: 'تأسیسات ساختمان در تهران | خدمات فنی و تعمیرات تأسیسات',
+        metaDesc: 'خدمات تخصصی تاسیسات ساختمان در تهران شامل لوله کشی، رفع نشتی، تشخیص ترکیدگی، تعمیرات موتورخانه و پکیج توسط تکنسین های مجرب بهدون.',
+        subtitle: 'تأسیسات، شریان‌های حیاتی ساختمان شما هستند. از لوله‌کشی و نشت‌یابی دقیق تا تعمیرات سیستم‌های گرمایشی و سرمایشی، متخصصان بهدون با تجهیزات پیشرفته در کنار شمایند.',
+        icon: '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>',
+        subServices: [
+            { name: 'لوله‌کشی آب', icon: 'M12 14l9-5-9-5-9 5 9 5z' },
+            { name: 'لوله‌کشی فاضلاب', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' },
+            { name: 'رفع نشتی', icon: 'M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z' },
+            { name: 'نشت‌یابی', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7' },
+            { name: 'رفع نم و رطوبت', icon: 'M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12' },
+            { name: 'سیستم‌های گرمایشی', icon: 'M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z' },
+            { name: 'سیستم‌های سرمایشی', icon: 'M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z' }
+        ],
+        content: \`
+            <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-2"><span class="w-2 h-6 bg-brand-500 rounded-full inline-block"></span> معرفی حوزه خدمات تأسیسات</h2>
+            <p class="mb-8">سیستم‌های تأسیساتی، قلب تپنده هر ساختمان هستند. از جریان آب در لوله‌ها تا تهویه و تنظیم دمای محیط، همه به عملکرد صحیح تأسیسات بستگی دارند. بروز مشکل در این بخش نه تنها آسایش ساکنان را مختل می‌کند، بلکه در صورت عدم رسیدگی سریع، می‌تواند به ساختار بنا آسیب رسانده و هزینه‌های سنگینی به بار آورد. خدمات تأسیسات ساختمان شامل طیف وسیعی از امور نصب، راه‌اندازی، نگهداری و تعمیرات است.</p>
+
+            <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-2"><span class="w-2 h-6 bg-brand-500 rounded-full inline-block"></span> مشکلات رایج در تأسیسات ساختمان</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                    <h3 class="font-bold text-brand-600 mb-2">افت فشار آب</h3>
+                    <p class="text-sm text-slate-600">گرفتگی لوله‌ها، خرابی پمپ یا رسوب‌گرفتگی مبدل‌ها می‌تواند باعث کاهش محسوس فشار آب در طبقات شود.</p>
+                </div>
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                    <h3 class="font-bold text-brand-600 mb-2">نم‌زدگی و ترکیدگی لوله‌ها</h3>
+                    <p class="text-sm text-slate-600">ایجاد لکه‌های زرد روی سقف یا دیوار، بوی نا و طبله کردن گچ، همگی نشانه‌هایی از وجود نشتی پنهان در مسیر لوله‌کشی هستند.</p>
+                </div>
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                    <h3 class="font-bold text-brand-600 mb-2">خرابی پکیج و شوفاژ</h3>
+                    <p class="text-sm text-slate-600">سرد شدن رادیاتورها، نوسان دمای آب مصرفی یا نمایش کدهای خطا در پکیج که نیاز به سرویس دوره‌ای یا تعمیر قطعات دارد.</p>
+                </div>
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                    <h3 class="font-bold text-brand-600 mb-2">گرفتگی فاضلاب</h3>
+                    <p class="text-sm text-slate-600">تخلیه کند آب از سینک یا کف‌شور و انتشار بوی نامطبوع در محیط ساختمان که نیازمند فنرزنی یا تراکم هواست.</p>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-2"><span class="w-2 h-6 bg-brand-500 rounded-full inline-block"></span> چه زمانی باید از متخصص کمک گرفت؟</h2>
+            <p class="mb-4">اقدامات خودسرانه در زمینه تأسیسات، به ویژه زمانی که صحبت از تأسیسات گاز یا نشتی‌های پنهان است، می‌تواند خطرات جانی و مالی در پی داشته باشد. در موارد زیر حتماً باید از یک تکنسین مجرب کمک بگیرید:</p>
+            <ul class="list-disc list-inside space-y-2 mb-8 text-slate-700">
+                <li>هنگامی که دیوارهای مجاور سرویس‌های بهداشتی تغییر رنگ داده‌اند (نیاز به نشت‌یابی با دستگاه).</li>
+                <li>وقتی سیستم گرمایشی با وجود هواگیری همچنان بازدهی ندارد یا به طور مکرر خاموش می‌شود.</li>
+                <li>در صورت گرفتگی‌های شدید لوله فاضلاب که با محلول‌های خانگی رفع نمی‌شود (استفاده مکرر از اسید باعث خوردگی لوله می‌شود).</li>
+                <li>شنیدن صدای جریان آب از داخل دیوارها زمانی که تمام شیرها بسته‌اند.</li>
+            </ul>
+
+            <div class="bg-brand-50 border border-brand-200 rounded-3xl p-8 mb-8 relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/40 rounded-full blur-3xl"></div>
+                <h2 class="text-2xl font-black text-brand-700 mb-4 relative z-10">بهدون؛ راهکاری برای دسترسی ساده‌تر به خدمات ساختمان در تهران</h2>
+                <p class="text-brand-800 leading-loose relative z-10">
+                    گروه فنی بهدون با درک اهمیت زمان و کیفیت در خدمات تأسیساتی، تیمی از تکنسین‌های مجرب را برای خدمت‌رسانی در سراسر تهران گرد هم آورده است. استفاده از تجهیزات پیشرفته مانند <strong>دستگاه‌های نشت‌یاب صوتی نقطه‌زن</strong> به ما این امکان را می‌دهد که بدون تخریب‌های گسترده و اضافی، محل دقیق مشکلات را شناسایی کنیم. اولویت بهدون، ارائه خدمات تخصصی، شفافیت در عیب‌یابی و جلب رضایت مشتریان است.
+                </p>
+            </div>
+        \`,
+        faq: [
+            { q: 'آیا برای نشت‌یابی حتماً باید کف ساختمان تخریب شود؟', a: 'خیر، با استفاده از دستگاه‌های نشت‌یاب صوتی و تصویری پیشرفته، محل دقیق نشتی شناسایی شده و تخریب فقط در همان نقطه محدود و به اندازه یک کاشی انجام می‌شود.' },
+            { q: 'تعمیرات پکیج چقدر زمان می‌برد؟', a: 'بیشتر مشکلات رایج پکیج‌های دیواری در همان جلسه اول و در کمتر از ۲ ساعت توسط تکنسین در محل عیب‌یابی و رفع می‌شوند.' },
+            { q: 'آیا اسیدهای لوله‌بازکن برای رفع گرفتگی توصیه می‌شوند؟', a: 'استفاده مداوم از محلول‌های شیمیایی قوی باعث از بین رفتن چسب اتصالات و نازک شدن جداره لوله‌های پلیکا می‌شود. برای گرفتگی‌های سخت، فنرزنی اصولی‌ترین روش است.' }
+        ]
+    },
+    'electrical': {
+        id: 'electrical',
+        title: 'برق‌کشی و روشنایی در تهران | سیم‌کشی، رفع اتصالی و خدمات برق',
+        metaDesc: 'خدمات تخصصی برقکاری و روشنایی در تهران. سیم کشی ساختمان، رفع اتصالی برق، نصب لوستر، عیب یابی تابلو برق توسط برقکار مجرب بهدون.',
+        subtitle: 'سیستم برق پایدار و ایمن، تضمین‌کننده امنیت و کارایی ساختمان است. از عیب‌یابی و رفع اتصالی تا طراحی و اجرای نورپردازی مدرن را به متخصصان ما بسپارید.',
+        icon: '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>',
+        subServices: [
+            { name: 'سیم‌کشی ساختمان', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
+            { name: 'رفع اتصالی', icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z' },
+            { name: 'نصب کلید و پریز', icon: 'M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01' },
+            { name: 'نورپردازی', icon: 'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z' }
+        ],
+        content: \`
+            <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-2"><span class="w-2 h-6 bg-brand-500 rounded-full inline-block"></span> معرفی حوزه برق و روشنایی</h2>
+            <p class="mb-8">برق‌کشی ساختمان تنها اتصال چند رشته سیم نیست؛ بلکه ایجاد یک شبکه ایمن، مهندسی‌شده و کارآمد برای تأمین انرژی وسایل الکتریکی و روشنایی است. با توجه به افزایش استفاده از لوازم برقی پرمصرف در خانه‌های امروزی، داشتن سیستم برقی استاندارد، فیوزهای مناسب و سیم‌کشی با ظرفیت بالا، برای جلوگیری از حوادثی مانند آتش‌سوزی و خرابی تجهیزات بسیار حیاتی است.</p>
+
+            <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-2"><span class="w-2 h-6 bg-brand-500 rounded-full inline-block"></span> علائم خطر در سیستم برق ساختمان</h2>
+            <ul class="list-disc list-inside space-y-3 mb-8 text-slate-700">
+                <li><strong>پریدن مداوم فیوزها:</strong> نشان‌دهنده اضافه بار (Overload) روی یک مدار یا وجود اتصالی در مسیر سیم‌کشی است.</li>
+                <li><strong>بوی سوختگی از پریزها:</strong> داغ شدن سیم‌ها به دلیل اتصال ضعیف یا مصرف بیش از حد مجاز که خطر آتش‌سوزی بالایی دارد.</li>
+                <li><strong>چشمک زدن یا نوسان نور لامپ‌ها:</strong> می‌تواند ناشی از شل بودن اتصالات در جعبه مینیاتوری یا افت ولتاژ در شبکه داخلی باشد.</li>
+                <li><strong>برق‌دار بودن بدنه لوازم خانگی:</strong> نشان‌دهنده عدم وجود سیستم ارت (Earth) مناسب یا نشتی جریان در دستگاه است.</li>
+            </ul>
+
+            <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-2"><span class="w-2 h-6 bg-brand-500 rounded-full inline-block"></span> چه زمانی باید از متخصص کمک گرفت؟</h2>
+            <p class="mb-8">برق با کسی شوخی ندارد! هرگونه تعمیرات در جعبه فیوز اصلی، تعویض سیم‌کشی‌های توکار، نصب لوسترهای سنگین و پیچیده، و عیب‌یابی مدارهایی که مکرراً قطع می‌شوند، منحصراً باید توسط برق‌کار ماهر و دارای تجهیزات ایمنی انجام شود. حتی یک اتصال اشتباه در فاز و نول می‌تواند به سوختن وسایل گران‌قیمت منزل منجر شود.</p>
+
+            <div class="bg-brand-50 border border-brand-200 rounded-3xl p-8 mb-8 relative overflow-hidden">
+                <h2 class="text-2xl font-black text-brand-700 mb-4 relative z-10">خدمات برق ساختمان با تیم تخصصی بهدون</h2>
+                <p class="text-brand-800 leading-loose relative z-10">
+                    بهدون با بهره‌گیری از برق‌کاران با تجربه، آماده ارائه تمامی خدمات الکتریکی در تهران است. از یک تعویض ساده کلید و پریز گرفته تا سیم‌کشی کامل یک واحد بازسازی شده، عیب‌یابی تابلو برق و نصب سیستم‌های نورپردازی هوشمند. تمرکز ما بر ایمنی کامل، رعایت استانداردهای نظام مهندسی و انجام کار تمیز و بی‌نقص است تا با خیالی آسوده از لوازم برقی خود استفاده کنید.
+                </p>
+            </div>
+        \`,
+        faq: [
+            { q: 'چرا فیوز یک بخش خاص از خانه مدام می‌پرد؟', a: 'این مشکل معمولاً به دلیل اتصال همزمان چند وسیله پرمصرف (مثل اتو، سشوار و لباسشویی) به یک مدار، یا وجود اتصالی پنهان در یکی از پریزها یا دستگاه‌ها رخ می‌دهد و باید توسط تکنسین آمپراژ آن بررسی شود.' },
+            { q: 'آیا بهدون خدمات نصب هالوژن و نورپردازی کناف را انجام می‌دهد؟', a: 'بله، طراحی و اجرای نورپردازی‌های مدرن شامل هالوژن، نور مخفی (ریسه LED) و نصب انواع لوستر از خدمات اصلی بخش برق‌کشی بهدون است.' },
+            { q: 'هزینه رفع اتصالی چگونه محاسبه می‌شود؟', a: 'عیب‌یابی برق نیاز به بررسی در محل دارد. پس از پیدا کردن منشأ اتصالی (که ممکن است یک پریز سوخته یا سیم‌کشی فرسوده داخل دیوار باشد)، هزینه دقیق تعمیر به شما اعلام می‌شود.' }
+        ]
+    },
+    'renovation': {
+        id: 'renovation',
+        title: 'بازسازی و دکوراسیون در تهران | نقاشی، کاشی‌کاری و نوسازی',
+        metaDesc: 'خدمات تخصصی بازسازی ساختمان و دکوراسیون داخلی در تهران. نقاشی، کاشی کاری، کناف کاری و نوسازی صفر تا صد با تیم مجرب بهدون.',
+        subtitle: 'به خانه خود جانی دوباره ببخشید. خدمات جامع بازسازی و دکوراسیون داخلی با بهترین متریال و اجرای دقیق، متناسب با سلیقه و بودجه شما.',
+        icon: '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>',
+        subServices: [
+            { name: 'بازسازی کامل', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
+            { name: 'نقاشی ساختمان', icon: 'M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01' },
+            { name: 'کاشی و سرامیک', icon: 'M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z' },
+            { name: 'کناف‌کاری و سقف کاذب', icon: 'M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z' }
+        ],
+        content: \`
+            <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-2"><span class="w-2 h-6 bg-brand-500 rounded-full inline-block"></span> معرفی خدمات بازسازی و دکوراسیون</h2>
+            <p class="mb-8">با گذشت زمان، ساختمان‌ها دچار فرسودگی شده و نیاز به نوسازی پیدا می‌کنند. بازسازی تنها به معنای زیبایی ظاهری نیست، بلکه شامل اصلاح زیرساخت‌های فرسوده (مثل لوله‌ها و سیم‌کشی‌ها)، بهینه‌سازی فضا و ارتقای کیفیت زندگی در آن محیط است. یک دکوراسیون اصولی می‌تواند فضای یک آپارتمان کوچک را بزرگ‌تر، روشن‌تر و کارآمدتر جلوه دهد.</p>
+
+            <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-2"><span class="w-2 h-6 bg-brand-500 rounded-full inline-block"></span> اشتباهات رایج در بازسازی ساختمان</h2>
+            <ul class="list-disc list-inside space-y-3 mb-8 text-slate-700">
+                <li><strong>عدم بررسی زیرساخت‌ها:</strong> رنگ‌آمیزی یا نصب کاغذ دیواری روی دیواری که رطوبت پنهان دارد، باعث از بین رفتن هزینه‌ها پس از چند ماه می‌شود. ابتدا باید تأسیسات چک شوند.</li>
+                <li><strong>استفاده از چندین پیمانکار ناهماهنگ:</strong> عدم هماهنگی بین برق‌کار، لوله‌کش، گچ‌کار و نقاش باعث تأخیر طولانی در پروژه و دوباره‌کاری می‌شود.</li>
+                <li><strong>تخریب دیوارهای باربر:</strong> تخریب دیوارها بدون کارشناسی مهندسی برای بزرگ‌تر کردن فضا، خطر نشست یا ریزش ساختمان را به همراه دارد.</li>
+            </ul>
+
+            <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-2"><span class="w-2 h-6 bg-brand-500 rounded-full inline-block"></span> مراحل یک بازسازی اصولی</h2>
+            <p class="mb-8">فرایند نوسازی معمولاً با کارشناسی و برداشت پلان آغاز می‌شود. سپس در صورت نیاز تخریب و خروج نخاله انجام گرفته و اصلاح زیرساخت‌های تأسیساتی و برقی در دستور کار قرار می‌گیرد. پس از آن نوبت به سفت‌کاری (مثل گچ‌کاری و سیمان‌کاری) و در نهایت نازک‌کاری و دکوراسیون (کاشی‌کاری، نقاشی، نصب کناف و کابینت) می‌رسد.</p>
+
+            <div class="bg-brand-50 border border-brand-200 rounded-3xl p-8 mb-8 relative overflow-hidden">
+                <h2 class="text-2xl font-black text-brand-700 mb-4 relative z-10">مدیریت یکپارچه بازسازی با بهدون</h2>
+                <p class="text-brand-800 leading-loose relative z-10">
+                    یکی از بزرگترین دغدغه‌های کارفرمایان در بازسازی، پیدا کردن استادکاران ماهر برای هر بخش و هماهنگ کردن آنهاست. بهدون با در اختیار داشتن تیم‌های کامل در تمامی حوزه‌ها (تأسیسات، برق، بنایی، نقاشی و کاشی‌کاری) فرایند بازسازی را در تهران یکپارچه کرده است. ما پروژه شما را بررسی کرده، زمان‌بندی واقع‌بینانه ارائه می‌دهیم و از ابتدا تا انتهای کار برای خلق فضایی زیبا و استاندارد در کنار شما هستیم.
+                </p>
+            </div>
+        \`,
+        faq: [
+            { q: 'آیا برای نقاشی ساختمان نیاز به تخلیه کامل منزل است؟', a: 'خیر، تیم نقاشی بهدون با کاور کردن دقیق وسایل و کف‌پوش‌ها، امکان رنگ‌آمیزی بخش‌به‌بخش را حتی در زمان سکونت شما فراهم می‌کند.' },
+            { q: 'چقدر زمان برای بازسازی کامل یک آپارتمان نیاز است؟', a: 'بسته به حجم تغییرات (تعویض لوله‌کشی، کف‌سازی، کابینت و...) این زمان متغیر است، اما معمولاً برای یک آپارتمان ۱۰۰ متری بین ۳۰ تا ۵۰ روز کاری زمان نیاز است.' },
+            { q: 'تفاوت کناف با گچ‌کاری سنتی سقف چیست؟', a: 'کناف (Drywall) سرعت اجرای بسیار بالاتری دارد، وزن ساختمان را سبک‌تر نگه می‌دارد، در برابر زلزله ایمن‌تر است و امکان اجرای طرح‌های نورپردازی بسیار متنوعی را به راحتی فراهم می‌کند.' }
+        ]
+    },
+    'construction': {
+        id: 'construction',
+        title: 'خدمات بنایی و عمرانی در تهران | دیوارکشی، سیمان‌کاری و تخریب',
+        metaDesc: 'خدمات تخصصی بنایی و عمرانی در تهران. تخریب اصولی، دیوارکشی، سیمان کاری، شیب بندی و تعمیرات ساختمانی با استادکاران ماهر بهدون.',
+        subtitle: 'استحکام و دوام بنای خود را به دستان توانمند استادکاران ما بسپارید. اجرای دقیق خدمات بنایی، دیوارکشی، سیمان‌کاری و تخریب اصولی با رعایت نکات ایمنی.',
+        icon: '<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>',
+        subServices: [
+            { name: 'تخریب و خاک‌برداری', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
+            { name: 'دیوارکشی', icon: 'M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z' },
+            { name: 'سیمان‌کاری', icon: 'M20 14H4m16 0c.552 0 1 .448 1 1v4c0 .552-.448 1-1 1H4c-.552 0-1-.448-1-1v-4c0-.552.448-1 1-1m16 0V9c0-.552-.448-1-1-1H5c-.552 0-1 .448-1 1v5m16-5V5c0-.552-.448-1-1-1H5c-.552 0-1 .448-1 1v4' },
+            { name: 'تعمیرات بنایی', icon: 'M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z' }
+        ],
+        content: \`
+            <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-2"><span class="w-2 h-6 bg-brand-500 rounded-full inline-block"></span> معرفی خدمات بنایی و عمرانی</h2>
+            <p class="mb-8">خدمات بنایی پایه و اساس شکل‌گیری و دوام یک ساختمان است. از تغییر نقشه داخلی یک آپارتمان با جابجایی دیوارها گرفته تا ترمیم بخش‌های آسیب‌دیده پس از رفع نشتی لوله‌ها، همگی نیازمند تخصص در ترکیب مصالح، اجرای شاقول و تراز، و درک ساختار توزیع بار ساختمان است.</p>
+
+            <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center gap-2"><span class="w-2 h-6 bg-brand-500 rounded-full inline-block"></span> موارد مهم در تعمیرات عمرانی</h2>
+            <ul class="list-disc list-inside space-y-3 mb-8 text-slate-700">
+                <li><strong>ایمنی در تخریب:</strong> تخریب دیوارهای جداکننده برای یکپارچه کردن فضا باید با احتیاط و اطمینان از باربر نبودن دیوار انجام شود تا به استحکام کل بنا آسیبی نرسد.</li>
+                <li><strong>شیب‌بندی صحیح:</strong> در کف‌سازی سرویس‌های بهداشتی، حمام و پشت‌بام، شیب‌بندی اصولی به سمت کف‌شور حیاتی است. کوچکترین خطایی در این بخش باعث تجمع آب و نفوذ رطوبت به طبقات پایین می‌شود.</li>
+                <li><strong>ترمیم اصولی پس از تأسیسات:</strong> پس از کنده‌کاری برای تعمیر لوله‌ها، محل مورد نظر باید با ملات مناسب پر شده، ایزوگام یا قیرگونی تجدید شود و سپس کاشی‌کاری یا گچ‌کاری صورت گیرد.</li>
+            </ul>
+
+            <div class="bg-brand-50 border border-brand-200 rounded-3xl p-8 mb-8 relative overflow-hidden">
+                <h2 class="text-2xl font-black text-brand-700 mb-4 relative z-10">استادکاران ماهر بنایی در بهدون</h2>
+                <p class="text-brand-800 leading-loose relative z-10">
+                    انجام امور بنایی به دلیل ایجاد گرد و خاک و نخاله، معمولاً برای ساکنان آپارتمان‌ها چالش‌برانگیز است. تیم بنایی بهدون با برنامه‌ریزی دقیق، سرعت عمل بالا و رعایت نظافت محیط کار، تلاش می‌کند تا تعمیرات عمرانی و خرده‌کاری‌های بنایی شما در تهران را با کمترین دردسر و بالاترین کیفیت مصالح به انجام برساند. از یک لکه‌گیری ساده گچ تا تیغه‌چینی و سیمان‌کاری نما، همراه شما هستیم.
+                </p>
+            </div>
+        \`,
+        faq: [
+            { q: 'آیا برای برداشتن تیغه‌های داخلی آپارتمان نیاز به مجوز است؟', a: 'اگر تیغه مورد نظر نقش باربر (حمال) نداشته باشد و تغییری در نمای خارجی ساختمان ایجاد نکند، معمولاً نیاز به مجوز خاصی از شهرداری نیست، اما مشورت با مهندس ناظر الزامی است.' },
+            { q: 'دلیل ترک خوردن گچ دیوارها چیست؟', a: 'ترک‌های گچ می‌تواند ناشی از نشست طبیعی ساختمان در سال‌های اولیه، ترکیب نامناسب ملات، نفوذ رطوبت، یا تغییرات شدید دمایی باشد. تکنسین‌های ما پس از بررسی، روش مناسب برای ترمیم اساسی آن را اجرا می‌کنند.' }
+        ]
+    }
+};
+
+// We will inject this data and a rendering function into worker.js
+const renderServicePageLogic = \`
+// --- INJECTED SERVICE PAGES ---
+const servicesData = \${JSON.stringify(servicesData, null, 2)};
+
+function renderServicePage(serviceId) {
+    const data = servicesData[serviceId];
+    if (!data) return '404';
+
+    const heroSection = \\\`
+        <div class="bg-slate-50 pt-20 pb-16 border-b border-slate-200 relative overflow-hidden">
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4=')] opacity-50"></div>
+            <div class="container mx-auto px-4 max-w-5xl relative z-10 text-center">
+                <div class="inline-flex items-center justify-center p-4 bg-brand-100 text-brand-600 rounded-2xl mb-6 shadow-sm border border-brand-200">
+                    \\\${data.icon}
+                </div>
+                <h1 class="text-2xl md:text-4xl font-black text-slate-800 mb-6 leading-snug tracking-tight">\\\${data.title}</h1>
+                <p class="text-slate-600 md:text-lg max-w-3xl mx-auto leading-relaxed mb-10">\\\${data.subtitle}</p>
+                <div class="flex justify-center">
+                    <a href="tel:\\\${PHONE}" class="inline-flex items-center gap-2 bg-success-500 hover:bg-success-600 text-white px-8 py-3.5 rounded-2xl font-bold transition-all shadow-md hover:shadow-lg hover:-translate-y-1">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                        تماس و ثبت درخواست
+                    </a>
+                </div>
+            </div>
+        </div>
+    \\\`;
+
+    let subServicesHtml = '';
+    if (data.subServices && data.subServices.length > 0) {
+        let cardsHtml = data.subServices.map(sub => \\\`
+            <div class="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm hover:shadow-md hover:border-brand-300 transition-all group flex-none w-48 md:w-auto cursor-default">
+                <div class="w-10 h-10 bg-slate-50 text-brand-500 rounded-xl flex items-center justify-center mb-4 group-hover:bg-brand-500 group-hover:text-white transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="\\\${sub.icon}"></path></svg>
+                </div>
+                <h3 class="font-bold text-slate-800 text-sm group-hover:text-brand-600 transition-colors">\\\${sub.name}</h3>
+            </div>
+        \\\`).join('');
+
+        subServicesHtml = \\\`
+            <div class="container mx-auto px-4 max-w-6xl -mt-6 relative z-20 mb-16">
+                <div class="flex overflow-x-auto gap-4 pb-4 snap-x hide-scrollbar md:grid md:grid-cols-3 lg:grid-cols-4">
+                    \\\${cardsHtml}
+                </div>
+            </div>
+        \\\`;
+    }
+
+    const contentSection = \\\`
+        <div class="container mx-auto px-4 max-w-4xl mb-16 text-slate-700 leading-loose">
+            \\\${data.content}
+            
+            <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6 md:p-8 mt-12">
+                <h2 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-2"><span class="w-2 h-6 bg-slate-800 rounded-full inline-block"></span> سؤالات متداول</h2>
+                <div class="space-y-4">
+                    \\\${data.faq.map(f => \\\`
+                        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                            <h3 class="font-bold text-slate-800 mb-2 flex items-start gap-2">
+                                <svg class="w-5 h-5 text-brand-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                \\\${f.q}
+                            </h3>
+                            <p class="text-sm text-slate-600 pr-7">\\\${f.a}</p>
+                        </div>
+                    \\\`).join('')}
+                </div>
+            </div>
+        </div>
+        
+        <style>
+            .hide-scrollbar::-webkit-scrollbar { display: none; }
+            .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        </style>
+    \\\`;
+
+    let customHeader = headerHTML
+        .replace('<title>بهدون؛ خدمات حرفه ای ساختمان در تهران</title>', '<title>' + data.title + '</title>')
+        .replace('content="تشخیص ترکیدگی لوله با دستگاه نقطه زن، لوله بازکنی و تعمیرات تاسیسات با ضمانت کتبی در تهران."', 'content="' + data.metaDesc + '"');
+
+    return customHeader + heroSection + subServicesHtml + contentSection + footerHTML;
+}
+// --- END INJECTED SERVICE PAGES ---
+\`;
+
+let contentStr = fs.readFileSync('worker.js', 'utf8');
+
+// Inject the logic right before the router definition
+const routerMarker = 'const url = new URL(request.url);';
+if (contentStr.includes('// --- INJECTED SERVICE PAGES ---')) {
+    console.log('Service logic already injected!');
+} else {
+    contentStr = contentStr.replace(routerMarker, renderServicePageLogic + '\\n    ' + routerMarker);
+    
+    // Modify router to catch /services/*
+    const routerReplacement = \`
+    let htmlResponse = '';
+    if (path === '/magazine' || path === '/magazine/') {
+        htmlResponse = headerHTML + magazineHTML + footerHTML;
+    } else if (path.startsWith('/magazine/')) {
+        htmlResponse = headerHTML + singleArticleHTML + footerHTML;
+    } else if (path.startsWith('/services/')) {
+        const parts = path.split('/');
+        const serviceId = parts[2];
+        const pageContent = renderServicePage(serviceId);
+        if (pageContent === '404') {
+            htmlResponse = html; // fallback to home
+        } else {
+            htmlResponse = pageContent;
+        }
+    } else {
+        htmlResponse = html;
+    }
+\`;
+
+    // We need to replace the existing router if-else block.
+    // The existing block looks like:
+    /*
+    let htmlResponse = '';
+    if (path === '/magazine' || path === '/magazine/') {
+        htmlResponse = headerHTML + magazineHTML + footerHTML;
+    } else if (path.startsWith('/magazine/')) {
+        htmlResponse = headerHTML + singleArticleHTML + footerHTML;
+    } else {
+        htmlResponse = html;
+    }
+    */
+    
+    // String replacement for the router block
+    const oldRouterRegex = /let htmlResponse = '';\\s*if \\(path === '\\/magazine'.*?\\} else \\{\\s*htmlResponse = html;\\s*\\}/s;
+    
+    if (oldRouterRegex.test(contentStr)) {
+        contentStr = contentStr.replace(oldRouterRegex, routerReplacement.trim());
+        console.log('Successfully injected routing and service logic!');
+    } else {
+        console.log('Failed to find the router regex to replace.');
+    }
+    
+    fs.writeFileSync('worker.js', contentStr);
+}
+

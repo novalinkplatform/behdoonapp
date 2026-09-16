@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+
+    <title>پروفایل | بهدون</title>
+    <meta name="description" content="مشاهده اطلاعات حساب کاربری در بهدون: نام، شماره تماس، تاریخ عضویت و آدرس‌های ثبت‌شده." />
+    <link rel="canonical" href="__SITE_ORIGIN__/profile" />
+    <meta name="robots" content="noindex, follow" />
+    <meta name="theme-color" content="#1656c9" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+      <script>
+      (function() {
+        var t = localStorage.getItem('behbar_theme');
+        if (t === 'dark' || (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div class="app-loading-overlay" aria-hidden="true"><span class="app-loading-spinner"></span></div>
+    <script type="module" src="/src/profile-main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,69 @@
+.hero {
+  position: relative;
+  background-color: var(--surface);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+/* وقتی خریدار عکس پس‌زمینه‌ی هدر را از تنظیمات انتخاب کند، این لایه‌ی نیمه‌شفاف روی عکس می‌نشیند
+   تا متن و کارت درخواست همچنان خوانا بمانند — دقیقاً مثل رنگ سطح سایت، فقط با کمی شفافیت. */
+.hero-bg-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-color: var(--surface);
+  opacity: 0.86;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  padding-block: 7rem var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* وقتی نوار استوری بالای صفحه هست، خودش فاصله لازم از هدر شناور را تامین می‌کند؛
+   فاصله بزرگ بالای هیرو دیگر لازم نیست — یک فاصله کم و ظریف کافی است تا از استوری جدا شود.
+   از ~ (نه +) استفاده شده چون خود StoriesStrip.ts یک #story-viewer مخفی هم بین نوار استوری و
+   main-content رندر می‌کند — یعنی main-content همسایه‌ی مستقیم نیست، فقط یک همسایه‌ی بعدی است. */
+.stories-strip-wrap ~ #main-content .hero-inner {
+  padding-top: var(--space-4);
+}
+
+.hero-content {
+  max-width: 580px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.hero-content h1 {
+  font-size: clamp(1.5rem, 1.15rem + 1.7vw, 2.375rem);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-3);
+}
+
+.hero-lead {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--muted);
+}
+
+@media (max-width: 600px) {
+  .hero-inner {
+    padding-block: 4.5rem 1rem;
+    gap: var(--space-3);
+  }
+
+  .demo-badges-wrapper ~ #main-content .hero-inner {
+    padding-top: 1rem;
+  }
+}
+
+

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#08090d" />
+
+    <title>اسکریپت باربری بهدون | پیش‌نمایش آنلاین و خرید از ژاکت</title>
+    <meta
+      name="description"
+      content="پیش‌نمایش آنلاین اسکریپت اختصاصی باربری و حمل اثاثیه بهدون؛ سامانه هوشمند مدیریت ناوگان و رزرو آنلاین بر پایه Node.js با دموی زنده سایت و پنل مدیریت."
+    />
+    <meta name="robots" content="noindex, follow" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+      <script>
+      (function() {
+        var t = localStorage.getItem('behbar_theme');
+        if (t === 'dark' || (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div class="app-loading-overlay" aria-hidden="true"><span class="app-loading-spinner"></span></div>
+    <script type="module" src="/src/sale-main.ts"></script>
+  </body>
+</html>

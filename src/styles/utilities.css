@@ -1,0 +1,128 @@
+.container {
+  width: 100%;
+  max-width: var(--container-width);
+  margin-inline: auto;
+  padding-inline: var(--container-padding);
+}
+
+/* در بازه‌ی ۷۶۹ تا ۹۶۰ پیکسل (تبلت)، دکمه‌های شناور تماس/چت گوشه‌ی صفحه (floating-call.css) با
+   position:fixed در inset-inline-end:20px می‌نشینند و حدود ۶۸ پیکسل عرض اشغال می‌کنند — اما
+   container‌ در همین بازه فقط ۲۰ پیکسل حاشیه دارد، پس محتوای عرض‌کامل (مثل ردیف‌های پرسش‌های
+   رایج) درست زیر همین دکمه‌ها می‌افتد. این‌جا با یک حاشیه‌ی اضافه‌ی نامتقارن، فضای امن برای
+   دکمه‌ها رزرو می‌شود بدون اینکه حاشیه‌ی سمت مقابل هم بی‌جهت زیاد شود. */
+@media (min-width: 769px) and (max-width: 960px) {
+  .container {
+    padding-inline-end: calc(var(--container-padding) + 56px);
+  }
+}
+
+.section {
+  padding-block: var(--space-8);
+}
+
+.section-header {
+  max-width: 640px;
+  margin-inline: auto;
+  text-align: center;
+  margin-bottom: var(--space-7);
+}
+
+.section-eyebrow {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--secondary);
+  background-color: var(--secondary-light);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-3);
+}
+
+.section-description {
+  margin-top: var(--space-3);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.btn-cta-wave {
+  background: linear-gradient(120deg, var(--primary-dark), var(--secondary), var(--primary), var(--secondary));
+  background-size: 300% 300%;
+  animation: header-cta-wave 6s ease infinite;
+  box-shadow: 0 8px 22px rgba(22, 86, 201, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.btn-cta-wave:hover {
+  background-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-cta-wave {
+    animation: none;
+  }
+}
+
+.btn-secondary {
+  background-color: #ffffff;
+  color: var(--primary);
+  border-color: var(--border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--primary);
+  background-color: var(--surface);
+}
+
+.btn-ghost {
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.btn-ghost:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-lg {
+  padding: 1rem 1.75rem;
+  font-size: 1.02rem;
+}
+
+.btn-sm {
+  padding: 0.5rem 0.9rem;
+  font-size: 0.82rem;
+}
+
+.icon {
+  width: 1.25em;
+  height: 1.25em;
+  flex-shrink: 0;
+}

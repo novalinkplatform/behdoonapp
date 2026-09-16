@@ -1,0 +1,14 @@
+.rich-text-body {
+  max-width: 760px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.rich-text-body p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.9;
+  text-align: center;
+}

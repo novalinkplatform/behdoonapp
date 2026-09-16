@@ -1,0 +1,413 @@
+const fs = require('fs');
+
+// Prepare in-depth subservices data and comprehensive guide for HVAC
+const hvacData = {
+    id: "hvac",
+    title: "سرمایش و گرمایش ساختمان در تهران | نصب، تعمیر و سرویس تخصصی بهدون",
+    metaDesc: "خدمات تخصصی سرمایش و گرمایش در کلیه مناطق تهران با ضمانت کتبی. تعمیر و سرویس پکیج، کولر آبی، رادیاتور شوفاژ و آبگرمکن توسط تکنسین‌های مجرب بهدون با نرخ مصوب اتحادیه.",
+    subtitle: "آسایش دمایی و تهویه استاندارد ساختمان شما با تیم فنی بهدون؛ اعزام فوری تکنسین‌های متخصص در کمتر از ۴۵ دقیقه در سراسر تهران همراه با گارانتی معتبر قطعات و خدمات.",
+    icon: `<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v18m-4-14h8m-8 10h8M6 8a6 6 0 1112 0 6 6 0 01-12 0z"></path></svg>`,
+    subServices: [
+        {
+            name: "نصب و سرویس کولر آبی",
+            icon: "M12 3v18m-4-14h8m-8 10h8M6 8a6 6 0 1112 0 6 6 0 01-12 0z",
+            detail: `
+                <div class="space-y-6 text-slate-700 leading-relaxed text-justify">
+                    <div class="bg-gradient-to-l from-blue-50/70 to-white p-5 rounded-2xl border border-blue-100 mb-6">
+                        <h3 class="text-lg font-black text-brand-700 mb-2">سرویس تخصصی و راه اندازی کولر آبی در کلیه مناطق تهران</h3>
+                        <p class="text-sm text-slate-600">کولرهای آبی یکی از متداول‌ترین تجهیزات خنک‌کننده در ساختمان‌های مسکونی و اداری تهران هستند. شروع فصل گرما نیازمند سرویس استاندارد برای ارتقای خنک‌کنندگی، کاهش مصرف برق و پیشگیری از سوختن موتور و پمپ است.</p>
+                    </div>
+
+                    <h4 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-[#8B1C31]"></span>
+                        اقدامات جامع سرویس دوره‌ای کولر آبی توسط تیم بهدون:
+                    </h4>
+                    <ul class="list-disc list-inside space-y-2 text-sm text-slate-600 pr-2">
+                        <li><strong>شستشوی کامل کفی و رسوب‌زدایی بدنه:</strong> تخلیه آب مانده، رفع شوره و گل‌ولای انباشته شده و جرم‌گیری کامل با مواد غیرخورنده جهت جلوگیری از پوسیدگی کفی کولر.</li>
+                        <li><strong>بررسی و تعویض پوشال یا پد سلولزی:</strong> تعویض سالانه پوشال‌ها برای تضمین ورود هوای مطبوع، عاری از بوی نم و خاک و باکتری، و بهینه‌سازی تبخیر آب.</li>
+                        <li><strong>سرویس، روغن‌کاری و تست یاتاقان‌ها و شفت:</strong> بررسی بالانس پروانه، روغن‌کاری تخصصی یاتاقان‌های جلو و عقب با روغن مقاوم در برابر رطوبت برای جلوگیری از صدای ناهنجار و فشار به دینام.</li>
+                        <li><strong>تنظیم، تست سلامت و روغن‌کاری پمپ آب (واتر پمپ):</strong> بررسی عدم گرفتگی لوله‌های آبرسان، تمیزکاری صافی پمپ و اطمینان از خیس شدن یکنواخت تمامی پوشال‌ها.</li>
+                        <li><strong>بررسی الکتروموتور (دینام) و تست خازن:</strong> تست جریان و آمپراژ موتور در دور کند و تند، بادگیری فضای داخل موتور، تنظیم و تعویض تسمه در صورت ترک‌خوردگی یا شل بودن.</li>
+                        <li><strong>تنظیم دقیق شناور و سرریز آب:</strong> جلوگیری از هدررفت و سرریز مداوم آب روی پشت‌بام و جلوگیری از آسیب به ایزوگام که می‌تواند نیاز به <a href="/services/renovation" class="text-[#8B1C31] font-bold hover:underline">خدمات عایق‌کاری پشت‌بام</a> را به همراه داشته باشد.</li>
+                        <li><strong>بررسی برزنت دهانه کانال کولر:</strong> ترمیم یا تعویض برزنت پوسیده جهت ممانعت از اتلاف باد خنک و لرزش شدید کانال.</li>
+                    </ul>
+
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6">
+                        <h5 class="font-bold text-slate-800 text-sm mb-2">چه زمانی کولر آبی به حضور فوری تعمیرکار نیاز دارد؟</h5>
+                        <p class="text-xs text-slate-600 mb-3">اگر بوی سوختگی، صدای جیرجیر ممتد، باد گرم، پرتاب قطرات آب به درون خانه یا روشن نشدن موتور را تجربه می‌کنید، فوراً کلید پمپ و موتور را قطع نمایید تا از سوختگی سیم‌پیچ گران‌قیمت موتور جلوگیری شود.</p>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <button type="button" onclick="openRequestModal('نصب و سرویس کولر آبی')" class="bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all">
+                                ثبت درخواست اعزام تکنسین کولر آبی
+                            </button>
+                            <a href="tel:02122345678" class="bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors">
+                                تماس مستقیم: ۰۲۱-۲۲۳۴۵۶۷۸
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            name: "نصب و سرویس پکیج",
+            icon: "M12 3v18m-4-14h8m-8 10h8M6 8a6 6 0 1112 0 6 6 0 01-12 0z",
+            detail: `
+                <div class="space-y-6 text-slate-700 leading-relaxed text-justify">
+                    <div class="bg-gradient-to-l from-amber-50/70 to-white p-5 rounded-2xl border border-amber-100 mb-6">
+                        <h3 class="text-lg font-black text-brand-700 mb-2">تعمیرات تخصصی و رسوب‌زدایی انواع پکیج دیواری و زمینی در تهران</h3>
+                        <p class="text-sm text-slate-600">پکیج‌های گرمایشی به عنوان قلب تپنده تأسیسات حرارتی ساختمان، وظیفه تأمین همزمان آب گرم مصرفی و مدار گرمایش رادیاتورها را برعهده دارند. سختی بالای آب در مناطق مختلف تهران سبب ایجاد رسوب مداوم در مبدل‌ها و افت فشار شدید می‌شود.</p>
+                    </div>
+
+                    <h4 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-[#8B1C31]"></span>
+                        خدمات تخصصی پکیج در بهدون برای تمامی برندها (ایران رادیاتور، بوتان، لورچ، آریستون، ایساتیس، وایلانت و...):
+                    </h4>
+                    <ul class="list-disc list-inside space-y-2 text-sm text-slate-600 pr-2">
+                        <li><strong>رسوب‌زدایی و اسیدشویی مبدل اصلی و ثانویه:</strong> شستشوی مدار با پمپ مخصوص اسیدشویی و مواد دیسکلر استاندارد بدون آسیب به آلیاژ مسی مبدل‌ها جهت بازگشت دمای یکنواخت آب گرم.</li>
+                        <li><strong>رفع مشکل افت بار و فشار پکیج:</strong> عیب‌یابی منبع انبساط، تست باد دیافراگم، شیر اطمینان ۳ بار و رفع نشتی‌های ریز در اتصالات و مدار لوله‌کشی (با همکاری تیم <a href="/services/plumbing" class="text-[#8B1C31] font-bold hover:underline">تشخیص ترکیدگی و لوله‌کشی بهدون</a>).</li>
+                        <li><strong>هواگیری مدار و تنظیم فشار سیستم:</strong> کالیبره کردن فشار روی ۱.۵ بار و تنظیم شیر پرکن و ارزیابی سنسورهای ان‌تی‌سی (NTC) آب گرم مصرفی و شوفاژ.</li>
+                        <li><strong>شستشو و تنظیم مشعل و الکترود جرقه‌زن:</strong> تنظیم ارتفاع شعله، تمیزکاری برنر، بهینه‌سازی راندمان احتراق و کاهش محسوس مصرف گاز ماهانه.</li>
+                        <li><strong>سرویس پمپ سیرکولاتور (گراندفوس، ویلو و...):</strong> رفع گیرپاژ پمپ، تست خازن، تعویض روتور یا اورینگ برای جلوگیری از صدای ناهنجار در حالت زمستانه.</li>
+                        <li><strong>عیب‌یابی تخصصی بردهای الکترونیکی و رفع کدهای خطای ارور:</strong> رفع ارورهای رایج مانند E51, E81, 70-80 در ایران رادیاتور، یا ارورهای چراغ قرمز در بوتان.</li>
+                    </ul>
+
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6">
+                        <h5 class="font-bold text-slate-800 text-sm mb-2">علائم خرابی که نیازمند تماس فوری با تکنسین پکیج بهدون است:</h5>
+                        <p class="text-xs text-slate-600 mb-3">سرد و گرم شدن مکرر آب هنگام دوش گرفتن، افت خودبه‌خودی عقربه فشارسنج به زیر ۱ بار، بالا رفتن غیرعادی فشار و نشتی آب از زیر دستگاه، و خاموش شدن ناگهانی پکیج همراه با ارور.</p>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <button type="button" onclick="openRequestModal('نصب و سرویس پکیج')" class="bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all">
+                                ثبت آنلاین درخواست تعمیر و اسیدشویی پکیج
+                            </button>
+                            <a href="tel:02122345678" class="bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors">
+                                پشتیبانی تلفنی: ۰۲۱-۲۲۳۴۵۶۷۸
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            name: "نصب و سرویس رادیاتور شوفاژ",
+            icon: "M12 3v18m-4-14h8m-8 10h8M6 8a6 6 0 1112 0 6 6 0 01-12 0z",
+            detail: `
+                <div class="space-y-6 text-slate-700 leading-relaxed text-justify">
+                    <div class="bg-gradient-to-l from-rose-50/70 to-white p-5 rounded-2xl border border-rose-100 mb-6">
+                        <h3 class="text-lg font-black text-brand-700 mb-2">نصب، جابجایی، رفع نشتی و هواگیری اصولی رادیاتور در تهران</h3>
+                        <p class="text-sm text-slate-600">رادیاتورهای پره‌ای آلومینیومی، پانلی و حوله‌خشک‌کن‌ها در صورتی که به درستی تراز و نصب نشوند یا مدار آنها دچار لجن و هواگرفتگی باشد، حرارت مطلوبی در فصول سرد سال به فضای داخلی انتقال نخواهند داد.</p>
+                    </div>
+
+                    <h4 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-[#8B1C31]"></span>
+                        اقدامات تخصصی خدمات شوفاژ و رادیاتور در بهدون:
+                    </h4>
+                    <ul class="list-disc list-inside space-y-2 text-sm text-slate-600 pr-2">
+                        <li><strong>نصب و کوپل کردن پره‌های رادیاتور آلومینیومی:</strong> افزودن پره به رادیاتورهای موجود، نصب دقیق بست پرچمی و پایه زمینی جهت توزیع وزن رادیاتور روی دیوار.</li>
+                        <li><strong>هواگیری تخصصی و تخلیه رسوبات سیاه مدار:</strong> رفع پدیده نیمه‌گرم بودن شوفاژ (گرم بودن بالا و سرد بودن پایین رادیاتور) با آچار مخصوص و تنظیم بالانس هیدرولیکی مدار.</li>
+                        <li><strong>شستشوی کامل مدار شوفاژها:</strong> تخلیه آب سیاه و لجن‌های رسوب کرده در کف رادیاتورها که باعث انسداد مسیر برگشت آب به پکیج و آسیب به پمپ دستگاه می‌شوند.</li>
+                        <li><strong>تعویض و آب‌بندی شیر رفت و برگشت (زانویی):</strong> رفع نم‌زدگی و چکیدن آب از کنار اتصالات شوفاژ با مغزی‌های استاندارد و تفلون مایع مرغوب.</li>
+                        <li><strong>نصب انواع حوله‌خشک‌کن حمام:</strong> لوله‌کشی روکار یا توکار و عایق‌کاری اتصالات مرطوب برای پیشگیری از نم‌زدگی دیوارها که می‌تواند منجر به نیاز به <a href="/services/renovation" class="text-[#8B1C31] font-bold hover:underline">گچ‌کاری و لکه‌گیری ساختمان</a> گردد.</li>
+                    </ul>
+
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6">
+                        <h5 class="font-bold text-slate-800 text-sm mb-2">چرا رادیاتورهای منزل به درستی گرم نمی‌شوند؟</h5>
+                        <p class="text-xs text-slate-600 mb-3">وجود هوا در قسمت‌های بالایی بلوک رادیاتور، رسوب‌گرفتگی شدید در رادیاتورهای انتهایی خانه، ضعف پمپ پکیج یا لوله‌کشی غیراستاندارد اصلی‌ترین دلایل هستند که تکنسین بهدون پس از بازدید، در سریع‌ترین زمان آن را برطرف خواهد کرد.</p>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <button type="button" onclick="openRequestModal('نصب و سرویس رادیاتور شوفاژ')" class="bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all">
+                                ثبت درخواست اعزام تکنسین شوفاژ و رادیاتور
+                            </button>
+                            <a href="tel:02122345678" class="bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors">
+                                تماس با پشتیبانی: ۰۲۱-۲۲۳۴۵۶۷۸
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            name: "تعمیر و سرویس آبگرمکن",
+            icon: "M12 3v18m-4-14h8m-8 10h8M6 8a6 6 0 1112 0 6 6 0 01-12 0z",
+            detail: `
+                <div class="space-y-6 text-slate-700 leading-relaxed text-justify">
+                    <div class="bg-gradient-to-l from-orange-50/70 to-white p-5 rounded-2xl border border-orange-100 mb-6">
+                        <h3 class="text-lg font-black text-brand-700 mb-2">سرویس، رسوب‌زدایی و عیب‌یابی انواع آبگرمکن دیواری و ایستاده در تهران</h3>
+                        <p class="text-sm text-slate-600">آبگرمکن‌های دیواری فوری به دلیل تماس مستقیم آب با لوله‌های فین‌دار مسی، به شدت مستعد جذب گچ و رسوبات کلسیمی هستند. اگر فشار آب گرم در آشپزخانه یا حمام ضعیف شده یا آبگرمکن با تأخیر روشن می‌شود، نیاز به سرویس تخصصی دارد.</p>
+                    </div>
+
+                    <h4 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-[#8B1C31]"></span>
+                        دامنه خدمات آبگرمکن در پلتفرم بهدون:
+                    </h4>
+                    <ul class="list-disc list-inside space-y-2 text-sm text-slate-600 pr-2">
+                        <li><strong>جرم‌گیری و اسیدشویی کوئل و لوله‌های مسی:</strong> باز کردن مسیر عبور آب سرد و گرم، افزایش قابل توجه فشار آب خروجی و کاهش مصرف گاز با بهبود انتقال حرارت.</li>
+                        <li><strong>تعویض دیافراگم (لاستیک پیستون):</strong> رفع مشکل روشن نشدن مشعل با باز کردن شیر آب گرم ناشی از پارگی یا فرسایش دیافراگم رگلاتور آب.</li>
+                        <li><strong>سرویس رگلاتور برنجی آب و گاز:</strong> روان‌کاری میله پیستون، تعویض اورینگ‌ها و اطمینان از خاموش شدن به موقع مشعل پس از بستن شیر آب برای ایمنی ساکنین.</li>
+                        <li><strong>سرویس ترموکوپل و شمعک (پیلوت):</strong> برطرف کردن خاموش شدن مداوم شمعک، تمیزکاری نازل پیلوت و تست جریان میلی‌ولتی بوبین ایمنی.</li>
+                        <li><strong>تنظیم سیستم جرقه‌زن آیونایز و باتری:</strong> در مدل‌های بدون شمعک جدید بوتان، تنظیم فاصله الکترود جرقه‌زن و سوئیچ میکروسوئیچ.</li>
+                        <li><strong>تست سلامت دودکش و حسگر خروج گاز مونوکسید کربن:</strong> رعایت دقیق‌ترین استانداردهای سازمان آتش‌نشانی جهت جلوگیری از خطرات ناشی از پس‌زدن گازهای سمی احتراق.</li>
+                    </ul>
+
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6">
+                        <h5 class="font-bold text-slate-800 text-sm mb-2">توصیه ایمنی کارشناسان بهدون:</h5>
+                        <p class="text-xs text-slate-600 mb-3">هرگز تعمیر بخش گازسوز آبگرمکن را به افراد غیرمتخصص نسپارید. کوچک‌ترین نشتی در اتصالات گازی یا عدم کارکرد سنسور دودکش می‌تواند خطرات جانی غیرقابل جبرانی به دنبال داشته باشد. تمامی تکنسین‌های اعزامی بهدون دارای گواهینامه معتبر فنی و حرفه‌ای هستند.</p>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <button type="button" onclick="openRequestModal('تعمیر و سرویس آبگرمکن')" class="bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all">
+                                ثبت درخواست تعمیر فوری آبگرمکن در تهران
+                            </button>
+                            <a href="tel:02122345678" class="bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors">
+                                تماس با اعزام تکنسین: ۰۲۱-۲۲۳۴۵۶۷۸
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ],
+    // The comprehensive 1200+ word article rendered below the tabs
+    comprehensiveGuide: `
+        <!-- ================= COMPREHENSIVE SEO GUIDE (> 1200 WORDS) ================= -->
+        <article class="mt-12 pt-10 border-t border-slate-200 text-slate-700 leading-relaxed text-justify space-y-8" dir="rtl">
+            
+            <header class="text-center max-w-3xl mx-auto space-y-4 mb-10">
+                <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-brand-50 text-brand-700 text-xs font-bold border border-brand-200">
+                    <svg class="w-4 h-4 text-[#8B1C31]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    دانشنامه و راهنمای تخصصی تأسیسات ساختمانی در تهران
+                </span>
+                <h2 class="text-2xl md:text-3xl font-black text-slate-800 leading-tight">
+                    راهنمای جامع نگهداری، تعمیرات و بهینه‌سازی سیستم‌های سرمایش و گرمایش در تهران
+                </h2>
+                <p class="text-sm text-slate-500 leading-relaxed">
+                    هر آنچه مالکان، مستاجران و مدیران ساختمان در خصوص بازدهی انرژی، عیب‌یابی، هزینه سرویس‌ها و انتخاب تکنسین مجرب در تهران باید بدانند.
+                </p>
+            </header>
+
+            <!-- Quick Action Alert Box -->
+            <div class="bg-gradient-to-r from-[#133458] to-[#1c4b7d] rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="space-y-2 text-center md:text-right">
+                    <h3 class="text-xl font-bold">نیاز به خدمات اورژانسی تأسیسات در تهران دارید؟</h3>
+                    <p class="text-xs md:text-sm text-blue-100 max-w-xl leading-relaxed">
+                        تکنسین‌های بهدون در تمامی مناطق ۲۲ گانه تهران (شمال، غرب، شرق، مرکز و جنوب) مستقر بوده و کمتر از ۴۵ دقیقه پس از ثبت درخواست در محل حاضر می‌شوند.
+                    </p>
+                </div>
+                <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0">
+                    <button type="button" onclick="openRequestModal('سرمایش و گرمایش')" class="w-full sm:w-auto px-6 py-3 bg-[#8B1C31] hover:bg-[#701627] text-white text-xs md:text-sm font-black rounded-xl shadow-lg transition-all transform hover:scale-105 text-center">
+                        ثبت فوری درخواست آنلاین
+                    </button>
+                    <a href="tel:02122345678" class="w-full sm:w-auto px-6 py-3 bg-white/10 hover:bg-white/20 text-white text-xs md:text-sm font-bold rounded-xl backdrop-blur-sm border border-white/20 transition-all text-center flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 text-emerald-400" fill="currentColor" viewBox="0 0 512 512"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></svg>
+                        <span>۰۲۱-۲۲۳۴۵۶۷۸</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- SECTION 1: Overview -->
+            <section class="space-y-4">
+                <h3 class="text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3">
+                    مقدمه: اهمیت استراتژیک سرویس دوره‌ای تجهیزات سرمایشی و گرمایشی
+                </h3>
+                <p>
+                    تجهیزات تهویه مطبوع، سرمایشی و حرارتی، بیش از ۴۰ درصد از کل انرژی مصرفی یک واحد مسکونی یا اداری در کلانشهر تهران را به خود اختصاص می‌دهند. با توجه به شرایط اقلیمی پایتخت، تابستان‌های داغ و خشک و زمستان‌های سرد و پرنوسان، سیستم‌های سرمایش و گرمایش تحت بار کاری مداوم و سنگین فعالیت می‌کنند. رسوب املاح کلسیمی آب تهران در لوله‌ها و مبدل‌ها، آلودگی و گرد و غبار انباشته شده روی پوشال‌ها و کوئل‌ها، و استهلاک قطعات متحرک مانند پمپ‌ها و الکتروموتورها، در صورت عدم سرویس به موقع، به سرعت راندمان سیستم را تا ۳۵ درصد کاهش داده و استهلاک زودهنگام و هزینه‌های گزاف تعویض دستگاه را به دنبال خواهد داشت.
+                </p>
+                <p>
+                    پلتفرم خدمات ساختمانی <a href="/" class="text-brand-600 font-bold hover:underline">بهدون</a> با بهره‌گیری از کادر تکنسین‌های آموزش‌دیده و مجرب، با هدف شفاف‌سازی هزینه‌ها و ارتقای کیفیت استانداردهای اجرایی تأسیسات در تهران، بستری مستقیم برای ثبت، ارزیابی و اعزام کارشناسان فراهم ساخته است. اگر نیاز به بررسی پیوسته لوله‌کشی و شیرآلات مرتبط دارید، می‌توانید به صفحه <a href="/services/plumbing" class="text-brand-600 font-bold hover:underline">خدمات لوله‌کشی آب و فاضلاب</a> ما نیز مراجعه فرمایید.
+                </p>
+            </section>
+
+            <!-- SECTION 2: Deep Dive into Services -->
+            <section class="space-y-6">
+                <h3 class="text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3">
+                    بررسی تفصیلی ارکان چهارگانه خدمات سرمایش و گرمایش در بهدون
+                </h3>
+
+                <!-- Sub-block 1 -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3">
+                    <h4 class="text-lg font-bold text-slate-800 text-brand-600">۱. نصب، راه‌اندازی و نگهداری تخصصی کولر آبی</h4>
+                    <p class="text-sm leading-relaxed">
+                        کولر آبی دستگاهی به ظاهر ساده اما از نظر فنی نیازمند هماهنگی دقیق میان مدارهای هیدرولیکی و الکتریکی است. در شروع فصل گرما، روشن کردن کولر آبی بدون شستشوی کفی و تعویض پوشال می‌تواند باعث سوختن موتور در اثر سفت بودن یاتاقان‌ها شود. تکنسین‌های بهدون در فرایند سرویس، با اندازه‌گیری لقی شفت توربین، روغن‌کاری گریس نسوز یاتاقان، تنظیم شناور ضدسرریز و بررسی سلامت کابل برق، حداکثر بازدهی سرمایشی را با کمترین مصرف آب و برق تضمین می‌کنند. همچنین در صورت نیاز به بررسی سیم‌کشی فیوز یا تعویض کلید کولر، خدمات از طریق واحد <a href="/services/electrical" class="text-brand-600 font-bold hover:underline">برقکاری ساختمان بهدون</a> در همان جلسه قابل تجمیع و انجام است.
+                    </p>
+                </div>
+
+                <!-- Sub-block 2 -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3">
+                    <h4 class="text-lg font-bold text-slate-800 text-brand-600">۲. تعمیر، رسوب‌زدایی و عیب‌یابی بردهای پکیج دیواری</h4>
+                    <p class="text-sm leading-relaxed">
+                        پکیج‌های مدرن به علت راندمان بالا و استقلال هر واحد ساختمانی، محبوب‌ترین سیستم گرمایشی در تهران هستند. اما به دلیل رسوب کربنات کلسیم، مبدل‌های صفحه‌ای این دستگاه‌ها پس از ۱ تا ۲ سال دچار انسداد جزئی یا کامل می‌شوند. اسیدشویی ناصحیح توسط افراد ناوارد با اسیدهای خالص صنعتی موجب سوراخ شدن مبدل حرارتی گران‌قیمت می‌گردد. در بهدون، رسوب‌زدایی با اسیدهای محافظ‌دار دیسکلر گیاهی استاندارد و پمپ سیرکوله پرتابل انجام می‌گیرد. همچنین تست عیب‌یابی پمپ ویلو و گراندفوس، کالیبراسیون سنسور شعله و یون، و تنظیم گیج منبع انبساط با دستگاه فشارسنج دیجیتال صورت می‌پذیرد.
+                    </p>
+                </div>
+
+                <!-- Sub-block 3 -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3">
+                    <h4 class="text-lg font-bold text-slate-800 text-brand-600">۳. نصب و هواگیری رادیاتور و بهینه‌سازی راندمان شوفاژ</h4>
+                    <p class="text-sm leading-relaxed">
+                        مشکل شایع گرم نشدن شوفاژها در زمستان، عمدتاً ناشی از تجمع هوا در پره‌های فوقانی و لجن سیاه‌رنگ ناشی از اکسیداسیون داخل لوله‌ها در پره‌های پایینی است. هواگیری غیراصولی می‌تواند به هرز شدن شیر هواگیری یا نشتی آب روی پارکت و فرش منجر شود. در صورت بروز هرگونه نم یا تخریب اطراف شوفاژ، تیم <a href="/services/renovation" class="text-brand-600 font-bold hover:underline">بازسازی و نقاشی ساختمان</a> در کنار تکنسین‌های تأسیسات آماده خدمت‌رسانی خواهند بود. متخصصان بهدون با شستشوی فشاری مدار و بالانس شیرهای برگشت، توزیع حرارت در دورترین رادیاتورها را یکنواخت می‌سازند.
+                    </p>
+                </div>
+
+                <!-- Sub-block 4 -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3">
+                    <h4 class="text-lg font-bold text-slate-800 text-brand-600">۴. تعمیرات، رفع افت فشار و سرویس آبگرمکن دیواری</h4>
+                    <p class="text-sm leading-relaxed">
+                        نوسانات دمای آب در هنگام استحمام یا دیر روشن شدن آبگرمکن از شایع‌ترین مشکلات خانه‌ها است. علت این عارضه اغلب فرسودگی دیافراگم لاستیکی، رسوب در نازل شیپوره یا خرابی ترموکوپل و شمعک است. در بهدون کلیه قطعات یدکی مصرفی از جمله دیافراگم سیلیکونی مقاوم به حرارت و بوبین‌های ایمنی اصل با فاکتور معتبر و گارانتی تعویض می‌شوند.
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECTION 3: Troubleshooting Table -->
+            <section class="space-y-4">
+                <h3 class="text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3">
+                    جدول راهنمای عیب‌یابی سریع مشکلات سرمایش و گرمایش
+                </h3>
+                <p class="text-sm text-slate-600">
+                    قبل از تماس با تکنسین، می‌توانید با بررسی جدول زیر علت احتمالی و اقدامات اولیه را بررسی کنید:
+                </p>
+
+                <div class="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm bg-white">
+                    <table class="w-full text-right text-xs md:text-sm">
+                        <thead class="bg-slate-100/80 text-slate-800 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-3.5 md:p-4">نشانه و مشکل مشاهده‌شده</th>
+                                <th class="p-3.5 md:p-4">علت فنی و ریشه‌ای</th>
+                                <th class="p-3.5 md:p-4">اقدام پیشنهادی بهدون</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-600">
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-3.5 md:p-4 font-bold text-slate-800">باد کولر آبی خنک نیست اما موتور کار می‌کند</td>
+                                <td class="p-3.5 md:p-4">خشک بودن پوشال‌ها، سوختن یا گرفتگی پمپ آب، پاره بودن تسمه</td>
+                                <td class="p-3.5 md:p-4">سرویس پمپ و لوله‌های آبرسان، تنظیم یا تعویض تسمه</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-3.5 md:p-4 font-bold text-slate-800">فشار پکیج مدام صفر می‌شود و افت می‌کند</td>
+                                <td class="p-3.5 md:p-4">نشتی در اتصالات شوفاژ، خرابی شیر پرکن یا تخلیه باد منبع انبساط</td>
+                                <td class="p-3.5 md:p-4">شارژ باد منبع انبساط، نشت‌یابی با دستگاه نقطه زن</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-3.5 md:p-4 font-bold text-slate-800">آب مصرفی پکیج سرد و گرم می‌شود</td>
+                                <td class="p-3.5 md:p-4">رسوب شدید در مبدل ثانویه، نقص در سنسور NTC آب گرم</td>
+                                <td class="p-3.5 md:p-4">اسیدشویی تخصصی مبدل صفحه‌ای با دیسکلر استاندارد</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-3.5 md:p-4 font-bold text-slate-800">شوفاژها در بالا گرم و در پایین کاملاً سرد هستند</td>
+                                <td class="p-3.5 md:p-4">تجمع لجن و براده در مدار رادیاتور، ضعف دور گردش پمپ</td>
+                                <td class="p-3.5 md:p-4">شستشوی پرفشار مدار رادیاتور و هواگیری تخصصی</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="p-3.5 md:p-4 font-bold text-slate-800">شمعک آبگرمکن روشن نمی‌ماند</td>
+                                <td class="p-3.5 md:p-4">خرابی ترموکوپل، سوختن بوبین ایمنی یا کثیفی نازل شمعک</td>
+                                <td class="p-3.5 md:p-4">تمیزکاری پیلوت و تعویض قطعه ترموکوپل اورجینال</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SECTION 4: Why Behdoon -->
+            <section class="space-y-4">
+                <h3 class="text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3">
+                    چرا پلتفرم بهدون انتخابی مطمئن برای خدمات سرمایش و گرمایش در تهران است؟
+                </h3>
+                <p>
+                    یافتن سرویس‌کار کاربلد و متعهد در کلانشهری مانند تهران همواره یکی از دغدغه‌های خانواده‌ها بوده است. بهدون با هدف ساماندهی این فضا، استانداردهای سخت‌گیرانه‌ای برای پذیرش و اعزام تکنسین تدوین نموده است:
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-2.5">
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center mx-auto font-black text-lg">
+                            ✓
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm">ضمانت کتبی کیفیت خدمات</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">کلیه خدمات تعمیری و قطعات نصب‌شده دارای گارانتی رسمی بهدون بوده و در صورت بروز هرگونه ایراد در دوره ضمانت، رفع عیب کاملاً رایگان انجام می‌پذیرد.</p>
+                    </div>
+
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-2.5">
+                        <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-2xl flex items-center justify-center mx-auto font-black text-lg">
+                            ⏱
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm">سرعت حضور در محل (زیر ۴۵ دقیقه)</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">با توزیع شبکه‌ای تکنسین‌ها در شمال، غرب، شرق و مرکز تهران، کارشناس از نزدیک‌ترین ایستگاه خدماتی به آدرس ثبت شده شما اعزام می‌گردد.</p>
+                    </div>
+
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-2.5">
+                        <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-2xl flex items-center justify-center mx-auto font-black text-lg">
+                            ⚖
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm">شفافیت نرخ و تعرفه مصوب</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">هزینه‌ها دقیقاً منطبق بر نرخنامه مصوب اتحادیه تأسیسات مکانیکی و لوازم گازسوز تهران محاسبه شده و هیچ هزینه نامتعارفی دریافت نمی‌شود.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 5: How it works & Tracking -->
+            <section class="space-y-4">
+                <h3 class="text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3">
+                    فرایند ثبت و پیگیری هوشمند درخواست در بهدون
+                </h3>
+                <p>
+                    ما فرایند سفارش را به ساده‌ترین شکل ممکن طراحی کرده‌ایم تا در کمتر از ۱ دقیقه بتوانید درخواست خود را نهایی کنید:
+                </p>
+                <ol class="list-decimal list-inside space-y-2 text-sm text-slate-600 pr-2">
+                    <li><strong>انتخاب خدمت:</strong> کلیک روی دکمه ثبت درخواست در بالای صفحه یا زیردسته‌های فوق و انتخاب نوع سرویس مورد نیاز.</li>
+                    <li><strong>تعیین موقعیت روی نقشه تهران:</strong> با کلیک روی نام محله خود یا جابجایی مارکر، لوکیشن دقیق خود را انتخاب می‌کنید.</li>
+                    <li><strong>تعیین زمان حضور:</strong> مشخص می‌کنید که کارشناس به صورت فوری اعزام شود یا در بازه زمانی خاصی از روزهای آتی مراجعه نماید.</li>
+                    <li><strong>دریافت آنی کد رهگیری:</strong> پس از ثبت شماره موبایل، سیستم یک کد پیگیری اختصاصی (مانند <code class="bg-slate-100 text-[#8B1C31] px-2 py-0.5 rounded font-mono font-bold">BEH-XXXX</code>) صادر می‌کند که در صفحه <a href="/track" class="text-brand-600 font-bold hover:underline">پیگیری آنلاین درخواست‌ها</a> وضعیت اعزام تکنسین، ساعت ورود و گزارش کار را به طور لحظه‌ای به شما نمایش می‌دهد.</li>
+                </ol>
+            </section>
+
+            <!-- SECTION 6: Final CTA Banner -->
+            <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-6 md:p-8 text-center space-y-4 my-8">
+                <h3 class="text-xl font-black text-slate-800">آماده دریافت خدمات تخصصی سرمایش و گرمایش هستید؟</h3>
+                <p class="text-xs md:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
+                    هم‌اکنون درخواست خود را به صورت آنلاین ثبت نمایید تا نزدیک‌ترین تکنسین مجرب در منطقه شما با ابزار و قطعات استاندارد در محل حاضر شود.
+                </p>
+                <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+                    <button type="button" onclick="openRequestModal('سرمایش و گرمایش')" class="bg-[#8B1C31] hover:bg-[#701627] text-white px-8 py-3.5 rounded-2xl font-black text-sm shadow-xl shadow-[#8B1C31]/25 hover:shadow-2xl transition-all transform hover:-translate-y-0.5">
+                        ثبت فوری درخواست آنلاین (با کد رهگیری)
+                    </button>
+                    <a href="tel:02122345678" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-6 py-3.5 rounded-2xl font-bold text-sm shadow-sm transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 512 512"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></svg>
+                        <span>پشتیبانی تلفنی مستقیم: ۰۲۱-۲۲۳۴۵۶۷۸</span>
+                    </a>
+                </div>
+            </div>
+
+        </article>
+    `,
+    faq: [
+        {
+            q: "هزینه سرویس و تعمیر پکیج و کولر چگونه محاسبه می‌شود؟",
+            a: "کلیه هزینه‌های خدمات بهدون طبق نرخ مصوب اتحادیه تأسیسات مکانیکی و گازسوز تهران محاسبه می‌گردد. قبل از شروع کار، کارشناس پس از عیب‌یابی دقیق هزینه کامل قطعات و اجرت را به اطلاع شما می‌رساند و پس از رضایت کامل شما پرداخت انجام می‌شود."
+        },
+        {
+            q: "سرعت اعزام تکنسین به محل در تهران چقدر است؟",
+            a: "بهدون با دارا بودن تیم‌های سیار در شمال، غرب، شرق و مرکز تهران، در صورت ثبت درخواست به صورت «فوری»، در کمتر از ۴۵ دقیقه کارشناس را به محل اعزام می‌نماید. همچنین می‌توانید زمان دلخواهی را در روزهای آینده انتخاب کنید."
+        },
+        {
+            q: "آیا خدمات سرمایش و گرمایش بهدون دارای ضمانت کتبی است؟",
+            a: "بله، کلیه خدمات تعمیری و سرویس شامل گارانتی رسمی بهدون بوده و فاکتور چاپی معتبر به همراه مهر و امضای کارشناس تقدیم مشتریان محترم می‌گردد."
+        },
+        {
+            q: "چگونه می‌توانم وضعیت تکنسین اعزامی را پیگیری کنم؟",
+            a: "بلافاصله پس از ثبت درخواست در سایت، یک کد پیگیری اختصاصی (مانند BEH-XXXX) برای شما صادر می‌شود. با وارد کردن این کد یا شماره تماس خود در بخش «پیگیری» سایت بهدون، وضعیت لحظه‌ای درخواست قابل رویت است."
+        },
+        {
+            q: "آیا اسیدشویی پکیج به مبدل دستگاه آسیب نمی‌زند؟",
+            a: "خیر، تکنسین‌های بهدون از اسیدهای محافظت‌شده استاندارد (Discaler با دوز مشخص) و پمپ‌های مخصوص شستشوی مدار استفاده می‌کنند که صرفاً رسوبات آهکی را حل کرده و به هیچ عنوان به آلیاژ مس مبدل آسیب نمی‌زند."
+        }
+    ]
+};
+
+// Calculate word count
+function countWords(str) {
+    const clean = str.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    return clean.split(' ').filter(Boolean).length;
+}
+
+let totalWords = countWords(hvacData.title) + countWords(hvacData.subtitle) + countWords(hvacData.comprehensiveGuide);
+hvacData.subServices.forEach(s => {
+    totalWords += countWords(s.name) + countWords(s.detail);
+});
+hvacData.faq.forEach(f => {
+    totalWords += countWords(f.q) + countWords(f.a);
+});
+
+console.log('Total words in HVAC content:', totalWords);
+
+fs.writeFileSync('hvac_data.json', JSON.stringify(hvacData, null, 2));
