@@ -4,6 +4,10 @@
 /track  /orders  301
 /services  /#services  301
 /services/:slug  /magazine/:slug  301
+/management  /admin.html  200
+/management/*  /admin.html  200
+/admin  /admin.html  200
+/admin/*  /admin.html  200
 /magazine/:slug  /article-template  200
 /p/:slug  /page-template  200
 /page/:slug  /page-template  200

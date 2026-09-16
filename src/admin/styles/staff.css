@@ -1,0 +1,136 @@
+.staff-form {
+  margin-bottom: var(--space-5);
+  max-width: 720px;
+}
+
+.staff-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-4);
+}
+
+.staff-form-section-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin: var(--space-2) 0 calc(-1 * var(--space-1));
+}
+
+.form-field-wide {
+  grid-column: 1 / -1;
+}
+
+.staff-table-wrapper {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+}
+
+.staff-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.staff-table th,
+.staff-table td {
+  padding: var(--space-3) var(--space-4);
+  text-align: start;
+  white-space: nowrap;
+}
+
+.staff-table thead th {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.8rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.staff-table tbody tr {
+  border-bottom: 1px solid var(--border);
+}
+
+.staff-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.staff-table tbody tr.is-inactive {
+  opacity: 0.5;
+}
+
+.staff-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  background-color: var(--secondary-light);
+  color: var(--secondary);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.staff-avatar-fallback .icon,
+.staff-avatar-fallback svg {
+  width: 20px;
+  height: 20px;
+}
+
+.staff-avatar-male {
+  background-color: var(--secondary-light);
+  color: var(--secondary);
+}
+
+.staff-avatar-female {
+  background-color: #fbe6ef;
+  color: #c2427e;
+}
+
+.staff-avatar-upload-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.staff-avatar-upload-row input[type='url'] {
+  flex: 1;
+  min-width: 0;
+}
+
+.staff-avatar-preview {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.staff-avatar-preview img {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+}
+
+.staff-avatar-preview .icon,
+.staff-avatar-preview svg {
+  width: 22px;
+  height: 22px;
+}
+
+.admin-sidebar-user {
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.82rem;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  margin-top: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.admin-sidebar-role {
+  font-size: 0.72rem;
+  color: var(--secondary);
+}

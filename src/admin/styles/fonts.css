@@ -1,0 +1,29 @@
+@font-face {
+  font-family: 'Yekan Bakh';
+  src: url('../assets/fonts/YekanBakhFaNum-VF.woff2') format('woff2-variations'),
+       url('../assets/fonts/YekanBakhFaNum-VF.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IRANSans';
+  src: url('../assets/fonts/IRANSans.woff2') format('woff2'),
+       url('../assets/fonts/IRANSans.woff') format('woff'),
+       url('../assets/fonts/IRANSans.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Yekan';
+  src: url('../assets/fonts/WeblogmaYekan.woff2') format('woff2'),
+       url('../assets/fonts/WeblogmaYekan.woff') format('woff'),
+       url('../assets/fonts/WeblogmaYekan.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+

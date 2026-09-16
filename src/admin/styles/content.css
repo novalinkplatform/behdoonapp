@@ -1,0 +1,701 @@
+.article-status-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--radius-full);
+  background-color: var(--surface-alt);
+  color: var(--muted);
+}
+
+.article-status-published {
+  background-color: var(--success-bg);
+  color: var(--success);
+}
+
+.article-status-draft {
+  background-color: var(--warning-bg);
+  color: var(--warning);
+}
+
+.staff-table-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.staff-table-empty {
+  text-align: center;
+  color: var(--muted);
+  padding-block: var(--space-6) !important;
+}
+
+.editor-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.editor-main .form-field {
+  margin-bottom: var(--space-4);
+}
+
+.editor-section-title {
+  font-size: 1rem;
+  margin: var(--space-5) 0 var(--space-3);
+}
+
+.editor-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.editor-sidebar-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.editor-sidebar-card h3 {
+  font-size: 0.9rem;
+}
+
+.editor-sidebar-card .btn + .btn {
+  margin-top: var(--space-2);
+}
+
+.block-editor {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background-color: var(--surface);
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.block-editor-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.block-editor-type {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.block-editor-actions {
+  display: flex;
+  gap: var(--space-1);
+  align-items: center;
+}
+
+.block-move-btn {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.7rem;
+}
+
+.block-editor-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.block-editor-body input,
+.block-editor-body textarea,
+.block-editor-body select {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--background);
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.88rem;
+  font-family: var(--font-family);
+}
+
+.block-add-row {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.block-add-row select {
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding-inline: var(--space-3);
+  background-color: var(--background);
+}
+
+.block-image-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--background);
+}
+
+.block-image-preview {
+  max-width: 100%;
+  max-height: 140px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+}
+
+.block-image-placeholder {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.editor-empty-blocks {
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+  padding-block: var(--space-4);
+}
+
+/* ===== ویرایش‌گر متن غنی (کلاسیک) ===== */
+
+.rte {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--background);
+  overflow: hidden;
+}
+
+.rte-toolbar {
+  /* همیشه راست‌چین می‌ماند، حتی برای ویرایش‌گر انگلیسی — فقط ناحیه‌ی تایپ (rte-content) جهت
+     زبان خودش را می‌گیرد، وگرنه دکمه‌های نوار ابزار بین دو ویرایش‌گر فارسی/انگلیسیِ یک بلوک
+     جابه‌جا می‌شدند. */
+  direction: rtl;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.4rem;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.rte-format-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* اسپسیفیسیتی بالاتر از ".block-editor-body select" لازم است، وگرنه آن قانون عمومی (که برای
+   ورودی‌های ساده‌ی بلوک تصویر/ویدئو نوشته شده) با width:100% این select را کش می‌کند و کل نوار
+   ابزار را به‌هم می‌ریزد. */
+.rte-toolbar .rte-format-select {
+  width: auto;
+  min-width: 92px;
+  flex-shrink: 0;
+  height: 30px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--background);
+  padding-inline: var(--space-2);
+  font-size: 0.78rem;
+  font-family: var(--font-family);
+  /* کروم برای این select با فونت وزیرمتن، حروف فارسی را جدا از هم و ناخوانا رندر می‌کند (باگ
+     رندر داخلی مرورگر مخصوص select، نه مشکل فونت یا اندازه — یک <div> با همین فونت/سایز درست
+     رندر می‌شود). متن خود select را نامرئی می‌کنیم و به‌جایش برچسب زیر (یک span معمولی، که درست
+     رندر می‌شود) را رویش می‌گذاریم؛ فلش/باکس/کلیک بومی select دست‌نخورده می‌ماند. */
+  color: transparent;
+}
+
+.rte-format-select-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-inline-end: var(--space-2);
+  padding-inline-start: 18px;
+  font-size: 0.78rem;
+  font-family: var(--font-family);
+  color: var(--text);
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.rte-sep {
+  width: 1px;
+  height: 20px;
+  background-color: var(--border);
+  margin-inline: 0.15rem;
+  flex-shrink: 0;
+}
+
+.rte-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--text);
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.rte-btn .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.rte-btn:hover {
+  background-color: var(--surface-alt);
+  border-color: var(--border);
+}
+
+.rte-btn-glyph {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.95rem;
+}
+
+.rte-color-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.rte-color-btn:hover {
+  background-color: var(--surface-alt);
+}
+
+.rte-color-swatch {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text);
+  border-bottom: 3px solid var(--muted);
+  line-height: 1;
+  padding-bottom: 1px;
+}
+
+.rte-color-btn input[type='color'] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.rte-link-popover {
+  position: absolute;
+  z-index: 5;
+  inset-block-start: calc(100% + 4px);
+  inset-inline-start: 0;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-3);
+}
+
+.rte-link-popover .form-field {
+  gap: 0.3rem;
+}
+
+.rte-link-popover .form-field label {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.rte-link-popover input[type='url'] {
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
+  padding-inline: var(--space-2);
+  font-size: 0.82rem;
+}
+
+.rte-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.78rem;
+  color: var(--text);
+}
+
+.rte-link-popover-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: 0.2rem;
+}
+
+.rte-content {
+  min-height: 160px;
+  max-height: 480px;
+  overflow-y: auto;
+  padding: var(--space-3) var(--space-4);
+  font-size: 0.92rem;
+  line-height: 1.9;
+  color: var(--text);
+}
+
+.rte-content:focus {
+  outline: none;
+}
+
+.rte-content h1,
+.rte-content h2,
+.rte-content h3,
+.rte-content h4,
+.rte-content h5,
+.rte-content h6 {
+  margin-block: 0.6em 0.3em;
+  line-height: 1.4;
+}
+
+.rte-content p {
+  margin-block: 0.5em;
+}
+
+.rte-content ul,
+.rte-content ol {
+  padding-inline-start: var(--space-5);
+  margin-block: 0.5em;
+}
+
+.rte-content blockquote {
+  margin-block: 0.6em;
+  padding-inline-start: var(--space-4);
+  border-inline-start: 3px solid var(--primary);
+  color: var(--muted);
+}
+
+.rte-content a {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.rte-content img {
+  max-width: 100%;
+  border-radius: var(--radius-sm);
+}
+
+.rte-content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin-block: 1em;
+}
+
+/* ===== Settings ===== */
+
+.settings-saved-note {
+  color: var(--success);
+  font-size: 0.85rem;
+  margin-bottom: var(--space-4);
+}
+
+.settings-tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2);
+}
+
+.settings-subtabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.settings-tabs .settings-tab,
+.settings-subtabs .settings-tab {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.settings-tab {
+  padding: 0.55rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  background-color: var(--background);
+  border: 1px solid var(--border);
+}
+
+.settings-tabs .settings-tab.is-active {
+  background-color: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+
+/* زیر دسته‌ها (مثلاً تب‌های قوانین/حریم‌خصوصی داخل «صفحات قانونی») تعمداً رنگی متفاوت از تب‌های اصلی
+   تنظیمات دارند تا در نگاه اول با آن‌ها اشتباه گرفته نشوند. */
+.settings-subtabs .settings-tab.is-active {
+  background-color: #0d9488;
+  color: #ffffff;
+  border-color: #0d9488;
+}
+
+.settings-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.backup-subpanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.backup-subpanel[hidden] {
+  display: none !important;
+}
+
+.settings-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-3);
+  align-items: end;
+}
+
+.settings-form-grid .form-field label {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.settings-panel-footer {
+  margin-top: var(--space-3);
+}
+
+.settings-inline-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.settings-panel-hint {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: var(--space-3);
+}
+
+.plugin-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.license-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+}
+
+.license-grid label {
+  display: block;
+  font-size: 0.74rem;
+  color: var(--muted);
+  margin-bottom: 0.2rem;
+}
+
+.license-grid p {
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.license-days-left {
+  color: var(--primary);
+  font-size: 1.1rem !important;
+}
+
+.license-timeline {
+  margin-top: var(--space-5);
+}
+
+.license-timeline-bar {
+  height: 10px;
+  border-radius: var(--radius-full);
+  background-color: var(--surface-alt);
+  overflow: hidden;
+}
+
+.license-timeline-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
+}
+
+.license-timeline-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.74rem;
+  color: var(--muted);
+  margin-top: var(--space-2);
+}
+
+.license-activate-row {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.license-activate-row input {
+  flex: 1;
+}
+
+.role-permissions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-2) var(--space-4);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.theme-color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-3);
+}
+
+.theme-color-field label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+
+.theme-color-input-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.theme-color-input-row input[type='color'] {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: none;
+  cursor: pointer;
+}
+
+.theme-color-input-row input[type='text'] {
+  flex: 1;
+  min-width: 0;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--background);
+  padding-inline: var(--space-2);
+  font-size: 0.8rem;
+}
+
+.testimonial-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.testimonial-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-4);
+}
+
+.testimonial-row-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.testimonial-row-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.testimonial-row-avatar .icon {
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+}
+
+.testimonial-row-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.testimonial-row-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: 0.2rem;
+}
+
+.testimonial-row-stars {
+  color: var(--warning);
+  letter-spacing: 0.1em;
+  font-size: 0.85rem;
+}
+
+.testimonial-row-text {
+  font-size: 0.85rem;
+  color: var(--muted);
+}

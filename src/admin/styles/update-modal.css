@@ -1,0 +1,66 @@
+.update-modal-changelog {
+  margin: var(--space-3) 0;
+  padding-inline-start: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: 0.85rem;
+}
+
+.update-modal-warning {
+  color: var(--warning);
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-top: var(--space-3);
+}
+
+.update-modal-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.update-manual-guide {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.update-manual-guide h4 {
+  font-size: 0.95rem;
+  margin-bottom: var(--space-2);
+}
+
+.update-manual-cmd-plain {
+  margin: var(--space-2) 0 var(--space-3);
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.85rem;
+  direction: ltr;
+  text-align: left;
+  overflow-wrap: break-word;
+  color: var(--text);
+}
+
+.update-manual-step {
+  margin-top: var(--space-4);
+}
+
+.update-manual-step:first-of-type {
+  margin-top: var(--space-3);
+}
+
+.update-manual-step h5 {
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+}
+
+.update-manual-list {
+  margin: var(--space-2) 0;
+  padding-inline-start: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: 0.85rem;
+  color: var(--muted);
+}

@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 
 const input: Record<string, string> = {
   main: fileURLToPath(new URL('./index.html', import.meta.url)),
+  admin: fileURLToPath(new URL('./admin.html', import.meta.url)),
   magazine: fileURLToPath(new URL('./magazine.html', import.meta.url)),
   article: fileURLToPath(new URL('./article-template.html', import.meta.url)),
   page: fileURLToPath(new URL('./page-template.html', import.meta.url)),

@@ -1,0 +1,224 @@
+/* ==========================================================
+   حالت تاریک شیشه‌ای سبز زمردی (Dark Emerald Frosted Glass)
+   پنل مدیریت بهدون
+   ========================================================== */
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* پالت رنگی تیره و زمردی لوکس */
+  --primary: #10b981;
+  --primary-dark: #059669;
+  --secondary: #34d399;
+  --secondary-light: rgba(16, 185, 129, 0.15);
+
+  --background: #060907;
+  --surface: #0a140e;
+  --surface-alt: #102117;
+  --text: #f0fdf4;
+  --muted: #94a3b8;
+  --border: rgba(52, 211, 153, 0.2);
+
+  --success: #34d399;
+  --success-bg: rgba(16, 185, 129, 0.16);
+  --warning: #fbbf24;
+  --warning-bg: rgba(251, 191, 36, 0.16);
+  --danger: #f87171;
+  --danger-bg: rgba(248, 113, 113, 0.16);
+}
+
+[data-theme="dark"] body {
+  background: radial-gradient(circle at 15% 15%, rgba(6, 78, 59, 0.35) 0%, transparent 45%),
+              radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.16) 0%, transparent 45%),
+              #060907;
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* هدر فیکس شیشه‌ای بالا */
+[data-theme="dark"] .admin-topbar {
+  background: rgba(8, 18, 12, 0.78) !important;
+  backdrop-filter: blur(20px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+  border-bottom: 1px solid rgba(52, 211, 153, 0.22) !important;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-theme="dark"] .admin-topbar-tab {
+  color: var(--muted);
+}
+
+[data-theme="dark"] .admin-topbar-tab:hover {
+  color: #f0fdf4;
+  background: rgba(52, 211, 153, 0.12);
+}
+
+[data-theme="dark"] .admin-topbar-tab.is-active {
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.18);
+  border-bottom-color: #34d399;
+}
+
+[data-theme="dark"] .admin-back-btn,
+[data-theme="dark"] .admin-topbar-icon-btn,
+[data-theme="dark"] .admin-topbar-user {
+  background: rgba(16, 32, 23, 0.65) !important;
+  border: 1px solid rgba(52, 211, 153, 0.25) !important;
+  color: #f0fdf4 !important;
+}
+
+[data-theme="dark"] .admin-back-btn:hover,
+[data-theme="dark"] .admin-topbar-icon-btn:hover,
+[data-theme="dark"] .admin-topbar-user:hover {
+  background: rgba(24, 48, 35, 0.85) !important;
+  border-color: rgba(52, 211, 153, 0.45) !important;
+}
+
+/* کارت‌ها و المان‌های شیشه‌ای (Frosted Glass) */
+[data-theme="dark"] .dash-kpi-card,
+[data-theme="dark"] .dash-card,
+[data-theme="dark"] .dash-quick-card,
+[data-theme="dark"] .admin-card,
+[data-theme="dark"] .card,
+[data-theme="dark"] .settings-card,
+[data-theme="dark"] .settings-sub-card,
+[data-theme="dark"] .pipeline-column,
+[data-theme="dark"] .pipeline-card,
+[data-theme="dark"] .fleet-card,
+[data-theme="dark"] .staff-card,
+[data-theme="dark"] .chat-card,
+[data-theme="dark"] .chat-convo-list,
+[data-theme="dark"] .chat-thread,
+[data-theme="dark"] .activity-item,
+[data-theme="dark"] .modal-card,
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .ai-widget-panel {
+  background: rgba(12, 24, 17, 0.7) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  border: 1px solid rgba(52, 211, 153, 0.2) !important;
+  box-shadow: 0 10px 32px 0 rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  color: var(--text);
+}
+
+/* فرم‌ها، ورودی‌ها و کنترل‌ها */
+[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background: rgba(15, 30, 22, 0.75) !important;
+  color: #f0fdf4 !important;
+  border: 1px solid rgba(52, 211, 153, 0.28) !important;
+}
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] select:focus,
+[data-theme="dark"] textarea:focus {
+  border-color: #34d399 !important;
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.25) !important;
+  background: rgba(20, 40, 30, 0.9) !important;
+}
+
+/* جداول */
+[data-theme="dark"] .dash-table-wrapper,
+[data-theme="dark"] .admin-table-wrapper {
+  background: transparent !important;
+}
+
+[data-theme="dark"] table {
+  color: var(--text);
+}
+
+[data-theme="dark"] th {
+  background: rgba(16, 40, 28, 0.8) !important;
+  color: #a7f3d0 !important;
+  border-bottom: 1px solid rgba(52, 211, 153, 0.25) !important;
+}
+
+[data-theme="dark"] td {
+  border-bottom: 1px solid rgba(52, 211, 153, 0.12) !important;
+}
+
+[data-theme="dark"] tr:hover td {
+  background: rgba(52, 211, 153, 0.08) !important;
+}
+
+/* دکمه‌های فرعی */
+[data-theme="dark"] .btn-secondary {
+  background: rgba(16, 32, 23, 0.75) !important;
+  color: #f0fdf4 !important;
+  border-color: rgba(52, 211, 153, 0.3) !important;
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+  background: rgba(24, 48, 35, 0.95) !important;
+  border-color: rgba(52, 211, 153, 0.5) !important;
+}
+
+/* تب‌های تنظیمات و ساب‌تب‌ها */
+[data-theme="dark"] .settings-tabs,
+[data-theme="dark"] .dash-subnav {
+  border-bottom: 1px solid rgba(52, 211, 153, 0.2);
+}
+
+[data-theme="dark"] .settings-tab,
+[data-theme="dark"] .dash-subnav-btn {
+  color: var(--muted);
+  background: transparent;
+}
+
+[data-theme="dark"] .settings-tab:hover,
+[data-theme="dark"] .dash-subnav-btn:hover {
+  color: #f0fdf4;
+  background: rgba(52, 211, 153, 0.1);
+}
+
+[data-theme="dark"] .settings-tab.is-active,
+[data-theme="dark"] .dash-subnav-btn.is-active {
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.16);
+  border-bottom-color: #34d399;
+}
+
+/* نشانگرها و بج‌ها */
+[data-theme="dark"] .badge-neutral {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+[data-theme="dark"] .badge-primary {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+[data-theme="dark"] .badge-warning {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+[data-theme="dark"] .badge-success {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+[data-theme="dark"] .dash-live-badge {
+  background-color: rgba(16, 185, 129, 0.18) !important;
+  border-color: rgba(52, 211, 153, 0.4) !important;
+  color: #34d399 !important;
+}
+
+/* دکمه سوییچ تم */
+.admin-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform var(--transition-fast), background var(--transition-fast);
+}
+
+.admin-theme-toggle:hover {
+  transform: scale(1.05);
+}

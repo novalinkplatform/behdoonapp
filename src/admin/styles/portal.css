@@ -1,0 +1,74 @@
+.portal-shell {
+  min-height: 100vh;
+  background-color: var(--surface);
+}
+
+.portal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  background-color: var(--background);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.portal-user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.portal-main {
+  max-width: 640px;
+  margin-inline: auto;
+  padding: var(--space-5);
+}
+
+.portal-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.portal-card {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  box-shadow: var(--shadow-sm);
+}
+
+.portal-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.portal-status {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  background-color: var(--secondary-light);
+  color: var(--primary);
+}
+
+.portal-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.portal-empty {
+  text-align: center;
+  color: var(--muted);
+  padding-block: var(--space-6);
+}

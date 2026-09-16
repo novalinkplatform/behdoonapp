@@ -1,0 +1,85 @@
+.article-status-new {
+  background-color: var(--secondary-light);
+  color: var(--secondary);
+}
+
+.article-status-reviewed {
+  background-color: var(--surface-alt);
+  color: var(--muted);
+}
+
+.article-status-contacted {
+  background-color: var(--warning-bg);
+  color: var(--warning);
+}
+
+.article-status-hired {
+  background-color: var(--success-bg);
+  color: var(--success);
+}
+
+.article-status-rejected {
+  background-color: var(--danger-bg);
+  color: var(--danger);
+}
+
+.article-status-busy {
+  background-color: var(--warning-bg);
+  color: var(--warning);
+  margin-inline-start: var(--space-2);
+}
+
+.version-command-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.drive-connection-status {
+  margin: var(--space-2) 0 var(--space-3);
+}
+
+.drive-oauth-setup {
+  margin-bottom: var(--space-3);
+  padding: var(--space-3);
+  background-color: var(--surface-alt);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+}
+
+.drive-oauth-setup summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.drive-oauth-setup code {
+  padding: 0.1rem 0.4rem;
+  background-color: var(--background);
+  border-radius: 4px;
+  font-size: 0.78rem;
+}
+
+.version-command-row code {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--surface-alt);
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  direction: ltr;
+  text-align: left;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.job-application-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.8rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.job-application-meta a {
+  color: inherit;
+}

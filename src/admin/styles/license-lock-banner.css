@@ -1,0 +1,61 @@
+.license-lock-banner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.license-lock-banner .icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.license-lock-banner span:not(.icon) {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* .admin-shell خودش padding دارد (children طبیعتاً از لبه فاصله دارند)؛ .portal-shell ندارد،
+   پس این‌جا صریحاً همان فاصله‌ی افقی portal-main را تکرار می‌کند تا گوشه‌های گرد نچسبد به لبه. */
+.portal-shell .license-lock-banner {
+  margin: var(--space-4) var(--space-5) 0;
+}
+
+/* همان الگوی بالا، فقط برای حساب آزمایشی عمومی — لحن هشدار ندارد (رنگ warning نه danger)، چون این
+   یک وضعیت مشکل‌دار نیست، فقط یک یادآوری. */
+.demo-account-banner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--warning-bg);
+  color: var(--warning);
+  border: 1px solid var(--warning);
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.demo-account-banner .icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.demo-account-banner span:not(.icon) {
+  flex: 1;
+  min-width: 200px;
+}
+
+.portal-shell .demo-account-banner {
+  margin: var(--space-4) var(--space-5) 0;
+}
