@@ -42,6 +42,7 @@ export interface OrderRecord {
   originProvince: string;
   originCity: string;
   originPropertyType: string;
+  originNotes?: string;
   destinationProvince: string;
   destinationCity: string;
   destinationPropertyType: string;

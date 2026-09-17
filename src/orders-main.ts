@@ -23,7 +23,6 @@ import { initLangToggle } from './components/LangToggle.ts';
 import { bootstrapI18n } from './i18n/bootstrap.ts';
 import { initBehaviorTracking } from './utils/analytics.ts';
 import { pick } from './i18n/lang.ts';
-import { displayCityName } from './data/provinces.ts';
 import { loadSettings } from './utils/dynamicContent.ts';
 import { applyTheme } from './utils/theme.ts';
 import { applySiteSeoSettings } from './utils/seo.ts';
@@ -72,10 +71,7 @@ function renderOrderCard(order: OrderRecord): string {
       </div>
       <div class="order-route">
         <span class="icon">${icons.pin}</span>
-        <span>${displayCityName(order.originProvince, order.originCity)}</span>
-        <span aria-hidden="true">←</span>
-        <span class="icon">${icons.flag}</span>
-        <span>${displayCityName(order.destinationProvince, order.destinationCity)}</span>
+        <span>${pick('محل انجام خدمت: تهران', 'Service location: Tehran')}${order.originNotes ? ` · ${order.originNotes}` : ''}</span>
       </div>
       <div class="order-meta">${order.serviceLabel} · <span id="order-schedule-${order.id}">${formatIranianDate(order.scheduledDate)} — ${pick('ساعت', 'at')} ${toPersianDigits(order.scheduledTime)}</span></div>
       <div class="order-estimate">${formatToman(order.estimateAvg)}</div>

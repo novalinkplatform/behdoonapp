@@ -14,7 +14,7 @@ export interface SubcategoryDetails {
   icon: string;
 }
 
-const SUBCATEGORY_DETAILS_MAP: Record<string, { desc: string; descEn: string }> = {
+export const SUBCATEGORY_DETAILS_MAP: Record<string, { desc: string; descEn: string }> = {
   'water-cooler': {
     desc: 'سرویس کامل دوره‌ای، تعویض پوشال، تست و تعویض پمپ و دینام و روغن‌کاری یاتاقان‌ها',
     descEn: 'Full seasonal maintenance, pad replacement, pump and motor testing, bearing lubrication',

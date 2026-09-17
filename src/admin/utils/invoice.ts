@@ -59,16 +59,10 @@ export function resolveOrderInvoice(order: {
   const laborChoice = (order.laborChoice || 'none') as 'none' | 'origin' | 'destination' | 'both';
   const laborCount = laborChoice === 'none' ? 0 : Math.max(1, order.laborCount ?? 2);
   let laborAmount = 0;
-  let laborDesc = 'عدم درخواست کارگر توسط مشتری';
-  if (laborChoice === 'both') {
-    laborAmount = LABOR_COST_PER_SIDE * 2 * laborCount;
-    laborDesc = `خدمات کارگر متخصص بارگیری و تخلیه (${laborCount} نفر - مبدأ و مقصد)`;
-  } else if (laborChoice === 'origin') {
+  let laborDesc = 'عدم درخواست تکنسین اضافی';
+  if (laborChoice === 'both' || laborChoice === 'origin' || laborChoice === 'destination') {
     laborAmount = LABOR_COST_PER_SIDE * laborCount;
-    laborDesc = `خدمات کارگر بارگیری در مبدأ (${laborCount} نفر)`;
-  } else if (laborChoice === 'destination') {
-    laborAmount = LABOR_COST_PER_SIDE * laborCount;
-    laborDesc = `خدمات کارگر تخلیه در مقصد (${laborCount} نفر)`;
+    laborDesc = `خدمات تکنسین متخصص بهدون در تهران (${laborCount} نفر)`;
   }
 
   const packingAmount = order.wantsPacking ? PACKING_COST : 0;
@@ -76,11 +70,7 @@ export function resolveOrderInvoice(order: {
   const floorDetails: string[] = [];
   if (!order.originElevator && (order.originFloor ?? 0) > 0) {
     floorAmount += (order.originFloor ?? 0) * FLOOR_COST_WITHOUT_ELEVATOR;
-    floorDetails.push(`مبدأ: طبقه ${order.originFloor}`);
-  }
-  if (!order.destinationElevator && (order.destinationFloor ?? 0) > 0) {
-    floorAmount += (order.destinationFloor ?? 0) * FLOOR_COST_WITHOUT_ELEVATOR;
-    floorDetails.push(`مقصد: طبقه ${order.destinationFloor}`);
+    floorDetails.push(`طبقه ${order.originFloor} (بدون آسانسور)`);
   }
 
   const total = Math.max(order.estimateAvg || 0, 1000000);

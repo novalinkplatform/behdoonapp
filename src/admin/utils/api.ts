@@ -1033,10 +1033,14 @@ export async function deleteArticle(id: number): Promise<void> {
 // ===== Custom Pages =====
 
 export async function fetchAdminPages(): Promise<CustomPageRecord[]> {
-  const res = await authedFetch('/api/admin/pages');
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت برگه‌ها ناموفق بود.');
-  return (body.pages ?? []) as CustomPageRecord[];
+  try {
+    const res = await authedFetch('/api/admin/pages');
+    if (res.ok) {
+      const body = await res.json().catch(() => ({}));
+      return (body.pages ?? []) as CustomPageRecord[];
+    }
+  } catch {}
+  return [];
 }
 
 export async function fetchAdminPage(id: number): Promise<CustomPageRecord> {
@@ -1599,10 +1603,14 @@ export async function deleteFleetVehicle(id: number): Promise<void> {
 // ===== Plugins (admin-only; may hold provider secrets) =====
 
 export async function fetchPlugins(): Promise<Record<string, unknown>> {
-  const res = await authedFetch('/api/admin/plugins');
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت افزونه‌ها ناموفق بود.');
-  return (body.plugins ?? {}) as Record<string, unknown>;
+  try {
+    const res = await authedFetch('/api/admin/plugins');
+    if (res.ok) {
+      const body = await res.json().catch(() => ({}));
+      return (body.plugins ?? {}) as Record<string, unknown>;
+    }
+  } catch {}
+  return {};
 }
 
 // ===== Request reports (staff note sent to customer via SMS) =====

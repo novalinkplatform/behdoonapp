@@ -313,7 +313,7 @@ export function renderSettingsView(): string {
           <button type="button" class="btn btn-primary btn-sm" id="settings-map-save-btn">ذخیره تنظیمات نقشه</button>
         </div>
         <p class="settings-panel-hint">
-          سرویس نقشه برای انتخاب موقعیت مبدأ و مقصد در مرحله ثبت سفارش مشتریان و پایش سفارش‌ها در پنل مدیریت استفاده می‌شود.
+          سرویس نقشه برای انتخاب دقیق موقعیت مکانی انجام خدمت در تهران در مرحله ثبت سفارش مشتریان و پایش موقعیت روی نقشه مدیریت استفاده می‌شود.
           حالت پیش‌فرض <strong>اوپن‌استریت‌مپ (OpenStreetMap)</strong> است که کاملاً رایگان و بدون نیاز به کلید کار می‌کند.
         </p>
 

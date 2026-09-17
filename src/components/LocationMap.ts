@@ -3,15 +3,15 @@ import 'leaflet/dist/leaflet.css';
 import { pick } from '../i18n/lang.ts';
 import { createConfiguredTileLayer, type MapSettings } from '../utils/mapProvider.ts';
 
-const TEHRAN: [number, number] = [35.6892, 51.389];
-const IRAN_BOUNDS: [[number, number], [number, number]] = [
-  [24.5, 43.0],
-  [40.5, 63.8],
+export const TEHRAN_CENTER: [number, number] = [35.7219, 51.3347];
+export const TEHRAN_BOUNDS: [[number, number], [number, number]] = [
+  [35.55, 51.15], // محدوده جنوب غربی تهران
+  [35.85, 51.65], // محدوده شمال شرقی تهران
 ];
 
 const PIN_SVG = `
   <svg width="34" height="42" viewBox="0 0 34 42" xmlns="http://www.w3.org/2000/svg">
-    <path d="M17 1C8.16 1 1 8.16 1 17c0 11.5 16 23.5 16 23.5S33 28.5 33 17C33 8.16 25.84 1 17 1Z" fill="#1656c9" stroke="#ffffff" stroke-width="2"/>
+    <path d="M17 1C8.16 1 1 8.16 1 17c0 11.5 16 23.5 16 23.5S33 28.5 33 17C33 8.16 25.84 1 17 1Z" fill="#7c3aed" stroke="#ffffff" stroke-width="2"/>
     <circle cx="17" cy="17" r="6" fill="#ffffff"/>
   </svg>
 `;
@@ -24,15 +24,16 @@ const pinIcon = L.divIcon({
 });
 
 export function renderLocationMap(id: string): string {
-  return `<div class="location-map" id="${id}" role="application" aria-label="${pick('نقشه انتخاب موقعیت', 'Location picker map')}"></div>`;
+  return `<div class="location-map" id="${id}" role="application" aria-label="${pick('نقشه انتخاب موقعیت در تهران', 'Tehran location picker map')}"></div>`;
 }
 
 export interface LocationMapController {
   setCenter: (lat: number, lng: number, zoom?: number) => void;
   getPosition: () => { lat: number; lng: number };
   hasInteracted: () => boolean;
+  markInteracted: () => void;
   refresh: () => void;
-  setBoundsMode: (mode: 'iran' | 'global') => void;
+  setBoundsMode: (mode?: string) => void;
   resetToIran: () => void;
 }
 
@@ -44,50 +45,86 @@ export function initLocationMap(
   const container = document.getElementById(id);
   if (!container) return null;
 
+  // نقشه صرفاً بر روی محدوده شهر تهران قفل شده است و خروج از آن ناممکن است
   const map = L.map(id, {
-    center: TEHRAN,
-    zoom: 11,
-    minZoom: 5,
+    center: TEHRAN_CENTER,
+    zoom: 12,
+    minZoom: 10,
     maxZoom: 18,
-    maxBounds: IRAN_BOUNDS,
-    maxBoundsViscosity: 1,
+    maxBounds: TEHRAN_BOUNDS,
+    maxBoundsViscosity: 1.0,
   });
 
   const tileLayer = createConfiguredTileLayer(mapSettings);
   tileLayer.addTo(map);
 
-  const marker = L.marker(TEHRAN, { icon: pinIcon, draggable: true }).addTo(map);
+  const marker = L.marker(TEHRAN_CENTER, { icon: pinIcon, draggable: true }).addTo(map);
 
-  // فقط تعامل مستقیم کاربر (کلیک روی نقشه یا جابه‌جایی نشانگر) ثبت می‌شود؛ جابه‌جایی خودکار
-  // نشانگر توسط geocode شهر (setCenter) به این معنی نیست که کاربر موقعیت را تأیید کرده است.
+  // تعامل مستقیم کاربر (کلیک روی نقشه یا جابه‌جایی نشانگر در تهران) الزامی است
   let interacted = false;
 
-  map.on('click', (event: L.LeafletMouseEvent) => {
-    marker.setLatLng(event.latlng);
+  function markInteraction(): void {
     interacted = true;
-    onUserMove?.(event.latlng.lat, event.latlng.lng);
+    const err = document.getElementById(`${id}-error`);
+    if (err) err.hidden = true;
+    const generalErr = document.getElementById('wizard-location-map-error');
+    if (generalErr) generalErr.hidden = true;
+  }
+
+  function clampToTehran(lat: number, lng: number): [number, number] {
+    const clampedLat = Math.max(35.55, Math.min(35.85, lat));
+    const clampedLng = Math.max(51.15, Math.min(51.65, lng));
+    return [clampedLat, clampedLng];
+  }
+
+  // شنود رویدادها روی کانتینر DOM برای تضمین ثبت تعامل حتی در کلیک روی لایه‌های داخلی
+  container.addEventListener('pointerdown', () => markInteraction());
+  container.addEventListener('click', () => markInteraction());
+  container.addEventListener('touchstart', () => markInteraction(), { passive: true });
+
+  map.on('click', (event: L.LeafletMouseEvent) => {
+    const [lat, lng] = clampToTehran(event.latlng.lat, event.latlng.lng);
+    marker.setLatLng([lat, lng]);
+    markInteraction();
+    onUserMove?.(lat, lng);
+  });
+
+  marker.on('click', () => {
+    markInteraction();
+  });
+
+  marker.on('dragstart', () => {
+    markInteraction();
+  });
+
+  marker.on('drag', () => {
+    markInteraction();
   });
 
   marker.on('dragend', () => {
-    interacted = true;
+    markInteraction();
     const pos = marker.getLatLng();
-    onUserMove?.(pos.lat, pos.lng);
+    const [lat, lng] = clampToTehran(pos.lat, pos.lng);
+    marker.setLatLng([lat, lng]);
+    onUserMove?.(lat, lng);
   });
+
+  map.on('movestart', () => markInteraction());
+  map.on('zoomstart', () => markInteraction());
 
   window.setTimeout(() => map.invalidateSize(), 100);
 
   return {
-    setCenter: (lat, lng, zoom = 12) => {
+    setCenter: (lat, lng, zoom = 13) => {
       if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+      const [clampedLat, clampedLng] = clampToTehran(lat, lng);
       map.invalidateSize();
-      marker.setLatLng([lat, lng]);
-      // اگر پنل نقشه هنوز مخفی است (ابعاد صفر)، flyTo انیمیشنی روی مختصات پیکسلی نامعتبر محاسبه می‌کند
-      // (خطای مکرر «Invalid LatLng» در کنسول) — در این حالت جابه‌جایی فوری (setView) امن است.
+      marker.setLatLng([clampedLat, clampedLng]);
       const isVisible = container.offsetWidth > 0 && container.offsetHeight > 0;
       if (isVisible) {
-        map.flyTo([lat, lng], zoom, { duration: 0.9 });
+        map.flyTo([clampedLat, clampedLng], zoom, { duration: 0.8 });
       } else {
-        map.setView([lat, lng], zoom, { animate: false });
+        map.setView([clampedLat, clampedLng], zoom, { animate: false });
       }
     },
     getPosition: () => {
@@ -95,39 +132,32 @@ export function initLocationMap(
       return { lat: pos.lat, lng: pos.lng };
     },
     hasInteracted: () => interacted,
+    markInteracted: () => {
+      markInteraction();
+    },
     refresh: () => {
       map.invalidateSize();
+      window.setTimeout(() => map.invalidateSize(), 50);
+      window.setTimeout(() => map.invalidateSize(), 200);
     },
-    setBoundsMode: (mode: 'iran' | 'global') => {
-      if (mode === 'iran') {
-        map.setMaxBounds(IRAN_BOUNDS);
-        map.setMinZoom(5);
-        const pos = marker.getLatLng();
-        const bounds = L.latLngBounds(IRAN_BOUNDS[0], IRAN_BOUNDS[1]);
-        if (!bounds.contains(pos)) {
-          marker.setLatLng(TEHRAN);
-          map.setView(TEHRAN, 6, { animate: false });
-        }
-      } else {
-        try {
-          (map as any).setMaxBounds(null);
-        } catch {
-          (map as any).options.maxBounds = null;
-          (map as any).off('moveend', (map as any)._panInsideMaxBounds);
-        }
-        map.setMinZoom(2);
+    setBoundsMode: () => {
+      map.setMaxBounds(TEHRAN_BOUNDS);
+      map.setMinZoom(10);
+      map.setMaxZoom(18);
+      const pos = marker.getLatLng();
+      const bounds = L.latLngBounds(TEHRAN_BOUNDS[0], TEHRAN_BOUNDS[1]);
+      if (!bounds.contains(pos)) {
+        marker.setLatLng(TEHRAN_CENTER);
+        map.setView(TEHRAN_CENTER, 12, { animate: false });
       }
       map.invalidateSize();
     },
     resetToIran: () => {
-      try {
-        map.setMaxBounds(IRAN_BOUNDS);
-      } catch {
-        // fallback
-      }
-      map.setMinZoom(5);
-      marker.setLatLng(TEHRAN);
-      map.setView(TEHRAN, 6, { animate: true });
+      map.setMaxBounds(TEHRAN_BOUNDS);
+      map.setMinZoom(10);
+      map.setMaxZoom(18);
+      marker.setLatLng(TEHRAN_CENTER);
+      map.setView(TEHRAN_CENTER, 12, { animate: true });
     },
   };
 }

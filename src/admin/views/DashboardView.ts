@@ -424,11 +424,11 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
             <div class="dash-card-body">${renderBarChart(stats.byService.map((s) => ({ label: s.service_label, value: s.count })))}</div>
           </div>
           <div class="dash-card">
-            <div class="dash-card-header"><h2 class="dash-card-title">پرتقاضاترین شهرهای مبدأ</h2></div>
+            <div class="dash-card-header"><h2 class="dash-card-title">مناطق پرتقاضای تهران</h2></div>
             <div class="dash-card-body">${stats.topCities.length ? renderBarChart(stats.topCities.map((c) => ({ label: c.city, value: c.count }))) : '<p class="dash-empty">داده‌ای وجود ندارد.</p>'}</div>
           </div>
           <div class="dash-card">
-            <div class="dash-card-header"><h2 class="dash-card-title">درخواست‌ها به تفکیک استان مبدأ</h2></div>
+            <div class="dash-card-header"><h2 class="dash-card-title">توزیع درخواست‌ها در مناطق تهران</h2></div>
             <div class="dash-card-body">${stats.topProvinces.length ? renderBarChart(stats.topProvinces.map((p) => ({ label: p.province, value: p.count }))) : '<p class="dash-empty">داده‌ای وجود ندارد.</p>'}</div>
           </div>
         </div>

@@ -32,6 +32,39 @@ function jsonResponse(data: unknown, status = 200): Response {
   });
 }
 
+// --- Shahanshahi / Imperial Tracking Code Utilities ---
+function gregorianToJalali(gy: number, gm: number, gd: number): { jy: number; jm: number; jd: number } {
+  const g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+  let jy = (gy <= 1600) ? 0 : 979;
+  gy -= (gy <= 1600) ? 621 : 1600;
+  const gy2 = (gm > 2) ? (gy + 1) : gy;
+  let days = (365 * gy) + Math.floor((gy2 + 3) / 4) - Math.floor((gy2 + 99) / 100) + Math.floor((gy2 + 399) / 400) - 80 + gd + g_d_m[gm - 1];
+  jy += 33 * Math.floor(days / 12053);
+  days %= 12053;
+  jy += 4 * Math.floor(days / 1461);
+  days %= 1461;
+  if (days > 365) {
+    jy += Math.floor((days - 1) / 365);
+    days = (days - 1) % 365;
+  }
+  const jm = (days < 186) ? 1 + Math.floor(days / 31) : 7 + Math.floor((days - 186) / 30);
+  const jd = 1 + ((days < 186) ? (days % 31) : ((days - 186) % 30));
+  return { jy, jm, jd };
+}
+
+function getShahanshahiDatePrefix(date = new Date()): string {
+  // Tehran timezone offset: UTC+3:30
+  const tehranMs = date.getTime() + (3.5 * 60 + date.getTimezoneOffset()) * 60000;
+  const tDate = new Date(tehranMs);
+  const { jy, jm, jd } = gregorianToJalali(tDate.getFullYear(), tDate.getMonth() + 1, tDate.getDate());
+  // Year 1405 Solar Hijri = 2585 Imperial/Shahanshahi -> last 2 digits: 85
+  const imperialYear = (jy + 1180) % 100;
+  const yy = String(imperialYear).padStart(2, '0');
+  const mm = String(jm).padStart(2, '0');
+  const dd = String(jd).padStart(2, '0');
+  return `${yy}${mm}${dd}`;
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
@@ -185,13 +218,86 @@ export default {
       if (pathname === '/api/requests' && request.method === 'POST') {
         try {
           const data = (await request.json().catch(() => ({}))) as Record<string, any>;
-          const trackingCode = 'BHD-' + Math.floor(100000 + Math.random() * 900000);
+          const datePrefix = getShahanshahiDatePrefix();
+          let dailyCount = 1;
+
           if (env.DB) {
             try {
               await env.DB.prepare(
-                'INSERT INTO requests (name, phone, service_id, status) VALUES (?, ?, ?, ?)'
+                'CREATE TABLE IF NOT EXISTS daily_order_counters (day_key TEXT PRIMARY KEY, count INTEGER NOT NULL DEFAULT 1)'
+              ).run();
+
+              const updated = await env.DB.prepare(
+                'INSERT INTO daily_order_counters (day_key, count) VALUES (?, 1) ON CONFLICT(day_key) DO UPDATE SET count = count + 1 RETURNING count'
+              ).bind(datePrefix).first();
+
+              if (updated && typeof updated.count === 'number') {
+                dailyCount = updated.count;
+              } else {
+                const row = await env.DB.prepare('SELECT count FROM daily_order_counters WHERE day_key = ?').bind(datePrefix).first();
+                if (row && typeof row.count === 'number') dailyCount = row.count;
+              }
+            } catch {
+              try {
+                const cntRow = await env.DB.prepare("SELECT COUNT(*) as c FROM requests WHERE tracking_code LIKE ?").bind(`${datePrefix}%`).first();
+                if (cntRow?.c) dailyCount = Number(cntRow.c) + 1;
+              } catch {}
+            }
+          }
+
+          const counterStr = dailyCount < 100 ? String(dailyCount).padStart(2, '0') : String(dailyCount);
+          const trackingCode = `${datePrefix}${counterStr}`;
+
+          if (env.DB) {
+            try {
+              await env.DB.prepare(
+                `CREATE TABLE IF NOT EXISTS requests (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  tracking_code TEXT UNIQUE,
+                  name TEXT,
+                  phone TEXT,
+                  service_id TEXT,
+                  service_label TEXT,
+                  origin_province TEXT,
+                  origin_city TEXT,
+                  origin_notes TEXT,
+                  origin_property_type TEXT,
+                  origin_lat REAL,
+                  origin_lng REAL,
+                  scheduled_date TEXT,
+                  scheduled_time TEXT,
+                  estimate_avg INTEGER,
+                  status TEXT DEFAULT 'pending',
+                  created_at TEXT
+                )`
+              ).run();
+
+              await env.DB.prepare(
+                `INSERT INTO requests (
+                  tracking_code, name, phone, service_id, service_label,
+                  origin_province, origin_city, origin_notes, origin_property_type,
+                  origin_lat, origin_lng, scheduled_date, scheduled_time, estimate_avg,
+                  status, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
               )
-                .bind(data.customerName || data.name || '', data.phone || '', data.serviceId || data.service_id || 'hvac', 'pending')
+                .bind(
+                  trackingCode,
+                  data.customerName || data.name || '',
+                  data.phone || '',
+                  data.serviceId || 'hvac',
+                  data.serviceLabel || 'سرمایش و گرمایش',
+                  'تهران',
+                  'تهران',
+                  data.originNotes || data.locationNotes || data.address || '',
+                  data.originPropertyType || data.propertyType || 'residential',
+                  data.originLat ?? data.lat ?? 35.7219,
+                  data.originLng ?? data.lng ?? 51.3347,
+                  data.scheduledDate || 'امروز',
+                  data.scheduledTime || 'فوری',
+                  data.estimateAvg || 1800000,
+                  'pending',
+                  new Date().toISOString()
+                )
                 .run();
             } catch {}
           }
@@ -217,17 +323,21 @@ export default {
             if (results && results.length > 0) {
               requestsList = results.map((r: any) => ({
                 id: r.id,
-                trackingCode: 'BHD-' + (1000 + r.id),
+                trackingCode: r.tracking_code || `${getShahanshahiDatePrefix()}${String(r.id < 100 ? r.id : r.id).padStart(2, '0')}`,
                 customerName: r.name,
                 serviceId: r.service_id,
-                serviceLabel: r.service_id,
+                serviceLabel: r.service_label || r.service_id,
                 originProvince: 'تهران',
                 originCity: 'تهران',
+                originNotes: r.origin_notes || '',
+                originLat: r.origin_lat,
+                originLng: r.origin_lng,
+                originPropertyType: r.origin_property_type || 'residential',
                 phone: r.phone,
                 status: r.status || 'pending',
-                scheduledDate: '1405/06/28',
-                scheduledTime: '10:00 - 12:00',
-                estimateAvg: 1800000,
+                scheduledDate: r.scheduled_date || '1405/06/28',
+                scheduledTime: r.scheduled_time || '10:00 - 12:00',
+                estimateAvg: r.estimate_avg || 1800000,
                 createdAt: r.created_at || new Date().toISOString(),
                 updatedAt: r.created_at || new Date().toISOString(),
               }));
@@ -235,6 +345,278 @@ export default {
           } catch {}
         }
         return jsonResponse({ requests: requestsList });
+      }
+
+      // --- Plugins Endpoints ---
+      if (pathname === '/api/admin/plugins' && request.method === 'GET') {
+        let plugins: Record<string, any> = {
+          sms: {
+            enabled: false,
+            username: '',
+            password: '',
+            bodyId: '',
+            autoNotifyStatusChange: false,
+          },
+          aiProviders: {
+            gemini: {
+              enabled: false,
+              apiKey: '',
+              model: 'gemini-1.5-flash',
+              priority: 1,
+            },
+          },
+        };
+        if (env.DB) {
+          try {
+            const row = await env.DB.prepare('SELECT value FROM settings WHERE key = ?').bind('plugins').first();
+            if (row?.value) {
+              plugins = JSON.parse(row.value);
+            }
+          } catch {}
+        }
+        return jsonResponse({ plugins });
+      }
+
+      if (pathname === '/api/admin/plugins' && (request.method === 'POST' || request.method === 'PUT')) {
+        try {
+          const data = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const pluginsData = data.plugins || data;
+          if (env.DB) {
+            try {
+              await env.DB.prepare('CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)').run();
+              await env.DB.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)')
+                .bind('plugins', JSON.stringify(pluginsData))
+                .run();
+            } catch {}
+          }
+          return jsonResponse({ success: true, plugins: pluginsData });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      // --- Custom Pages Endpoints ---
+      if (pathname === '/api/admin/pages' && request.method === 'GET') {
+        let pages: any[] = [];
+        if (env.DB) {
+          try {
+            await env.DB.prepare(`
+              CREATE TABLE IF NOT EXISTS custom_pages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                slug TEXT UNIQUE,
+                title TEXT,
+                title_en TEXT,
+                excerpt TEXT,
+                excerpt_en TEXT,
+                cover_image_url TEXT,
+                content TEXT,
+                meta_title TEXT,
+                meta_description TEXT,
+                status TEXT DEFAULT 'draft',
+                author_staff_id INTEGER,
+                published_at TEXT,
+                show_in_header INTEGER DEFAULT 0,
+                show_in_footer INTEGER DEFAULT 0,
+                created_at TEXT,
+                updated_at TEXT
+              )
+            `).run();
+            const { results } = await env.DB.prepare('SELECT * FROM custom_pages ORDER BY id DESC').all();
+            if (results) {
+              pages = results.map((r: any) => ({
+                id: r.id,
+                slug: r.slug,
+                title: r.title,
+                titleEn: r.title_en || '',
+                excerpt: r.excerpt || '',
+                excerptEn: r.excerpt_en || '',
+                coverImageUrl: r.cover_image_url,
+                content: typeof r.content === 'string' ? JSON.parse(r.content || '[]') : (r.content || []),
+                metaTitle: r.meta_title,
+                metaDescription: r.meta_description,
+                status: r.status || 'draft',
+                authorStaffId: r.author_staff_id,
+                publishedAt: r.published_at,
+                showInHeader: Boolean(r.show_in_header),
+                showInFooter: Boolean(r.show_in_footer),
+                createdAt: r.created_at,
+                updatedAt: r.updated_at,
+              }));
+            }
+          } catch {}
+        }
+        return jsonResponse({ pages });
+      }
+
+      if (pathname === '/api/admin/pages' && request.method === 'POST') {
+        try {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const slug = (body.slug || ('page-' + Date.now())).trim().toLowerCase();
+          const now = new Date().toISOString();
+          let newId = Date.now();
+          if (env.DB) {
+            try {
+              const res = await env.DB.prepare(`
+                INSERT INTO custom_pages (
+                  slug, title, title_en, excerpt, excerpt_en, cover_image_url,
+                  content, meta_title, meta_description, status, author_staff_id,
+                  published_at, show_in_header, show_in_footer, created_at, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              `).bind(
+                slug,
+                body.title || '',
+                body.titleEn || '',
+                body.excerpt || '',
+                body.excerptEn || '',
+                body.coverImageUrl || null,
+                JSON.stringify(body.content || []),
+                body.metaTitle || null,
+                body.metaDescription || null,
+                body.status || 'draft',
+                body.authorStaffId || 1,
+                body.publishedAt || (body.status === 'published' ? now : null),
+                body.showInHeader ? 1 : 0,
+                body.showInFooter ? 1 : 0,
+                now,
+                now
+              ).run();
+              if (res?.meta?.last_row_id) {
+                newId = res.meta.last_row_id;
+              }
+            } catch {}
+          }
+          const page = {
+            id: newId,
+            slug,
+            title: body.title || '',
+            titleEn: body.titleEn || '',
+            excerpt: body.excerpt || '',
+            excerptEn: body.excerptEn || '',
+            coverImageUrl: body.coverImageUrl || null,
+            content: body.content || [],
+            metaTitle: body.metaTitle || null,
+            metaDescription: body.metaDescription || null,
+            status: body.status || 'draft',
+            authorStaffId: body.authorStaffId || 1,
+            publishedAt: body.status === 'published' ? now : null,
+            showInHeader: Boolean(body.showInHeader),
+            showInFooter: Boolean(body.showInFooter),
+            createdAt: now,
+            updatedAt: now,
+          };
+          return jsonResponse({ page }, 201);
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      if (pathname.startsWith('/api/admin/pages/') && request.method === 'GET') {
+        const parts = pathname.split('/');
+        const id = Number(parts[parts.length - 1]);
+        let page: any = null;
+        if (env.DB && id) {
+          try {
+            const r = await env.DB.prepare('SELECT * FROM custom_pages WHERE id = ?').bind(id).first();
+            if (r) {
+              page = {
+                id: r.id,
+                slug: r.slug,
+                title: r.title,
+                titleEn: r.title_en || '',
+                excerpt: r.excerpt || '',
+                excerptEn: r.excerpt_en || '',
+                coverImageUrl: r.cover_image_url,
+                content: typeof r.content === 'string' ? JSON.parse(r.content || '[]') : (r.content || []),
+                metaTitle: r.meta_title,
+                metaDescription: r.meta_description,
+                status: r.status || 'draft',
+                authorStaffId: r.author_staff_id,
+                publishedAt: r.published_at,
+                showInHeader: Boolean(r.show_in_header),
+                showInFooter: Boolean(r.show_in_footer),
+                createdAt: r.created_at,
+                updatedAt: r.updated_at,
+              };
+            }
+          } catch {}
+        }
+        if (!page) {
+          page = {
+            id,
+            slug: 'page-' + id,
+            title: 'برگه نمونه',
+            titleEn: 'Sample Page',
+            excerpt: '',
+            excerptEn: '',
+            coverImageUrl: null,
+            content: [],
+            metaTitle: null,
+            metaDescription: null,
+            status: 'draft',
+            authorStaffId: 1,
+            publishedAt: null,
+            showInHeader: false,
+            showInFooter: false,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+        }
+        return jsonResponse({ page });
+      }
+
+      if (pathname.startsWith('/api/admin/pages/') && (request.method === 'PUT' || request.method === 'PATCH')) {
+        const parts = pathname.split('/');
+        const id = Number(parts[parts.length - 1]);
+        const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+        const now = new Date().toISOString();
+        if (env.DB && id) {
+          try {
+            await env.DB.prepare(`
+              UPDATE custom_pages SET
+                title = COALESCE(?, title),
+                title_en = COALESCE(?, title_en),
+                slug = COALESCE(?, slug),
+                excerpt = COALESCE(?, excerpt),
+                excerpt_en = COALESCE(?, excerpt_en),
+                cover_image_url = COALESCE(?, cover_image_url),
+                content = COALESCE(?, content),
+                meta_title = COALESCE(?, meta_title),
+                meta_description = COALESCE(?, meta_description),
+                status = COALESCE(?, status),
+                show_in_header = COALESCE(?, show_in_header),
+                show_in_footer = COALESCE(?, show_in_footer),
+                updated_at = ?
+              WHERE id = ?
+            `).bind(
+              body.title ?? null,
+              body.titleEn ?? null,
+              body.slug ?? null,
+              body.excerpt ?? null,
+              body.excerptEn ?? null,
+              body.coverImageUrl ?? null,
+              body.content ? JSON.stringify(body.content) : null,
+              body.metaTitle ?? null,
+              body.metaDescription ?? null,
+              body.status ?? null,
+              body.showInHeader !== undefined ? (body.showInHeader ? 1 : 0) : null,
+              body.showInFooter !== undefined ? (body.showInFooter ? 1 : 0) : null,
+              now,
+              id
+            ).run();
+          } catch {}
+        }
+        return jsonResponse({ success: true, page: { id, ...body, updatedAt: now } });
+      }
+
+      if (pathname.startsWith('/api/admin/pages/') && request.method === 'DELETE') {
+        const parts = pathname.split('/');
+        const id = Number(parts[parts.length - 1]);
+        if (env.DB && id) {
+          try {
+            await env.DB.prepare('DELETE FROM custom_pages WHERE id = ?').bind(id).run();
+          } catch {}
+        }
+        return jsonResponse({ success: true });
       }
 
       if (pathname === '/api/customer/me') {

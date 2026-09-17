@@ -6,13 +6,17 @@ import { STATUS_LABELS } from '../data/status.ts';
 import { toPersianDigits } from '../utils/format.ts';
 import { createConfiguredTileLayer, DEFAULT_MAP_SETTINGS, type MapSettings } from '../utils/mapProvider.ts';
 
-const TEHRAN: [number, number] = [35.6892, 51.389];
+const TEHRAN_CENTER: [number, number] = [35.7219, 51.3347];
+const TEHRAN_BOUNDS: [[number, number], [number, number]] = [
+  [35.55, 51.15],
+  [35.85, 51.65],
+];
 const ACTIVE_STATUSES = ['pending', 'contacted', 'scheduled', 'in_progress'];
 
 const pinIcon = L.divIcon({
   className: 'admin-map-pin',
   html: `<svg width="30" height="38" viewBox="0 0 34 42" xmlns="http://www.w3.org/2000/svg">
-    <path d="M17 1C8.16 1 1 8.16 1 17c0 11.5 16 23.5 16 23.5S33 28.5 33 17C33 8.16 25.84 1 17 1Z" fill="#1656c9" stroke="#ffffff" stroke-width="2"/>
+    <path d="M17 1C8.16 1 1 8.16 1 17c0 11.5 16 23.5 16 23.5S33 28.5 33 17C33 8.16 25.84 1 17 1Z" fill="#7c3aed" stroke="#ffffff" stroke-width="2"/>
     <circle cx="17" cy="17" r="6" fill="#ffffff"/>
   </svg>`,
   iconSize: [30, 38],
@@ -36,7 +40,14 @@ export function initMapView(): void {
   const mapContainer = document.getElementById('admin-map');
   if (!mapError || !refreshBtn || !mapContainer) return;
 
-  const map = L.map('admin-map', { center: TEHRAN, zoom: 11 });
+  const map = L.map('admin-map', {
+    center: TEHRAN_CENTER,
+    zoom: 12,
+    minZoom: 10,
+    maxZoom: 18,
+    maxBounds: TEHRAN_BOUNDS,
+    maxBoundsViscosity: 1.0,
+  });
 
   fetchSettings()
     .then((settings) => {
@@ -60,7 +71,7 @@ export function initMapView(): void {
     return `
       <div class="admin-map-popup">
         <div class="admin-map-popup-title">#${toPersianDigits(order.trackingCode)} — ${order.serviceLabel}</div>
-        <div class="admin-map-popup-row">${order.originCity || 'تهران'}${order.destinationCity && order.destinationCity !== order.originCity ? ` (${order.destinationCity})` : ''}</div>
+        <div class="admin-map-popup-row">محل خدمت: تهران${order.originNotes ? ` (${order.originNotes})` : ''}</div>
         <div class="admin-map-popup-row">${STATUS_LABELS[order.status] ?? order.status}</div>
         <div class="admin-map-popup-row" dir="ltr">${order.phone}</div>
         <select class="admin-map-assign-select" data-map-assign-id="${order.id}">

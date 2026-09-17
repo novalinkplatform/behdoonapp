@@ -227,12 +227,8 @@ export function renderProfileView(): string {
             <h2>${pick('آدرس‌های سفارش‌های قبلی', 'Previous orders addresses')}</h2>
             <div class="saved-address-groups">
               <div class="saved-address-group" id="profile-origin-addresses" hidden>
-                <h3 class="saved-address-group-title"><span class="icon">${icons.pin}</span>${pick('مبدأها', 'Origins')}</h3>
+                <h3 class="saved-address-group-title"><span class="icon">${icons.pin}</span>${pick('آدرس‌های محل خدمت در تهران', 'Service locations in Tehran')}</h3>
                 <ul class="saved-address-list" id="profile-origin-address-list"></ul>
-              </div>
-              <div class="saved-address-group" id="profile-destination-addresses" hidden>
-                <h3 class="saved-address-group-title"><span class="icon">${icons.flag}</span>${pick('مقصدها', 'Destinations')}</h3>
-                <ul class="saved-address-list" id="profile-destination-address-list"></ul>
               </div>
             </div>
           </section>
