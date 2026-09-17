@@ -7,8 +7,7 @@ export function renderLicenseLockBanner(): string {
   return `
     <div class="license-lock-banner">
       <span class="icon">${icons.lock}</span>
-      <span>دوره‌ی آزمایشی این نصب به پایان رسیده — تا خرید لایسنس، فقط امکان مشاهده دارید.</span>
-      <a class="btn btn-primary btn-sm" href="https://behbarapp.ir/sale" target="_blank" rel="noopener noreferrer">خرید لایسنس</a>
+      <span>دسترسی به برخی امکانات محدود شده است — لطفاً با مدیریت سامانه بهدون تماس بگیرید.</span>
     </div>
   `;
 }

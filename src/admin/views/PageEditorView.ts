@@ -175,7 +175,7 @@ export function renderPageEditorView(): string {
             <label for="page-editor-slug">پیوند صفحه (انگلیسی یا فارسی)</label>
             <input type="text" id="page-editor-slug" dir="ltr" placeholder="مثال: vip-moving یا privacy" />
             <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; margin-top: 4px;">
-              آدرس صفحه به شکل <code>behbarapp.ir/p/slug</code> خواهد بود.
+              آدرس صفحه به شکل <code>behdoon.ir/p/slug</code> خواهد بود.
             </span>
           </div>
         </div>
@@ -310,7 +310,7 @@ export function initPageEditorView(pageId: number | null, onBack: () => void): v
       const pageSlug = slug || slugInput!.value.trim();
       if (pageSlug) {
         liveLinkContainer.hidden = false;
-        const fullUrl = `https://behbarapp.ir/p/${encodeURIComponent(pageSlug)}`;
+        const fullUrl = `/p/${encodeURIComponent(pageSlug)}`;
         liveLink.href = fullUrl;
         liveLink.textContent = `/p/${pageSlug}`;
       } else {

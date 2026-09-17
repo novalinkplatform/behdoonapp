@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 
 const input: Record<string, string> = {
   main: fileURLToPath(new URL('./index.html', import.meta.url)),
+  management: fileURLToPath(new URL('./management.html', import.meta.url)),
   admin: fileURLToPath(new URL('./admin.html', import.meta.url)),
   magazine: fileURLToPath(new URL('./magazine.html', import.meta.url)),
   article: fileURLToPath(new URL('./article-template.html', import.meta.url)),
@@ -23,7 +24,29 @@ if (process.env.VITE_DEMO_SALE_URL) {
   input.sale = fileURLToPath(new URL('./sale.html', import.meta.url));
 }
 
+function managementRewritePlugin() {
+  return {
+    name: 'vite-plugin-management-rewrite',
+    configureServer(server: any) {
+      server.middlewares.use((req: any, _res: any, next: () => void) => {
+        if (req.url) {
+          const path = req.url.split('?')[0];
+          if (path === '/management' || path.startsWith('/management/')) {
+            const query = req.url.includes('?') ? '?' + req.url.split('?')[1] : '';
+            req.url = '/management.html' + query;
+          } else if (path === '/admin' || path.startsWith('/admin/')) {
+            const query = req.url.includes('?') ? '?' + req.url.split('?')[1] : '';
+            req.url = '/admin.html' + query;
+          }
+        }
+        next();
+      });
+    },
+  };
+}
+
 export default defineConfig({
+  plugins: [managementRewritePlugin()],
   build: {
     rollupOptions: { input },
   },

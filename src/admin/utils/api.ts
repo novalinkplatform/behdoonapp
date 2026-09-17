@@ -312,7 +312,7 @@ export async function downloadRequestsCsv(): Promise<void> {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `behbar-requests-${new Date().toISOString().slice(0, 10)}.csv`;
+  link.download = `behdoon-requests-${new Date().toISOString().slice(0, 10)}.csv`;
   document.body.appendChild(link);
   link.click();
   link.remove();

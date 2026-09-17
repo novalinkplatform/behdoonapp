@@ -112,7 +112,7 @@ function textToSectionBody(text: string): { paragraphs: string[]; list?: string[
 }
 
 function renderCustomRow(page: CustomPageRecord): string {
-  const publicUrl = `https://behbarapp.ir/p/${encodeURIComponent(page.slug)}`;
+  const publicUrl = `/p/${encodeURIComponent(page.slug)}`;
   return `
     <tr data-page-row="${page.id}">
       <td>
@@ -187,7 +187,7 @@ export function renderPagesListView(hideHeader = false): string {
           </div>
           <div style="display: flex; gap: 8px; align-items: center;">
             <button type="button" class="btn btn-primary btn-sm" id="homepage-save-btn-top">ذخیره</button>
-            <a href="https://behbarapp.ir/" target="_blank" class="btn btn-ghost btn-sm" style="display: inline-flex; align-items: center; gap: 4px;">
+            <a href="/" target="_blank" class="btn btn-ghost btn-sm" style="display: inline-flex; align-items: center; gap: 4px;">
               <span>مشاهده صفحه اصلی</span>
               <span class="icon" style="width: 14px; height: 14px;">${icons.externalLink || ''}</span>
             </a>
@@ -224,7 +224,7 @@ export function renderPagesListView(hideHeader = false): string {
           </div>
           <div style="display: flex; gap: 8px; align-items: center;">
             <button type="button" class="btn btn-primary btn-sm" id="legal-about-save-btn-top">ذخیره</button>
-            <a href="https://behbarapp.ir/about" target="_blank" class="btn btn-ghost btn-sm" style="display: inline-flex; align-items: center; gap: 4px;">
+            <a href="/about" target="_blank" class="btn btn-ghost btn-sm" style="display: inline-flex; align-items: center; gap: 4px;">
               <span>مشاهده صفحه درباره ما</span>
               <span class="icon" style="width: 14px; height: 14px;">${icons.externalLink || ''}</span>
             </a>
@@ -244,7 +244,7 @@ export function renderPagesListView(hideHeader = false): string {
           </div>
           <div style="display: flex; gap: 8px; align-items: center;">
             <button type="button" class="btn btn-primary btn-sm" id="legal-terms-save-btn-top">ذخیره</button>
-            <a href="https://behbarapp.ir/terms" target="_blank" class="btn btn-ghost btn-sm" style="display: inline-flex; align-items: center; gap: 4px;">
+            <a href="/terms" target="_blank" class="btn btn-ghost btn-sm" style="display: inline-flex; align-items: center; gap: 4px;">
               <span>مشاهده صفحه قوانین</span>
               <span class="icon" style="width: 14px; height: 14px;">${icons.externalLink || ''}</span>
             </a>
@@ -264,7 +264,7 @@ export function renderPagesListView(hideHeader = false): string {
           </div>
           <div style="display: flex; gap: 8px; align-items: center;">
             <button type="button" class="btn btn-primary btn-sm" id="legal-privacy-save-btn-top">ذخیره</button>
-            <a href="https://behbarapp.ir/privacy" target="_blank" class="btn btn-ghost btn-sm" style="display: inline-flex; align-items: center; gap: 4px;">
+            <a href="/privacy" target="_blank" class="btn btn-ghost btn-sm" style="display: inline-flex; align-items: center; gap: 4px;">
               <span>مشاهده صفحه حریم خصوصی</span>
               <span class="icon" style="width: 14px; height: 14px;">${icons.externalLink || ''}</span>
             </a>

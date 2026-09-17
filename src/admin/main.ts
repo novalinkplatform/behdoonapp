@@ -189,7 +189,7 @@ const PATH_TO_SCREEN: Record<string, AdminScreen> = {
 
 function getScreenFromUrl(): { screen: AdminScreen; detailId?: number | null } | null {
   const pathname = window.location.pathname;
-  const normalized = pathname.replace(/^\/management\/?/, '').replace(/\/+$/, '');
+  const normalized = pathname.replace(/^\/(?:management|admin)\/?/, '').replace(/\/+$/, '');
   if (!normalized) return { screen: 'home' };
 
   if (PATH_TO_SCREEN[normalized]) {

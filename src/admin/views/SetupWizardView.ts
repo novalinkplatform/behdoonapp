@@ -17,12 +17,12 @@ interface WizardVehicleType {
 }
 
 const FALLBACK_VEHICLE_TYPES: WizardVehicleType[] = [
-  { id: 'motorcycle', label: 'موتور', labelEn: 'Motorcycle', icon: 'motorcycle', basePrice: 180000, perKmRate: 6000, floorCostExempt: true, active: true, sortOrder: 1 },
-  { id: 'pickup', label: 'وانت', labelEn: 'Pickup', icon: 'pickup', basePrice: 950000, perKmRate: 26000, floorCostExempt: false, active: true, sortOrder: 2 },
-  { id: 'van', label: 'نیسان', labelEn: 'Van', icon: 'van', basePrice: 1300000, perKmRate: 32000, floorCostExempt: false, active: true, sortOrder: 3 },
-  { id: 'light-truck', label: 'خاور', labelEn: 'Light truck', icon: 'lightTruck', basePrice: 2100000, perKmRate: 55000, floorCostExempt: false, active: true, sortOrder: 4 },
-  { id: 'truck', label: 'کامیون', labelEn: 'Truck', icon: 'truck', basePrice: 3000000, perKmRate: 90000, floorCostExempt: false, active: true, sortOrder: 5 },
-  { id: 'trailer', label: 'تریلی', labelEn: 'Trailer', icon: 'trailer', basePrice: 4500000, perKmRate: 140000, floorCostExempt: false, active: true, sortOrder: 6 },
+  { id: 'hvac', label: 'سرمایش و گرمایش (کولر، پکیج، چیلر)', labelEn: 'HVAC & Heating', icon: 'wrench', basePrice: 450000, perKmRate: 150000, floorCostExempt: true, active: true, sortOrder: 1 },
+  { id: 'plumbing', label: 'لوله‌کشی و تأسیسات آب و فاضلاب', labelEn: 'Plumbing & Pipes', icon: 'wrench', basePrice: 400000, perKmRate: 150000, floorCostExempt: true, active: true, sortOrder: 2 },
+  { id: 'electrical', label: 'برق‌کاری و سیم‌کشی ساختمان', labelEn: 'Electrical Services', icon: 'wrench', basePrice: 350000, perKmRate: 150000, floorCostExempt: true, active: true, sortOrder: 3 },
+  { id: 'renovation', label: 'نقاشی و بازسازی داخلی ساختمان', labelEn: 'Renovation & Painting', icon: 'wrench', basePrice: 800000, perKmRate: 200000, floorCostExempt: true, active: true, sortOrder: 4 },
+  { id: 'appliances', label: 'نصب و تعمیر لوازم خانگی', labelEn: 'Home Appliances Repair', icon: 'wrench', basePrice: 400000, perKmRate: 150000, floorCostExempt: true, active: true, sortOrder: 5 },
+  { id: 'masonry', label: 'بنایی، گچ‌کاری و کاشی‌کاری', labelEn: 'Masonry & Tiling', icon: 'wrench', basePrice: 600000, perKmRate: 200000, floorCostExempt: true, active: true, sortOrder: 6 },
 ];
 
 const STEP_COUNT = 8;
@@ -121,8 +121,8 @@ export function renderSetupWizardView(): string {
         </div>
 
         <div data-setup-step="4" class="setup-wizard-step" hidden>
-          <h2>شهر مبدأ خدمات</h2>
-          <p class="setup-wizard-hint">شهری که خدمات شما از آن‌جا شروع می‌شود — این شهر در فرم ثبت درخواست مشتریان به‌صورت پیش‌فرض انتخاب می‌شود.</p>
+          <h2>محدوده اصلی ارائه خدمات</h2>
+          <p class="setup-wizard-hint">استان و شهر مرکز خدمات شما — این شهر در فرم ثبت درخواست خدمات ساختمانی به صورت پیش‌فرض انتخاب می‌شود.</p>
           <div class="settings-form-grid">
             <div class="form-field">
               <label for="setup-origin-province">استان</label>
@@ -207,11 +207,11 @@ export function initSetupWizardView(staff: StaffInfo, onDone: (skippedOnly: bool
             <span>${v.label}</span>
           </span>
           <div class="form-field">
-            <label>قیمت پایه (تومان)</label>
+            <label>اجرت پایه (تومان)</label>
             <input type="number" min="0" step="1000" data-vehicle-base-price="${i}" value="${v.basePrice}" />
           </div>
           <div class="form-field">
-            <label>هر کیلومتر (تومان)</label>
+            <label>ایاب و ذهاب / کارشناسی (تومان)</label>
             <input type="number" min="0" step="1000" data-vehicle-per-km="${i}" value="${v.perKmRate}" />
           </div>
         </div>
