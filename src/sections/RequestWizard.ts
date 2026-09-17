@@ -19,6 +19,7 @@ import { formatAddressLabel } from '../utils/addresses.ts';
 import type { SavedAddress, SavedAddresses } from '../utils/addresses.ts';
 import { pick } from '../i18n/lang.ts';
 import { trackEvent } from '../utils/analytics.ts';
+import { saveCustomerSession } from '../utils/customerAuth.ts';
 
 const FLOOR_VALUES = [0, 1, 2, 3, 4, 5];
 
@@ -300,6 +301,35 @@ function renderLocationStep(prefix: string, label: string, note?: string): strin
   `;
 }
 
+export function renderRequestWizardModal(
+  vehicleTypes: VehicleTypeSetting[] = DEFAULT_VEHICLE_TYPES,
+  serviceCities?: ServiceCitiesSettings,
+  serviceCategorySettings?: ServiceCategoriesSettings,
+  siteName?: { fa?: string; en?: string } | string,
+): string {
+  return `
+    <div class="request-wizard-modal-overlay" id="request-wizard-modal" hidden tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="modal-wizard-heading">
+      <div class="request-wizard-modal-dialog">
+        <div class="request-wizard-modal-topbar">
+          <div class="request-wizard-modal-title-wrap">
+            <span class="modal-title-icon">${icons.bolt}</span>
+            <div>
+              <h2 class="request-wizard-modal-title" id="modal-wizard-heading">${pick('ثبت آنلاین درخواست خدمات بهدون', 'Online Service Request - Behdoon')}</h2>
+              <p class="request-wizard-modal-sub">${pick('محاسبه آنی هزینه، اعزام نزدیک‌ترین تکنسین متخصص و ضمانت کتبی در تهران', 'Instant price estimate, certified technician dispatch & written warranty in Tehran')}</p>
+            </div>
+          </div>
+          <button type="button" class="request-wizard-modal-close" id="request-wizard-modal-close" aria-label="${pick('بستن', 'Close')}" title="${pick('بستن', 'Close')}">
+            <span class="icon">${icons.close}</span>
+          </button>
+        </div>
+        <div class="request-wizard-modal-body">
+          ${renderRequestWizard(vehicleTypes, serviceCities, serviceCategorySettings, siteName)}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 export function renderRequestWizard(
   vehicleTypes: VehicleTypeSetting[] = DEFAULT_VEHICLE_TYPES,
   serviceCities?: ServiceCitiesSettings,
@@ -538,13 +568,33 @@ export function renderRequestWizard(
         </section>
 
         <section class="request-panel wizard-success" data-panel="success" hidden>
-          <span class="request-success-icon">${icons.checkCircle}</span>
-          <h3>${pick('درخواست شما ثبت شد', 'Your request has been submitted')}</h3>
-          <p>${pick(
-            'کد رهگیری زیر را نزد خود نگه دارید؛ به‌زودی با شماره شما هماهنگ می‌کنیم.',
-            "Keep the tracking code below; we'll contact you at your number shortly.",
-          )}</p>
-          <div class="tracking-code" id="wizard-tracking-code"></div>
+          <div class="request-success-header">
+            <span class="request-success-icon">${icons.checkCircle}</span>
+            <h3>${pick('درخواست شما با موفقیت در بهدون ثبت شد', 'Your request has been successfully submitted to Behdoon')}</h3>
+            <p>${pick(
+              'کد رهگیری زیر را نزد خود نگه دارید؛ نزدیک‌ترین تکنسین مجرب پس از بررسی با شما هماهنگ خواهد شد.',
+              "Keep the tracking code below; the nearest certified technician will coordinate with you shortly.",
+            )}</p>
+          </div>
+
+          <div class="wizard-membership-activation-box">
+            <span class="icon">${icons.user || icons.shield}</span>
+            <div>
+              <strong>${pick('عضویت شما در بهدون فعال شد', 'Your Behdoon Membership is Active')}</strong>
+              <p id="wizard-membership-text">${pick('حساب کاربری شما با شماره تماس ثبت‌شده فعال گردید. وضعیت این سفارش و فاکتورها همیشه در بخش «درخواست‌های من» در دسترس است.', 'Your customer account is active. You can track this request anytime under "My Orders".')}</p>
+            </div>
+          </div>
+
+          <div class="wizard-tracking-box">
+            <span class="tracking-label">${pick('کد رهگیری هوشمند درخواست:', 'Smart Tracking Code:')}</span>
+            <div class="tracking-code-row">
+              <span class="tracking-code-val" id="wizard-tracking-code"></span>
+              <button type="button" class="btn btn-secondary btn-sm" id="wizard-copy-tracking-btn" title="${pick('کپی کد پیگیری', 'Copy tracking code')}">
+                <span class="icon">${icons.copy || icons.fileText}</span>
+                <span id="wizard-copy-tracking-text">${pick('کپی کد', 'Copy')}</span>
+              </button>
+            </div>
+          </div>
 
           <div class="wizard-success-notice-box">
             <span class="icon">${icons.shield || icons.checkCircle}</span>
@@ -555,6 +605,32 @@ export function renderRequestWizard(
           </div>
 
           <dl class="request-summary" id="wizard-final-summary"></dl>
+
+          <div class="wizard-success-actions-grid">
+            <button type="button" class="btn btn-primary wizard-action-btn-invoice" id="wizard-view-invoice-btn">
+              <span class="icon">${icons.fileText}</span>
+              <span>${pick('مشاهده و دریافت فاکتور رسمی تفکیکی', 'View Official Itemized Invoice')}</span>
+            </button>
+
+            <a href="/orders" class="btn btn-secondary wizard-action-btn" id="wizard-go-orders-btn">
+              <span class="icon">${icons.box}</span>
+              <span>${pick('پیگیری در درخواست‌های من', 'Track in My Orders')}</span>
+            </a>
+
+            <a href="tel:02122345678" class="btn btn-secondary wizard-action-btn" id="wizard-call-support-btn">
+              <span class="icon">${icons.phone}</span>
+              <span>${pick('تماس با پشتیبانی: ۰۲۱-۲۲۳۴۵۶۷۸', 'Support: 021-22345678')}</span>
+            </a>
+
+            <a href="https://wa.me/989333256885" target="_blank" rel="noopener" class="btn btn-secondary wizard-action-btn wizard-whatsapp-action" id="wizard-whatsapp-btn">
+              <span class="icon">${icons.chat}</span>
+              <span>${pick('هماهنگی و ارسال تصویر در واتساپ', 'WhatsApp Support & Photo Send')}</span>
+            </a>
+
+            <button type="button" class="btn btn-ghost wizard-action-btn-reset" id="wizard-new-request-btn">
+              <span>${pick('ثبت درخواست جدید', 'Submit New Request')}</span>
+            </button>
+          </div>
         </section>
       </div>
 
@@ -599,7 +675,11 @@ function wireChipGroup(
 
 export interface RequestWizardController {
   selectService: (serviceId: string) => void;
+  selectVehicle: (vehicleId: string) => void;
   setSavedAddresses: (addresses: SavedAddresses) => void;
+  openModal: (serviceId?: string, vehicleId?: string) => void;
+  closeModal: () => void;
+  resetWizard: () => void;
 }
 
 export function initRequestWizard(
@@ -624,7 +704,14 @@ export function initRequestWizard(
   const trackingCodeEl = document.getElementById('wizard-tracking-code');
   const finalSummaryEl = document.getElementById('wizard-final-summary');
 
-  const noop: RequestWizardController = { selectService: () => {}, setSavedAddresses: () => {} };
+  const noop: RequestWizardController = {
+    selectService: () => {},
+    selectVehicle: () => {},
+    setSavedAddresses: () => {},
+    openModal: () => {},
+    closeModal: () => {},
+    resetWizard: () => {},
+  };
   if (
     !card ||
     !questionEl ||
@@ -1282,10 +1369,53 @@ export function initRequestWizard(
 
         saveLastPhone(phone);
         saveLastName(name);
+
+        // عضویت مشتری در سامانه بهدون (دقیقاً مشابه بهبار)
+        saveCustomerSession({
+          id: Date.now(),
+          phone,
+          fullName: name,
+        });
+
+        const memberText = document.getElementById('wizard-membership-text');
+        if (memberText) {
+          memberText.textContent = pick(
+            `حساب کاربری شما با شماره تماس ${toPersianDigits(phone)} فعال گردید. وضعیت این سفارش و فاکتورها همیشه در بخش «درخواست‌های من» در دسترس شماست.`,
+            `Your customer account with phone ${toPersianDigits(phone)} is active. You can track this request anytime under "My Orders".`,
+          );
+        }
+
         const originNotes = (document.getElementById('wizard-origin-notes') as HTMLTextAreaElement | null)?.value.trim();
         const destinationNotes = (document.getElementById('wizard-destination-notes') as HTMLTextAreaElement | null)?.value.trim();
         trackingCodeEl!.textContent = toPersianDigits(trackingCode);
         trackEvent('order_submitted', { trackingCode, serviceId: state.serviceId, vehicleId: state.vehicleId });
+
+        // دکمه کپی کد پیگیری با بازخورد تصویری سریع
+        const copyBtn = document.getElementById('wizard-copy-tracking-btn');
+        const copyText = document.getElementById('wizard-copy-tracking-text');
+        copyBtn?.addEventListener('click', () => {
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(trackingCode).then(() => {
+              if (copyText) copyText.textContent = pick('کپی شد! ✓', 'Copied! ✓');
+              setTimeout(() => {
+                if (copyText) copyText.textContent = pick('کپی کد', 'Copy');
+              }, 2500);
+            }).catch(() => {});
+          }
+        });
+
+        // تنظیم پیام از پیش آماده واتساپ
+        const waBtn = document.getElementById('wizard-whatsapp-btn') as HTMLAnchorElement | null;
+        if (waBtn) {
+          const waMsg = `سلام، درخواست ${serviceLabel()} با کد پیگیری #${trackingCode} در سامانه بهدون ثبت کردم. جهت ارسال تصویر و هماهنگی پیام می‌دهم.`;
+          waBtn.href = `https://wa.me/989333256885?text=${encodeURIComponent(waMsg)}`;
+        }
+
+        // دکمه ثبت درخواست جدید
+        const newReqBtn = document.getElementById('wizard-new-request-btn');
+        newReqBtn?.addEventListener('click', () => {
+          resetWizard();
+        });
 
         const selectedTier = INSURANCE_TIERS.find((t) => t.id === state.insuranceTier) || INSURANCE_TIERS[2];
         const insuranceTitle = pick(selectedTier.title, selectedTier.titleEn);
@@ -1303,12 +1433,6 @@ export function initRequestWizard(
           <div class="request-summary-row"><dt>${pick('موبایل', 'Mobile')}</dt><dd>${toPersianDigits(phone)}</dd></div>
           ${originNotes ? `<div class="request-summary-row"><dt>${pick('توضیحات مبدأ', 'Origin notes')}</dt><dd>${originNotes}</dd></div>` : ''}
           ${destinationNotes ? `<div class="request-summary-row"><dt>${pick('توضیحات مقصد', 'Destination notes')}</dt><dd>${destinationNotes}</dd></div>` : ''}
-          <div class="wizard-success-invoice-cta" style="margin-top: 18px; text-align: center; width: 100%;">
-            <button type="button" class="btn btn-primary" id="wizard-view-invoice-btn" style="width: 100%; max-width: 320px; margin: 0 auto; gap: 8px;">
-              <span class="icon">${icons.fileText}</span>
-              <span>${pick('مشاهده و دریافت فاکتور رسمی', 'View & Print Official Invoice')}</span>
-            </button>
-          </div>
         `;
 
         const viewInvoiceBtn = document.getElementById('wizard-view-invoice-btn');
@@ -1329,19 +1453,24 @@ export function initRequestWizard(
           });
         });
 
+        const newRequestBtn = document.getElementById('wizard-new-request-btn');
+        newRequestBtn?.addEventListener('click', () => {
+          resetWizard();
+        });
+
         card!.querySelectorAll<HTMLElement>('.request-panel[data-panel]').forEach((el) => {
           el.hidden = el.dataset.panel !== 'success';
         });
-      document.querySelector('.wizard-progress')?.setAttribute('hidden', '');
-      questionEl!.hidden = true;
-      footer!.hidden = true;
-    } catch (err) {
-      submitError!.hidden = false;
-      submitError!.textContent = err instanceof Error ? err.message : pick('ثبت درخواست ناموفق بود. دوباره تلاش کنید.', 'Failed to submit the request. Please try again.');
-      nextBtn!.disabled = false;
-      nextBtn!.textContent = pick('ثبت درخواست', 'Submit request');
+        document.querySelector('.wizard-progress')?.setAttribute('hidden', '');
+        questionEl!.hidden = true;
+        footer!.hidden = true;
+      } catch (err) {
+        submitError!.hidden = false;
+        submitError!.textContent = err instanceof Error ? err.message : pick('ثبت درخواست ناموفق بود. دوباره تلاش کنید.', 'Failed to submit the request. Please try again.');
+        nextBtn!.disabled = false;
+        nextBtn!.textContent = pick('ثبت درخواست', 'Submit request');
+      }
     }
-  }
 
   nextBtn.addEventListener('click', () => {
     if (!validateCurrentStep()) return;
@@ -1364,17 +1493,113 @@ export function initRequestWizard(
     advanceStep(-1);
   });
 
+  function resetWizard(): void {
+    currentStep = 1;
+    state.serviceId = null;
+    state.vehicleId = null;
+    state.originPropertyType = null;
+    state.destinationPropertyType = null;
+    state.originFloor = null;
+    state.originElevator = null;
+    state.destinationFloor = null;
+    state.destinationElevator = null;
+    state.wantsPacking = null;
+    state.laborChoice = null;
+
+    card?.querySelectorAll<HTMLButtonElement>('[data-service-choice], [data-vehicle-choice], [data-property-choice], [data-floor-choice], [data-elevator-choice], [data-packing-choice], [data-labor-choice]').forEach((btn) => {
+      btn.classList.remove('is-selected');
+    });
+    card?.querySelectorAll<HTMLElement>('.request-panel[data-panel]').forEach((el) => {
+      el.hidden = el.dataset.panel !== '1';
+    });
+    document.querySelector('.wizard-progress')?.removeAttribute('hidden');
+    questionEl!.hidden = false;
+    footer!.hidden = false;
+    nextBtn!.disabled = false;
+    submitError!.hidden = true;
+    updateStepUI();
+  }
+
+  function openModal(serviceId?: string, vehicleId?: string): void {
+    const modalEl = document.getElementById('request-wizard-modal');
+    if (modalEl) {
+      modalEl.hidden = false;
+      modalEl.classList.add('is-open');
+      document.body.classList.add('modal-open');
+    }
+
+    if (serviceId) {
+      setServiceSelection(serviceId);
+    }
+    if (vehicleId) {
+      setVehicleSelection(vehicleId);
+    }
+
+    if (serviceId && vehicleId) {
+      currentStep = 3;
+    } else if (serviceId) {
+      currentStep = 2;
+    } else {
+      currentStep = 1;
+    }
+    updateStepUI();
+  }
+
+  function closeModal(): void {
+    const modalEl = document.getElementById('request-wizard-modal');
+    if (modalEl) {
+      modalEl.classList.remove('is-open');
+      modalEl.hidden = true;
+      document.body.classList.remove('modal-open');
+    }
+  }
+
+  document.getElementById('request-wizard-modal-close')?.addEventListener('click', closeModal);
+
+  const modalOverlay = document.getElementById('request-wizard-modal');
+  modalOverlay?.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) closeModal();
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalOverlay && !modalOverlay.hidden) {
+      closeModal();
+    }
+  });
+
+  document.querySelectorAll<HTMLElement>('.header-cta, .request-wizard-open-trigger').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openModal();
+    });
+  });
+
+  if (location.hash === '#request') {
+    openModal();
+  }
+  window.addEventListener('hashchange', () => {
+    if (location.hash === '#request') {
+      openModal();
+    }
+  });
+
   updateStepUI();
 
   return {
     selectService: (serviceId: string) => {
       setServiceSelection(serviceId);
-      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      openModal(serviceId);
+    },
+    selectVehicle: (vehicleId: string) => {
+      setVehicleSelection(vehicleId);
     },
     setSavedAddresses: (addresses: SavedAddresses) => {
       // اگر مبدأ ثابت تنظیم شده، انتخاب مبدأ از قبل قفل است — نمایش لیست آدرس‌های قبلی برای آن معنی ندارد.
       if (!fixedOriginCity) wireSavedAddressPicker('wizard-origin', origin, addresses.origins);
       wireSavedAddressPicker('wizard-destination', destination, addresses.destinations);
     },
+    openModal,
+    closeModal,
+    resetWizard,
   };
 }

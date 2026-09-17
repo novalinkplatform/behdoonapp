@@ -202,10 +202,18 @@ export default {
       }
 
       if ((pathname === '/api/admin/requests' || pathname === '/api/requests') && request.method === 'GET') {
+        const phoneParam = url.searchParams.get('phone');
         let requestsList: any[] = [];
         if (env.DB) {
           try {
-            const { results } = await env.DB.prepare('SELECT * FROM requests ORDER BY id DESC').all();
+            let results: any[] = [];
+            if (phoneParam) {
+              const queryRes = await env.DB.prepare('SELECT * FROM requests WHERE phone = ? ORDER BY id DESC').bind(phoneParam).all();
+              results = (queryRes?.results as any[]) || [];
+            } else {
+              const queryRes = await env.DB.prepare('SELECT * FROM requests ORDER BY id DESC').all();
+              results = (queryRes?.results as any[]) || [];
+            }
             if (results && results.length > 0) {
               requestsList = results.map((r: any) => ({
                 id: r.id,
@@ -227,6 +235,301 @@ export default {
           } catch {}
         }
         return jsonResponse({ requests: requestsList });
+      }
+
+      if (pathname === '/api/customer/me') {
+        const authHeader = request.headers.get('Authorization') || '';
+        const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+        const phoneMatch = token.match(/(09\d{9})/);
+        const phone = phoneMatch ? phoneMatch[1] : '09123456789';
+        let fullName = 'مشتری گرامی بهدون';
+        if (env.DB) {
+          try {
+            const row = await env.DB.prepare('SELECT name FROM requests WHERE phone = ? ORDER BY id DESC LIMIT 1').bind(phone).first();
+            if (row?.name) fullName = String(row.name);
+          } catch {}
+        }
+        return jsonResponse({
+          customer: {
+            id: 1,
+            phone,
+            fullName,
+          },
+        });
+      }
+
+      const BEHDOON_STAFF_MEMBERS = [
+        {
+          id: 1,
+          username: 'admin',
+          fullName: 'علیرضا کاظمی',
+          role: 'super_admin',
+          roleLabel: 'مدیر کل سیستم',
+          permissions: ['*'],
+          assignable: true,
+          phone: '021-22345678',
+          avatarUrl: null,
+          nationalId: '0012345678',
+          address: 'تهران، نیاوران، دفتر مرکزی بهدون',
+          hireDate: '1402/01/01',
+          emergencyContactName: 'دفتر مرکزی',
+          emergencyContactPhone: '02122345678',
+          notes: 'مدیریت کل سیستم خدمات ساختمانی بهدون',
+          gender: 'male',
+          isActive: true,
+          isReadOnly: false,
+          onActiveService: false,
+          salaryAmountOverride: null,
+          bonusTypeOverride: null,
+          bonusAmountOverride: null,
+          createdAt: '1402/01/01',
+        },
+        {
+          id: 2,
+          username: 'sara.dispatch',
+          fullName: 'سارا حسینی',
+          role: 'support_dispatch',
+          roleLabel: 'کارشناس پشتیبانی و اعزام فوری',
+          permissions: ['dashboard', 'pipeline', 'map', 'chat'],
+          assignable: false,
+          phone: '09129876543',
+          avatarUrl: null,
+          nationalId: '0078901234',
+          address: 'تهران، پاسداران',
+          hireDate: '1402/08/15',
+          emergencyContactName: 'حسینی',
+          emergencyContactPhone: '09121112233',
+          notes: 'مسئول هماهنگی تلفنی و اعزام فوری تکنسین‌ها به محلات تهران',
+          gender: 'female',
+          isActive: true,
+          isReadOnly: false,
+          onActiveService: false,
+          salaryAmountOverride: null,
+          bonusTypeOverride: null,
+          bonusAmountOverride: null,
+          createdAt: '1402/08/15',
+        },
+        {
+          id: 3,
+          username: 'majid.hvac',
+          fullName: 'مهندس مجید رستمی',
+          role: 'tech_hvac',
+          roleLabel: 'تکنسین ارشد سرمایش و گرمایش',
+          permissions: ['assignments'],
+          assignable: true,
+          phone: '09351112233',
+          avatarUrl: null,
+          nationalId: '0045678901',
+          address: 'تهران، سعادت‌آباد و پونک',
+          hireDate: '1402/04/10',
+          emergencyContactName: 'رستمی',
+          emergencyContactPhone: '09350001122',
+          notes: 'دارای مدرک فنی‌حرفه‌ای بین‌المللی پکیج، چیلر، اسپلیت و موتورخانه',
+          gender: 'male',
+          isActive: true,
+          isReadOnly: false,
+          onActiveService: true,
+          salaryAmountOverride: null,
+          bonusTypeOverride: null,
+          bonusAmountOverride: null,
+          createdAt: '1402/04/10',
+        },
+        {
+          id: 4,
+          username: 'behrouz.pipe',
+          fullName: 'استاد بهروز قاسمی',
+          role: 'tech_plumbing',
+          roleLabel: 'استادکار لوله‌کشی و تأسیسات',
+          permissions: ['assignments'],
+          assignable: true,
+          phone: '09124445566',
+          avatarUrl: null,
+          nationalId: '0067890123',
+          address: 'تهران، ستارخان و منطقه ۲',
+          hireDate: '1402/03/01',
+          emergencyContactName: 'قاسمی',
+          emergencyContactPhone: '09127778899',
+          notes: 'متخصص نشت‌یابی با دستگاه تصویری، لوله بازکنی بدون تخریب و پمپ آب ساختمان',
+          gender: 'male',
+          isActive: true,
+          isReadOnly: false,
+          onActiveService: false,
+          salaryAmountOverride: null,
+          bonusTypeOverride: null,
+          bonusAmountOverride: null,
+          createdAt: '1402/03/01',
+        },
+        {
+          id: 5,
+          username: 'sina.electric',
+          fullName: 'مهندس سینا مرادی',
+          role: 'tech_electrical',
+          roleLabel: 'برقکار و تکنسین برق ساختمان',
+          permissions: ['assignments'],
+          assignable: true,
+          phone: '09193334455',
+          avatarUrl: null,
+          nationalId: '0034567890',
+          address: 'تهران، تهرانپارس و شرق تهران',
+          hireDate: '1402/06/20',
+          emergencyContactName: 'مرادی',
+          emergencyContactPhone: '09195556677',
+          notes: 'رفع فوری اتصالی برق ساختمان، سیم‌کشی سه فاز و نصب انواع آیفون تصویری',
+          gender: 'male',
+          isActive: true,
+          isReadOnly: false,
+          onActiveService: true,
+          salaryAmountOverride: null,
+          bonusTypeOverride: null,
+          bonusAmountOverride: null,
+          createdAt: '1402/06/20',
+        },
+        {
+          id: 6,
+          username: 'ahmad.reno',
+          fullName: 'استاد احمد کریمی',
+          role: 'tech_renovation',
+          roleLabel: 'استادکار تعمیرات و بازسازی ساختمان',
+          permissions: ['assignments'],
+          assignable: true,
+          phone: '09128889900',
+          avatarUrl: null,
+          nationalId: '0098765432',
+          address: 'تهران، یوسف‌آباد و مرکز شهر',
+          hireDate: '1402/02/12',
+          emergencyContactName: 'کریمی',
+          emergencyContactPhone: '09122223344',
+          notes: 'استادکار بازسازی صفر تا صد، کاشی‌کاری پرسلان، نقاشی مدرن و کناف ضد رطوبت',
+          gender: 'male',
+          isActive: true,
+          isReadOnly: false,
+          onActiveService: false,
+          salaryAmountOverride: null,
+          bonusTypeOverride: null,
+          bonusAmountOverride: null,
+          createdAt: '1402/02/12',
+        },
+      ];
+
+      const BEHDOON_ROLE_RECORDS = [
+        {
+          id: 1,
+          key: 'super_admin',
+          label: 'مدیر کل سیستم',
+          labelEn: 'Super Admin',
+          permissions: ['*'],
+          isSystem: true,
+          defaultSalaryAmount: 0,
+          defaultBonusType: 'percent',
+          defaultBonusAmount: 0,
+          createdAt: '1402/01/01',
+          updatedAt: '1402/01/01',
+        },
+        {
+          id: 2,
+          key: 'support_dispatch',
+          label: 'کارشناس پشتیبانی و اعزام فوری',
+          labelEn: 'Support & Dispatch Specialist',
+          permissions: ['dashboard', 'pipeline', 'map', 'chat'],
+          isSystem: false,
+          defaultSalaryAmount: 18000000,
+          defaultBonusType: 'percent',
+          defaultBonusAmount: 5,
+          createdAt: '1402/08/15',
+          updatedAt: '1402/08/15',
+        },
+        {
+          id: 3,
+          key: 'tech_hvac',
+          label: 'تکنسین ارشد سرمایش و گرمایش',
+          labelEn: 'HVAC Specialist',
+          permissions: ['assignments'],
+          isSystem: false,
+          defaultSalaryAmount: 25000000,
+          defaultBonusType: 'flat',
+          defaultBonusAmount: 600000,
+          createdAt: '1402/04/10',
+          updatedAt: '1402/04/10',
+        },
+        {
+          id: 4,
+          key: 'tech_plumbing',
+          label: 'استادکار لوله‌کشی و تأسیسات',
+          labelEn: 'Plumbing Specialist',
+          permissions: ['assignments'],
+          isSystem: false,
+          defaultSalaryAmount: 24000000,
+          defaultBonusType: 'flat',
+          defaultBonusAmount: 550000,
+          createdAt: '1402/03/01',
+          updatedAt: '1402/03/01',
+        },
+        {
+          id: 5,
+          key: 'tech_electrical',
+          label: 'برقکار و تکنسین برق ساختمان',
+          labelEn: 'Electrical Specialist',
+          permissions: ['assignments'],
+          isSystem: false,
+          defaultSalaryAmount: 23000000,
+          defaultBonusType: 'flat',
+          defaultBonusAmount: 500000,
+          createdAt: '1402/06/20',
+          updatedAt: '1402/06/20',
+        },
+        {
+          id: 6,
+          key: 'tech_renovation',
+          label: 'استادکار تعمیرات و بازسازی ساختمان',
+          labelEn: 'Renovation Specialist',
+          permissions: ['assignments'],
+          isSystem: false,
+          defaultSalaryAmount: 26000000,
+          defaultBonusType: 'flat',
+          defaultBonusAmount: 700000,
+          createdAt: '1402/02/12',
+          updatedAt: '1402/02/12',
+        },
+      ];
+
+      const BEHDOON_PERMISSION_LIST = [
+        { key: 'dashboard', label: 'داشبورد و آمار', labelEn: 'Dashboard & Stats' },
+        { key: 'pipeline', label: 'مراحل درخواست‌ها', labelEn: 'Pipeline' },
+        { key: 'map', label: 'نقشه درخواست‌ها', labelEn: 'Map' },
+        { key: 'content', label: 'مدیریت محتوا', labelEn: 'Content' },
+        { key: 'homepage', label: 'صفحه اصلی', labelEn: 'Homepage' },
+        { key: 'stories', label: 'استوری‌ها', labelEn: 'Stories' },
+        { key: 'chat', label: 'چت پشتیبانی', labelEn: 'Support Chat' },
+        { key: 'recruitment', label: 'فرصت‌های شغلی', labelEn: 'Recruitment' },
+        { key: 'staff', label: 'کارمندان و تکنسین‌ها', labelEn: 'Staff' },
+        { key: 'roles', label: 'نقش‌ها و دسترسی‌ها', labelEn: 'Roles' },
+        { key: 'settings', label: 'تنظیمات عمومی', labelEn: 'Settings' },
+        { key: 'seo', label: 'مدیریت سئو', labelEn: 'SEO' },
+        { key: 'ai', label: 'دستیار هوش مصنوعی', labelEn: 'AI Assistant' },
+        { key: 'plugins', label: 'افزونه‌ها', labelEn: 'Plugins' },
+        { key: 'assignments', label: 'ماموریت‌های من', labelEn: 'My Assignments' },
+        { key: 'wallet', label: 'حقوق و دستمزد', labelEn: 'Payroll' },
+      ];
+
+      if (pathname === '/api/admin/staff') {
+        return jsonResponse({ staff: BEHDOON_STAFF_MEMBERS });
+      }
+
+      if (pathname === '/api/admin/roles') {
+        return jsonResponse({ roles: BEHDOON_ROLE_RECORDS, permissions: BEHDOON_PERMISSION_LIST });
+      }
+
+      if (pathname === '/api/admin/wallet/staff') {
+        const wallets = BEHDOON_STAFF_MEMBERS.map((s) => ({
+          staffId: s.id,
+          fullName: s.fullName,
+          roleLabel: s.roleLabel,
+          balance: s.id * 1850000,
+          totalEarned: s.id * 9200000,
+          totalPaidOut: s.id * 7350000,
+          pendingPayoutAmount: 0,
+        }));
+        return jsonResponse({ wallets });
       }
 
       if (pathname.startsWith('/api/admin/requests/') && request.method === 'PATCH') {
@@ -277,7 +580,12 @@ export default {
           topProvinces: [{ province: 'تهران', count: 28 }],
           avgOrderValue: 1732000,
           staffPerformance: [
-            { name: 'مدیر کل بهدون', role: 'super_admin', role_label: 'مدیر کل سیستم', total: 28, completed: 5 },
+            { name: 'علیرضا کاظمی', role: 'super_admin', role_label: 'مدیر کل سیستم', total: 28, completed: 5 },
+            { name: 'سارا حسینی', role: 'support_dispatch', role_label: 'پشتیبانی و اعزام فوری', total: 24, completed: 18 },
+            { name: 'مهندس مجید رستمی', role: 'tech_hvac', role_label: 'تکنسین سرمایش و گرمایش', total: 12, completed: 10 },
+            { name: 'استاد بهروز قاسمی', role: 'tech_plumbing', role_label: 'استادکار تأسیسات', total: 9, completed: 8 },
+            { name: 'مهندس سینا مرادی', role: 'tech_electrical', role_label: 'برقکار ساختمان', total: 4, completed: 4 },
+            { name: 'استاد احمد کریمی', role: 'tech_renovation', role_label: 'استادکار بازسازی', total: 3, completed: 2 },
           ],
         });
       }

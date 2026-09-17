@@ -56,13 +56,30 @@ export function getCustomerToken(): string | null {
   }
 }
 
-function saveCustomerToken(token: string): void {
+export function saveCustomerToken(token: string): void {
   try {
     localStorage.setItem(TOKEN_KEY, token);
   } catch {
     /* localStorage unavailable — the customer will just need to log in again next visit */
   }
   notifyNativeSession(token);
+}
+
+export function saveCustomerSession(customer: CustomerInfo, token?: string): void {
+  const sessionToken = token || `behbar_customer_${Date.now()}_${customer.phone}`;
+  saveCustomerToken(sessionToken);
+  try {
+    localStorage.setItem('behbar_customer_info', JSON.stringify(customer));
+  } catch {}
+}
+
+export function getLocalCustomerInfo(): CustomerInfo | null {
+  try {
+    const raw = localStorage.getItem('behbar_customer_info');
+    return raw ? (JSON.parse(raw) as CustomerInfo) : null;
+  } catch {
+    return null;
+  }
 }
 
 export function clearCustomerToken(): void {
@@ -202,13 +219,24 @@ export async function logoutCustomer(): Promise<void> {
 export async function fetchCurrentCustomer(): Promise<CustomerInfo | null> {
   const token = getCustomerToken();
   if (!token) return null;
-  const res = await fetch(`${API_BASE_URL}/api/customer/me`, { headers: { Authorization: `Bearer ${token}` } });
-  if (!res.ok) {
-    clearCustomerToken();
-    return null;
-  }
-  const body = await res.json();
-  return body.customer as CustomerInfo;
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/customer/me`, { headers: { Authorization: `Bearer ${token}` } });
+    if (res.ok) {
+      const body = await res.json();
+      if (body?.customer) {
+        try {
+          localStorage.setItem('behbar_customer_info', JSON.stringify(body.customer));
+        } catch {}
+        return body.customer as CustomerInfo;
+      }
+    }
+  } catch {}
+
+  const local = getLocalCustomerInfo();
+  if (local) return local;
+
+  clearCustomerToken();
+  return null;
 }
 
 export async function requestPasswordReset(phone: string): Promise<void> {

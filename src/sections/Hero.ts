@@ -1,4 +1,4 @@
-import { renderRequestWizard } from './RequestWizard.ts';
+import { renderServiceCategoriesAccordion } from '../components/ServiceCategoriesAccordion.ts';
 import { pick } from '../i18n/lang.ts';
 import type {
   VehicleTypeSetting,
@@ -9,12 +9,12 @@ import type {
 } from '../utils/dynamicContent.ts';
 
 export function renderHero(
-  vehicleTypes?: VehicleTypeSetting[],
+  _vehicleTypes?: VehicleTypeSetting[],
   section?: HomepageSection,
-  serviceCities?: ServiceCitiesSettings,
-  serviceCategorySettings?: ServiceCategoriesSettings,
+  _serviceCities?: ServiceCitiesSettings,
+  _serviceCategorySettings?: ServiceCategoriesSettings,
   heroSlogan?: HeroSloganSetting,
-  siteName?: { fa?: string; en?: string } | string,
+  _siteName?: { fa?: string; en?: string } | string,
 ): string {
   const isEnabled = heroSlogan?.enabled !== false;
   const headline = pick(
@@ -41,7 +41,7 @@ export function renderHero(
             : ''
         }
 
-        ${renderRequestWizard(vehicleTypes, serviceCities, serviceCategorySettings, siteName)}
+        ${renderServiceCategoriesAccordion()}
       </div>
     </section>
   `;

@@ -9,7 +9,8 @@ import { renderHeader, initHeader } from './components/Header.ts';
 import { renderFooter, initFooter } from './components/Footer.ts';
 import { renderHero } from './sections/Hero.ts';
 import { renderContentBlock, initContentBlocks } from './sections/ContentBlock.ts';
-import { initRequestWizard } from './sections/RequestWizard.ts';
+import { initRequestWizard, renderRequestWizardModal } from './sections/RequestWizard.ts';
+import { initServiceCategoriesAccordion } from './components/ServiceCategoriesAccordion.ts';
 import { renderBottomNav, initBottomNav } from './components/BottomNav.ts';
 import { renderDemoBadges } from './components/DemoBadges.ts';
 import { renderStoriesStrip, initStoriesStrip } from './components/StoriesStrip.ts';
@@ -107,6 +108,7 @@ function renderApp(settings: Awaited<ReturnType<typeof loadSettings>>, testimoni
     ${renderBottomNav()}
     ${renderQuickActions(settings)}
     ${renderDemoBadges()}
+    ${renderRequestWizardModal(vehicleTypes, settings.service_cities, settings.service_categories, settings.site_name)}
   `;
 }
 
@@ -133,6 +135,9 @@ async function init(): Promise<void> {
   initFooter(settings);
   setGeocodeMapConfig(settings.map);
   const wizardController = initRequestWizard(vehicleTypes, settings.service_cities, settings.map, settings.site_name);
+  initServiceCategoriesAccordion((catId, vehicleId) => {
+    wizardController.openModal(catId, vehicleId);
+  });
   initContentBlocks();
   initBottomNav();
   initLangToggle();
