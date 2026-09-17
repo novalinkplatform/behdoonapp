@@ -28,6 +28,86 @@ function floorLabel(floor: number): string {
   return toPersianDigits(floor);
 }
 
+export interface InsuranceTier {
+  id: string;
+  title: string;
+  titleEn: string;
+  coverageCeiling: string;
+  coverageCeilingEn: string;
+  costLabel: string;
+  costLabelEn: string;
+  description: string;
+  descriptionEn: string;
+  isRecommended?: boolean;
+}
+
+export const INSURANCE_TIERS: InsuranceTier[] = [
+  {
+    id: 'base_50m',
+    title: 'پوشش پایه',
+    titleEn: 'Basic Coverage',
+    coverageCeiling: 'تا سقف ۵۰ میلیون تومان',
+    coverageCeilingEn: 'Up to 50M Toman',
+    costLabel: 'شامل خدمات پایه',
+    costLabelEn: 'Included in Base',
+    description: 'جبران خسارت حوادث حین کار و سلامت کارشناسی تا ۵۰ میلیون تومان',
+    descriptionEn: 'Protection for on-site damage and service warranty up to 50M Toman',
+  },
+  {
+    id: 'silver_150m',
+    title: 'پوشش نقره‌ای',
+    titleEn: 'Silver Coverage',
+    coverageCeiling: 'تا سقف ۱۵۰ میلیون تومان',
+    coverageCeilingEn: 'Up to 150M Toman',
+    costLabel: 'مناسب پروژه‌های معمول',
+    costLabelEn: 'Standard Service',
+    description: 'پوشش خسارت تأسیسات، تجهیزات ساختمانی و قطعات مصرفی استاندارد',
+    descriptionEn: 'Protection for installations, building equipment and standard materials',
+  },
+  {
+    id: 'gold_300m',
+    title: 'پوشش طلایی',
+    titleEn: 'Gold Coverage',
+    coverageCeiling: 'تا سقف ۳۰۰ میلیون تومان',
+    coverageCeilingEn: 'Up to 300M Toman',
+    costLabel: 'پیشنهادی برای تعمیرات و بازسازی',
+    costLabelEn: 'Recommended for Renovation',
+    description: 'پوشش کامل قطعات گران‌قیمت، تجهیزات پکیج/سرمایش و تضمین کیفیت کار',
+    descriptionEn: 'Full protection for high-value components, HVAC/appliances and warranty',
+    isRecommended: true,
+  },
+  {
+    id: 'platinum_500m',
+    title: 'پوشش ویژه و VIP',
+    titleEn: 'VIP Coverage',
+    coverageCeiling: 'تا سقف ۵۰۰ میلیون تومان',
+    coverageCeilingEn: 'Up to 500M Toman',
+    costLabel: 'حداکثر سقف عادی',
+    costLabelEn: 'Max Standard Limit',
+    description: 'سقف حداکثری جبران فوری برای پروژه‌های بزرگ و تجهیزات لوکس ساختمانی',
+    descriptionEn: 'Maximum compensation ceiling for large projects and luxury building installations',
+  },
+  {
+    id: 'custom_high',
+    title: 'پوشش اختصاصی (پروژه‌های سنگین)',
+    titleEn: 'Custom High-Value',
+    coverageCeiling: 'بیش از ۵۰۰ میلیون تومان',
+    coverageCeilingEn: 'Above 500M Toman',
+    costLabel: 'کارشناسی بر اساس ارزش کار',
+    costLabelEn: 'Based on Project Value',
+    description: 'صدور بیمه‌نامه معتبر بر اساس برآورد پروژه و کارشناسی تخصصی در محل',
+    descriptionEn: 'Official insurance policy based on project assessment after expert verification',
+  },
+];
+
+export function getSiteBrandName(siteName?: { fa?: string; en?: string } | string): string {
+  if (!siteName) return pick('بهدون', 'Behdoon');
+  if (typeof siteName === 'object') {
+    return pick(siteName.fa, siteName.en) || siteName.fa || siteName.en || 'بهدون';
+  }
+  return String(siteName);
+}
+
 const STEPS = [
   { id: 'service', question: 'به چه خدمتی در ساختمان نیاز دارید؟', questionEn: 'What building service do you need?' },
   { id: 'vehicle', question: 'کدام خدمت تخصصی مدنظرتان است؟', questionEn: 'Which specific service do you need?' },
@@ -38,7 +118,7 @@ const STEPS = [
   { id: 'packing', question: 'آیا نیاز به تامین قطعات یا مصالح مصرفی دارید؟', questionEn: 'Do you need materials or spare parts provided?' },
   { id: 'labor', question: 'میزان فوریت خدمت را تعیین کنید', questionEn: 'Select service urgency' },
   { id: 'schedule', question: 'تکنسین چه زمانی به محل مراجعه کند؟', questionEn: 'When should the technician visit?' },
-  { id: 'estimate', question: 'برآورد اولیه هزینه خدمات', questionEn: 'Preliminary service cost estimate' },
+  { id: 'estimate', question: 'برآورد اولیه هزینه و انتخاب پوشش بیمه و خسارت', questionEn: 'Preliminary service cost estimate & insurance coverage' },
   { id: 'phone', question: 'برای ثبت نهایی و اعزام تکنسین، مشخصات خود را وارد کنید', questionEn: 'Enter your details to finalize and dispatch' },
 ];
 const TOTAL_STEPS = STEPS.length;
@@ -224,7 +304,9 @@ export function renderRequestWizard(
   vehicleTypes: VehicleTypeSetting[] = DEFAULT_VEHICLE_TYPES,
   serviceCities?: ServiceCitiesSettings,
   serviceCategorySettings?: ServiceCategoriesSettings,
+  siteName?: { fa?: string; en?: string } | string,
 ): string {
+  const brandName = getSiteBrandName(siteName);
   const activeVehicles = vehicleTypes.filter((v) => v.active).sort((a, b) => a.sortOrder - b.sortOrder);
   const activeVehicleIds = new Set(activeVehicles.map((v) => v.id));
   const showCountry = Boolean(serviceCities?.internationalShippingEnabled);
@@ -368,9 +450,74 @@ export function renderRequestWizard(
 
         <section class="request-panel" data-panel="10" hidden>
           <div id="wizard-cost-chart"></div>
+
+          <div class="wizard-insurance-section">
+            <div class="wizard-insurance-header">
+              <div class="wizard-insurance-header-title">
+                <span class="icon">${icons.shield || icons.checkCircle}</span>
+                <h4>${pick('انتخاب پوشش بیمه و میزان جبران خسارت', 'Select Insurance & Damage Compensation Limit')}</h4>
+              </div>
+              <p class="wizard-insurance-subtitle">
+                ${pick(
+                  'جهت تضمین ایمنی خدمات و جبران خسارات احتمالی هنگام انجام کار، سقف پوشش مورد نظر خود را انتخاب فرمایید:',
+                  'Select your desired coverage limit for job safety guarantee and damage compensation:',
+                )}
+              </p>
+            </div>
+
+            <div class="wizard-insurance-grid" id="wizard-insurance-grid">
+              ${INSURANCE_TIERS.map(
+                (tier) => `
+                <button
+                  type="button"
+                  class="wizard-insurance-card ${tier.id === 'gold_300m' ? 'is-selected' : ''} ${tier.isRecommended ? 'is-recommended' : ''}"
+                  data-insurance-choice="${tier.id}"
+                >
+                  ${tier.isRecommended ? `<span class="wizard-insurance-badge">${pick('پیشنهاد ویژه', 'Recommended')}</span>` : ''}
+                  <div class="wizard-insurance-card-top">
+                    <span class="wizard-insurance-card-title">${pick(tier.title, tier.titleEn)}</span>
+                    <span class="wizard-insurance-card-coverage">${pick(tier.coverageCeiling, tier.coverageCeilingEn)}</span>
+                  </div>
+                  <div class="wizard-insurance-card-cost">${pick(tier.costLabel, tier.costLabelEn)}</div>
+                  <p class="wizard-insurance-card-desc">${pick(tier.description, tier.descriptionEn)}</p>
+                </button>
+              `,
+              ).join('')}
+            </div>
+
+            <div class="wizard-insurance-notice">
+              <span class="icon wizard-insurance-notice-icon">${icons.shield || icons.checkCircle}</span>
+              <div class="wizard-insurance-notice-content">
+                <strong>${pick(
+                  `نهایی شدن توسط ${brandName} پس از بررسی صورت خواهد گرفت.`,
+                  `Finalization by ${brandName} will take place after review.`,
+                )}</strong>
+                <p>${pick(
+                  `پس از ثبت درخواست، شرایط کار و سقف پوشش بیمه انتخابی توسط کارشناسان ${brandName} بررسی و در هماهنگی تلفنی قطعی خواهد شد.`,
+                  `After submission, job conditions and selected insurance coverage will be verified and finalized with you by ${brandName} experts.`,
+                )}</p>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section class="request-panel" data-panel="11" hidden>
+          <div class="wizard-phone-insurance-banner">
+            <div class="wizard-phone-insurance-info">
+              <span class="icon">${icons.shield || icons.checkCircle}</span>
+              <div>
+                <span class="wizard-phone-insurance-title">${pick('پوشش بیمه و خسارت انتخابی:', 'Selected Insurance Coverage:')}</span>
+                <span class="wizard-phone-insurance-value" id="wizard-selected-insurance-text">${pick('پوشش طلایی — تا سقف ۳۰۰ میلیون تومان', 'Gold Coverage — Up to 300M Toman')}</span>
+              </div>
+            </div>
+            <div class="wizard-insurance-notice-compact">
+              ${pick(
+                `نهایی شدن توسط ${brandName} پس از بررسی صورت خواهد گرفت.`,
+                `Finalization by ${brandName} will take place after review.`,
+              )}
+            </div>
+          </div>
+
           <div class="form-field">
             <label for="wizard-name">${pick('نام و نام خانوادگی', 'Full name')}</label>
             <div class="input-wrapper">
@@ -398,6 +545,15 @@ export function renderRequestWizard(
             "Keep the tracking code below; we'll contact you at your number shortly.",
           )}</p>
           <div class="tracking-code" id="wizard-tracking-code"></div>
+
+          <div class="wizard-success-notice-box">
+            <span class="icon">${icons.shield || icons.checkCircle}</span>
+            <span>${pick(
+              `نهایی شدن توسط ${brandName} پس از بررسی صورت خواهد گرفت.`,
+              `Finalization by ${brandName} will take place after review.`,
+            )}</span>
+          </div>
+
           <dl class="request-summary" id="wizard-final-summary"></dl>
         </section>
       </div>
@@ -423,6 +579,7 @@ interface WizardState {
   laborChoice: 'none' | 'origin' | 'destination' | 'both' | null;
   laborCount: number;
   heavyItemsCount: number;
+  insuranceTier: string;
 }
 
 function wireChipGroup(
@@ -449,6 +606,7 @@ export function initRequestWizard(
   vehicleTypes: VehicleTypeSetting[] = DEFAULT_VEHICLE_TYPES,
   serviceCities?: ServiceCitiesSettings,
   mapSettings?: MapSettings,
+  siteName?: { fa?: string; en?: string } | string,
 ): RequestWizardController {
   const card = document.getElementById('request');
   const questionEl = document.getElementById('wizard-question');
@@ -651,6 +809,8 @@ export function initRequestWizard(
   originMap?.setBoundsMode('iran');
   destinationMap?.setBoundsMode('iran');
 
+  const brandName = getSiteBrandName(siteName);
+
   const state: WizardState = {
     serviceId: null,
     vehicleId: null,
@@ -664,7 +824,27 @@ export function initRequestWizard(
     laborChoice: null,
     laborCount: 2,
     heavyItemsCount: 0,
+    insuranceTier: 'gold_300m',
   };
+
+  const selectedInsuranceTextEl = document.getElementById('wizard-selected-insurance-text');
+  function updateSelectedInsuranceDisplay(tierId: string): void {
+    const tier = INSURANCE_TIERS.find((t) => t.id === tierId) || INSURANCE_TIERS[2];
+    if (selectedInsuranceTextEl) {
+      selectedInsuranceTextEl.textContent = `${pick(tier.title, tier.titleEn)} — ${pick(tier.coverageCeiling, tier.coverageCeilingEn)}`;
+    }
+  }
+
+  const insuranceButtons = Array.from(card.querySelectorAll<HTMLButtonElement>('[data-insurance-choice]'));
+  insuranceButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      insuranceButtons.forEach((b) => b.classList.remove('is-selected'));
+      btn.classList.add('is-selected');
+      const choice = btn.getAttribute('data-insurance-choice') || 'gold_300m';
+      state.insuranceTier = choice;
+      updateSelectedInsuranceDisplay(choice);
+    });
+  });
 
   let currentStep = 1;
 
@@ -1106,6 +1286,11 @@ export function initRequestWizard(
         const destinationNotes = (document.getElementById('wizard-destination-notes') as HTMLTextAreaElement | null)?.value.trim();
         trackingCodeEl!.textContent = toPersianDigits(trackingCode);
         trackEvent('order_submitted', { trackingCode, serviceId: state.serviceId, vehicleId: state.vehicleId });
+
+        const selectedTier = INSURANCE_TIERS.find((t) => t.id === state.insuranceTier) || INSURANCE_TIERS[2];
+        const insuranceTitle = pick(selectedTier.title, selectedTier.titleEn);
+        const insuranceCoverage = pick(selectedTier.coverageCeiling, selectedTier.coverageCeilingEn);
+
         finalSummaryEl!.innerHTML = `
           <div class="request-summary-row"><dt>${pick('نام', 'Name')}</dt><dd>${name}</dd></div>
           <div class="request-summary-row"><dt>${pick('نوع خدمت', 'Service type')}</dt><dd>${categoryLabel()}</dd></div>
@@ -1113,6 +1298,8 @@ export function initRequestWizard(
           <div class="request-summary-row"><dt>${pick('مسیر', 'Route')}</dt><dd>${displayCityName(originValue.province, originValue.city)}${pick('،', ',')} ${displayProvinceName(originValue.province)} ← ${displayCityName(destinationValue.province, destinationValue.city)}${pick('،', ',')} ${displayProvinceName(destinationValue.province)}</dd></div>
           <div class="request-summary-row"><dt>${pick('نوع مکان', 'Property type')}</dt><dd>${propertyTypeLabel(state.originPropertyType)} ← ${propertyTypeLabel(state.destinationPropertyType)}</dd></div>
           <div class="request-summary-row"><dt>${pick('زمان', 'Time')}</dt><dd>${date} — ${pick('ساعت', 'at')} ${formatTime(time)}</dd></div>
+          <div class="request-summary-row"><dt>${pick('پوشش بیمه و خسارت', 'Insurance Coverage')}</dt><dd>${insuranceTitle} (${insuranceCoverage})</dd></div>
+          <div class="request-summary-row" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px 12px; margin: 6px 0;"><dt style="color: #166534; font-weight: bold;">${pick('تاییدیه نهایی', 'Final Confirmation')}</dt><dd style="color: #15803d; font-weight: 600;">${pick(`نهایی شدن توسط ${brandName} پس از بررسی صورت خواهد گرفت.`, `Finalization by ${brandName} will take place after review.`)}</dd></div>
           <div class="request-summary-row"><dt>${pick('موبایل', 'Mobile')}</dt><dd>${toPersianDigits(phone)}</dd></div>
           ${originNotes ? `<div class="request-summary-row"><dt>${pick('توضیحات مبدأ', 'Origin notes')}</dt><dd>${originNotes}</dd></div>` : ''}
           ${destinationNotes ? `<div class="request-summary-row"><dt>${pick('توضیحات مقصد', 'Destination notes')}</dt><dd>${destinationNotes}</dd></div>` : ''}

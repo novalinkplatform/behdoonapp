@@ -91,7 +91,7 @@ function renderApp(settings: Awaited<ReturnType<typeof loadSettings>>, testimoni
     .map((section) => {
       if (section.type !== 'hero' && section.visible === false) return '';
       return section.type === 'hero'
-        ? renderHero(vehicleTypes, section, settings.service_cities, settings.service_categories, settings.hero_slogan)
+        ? renderHero(vehicleTypes, section, settings.service_cities, settings.service_categories, settings.hero_slogan, settings.site_name)
         : renderContentBlock(section, testimonials);
     })
     .join('');
@@ -132,7 +132,7 @@ async function init(): Promise<void> {
   initHeader(settings);
   initFooter(settings);
   setGeocodeMapConfig(settings.map);
-  const wizardController = initRequestWizard(vehicleTypes, settings.service_cities, settings.map);
+  const wizardController = initRequestWizard(vehicleTypes, settings.service_cities, settings.map, settings.site_name);
   initContentBlocks();
   initBottomNav();
   initLangToggle();

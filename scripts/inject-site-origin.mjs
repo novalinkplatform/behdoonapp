@@ -12,21 +12,31 @@ const distDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'dist');
 // functions/_middleware.ts (تزریق سمت‌سرور تگ تأیید Search Console) در زمان اجرا روی Cloudflare Pages
 // این فایل استاتیک را می‌خواند تا آدرس API را بداند — هیچ دامنه‌ای در کد کامپایل‌شده هاردکد نمی‌شود؛
 // اگر خریدار VITE_API_BASE_URL را ست نکند، این فایل خالی می‌ماند و آن میان‌افزار بی‌اثر باقی می‌ماند.
-writeFileSync(join(distDir, 'api-base.txt'), process.env.VITE_API_BASE_URL ?? '', 'utf-8');
+import { mkdirSync, copyFileSync, existsSync } from 'node:fs';
 
-const siteOrigin = process.env.SITE_ORIGIN;
-if (!siteOrigin) {
-  console.log('[inject-site-origin] SITE_ORIGIN not set — leaving __SITE_ORIGIN__ placeholder in dist for runtime substitution.');
-  process.exit(0);
+// Guarantee /management and /admin directory routes exist for clean URL serving
+if (existsSync(join(distDir, 'management.html'))) {
+  mkdirSync(join(distDir, 'management'), { recursive: true });
+  copyFileSync(join(distDir, 'management.html'), join(distDir, 'management', 'index.html'));
+  mkdirSync(join(distDir, 'admin'), { recursive: true });
+  copyFileSync(join(distDir, 'management.html'), join(distDir, 'admin', 'index.html'));
 }
 
-const targets = readdirSync(distDir).filter((f) => f.endsWith('.html') || f === 'robots.txt' || f === 'sitemap.xml');
+writeFileSync(join(distDir, 'api-base.txt'), process.env.VITE_API_BASE_URL ?? '', 'utf-8');
+
+const siteOrigin = process.env.SITE_ORIGIN ?? 'https://behdoon.ir';
+
+const targets = readdirSync(distDir, { recursive: true }).filter(
+  (f) => typeof f === 'string' && (f.endsWith('.html') || f.endsWith('robots.txt') || f.endsWith('sitemap.xml'))
+);
 
 for (const file of targets) {
   const path = join(distDir, file);
-  const content = readFileSync(path, 'utf-8');
-  if (!content.includes('__SITE_ORIGIN__')) continue;
-  writeFileSync(path, content.replaceAll('__SITE_ORIGIN__', siteOrigin.replace(/\/$/, '')), 'utf-8');
+  try {
+    const content = readFileSync(path, 'utf-8');
+    if (!content.includes('__SITE_ORIGIN__')) continue;
+    writeFileSync(path, content.replaceAll('__SITE_ORIGIN__', siteOrigin.replace(/\/$/, '')), 'utf-8');
+  } catch {}
 }
 
 console.log(`[inject-site-origin] replaced __SITE_ORIGIN__ with ${siteOrigin} in dist.`);

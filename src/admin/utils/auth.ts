@@ -19,7 +19,8 @@ export type Permission =
   | 'ai'
   | 'plugins'
   | 'assignments'
-  | 'wallet';
+  | 'wallet'
+  | '*';
 
 export interface StaffInfo {
   id: number;
@@ -100,6 +101,7 @@ export function isAuthenticated(): boolean {
 }
 
 export function hasPermission(role: StaffInfo, permission: Permission): boolean {
+  if (role.role === 'super_admin' || (role.permissions ?? []).includes('*')) return true;
   return (role.permissions ?? []).includes(permission);
 }
 

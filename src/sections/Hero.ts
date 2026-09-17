@@ -14,6 +14,7 @@ export function renderHero(
   serviceCities?: ServiceCitiesSettings,
   serviceCategorySettings?: ServiceCategoriesSettings,
   heroSlogan?: HeroSloganSetting,
+  siteName?: { fa?: string; en?: string } | string,
 ): string {
   const isEnabled = heroSlogan?.enabled !== false;
   const headline = pick(
@@ -40,7 +41,7 @@ export function renderHero(
             : ''
         }
 
-        ${renderRequestWizard(vehicleTypes, serviceCities, serviceCategorySettings)}
+        ${renderRequestWizard(vehicleTypes, serviceCities, serviceCategorySettings, siteName)}
       </div>
     </section>
   `;

@@ -588,3 +588,297 @@
   }
 }
 
+/* ==========================================================================
+   بیمه و میزان پوشش خسارت (Insurance & Loss Coverage)
+   ========================================================================== */
+.wizard-insurance-section {
+  margin-top: 20px;
+  padding: 18px 16px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 18px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+
+.wizard-insurance-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.wizard-insurance-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(5, 150, 105, 0.1);
+  color: #059669;
+  flex-shrink: 0;
+}
+
+.wizard-insurance-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.wizard-insurance-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: right;
+}
+
+.wizard-insurance-title {
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.wizard-insurance-subtitle {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.wizard-insurance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.wizard-insurance-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: right;
+  padding: 12px 14px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100%;
+}
+
+.wizard-insurance-card:hover {
+  border-color: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+}
+
+.wizard-insurance-card.is-selected {
+  border-color: #059669;
+  background: rgba(5, 150, 105, 0.04);
+  box-shadow: 0 0 0 1.5px #059669, 0 6px 18px rgba(5, 150, 105, 0.12);
+}
+
+.insurance-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.insurance-card-title {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.insurance-card-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.insurance-card-ceiling {
+  font-size: 0.9rem;
+  color: #059669;
+  margin-bottom: 6px;
+}
+
+.insurance-card-desc {
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.45;
+  margin-bottom: 10px;
+  flex: 1;
+}
+
+.insurance-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 8px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.insurance-card-cost {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.insurance-card-check {
+  display: flex;
+  align-items: center;
+  color: #cbd5e1;
+  transition: color 0.2s;
+}
+
+.insurance-card-check svg {
+  width: 18px;
+  height: 18px;
+}
+
+.wizard-insurance-card.is-selected .insurance-card-check {
+  color: #059669;
+}
+
+/* کادر رسمی نهایی‌سازی بر اساس نام متغیر سایت */
+.wizard-insurance-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+}
+
+.wizard-insurance-notice-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #16a34a;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.wizard-insurance-notice-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.wizard-insurance-notice-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: right;
+}
+
+.wizard-insurance-notice-text {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #15803d;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.wizard-insurance-notice-sub {
+  font-size: 0.74rem;
+  color: #166534;
+  line-height: 1.4;
+}
+
+/* بنر خلاصه بیمه در مرحله ۱۱ (شماره تماس و ثبت نهایی) */
+.wizard-phone-insurance-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  margin-bottom: 16px;
+  text-align: right;
+}
+
+.phone-insurance-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.phone-insurance-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(5, 150, 105, 0.1);
+  color: #059669;
+  flex-shrink: 0;
+}
+
+.phone-insurance-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.phone-insurance-label {
+  font-size: 0.74rem;
+  color: var(--muted);
+  display: block;
+}
+
+.phone-insurance-value {
+  font-size: 0.86rem;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.wizard-insurance-notice-compact {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #15803d;
+  background: #f0fdf4;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #dcfce7;
+  margin: 0;
+  line-height: 1.4;
+  text-align: right;
+}
+
+/* کادر تأیید در صفحه موفقیت */
+.wizard-success-notice-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  margin: 14px 0 6px;
+  color: #15803d;
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.wizard-success-notice-box svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .wizard-insurance-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
