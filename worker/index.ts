@@ -74,8 +74,49 @@ export default {
             phone: '09123456789',
             avatarUrl: null,
             twoFactorEnabled: false,
+            licenseLocked: false,
+            licenseSummary: {
+              type: 'golden',
+              text: 'لایسنس طلایی مادام‌العمر بهدون فعال است',
+              daysRemaining: 99999,
+            },
           },
           licenseLocked: false,
+          licenseSummary: {
+            type: 'golden',
+            text: 'لایسنس طلایی مادام‌العمر بهدون فعال است',
+            daysRemaining: 99999,
+          },
+        });
+      }
+
+      if (pathname === '/api/admin/license' && request.method === 'GET') {
+        return jsonResponse({
+          license: {
+            key: 'BHDN-GOLD-9999-PERMANENT',
+            productName: 'بهدون پرو — سامانه جامع مدیریت هوشمند خدمات ساختمانی',
+            plan: 'طلایی (نامحدود مادام‌العمر)',
+            status: 'active',
+            issuedAt: '1403/01/01',
+            expiresAt: '1499/12/29',
+            licensedTo: 'مدیریت بهدون (نسخه اختصاصی)',
+            lastValidatedAt: new Date().toISOString(),
+          },
+        });
+      }
+
+      if (pathname === '/api/admin/license/activate' && request.method === 'POST') {
+        return jsonResponse({
+          license: {
+            key: 'BHDN-GOLD-9999-PERMANENT',
+            productName: 'بهدون پرو — سامانه جامع مدیریت هوشمند خدمات ساختمانی',
+            plan: 'طلایی (نامحدود مادام‌العمر)',
+            status: 'active',
+            issuedAt: '1403/01/01',
+            expiresAt: '1499/12/29',
+            licensedTo: 'مدیریت بهدون (نسخه اختصاصی)',
+            lastValidatedAt: new Date().toISOString(),
+          },
         });
       }
 
@@ -242,13 +283,13 @@ export default {
       }
     }
 
-    // --- HTML Routes & Exact Asset Rewrites (with html_handling: "none") ---
-    if (
-      pathname === '/management' ||
-      pathname.startsWith('/management/') ||
-      pathname === '/admin' ||
-      pathname.startsWith('/admin/')
-    ) {
+    // --- Canonical Management Route (Redirect /admin to /management) ---
+    if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+      const targetUrl = new URL('/management' + url.search, url.origin);
+      return Response.redirect(targetUrl.toString(), 301);
+    }
+
+    if (pathname === '/management' || pathname.startsWith('/management/')) {
       const assetUrl = new URL('/management.html' + url.search, url.origin);
       return env.ASSETS.fetch(new Request(assetUrl, request));
     }

@@ -5,11 +5,11 @@
      این خط به مرورگر می‌گوید صفحه عمداً فقط روشن است، پس دست‌کاری‌اش نکند. */
   color-scheme: light;
 
-  /* Brand colors — clean neutral base with a trustworthy blue accent */
-  --primary: #1656c9;
-  --primary-dark: #0f3f9c;
-  --secondary: #3b7ff0;
-  --secondary-light: #e9f0fd;
+  /* Brand colors — modern Behdoon Light Purple & Violet */
+  --primary: #7c3aed;
+  --primary-dark: #6d28d9;
+  --secondary: #8b5cf6;
+  --secondary-light: #ede9fe;
 
   /* Neutrals */
   --background: #fdfcfa;

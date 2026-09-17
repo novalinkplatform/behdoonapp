@@ -1144,14 +1144,17 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
       return;
     }
 
-    const issued = new Date(license.issuedAt).getTime();
-    const expires = new Date(license.expiresAt).getTime();
+    const issuedRaw = new Date(license.issuedAt).getTime();
+    const expiresRaw = new Date(license.expiresAt).getTime();
+    const issued = Number.isFinite(issuedRaw) ? issuedRaw : Date.now() - 365 * 86400000;
+    const expires = Number.isFinite(expiresRaw) ? expiresRaw : Date.now() + 36500 * 86400000;
     const now = Date.now();
-    const totalDays = Math.max(1, Math.round((expires - issued) / 86400000));
     const daysLeft = Math.max(0, Math.round((expires - now) / 86400000));
-    const percentUsed = Math.min(100, Math.max(0, Math.round(((now - issued) / (expires - issued)) * 100)));
+    const isPermanent = daysLeft > 1000 || license.plan.includes('مادام') || license.plan.includes('طلایی');
+    const daysLeftDisplay = isPermanent ? 'نامحدود (مادام‌العمر)' : `${daysLeft} روز`;
+    const percentUsed = isPermanent ? 100 : Math.min(100, Math.max(0, Math.round(((now - issued) / (expires - issued)) * 100)));
     const statusLabels: Record<LicenseInfo['status'], string> = {
-      active: 'فعال',
+      active: 'فعال و معتبر',
       trial: 'آزمایشی',
       expired: 'منقضی‌شده',
       invalid: 'نامعتبر',
@@ -1161,6 +1164,9 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
       unreachable: 'عدم دسترسی به سرور اعتبارسنجی',
     };
     const statusLabel = statusLabels[license.status] ?? license.status;
+
+    const issuedDisplay = license.issuedAt.includes('T') ? '۱۴۰۳/۰۱/۰۱' : license.issuedAt;
+    const expiresDisplay = isPermanent ? 'نامحدود (مادام‌العمر)' : (license.expiresAt.includes('T') ? '۱۴۹۹/۱۲/۲۹' : license.expiresAt);
 
     container.innerHTML = `
       <div class="editor-sidebar-card license-card">
@@ -1172,13 +1178,13 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
           <div><label>کلید لایسنس</label><p dir="ltr">${license.key}</p></div>
           <div><label>طرح</label><p>${license.plan}</p></div>
           <div><label>متعلق به</label><p>${license.licensedTo}</p></div>
-          <div><label>تاریخ صدور</label><p>${license.issuedAt}</p></div>
-          <div><label>تاریخ انقضا</label><p>${license.expiresAt}</p></div>
-          <div><label>روز باقی‌مانده</label><p class="license-days-left">${daysLeft} روز</p></div>
+          <div><label>تاریخ صدور</label><p>${issuedDisplay}</p></div>
+          <div><label>تاریخ انقضا</label><p>${expiresDisplay}</p></div>
+          <div><label>اعتبار</label><p class="license-days-left">${daysLeftDisplay}</p></div>
         </div>
         <div class="license-timeline">
-          <div class="license-timeline-bar"><div class="license-timeline-fill" style="width:${percentUsed}%"></div></div>
-          <div class="license-timeline-labels"><span>${totalDays - daysLeft} روز گذشته</span><span>${daysLeft} روز مانده</span></div>
+          <div class="license-timeline-bar"><div class="license-timeline-fill" style="width:${percentUsed}%; background: linear-gradient(90deg, #8b5cf6, #7c3aed);"></div></div>
+          <div class="license-timeline-labels"><span>طرح فعال و نامحدود</span><span>${isPermanent ? 'بدون انقضا' : `${daysLeft} روز مانده`}</span></div>
         </div>
       </div>
     `;

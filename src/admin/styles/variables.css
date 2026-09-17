@@ -1,22 +1,35 @@
 :root {
-  --primary: #1656c9;
-  --primary-dark: #0f3f9c;
-  --secondary: #3b7ff0;
-  --secondary-light: #e9f0fd;
+  /* پالت رنگی بنفش روشن و شیشه‌ای اختصاصی بهدون (Light Purple & Frosted Glass) */
+  --primary: #7c3aed;
+  --primary-hover: #6d28d9;
+  --primary-dark: #5b21b6;
+  --primary-light: #f5f3ff;
+  --secondary: #8b5cf6;
+  --secondary-light: #ede9fe;
+  --secondary-hover: #ddd6fe;
 
-  --background: #fdfcfa;
-  --surface: #f6f5f1;
-  --surface-alt: #eeece5;
-  --text: #1c1b18;
-  --muted: #78766f;
-  --border: #e3e1d9;
+  /* سطوح شیشه‌ای مات و شفافیت مدرن */
+  --background: #fbf9fe;
+  --surface: #f4f0fb;
+  --surface-alt: #ece5f7;
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.55);
+  --glass-bg-card: rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(255, 255, 255, 0.75);
+  --glass-border-purple: rgba(139, 92, 246, 0.22);
+  --glass-blur: blur(16px) saturate(180%);
+  --glass-shadow: 0 10px 30px rgba(124, 58, 237, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
 
-  --success: #4a5940;
-  --success-bg: #eef1e9;
-  --warning: #a3714c;
-  --warning-bg: #fbf1ea;
-  --danger: #b3403a;
-  --danger-bg: #fbecea;
+  --text: #1e1b2e;
+  --muted: #6b6684;
+  --border: #e6e0f3;
+
+  --success: #10b981;
+  --success-bg: #ecfdf5;
+  --warning: #f59e0b;
+  --warning-bg: #fffbeb;
+  --danger: #ef4444;
+  --danger-bg: #fef2f2;
 
   --font-family: 'Yekan Bakh', 'IRANSans', 'Yekan', 'Vazirmatn', 'Tahoma', -apple-system, BlinkMacSystemFont, sans-serif;
 
@@ -29,14 +42,16 @@
   --space-7: 3rem;
   --space-8: 4rem;
 
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
   --radius-full: 999px;
 
-  --shadow-sm: 0 1px 2px rgba(23, 22, 20, 0.05);
-  --shadow-md: 0 6px 20px rgba(23, 22, 20, 0.07);
-  --shadow-lg: 0 16px 40px rgba(23, 22, 20, 0.1);
+  --shadow-sm: 0 2px 6px rgba(124, 58, 237, 0.04);
+  --shadow-md: 0 8px 24px rgba(124, 58, 237, 0.07);
+  --shadow-lg: 0 16px 40px rgba(124, 58, 237, 0.1);
+  --shadow-glass: 0 12px 36px rgba(124, 58, 237, 0.08), 0 2px 6px rgba(0, 0, 0, 0.02);
 
   --sidebar-width: 220px;
   --topbar-height: 64px;

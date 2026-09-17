@@ -19,7 +19,11 @@ if (existsSync(join(distDir, 'management.html'))) {
   mkdirSync(join(distDir, 'management'), { recursive: true });
   copyFileSync(join(distDir, 'management.html'), join(distDir, 'management', 'index.html'));
   mkdirSync(join(distDir, 'admin'), { recursive: true });
-  copyFileSync(join(distDir, 'management.html'), join(distDir, 'admin', 'index.html'));
+  writeFileSync(
+    join(distDir, 'admin', 'index.html'),
+    '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=/management"><script>location.replace("/management" + location.search + location.hash);</script></head><body><p>Redirecting to <a href="/management">/management</a>...</p></body></html>',
+    'utf-8'
+  );
 }
 
 writeFileSync(join(distDir, 'api-base.txt'), process.env.VITE_API_BASE_URL ?? '', 'utf-8');

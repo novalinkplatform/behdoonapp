@@ -36,7 +36,9 @@ function managementRewritePlugin() {
             req.url = '/management.html' + query;
           } else if (path === '/admin' || path.startsWith('/admin/')) {
             const query = req.url.includes('?') ? '?' + req.url.split('?')[1] : '';
-            req.url = '/admin.html' + query;
+            _res.writeHead(302, { Location: '/management' + query });
+            _res.end();
+            return;
           }
         }
         next();

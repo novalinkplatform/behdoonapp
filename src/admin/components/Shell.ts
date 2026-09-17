@@ -20,11 +20,11 @@ export function renderShell(staff: StaffInfo): string {
           </div>
         </div>
         <div class="admin-topbar-end">
-          <span class="admin-license-badge admin-license-badge-${staff.licenseSummary?.type || 'trial'}">
-            ${staff.licenseSummary?.text || 'نسخه آزمایشی (۷ روز فعال)'}
+          <span class="admin-license-badge admin-license-badge-${staff.licenseSummary?.type || 'golden'}">
+            ${staff.licenseSummary?.text || 'لایسنس طلایی مادام‌العمر بهدون فعال است'}
           </span>
           <span class="admin-topbar-version" id="admin-sidebar-version" hidden></span>
-          <button type="button" class="admin-topbar-icon-btn admin-theme-toggle" id="admin-theme-toggle-btn" title="تغییر حالت تم (روشن / سبز زمردی تیره شیشه‌ای)" aria-label="تغییر حالت تم">
+          <button type="button" class="admin-topbar-icon-btn admin-theme-toggle" id="admin-theme-toggle-btn" title="تغییر حالت تم (روشن بنفش شیشه‌ای / بنفش تیره شیشه‌ای)" aria-label="تغییر حالت تم">
             <span class="icon icon-theme-sun" id="admin-theme-sun" hidden>${icons.sun}</span>
             <span class="icon icon-theme-moon" id="admin-theme-moon">${icons.moon}</span>
           </button>

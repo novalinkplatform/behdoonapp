@@ -6,8 +6,8 @@
 /services/:slug  /magazine/:slug  301
 /management  /management.html  200
 /management/*  /management.html  200
-/admin  /management.html  200
-/admin/*  /management.html  200
+/admin  /management  301
+/admin/*  /management  301
 /magazine/:slug  /article-template  200
 /p/:slug  /page-template  200
 /page/:slug  /page-template  200

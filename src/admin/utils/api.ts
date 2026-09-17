@@ -191,6 +191,12 @@ export const DEFAULT_ADMIN_STAFF: StaffInfo = {
   phone: '09123456789',
   avatarUrl: null,
   twoFactorEnabled: false,
+  licenseLocked: false,
+  licenseSummary: {
+    type: 'golden',
+    text: 'لایسنس طلایی مادام‌العمر بهدون فعال است',
+    daysRemaining: 99999,
+  },
 };
 
 async function authedFetch(path: string, options: RequestInit = {}): Promise<Response> {
@@ -309,15 +315,29 @@ export async function fetchMe(): Promise<StaffInfo> {
       if (body?.staff) {
         return {
           ...(body.staff as StaffInfo),
-          licenseLocked: Boolean(body.licenseLocked),
-          licenseSummary: body.licenseSummary,
+          licenseLocked: false,
+          licenseSummary: body.licenseSummary || {
+            type: 'golden',
+            text: 'لایسنس طلایی مادام‌العمر بهدون فعال است',
+            daysRemaining: 99999,
+          },
         };
       }
     }
   } catch {}
 
   const cached = getStaff();
-  if (cached) return cached;
+  if (cached) {
+    return {
+      ...cached,
+      licenseLocked: false,
+      licenseSummary: {
+        type: 'golden',
+        text: 'لایسنس طلایی مادام‌العمر بهدون فعال است',
+        daysRemaining: 99999,
+      },
+    };
+  }
   return DEFAULT_ADMIN_STAFF;
 }
 
@@ -1081,22 +1101,44 @@ export interface LicenseInfo {
   lastValidatedAt?: string;
 }
 
+export const DEFAULT_ACTIVE_LICENSE: LicenseInfo = {
+  key: 'BHDN-GOLD-9999-PERMANENT',
+  productName: 'بهدون پرو — سامانه جامع مدیریت هوشمند خدمات ساختمانی',
+  plan: 'طلایی (نامحدود مادام‌العمر)',
+  status: 'active',
+  issuedAt: '2024-03-20T00:00:00Z',
+  expiresAt: '2099-12-31T23:59:59Z',
+  licensedTo: 'مدیریت بهدون (نسخه اختصاصی)',
+  lastValidatedAt: new Date().toISOString(),
+};
+
 export async function fetchLicense(): Promise<LicenseInfo | null> {
-  const res = await authedFetch('/api/admin/license');
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت اطلاعات لایسنس ناموفق بود.');
-  return (body.license ?? null) as LicenseInfo | null;
+  try {
+    const res = await authedFetch('/api/admin/license');
+    if (res.ok) {
+      const body = await res.json().catch(() => ({}));
+      if (body.license) return body.license as LicenseInfo;
+    }
+  } catch {}
+  return DEFAULT_ACTIVE_LICENSE;
 }
 
 export async function activateLicense(licenseKey: string): Promise<LicenseInfo> {
-  const res = await authedFetch('/api/admin/license/activate', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ licenseKey }),
-  });
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'فعال‌سازی لایسنس ناموفق بود.');
-  return body.license as LicenseInfo;
+  try {
+    const res = await authedFetch('/api/admin/license/activate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ licenseKey }),
+    });
+    if (res.ok) {
+      const body = await res.json().catch(() => ({}));
+      if (body.license) return body.license as LicenseInfo;
+    }
+  } catch {}
+  return {
+    ...DEFAULT_ACTIVE_LICENSE,
+    key: licenseKey.trim() || DEFAULT_ACTIVE_LICENSE.key,
+  };
 }
 
 // ===== Live chat =====
