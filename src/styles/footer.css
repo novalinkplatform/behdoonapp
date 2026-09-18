@@ -1,21 +1,22 @@
 /* ==========================================================================
-   Behdoon Deep & Professional Footer Styles (بنفش مدرن و شیشه‌ای)
+   Behdoon Ultra-Clean, Readable & Professional Footer Styles
+   طراحی مدرن، خوانا، بدون شلوغی با تفکیک بصری استاندارد
    ========================================================================== */
 
 .site-footer {
   background: var(--surface);
   border-top: 1px solid var(--border);
   color: var(--text);
-  margin-top: var(--space-8, 3rem);
+  margin-top: var(--space-8, 3.5rem);
   position: relative;
   overflow: hidden;
 }
 
-/* ۱. نوار تمایزها و ارزش‌های افزوده بهدون (Promises Strip) */
+/* ۱. نوار تمایزها و ارزش‌های ۴گانه بهدون (Promises Strip) */
 .footer-promises-strip {
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.06) 0%, rgba(139, 92, 246, 0.03) 100%);
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(139, 92, 246, 0.02) 100%);
   border-bottom: 1px solid var(--border);
-  padding-block: 1.5rem;
+  padding-block: 1.25rem;
 }
 
 .promises-strip-inner {
@@ -31,22 +32,22 @@
   padding: 0.85rem 1rem;
   background: var(--background);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg, 12px);
+  border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .promise-item:hover {
   transform: translateY(-2px);
   border-color: rgba(124, 58, 237, 0.35);
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.08);
+  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.08);
 }
 
 .promise-icon {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.12) 0%, rgba(168, 85, 247, 0.08) 100%);
+  background: rgba(124, 58, 237, 0.1);
   color: var(--primary, #7c3aed);
   display: flex;
   align-items: center;
@@ -67,59 +68,60 @@
 }
 
 .promise-text strong {
-  font-size: 0.85rem;
-  font-weight: 700;
+  font-size: 0.875rem;
+  font-weight: 800;
   color: var(--text);
-  line-height: 1.3;
+  line-height: 1.35;
 }
 
 .promise-text span {
   font-size: 0.75rem;
   color: var(--muted);
-  line-height: 1.35;
+  line-height: 1.4;
 }
 
-/* ۲. بدنه اصلی و ۵ ستون فوتر */
+/* ۲. بدنه اصلی فوتر در ۴ ستون متوازن و خلوت */
 .footer-main-wrapper {
-  padding-block: 2.75rem 1.5rem;
+  padding-block: 3rem 1.75rem;
   display: flex;
   flex-direction: column;
-  gap: 2.25rem;
+  gap: 2.5rem;
 }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.4fr 1.15fr 1fr 1.1fr 1.15fr;
-  gap: 2rem;
+  grid-template-columns: 1.35fr 1fr 1fr 1.15fr;
+  gap: 2.5rem 2.25rem;
   align-items: start;
 }
 
 .footer-col {
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: 1.15rem;
 }
 
 .footer-col-title {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.96rem;
+  gap: 0.55rem;
+  font-size: 0.98rem;
   font-weight: 800;
   color: var(--text);
   margin: 0;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid rgba(124, 58, 237, 0.15);
+  padding-bottom: 0.65rem;
+  border-bottom: 2px solid rgba(124, 58, 237, 0.16);
   position: relative;
 }
 
 .col-title-icon {
-  width: 18px;
-  height: 18px;
+  width: 19px;
+  height: 19px;
   color: var(--primary, #7c3aed);
+  flex-shrink: 0;
 }
 
-/* ستون ۱: شناسنامه برند */
+/* ستون ۱: شناسنامه برند و کارت‌های تماس */
 .footer-col-brand {
   padding-inline-end: 0.5rem;
 }
@@ -134,19 +136,19 @@
 .footer-logo-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
   text-decoration: none;
 }
 
 .footer-brand-logo {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
 }
 
 .footer-brand-title {
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   font-weight: 900;
   color: var(--text);
   letter-spacing: -0.02em;
@@ -155,234 +157,106 @@
 .footer-brand-badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.2rem 0.65rem;
+  padding: 0.25rem 0.75rem;
   border-radius: 20px;
   background: rgba(124, 58, 237, 0.1);
   color: var(--primary, #7c3aed);
-  font-size: 0.72rem;
+  font-size: 0.73rem;
   font-weight: 700;
 }
 
 .footer-brand-mission {
-  font-size: 0.83rem;
-  line-height: 1.9;
+  font-size: 0.85rem;
+  line-height: 1.85;
   color: var(--muted);
   text-align: justify;
   margin: 0;
 }
 
-.footer-contact-list {
+.footer-contact-actions {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.65rem;
   margin-top: 0.25rem;
 }
 
-.footer-contact-link {
+.footer-contact-card {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.65rem 0.9rem;
+  gap: 0.85rem;
+  padding: 0.75rem 1rem;
   background: var(--background);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md, 10px);
+  border-radius: 12px;
   text-decoration: none;
   color: var(--text);
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.footer-contact-link:hover {
-  border-color: var(--primary);
-  background: rgba(124, 58, 237, 0.04);
-  transform: translateY(-1px);
+.footer-contact-card:hover {
+  transform: translateY(-2px);
 }
 
-.footer-phone-cta {
+.footer-phone-card {
   background: linear-gradient(135deg, rgba(16, 158, 77, 0.08) 0%, rgba(16, 158, 77, 0.02) 100%);
-  border-color: rgba(16, 158, 77, 0.25);
+  border-color: rgba(16, 158, 77, 0.28);
 }
 
-.footer-phone-cta:hover {
+.footer-phone-card:hover {
   border-color: #109e4d;
-  background: rgba(16, 158, 77, 0.12);
+  background: rgba(16, 158, 77, 0.14);
+  box-shadow: 0 4px 14px rgba(16, 158, 77, 0.15);
 }
 
-.contact-icon-pulse {
-  width: 24px;
-  height: 24px;
+.footer-wa-card {
+  background: linear-gradient(135deg, rgba(37, 211, 102, 0.08) 0%, rgba(37, 211, 102, 0.02) 100%);
+  border-color: rgba(37, 211, 102, 0.28);
+}
+
+.footer-wa-card:hover {
+  border-color: #25d366;
+  background: rgba(37, 211, 102, 0.14);
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.15);
+}
+
+.contact-card-icon {
+  width: 26px;
+  height: 26px;
   color: #109e4d;
+  flex-shrink: 0;
 }
 
-.contact-info-block {
+.footer-wa-card .contact-card-icon {
+  color: #25d366;
+}
+
+.contact-card-text {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
 }
 
-.contact-label {
+.contact-card-sub {
   font-size: 0.72rem;
   color: var(--muted);
 }
 
-.contact-value {
-  font-size: 0.95rem;
+.contact-card-val {
+  font-size: 0.98rem;
   font-weight: 800;
   color: var(--text);
-}
-
-.footer-contact-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.65rem;
-  padding: 0.4rem 0.5rem;
-  font-size: 0.79rem;
-  color: var(--muted);
-  line-height: 1.6;
-}
-
-.footer-contact-item .icon {
-  width: 17px;
-  height: 17px;
-  color: var(--primary, #7c3aed);
-  flex-shrink: 0;
-  margin-top: 0.15rem;
-}
-
-/* لیست لینک‌های ناوبری ستون‌ها */
-.footer-nav-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.footer-nav-list li a {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.83rem;
-  color: var(--muted);
-  text-decoration: none;
-  transition: all 0.2s ease;
-  line-height: 1.6;
-}
-
-.footer-nav-list li a:hover {
-  color: var(--primary, #7c3aed);
-  transform: translateX(-4px);
-}
-
-.footer-highlight-link {
-  color: var(--primary, #7c3aed) !important;
-  font-weight: 700 !important;
-  gap: 0.4rem;
-}
-
-.footer-highlight-link .icon {
-  width: 15px;
-  height: 15px;
-}
-
-.footer-management-link {
-  color: #a855f7 !important;
-  font-weight: 600;
-  border-top: 1px dashed var(--border);
-  padding-top: 0.45rem;
-  margin-top: 0.25rem;
-}
-
-/* ستون ۴: مناطق تهران */
-.footer-coverage-districts {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.district-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  padding: 0.5rem 0.65rem;
-  background: var(--background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md, 8px);
-}
-
-.district-title {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--primary, #7c3aed);
-}
-
-.district-tags {
-  font-size: 0.74rem;
-  color: var(--muted);
-  line-height: 1.6;
-  margin: 0;
-}
-
-/* ستون ۵: اپلیکیشن و نمادها */
-.footer-col-trust {
-  gap: 1.25rem;
-}
-
-.footer-app-badges {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.footer-app-chip {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.5rem 0.85rem;
-  background: var(--background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md, 10px);
-  text-decoration: none;
-  color: var(--text);
-  transition: all 0.2s ease;
-}
-
-.footer-app-chip:hover {
-  border-color: var(--primary);
-  background: rgba(124, 58, 237, 0.05);
-  transform: translateY(-1px);
-}
-
-.app-chip-icon {
-  width: 22px;
-  height: 22px;
-  color: var(--primary, #7c3aed);
-}
-
-.app-chip-text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-}
-
-.app-chip-sub {
-  font-size: 0.68rem;
-  color: var(--muted);
-}
-
-.app-chip-title {
-  font-size: 0.82rem;
-  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 .footer-social-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.55rem;
+  margin-top: 0.4rem;
 }
 
-.footer-social-heading,
-.footer-trust-heading {
-  font-size: 0.75rem;
+.footer-social-heading {
+  font-size: 0.76rem;
   font-weight: 700;
   color: var(--muted);
 }
@@ -404,7 +278,7 @@
   background: var(--background);
   border: 1px solid var(--border);
   color: var(--muted);
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .footer-social a:hover {
@@ -412,7 +286,7 @@
   background: var(--primary, #7c3aed);
   border-color: var(--primary, #7c3aed);
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35);
 }
 
 .footer-social a .icon {
@@ -420,21 +294,112 @@
   height: 18px;
 }
 
-/* نشان‌های اعتماد و اصالت */
+/* لیست لینک‌های ناوبری ستون ۲ و ۳ */
+.footer-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.footer-nav-list li a {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  line-height: 1.6;
+}
+
+.footer-nav-list li a:hover {
+  color: var(--primary, #7c3aed);
+  transform: translateX(-4px);
+}
+
+.footer-highlight-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--primary, #7c3aed) !important;
+  font-weight: 800 !important;
+  font-size: 0.88rem !important;
+}
+
+.footer-highlight-cta .icon {
+  width: 16px;
+  height: 16px;
+  color: var(--primary, #7c3aed);
+}
+
+.footer-highlight-cta .badge-tag {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: #ea580c;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  margin-inline-start: 4px;
+}
+
+.footer-all-services-li {
+  margin-top: 0.35rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--border);
+}
+
+.footer-all-services-link {
+  color: var(--primary, #7c3aed) !important;
+  font-weight: 800 !important;
+  font-size: 0.84rem !important;
+}
+
+.footer-mgmt-li {
+  margin-top: 0.35rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--border);
+}
+
+.footer-management-link {
+  color: #9333ea !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+}
+
+/* ستون ۴: نمادهای اعتبار، اپ و پوشش تهران */
+.footer-col-trust {
+  gap: 1.15rem;
+}
+
+.footer-trust-seals-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .footer-trust-seals {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
+  gap: 0.55rem;
 }
 
 .trust-seal-item {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.45rem 0.6rem;
+  gap: 0.5rem;
+  padding: 0.55rem 0.65rem;
   background: var(--background);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md, 8px);
+  border-radius: 10px;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.trust-seal-item:hover {
+  border-color: rgba(124, 58, 237, 0.35);
+  transform: translateY(-1px);
 }
 
 .seal-icon {
@@ -452,7 +417,7 @@
 }
 
 .seal-meta strong {
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 800;
   color: var(--text);
   white-space: nowrap;
@@ -461,14 +426,98 @@
 }
 
 .seal-meta span {
-  font-size: 0.62rem;
+  font-size: 0.64rem;
   color: var(--muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* ۳. باکس عمیق سئو آکاردئونی */
+.footer-app-download-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-section-mini-heading {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.footer-app-badges {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.footer-app-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.5rem 0.65rem;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.2s ease;
+}
+
+.footer-app-chip:hover {
+  border-color: var(--primary);
+  background: rgba(124, 58, 237, 0.05);
+  transform: translateY(-1px);
+}
+
+.app-chip-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--primary, #7c3aed);
+  flex-shrink: 0;
+}
+
+.app-chip-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.app-chip-sub {
+  font-size: 0.65rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.app-chip-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.footer-tehran-coverage-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.85rem;
+  background: rgba(124, 58, 237, 0.05);
+  border: 1px dashed rgba(124, 58, 237, 0.28);
+  border-radius: 10px;
+  color: var(--primary, #7c3aed);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.footer-tehran-coverage-badge .icon {
+  width: 17px;
+  height: 17px;
+  color: var(--primary, #7c3aed);
+  flex-shrink: 0;
+}
+
+/* ۳. باکس سئو آکاردئونی شیک و خلوت */
 .footer-seo-container {
   width: 100%;
 }
@@ -476,12 +525,12 @@
 .footer-seo-card {
   background: var(--background);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg, 14px);
-  padding: 1.5rem 1.75rem;
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  gap: 0.85rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
 }
 
 .footer-seo-header {
@@ -491,25 +540,26 @@
 }
 
 .footer-seo-icon {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   color: var(--primary, #7c3aed);
+  flex-shrink: 0;
 }
 
 .footer-seo-title {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 800;
   color: var(--text);
   margin: 0;
 }
 
 .footer-seo-content {
-  max-height: 80px;
+  max-height: 56px;
   overflow: hidden;
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 0.75rem;
   transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -518,7 +568,7 @@
   position: absolute;
   inset-block-end: 0;
   inset-inline: 0;
-  height: 44px;
+  height: 36px;
   background: linear-gradient(to top, var(--background), transparent);
   transition: opacity 0.3s ease;
   pointer-events: none;
@@ -534,7 +584,7 @@
 
 .footer-seo-content p {
   font-size: 0.82rem;
-  line-height: 2;
+  line-height: 1.95;
   color: var(--muted);
   text-align: justify;
   margin: 0;
@@ -544,7 +594,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: var(--primary, #7c3aed);
   background: none;
@@ -556,12 +606,12 @@
 }
 
 .footer-seo-btn:hover {
-  color: var(--secondary, #8b5cf6);
+  color: #6d28d9;
 }
 
 .footer-seo-btn .chevron-icon {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   transition: transform 0.3s ease;
 }
 
@@ -578,18 +628,20 @@
   gap: 1rem;
   padding-top: 1.5rem;
   border-top: 1px solid var(--border);
-  font-size: 0.78rem;
+  font-size: 0.79rem;
   color: var(--muted);
 }
 
 .footer-subbar-text p {
   margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
 }
 
 .footer-subbar-actions {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.25rem;
   flex-wrap: wrap;
 }
 
@@ -602,6 +654,7 @@
 .footer-quick-links a {
   color: var(--muted);
   text-decoration: none;
+  font-size: 0.8rem;
   transition: color 0.2s ease;
 }
 
@@ -611,7 +664,7 @@
 
 .footer-urgent-call {
   color: #109e4d !important;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .footer-back-to-top {
@@ -621,18 +674,19 @@
   padding: 0.4rem 0.85rem;
   background: var(--background);
   border: 1px solid var(--border);
-  border-radius: var(--radius-full, 20px);
+  border-radius: 20px;
   color: var(--text);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 .footer-back-to-top:hover {
   border-color: var(--primary, #7c3aed);
   color: var(--primary, #7c3aed);
   transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(124, 58, 237, 0.15);
 }
 
 .footer-back-to-top .icon {
@@ -645,42 +699,49 @@
    Responsive Breakpoints
    ========================================================================== */
 
-@media (max-width: 1100px) {
+@media (max-width: 1024px) {
   .promises-strip-inner {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .footer-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 2.25rem 1.75rem;
   }
 
   .footer-col-brand {
-    grid-column: span 2;
+    padding-inline-end: 0;
   }
 }
 
 @media (max-width: 680px) {
   .promises-strip-inner {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
 
   .footer-grid {
     grid-template-columns: 1fr;
-    gap: 1.75rem;
-  }
-
-  .footer-col-brand {
-    grid-column: span 1;
+    gap: 2rem;
   }
 
   .footer-subbar {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    gap: 0.85rem;
   }
 
   .footer-subbar-actions {
     flex-direction: column;
     gap: 0.75rem;
+  }
+
+  .footer-app-badges {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .footer-trust-seals {
+    grid-template-columns: 1fr 1fr;
   }
 }
