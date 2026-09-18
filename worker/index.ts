@@ -38,6 +38,210 @@ function isStaffAuthed(request: Request): boolean {
   return token.length > 5 && (token.startsWith('behdoon_') || token.startsWith('behbar_'));
 }
 
+function getCustomerAuth(request: Request): { id: number; phone: string } | null {
+  const auth = request.headers.get('Authorization') || '';
+  const token = auth.replace(/^Bearer\s+/i, '').trim();
+  if (!token) return null;
+  const match = token.match(/customer_(\d+)_?(09\d{9})?/) || token.match(/(09\d{9})/);
+  if (match) {
+    const phone = match[2] || (match[1].startsWith('09') ? match[1] : '09123456789');
+    const id = match[2] && !match[1].startsWith('09') ? parseInt(match[1], 10) : 1;
+    return { id, phone };
+  }
+  return null;
+}
+
+function generateStandardOrderId(seq: number): string {
+  const currentYear = new Date().getFullYear();
+  const seqStr = String(seq).padStart(6, '0');
+  return `BD-${currentYear}-${seqStr}`;
+}
+
+let isDbInitialized = false;
+async function ensureDbInitialized(env: Env): Promise<void> {
+  if (!env.DB || isDbInitialized) return;
+  try {
+    await env.DB.prepare('CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)').run();
+    await env.DB.prepare('CREATE TABLE IF NOT EXISTS daily_order_counters (day_key TEXT PRIMARY KEY, count INTEGER NOT NULL DEFAULT 1)').run();
+
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS customers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        phone TEXT UNIQUE NOT NULL,
+        full_name TEXT,
+        gender TEXT DEFAULT 'male',
+        company_name TEXT,
+        avatar_url TEXT,
+        status TEXT DEFAULT 'active',
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    `).run();
+
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS customer_addresses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        customer_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        city TEXT DEFAULT 'تهران',
+        district TEXT,
+        address TEXT NOT NULL,
+        floor TEXT,
+        unit TEXT,
+        has_elevator INTEGER DEFAULT 1,
+        lat REAL,
+        lng REAL,
+        notes TEXT,
+        created_at TEXT NOT NULL
+      )
+    `).run();
+
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS customer_otps (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        phone TEXT NOT NULL,
+        code TEXT NOT NULL,
+        expires_at INTEGER NOT NULL,
+        attempts INTEGER DEFAULT 0,
+        verified INTEGER DEFAULT 0,
+        created_at TEXT NOT NULL
+      )
+    `).run();
+
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS providers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        full_name TEXT NOT NULL,
+        phone TEXT UNIQUE NOT NULL,
+        national_id TEXT,
+        avatar_url TEXT,
+        city TEXT DEFAULT 'تهران',
+        districts TEXT,
+        service_categories TEXT NOT NULL,
+        bio TEXT,
+        years_experience INTEGER DEFAULT 3,
+        status TEXT DEFAULT 'active',
+        is_online INTEGER DEFAULT 1,
+        pricing_base INTEGER DEFAULT 0,
+        performance_score REAL DEFAULT 5.0,
+        total_jobs INTEGER DEFAULT 0,
+        completed_jobs INTEGER DEFAULT 0,
+        cancelled_jobs INTEGER DEFAULT 0,
+        verified_at TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    `).run();
+
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS requests (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        tracking_code TEXT UNIQUE,
+        customer_id INTEGER,
+        provider_id INTEGER,
+        name TEXT,
+        phone TEXT,
+        service_id TEXT,
+        service_label TEXT,
+        origin_province TEXT DEFAULT 'تهران',
+        origin_city TEXT DEFAULT 'تهران',
+        origin_district TEXT,
+        origin_notes TEXT,
+        origin_property_type TEXT DEFAULT 'residential',
+        origin_lat REAL DEFAULT 35.7219,
+        origin_lng REAL DEFAULT 51.3347,
+        has_elevator INTEGER DEFAULT 1,
+        floor_number INTEGER DEFAULT 1,
+        needs_parts INTEGER DEFAULT 0,
+        urgency TEXT DEFAULT 'normal',
+        pricing_model TEXT DEFAULT 'fixed',
+        scheduled_date TEXT,
+        scheduled_time TEXT,
+        estimate_avg INTEGER,
+        final_price INTEGER,
+        status TEXT DEFAULT 'submitted',
+        insurance_tier_id TEXT DEFAULT 'gold_300m',
+        cancellation_reason TEXT,
+        created_at TEXT,
+        updated_at TEXT
+      )
+    `).run();
+
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS order_status_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        request_id INTEGER NOT NULL,
+        from_status TEXT,
+        to_status TEXT NOT NULL,
+        changed_by_role TEXT NOT NULL,
+        changed_by_id INTEGER,
+        note TEXT,
+        created_at TEXT NOT NULL
+      )
+    `).run();
+
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS job_applications (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        full_name TEXT NOT NULL,
+        phone TEXT NOT NULL,
+        position TEXT,
+        position_label TEXT,
+        city TEXT,
+        message TEXT,
+        has_vehicle INTEGER,
+        vehicle_type TEXT,
+        status TEXT DEFAULT 'new',
+        created_at TEXT
+      )
+    `).run();
+
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS custom_pages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        slug TEXT UNIQUE,
+        title TEXT,
+        title_en TEXT,
+        excerpt TEXT,
+        excerpt_en TEXT,
+        cover_image_url TEXT,
+        content TEXT,
+        meta_title TEXT,
+        meta_description TEXT,
+        status TEXT DEFAULT 'draft',
+        author_staff_id INTEGER,
+        published_at TEXT,
+        show_in_header INTEGER DEFAULT 0,
+        show_in_footer INTEGER DEFAULT 0,
+        created_at TEXT,
+        updated_at TEXT
+      )
+    `).run();
+
+    // Initial provider seed if table is completely empty
+    const providerCount = await env.DB.prepare('SELECT COUNT(*) as c FROM providers').first();
+    if (!providerCount?.c || Number(providerCount.c) === 0) {
+      const now = new Date().toISOString();
+      const seed = [
+        { name: 'مهندس مجید رستمی', phone: '09351112233', cat: '["hvac"]', bio: 'دارای مدرک فنی‌حرفه‌ای بین‌المللی پکیج، چیلر، اسپلیت و موتورخانه', exp: 8, rating: 4.9, jobs: 42 },
+        { name: 'استاد بهروز قاسمی', phone: '09124445566', cat: '["plumbing"]', bio: 'متخصص نشت‌یابی با دستگاه تصویری، لوله بازکنی بدون تخریب و پمپ آب ساختمان', exp: 12, rating: 5.0, jobs: 68 },
+        { name: 'مهندس سینا مرادی', phone: '09193334455', cat: '["electrical"]', bio: 'رفع فوری اتصالی برق ساختمان، سیم‌کشی سه فاز و نصب آیفون تصویری', exp: 7, rating: 4.85, jobs: 35 },
+        { name: 'استاد احمد کریمی', phone: '09128889900', cat: '["renovation"]', bio: 'استادکار بازسازی صفر تا صد، کاشی‌کاری پرسلان، نقاشی مدرن و کناف ضد رطوبت', exp: 15, rating: 4.95, jobs: 54 },
+      ];
+      for (const p of seed) {
+        await env.DB.prepare(`
+          INSERT INTO providers (full_name, phone, districts, service_categories, bio, years_experience, status, is_online, performance_score, total_jobs, completed_jobs, created_at, updated_at)
+          VALUES (?, ?, '["all"]', ?, ?, ?, 'active', 1, ?, ?, ?, ?, ?)
+        `).bind(p.name, p.phone, p.cat, p.bio, p.exp, p.rating, p.jobs, p.jobs, now, now).run();
+      }
+    }
+
+    isDbInitialized = true;
+  } catch (err) {
+    console.error('DB initialization error:', err);
+  }
+}
+
 // --- Shahanshahi / Imperial Tracking Code Utilities ---
 function gregorianToJalali(gy: number, gm: number, gd: number): { jy: number; jm: number; jd: number } {
   const g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
@@ -79,6 +283,8 @@ export default {
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: CORS_HEADERS });
     }
+
+    await ensureDbInitialized(env);
 
     // --- API Handlers ---
     if (pathname.startsWith('/api/')) {
@@ -232,10 +438,6 @@ export default {
 
           if (env.DB) {
             try {
-              await env.DB.prepare(
-                'CREATE TABLE IF NOT EXISTS daily_order_counters (day_key TEXT PRIMARY KEY, count INTEGER NOT NULL DEFAULT 1)'
-              ).run();
-
               const updated = await env.DB.prepare(
                 'INSERT INTO daily_order_counters (day_key, count) VALUES (?, 1) ON CONFLICT(day_key) DO UPDATE SET count = count + 1 RETURNING count'
               ).bind(datePrefix).first();
@@ -254,49 +456,52 @@ export default {
             }
           }
 
-          const counterStr = dailyCount < 100 ? String(dailyCount).padStart(2, '0') : String(dailyCount);
-          const trackingCode = `${datePrefix}${counterStr}`;
+          // Generate standard Behdoon Order ID: BD-YYYY-XXXXXX
+          const trackingCode = generateStandardOrderId(dailyCount);
+          const now = new Date().toISOString();
+          const phone = String(data.phone || '').trim();
+          const customerName = String(data.customerName || data.name || '').trim();
 
+          let customerId: number | null = null;
+          const authCust = getCustomerAuth(request);
+          if (authCust) {
+            customerId = authCust.id;
+          } else if (env.DB && phone) {
+            try {
+              const cRow = await env.DB.prepare('SELECT id FROM customers WHERE phone = ?').bind(phone).first();
+              if (cRow?.id) {
+                customerId = Number(cRow.id);
+              } else {
+                const newC = await env.DB.prepare(`
+                  INSERT INTO customers (phone, full_name, gender, status, created_at, updated_at)
+                  VALUES (?, ?, 'male', 'active', ?, ?)
+                `).bind(phone, customerName || 'مشتری گرامی بهدون', now, now).run();
+                if (newC?.meta?.last_row_id) customerId = newC.meta.last_row_id;
+              }
+            } catch {}
+          }
+
+          let newOrderId = Date.now();
           if (env.DB) {
             try {
-              await env.DB.prepare(
-                `CREATE TABLE IF NOT EXISTS requests (
-                  id INTEGER PRIMARY KEY AUTOINCREMENT,
-                  tracking_code TEXT UNIQUE,
-                  name TEXT,
-                  phone TEXT,
-                  service_id TEXT,
-                  service_label TEXT,
-                  origin_province TEXT,
-                  origin_city TEXT,
-                  origin_notes TEXT,
-                  origin_property_type TEXT,
-                  origin_lat REAL,
-                  origin_lng REAL,
-                  scheduled_date TEXT,
-                  scheduled_time TEXT,
-                  estimate_avg INTEGER,
-                  status TEXT DEFAULT 'pending',
-                  created_at TEXT
-                )`
-              ).run();
-
-              await env.DB.prepare(
+              const insRes = await env.DB.prepare(
                 `INSERT INTO requests (
-                  tracking_code, name, phone, service_id, service_label,
-                  origin_province, origin_city, origin_notes, origin_property_type,
+                  tracking_code, customer_id, name, phone, service_id, service_label,
+                  origin_province, origin_city, origin_district, origin_notes, origin_property_type,
                   origin_lat, origin_lng, scheduled_date, scheduled_time, estimate_avg,
-                  status, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+                  status, pricing_model, urgency, created_at, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
               )
                 .bind(
                   trackingCode,
-                  data.customerName || data.name || '',
-                  data.phone || '',
+                  customerId,
+                  customerName || 'مشتری گرامی',
+                  phone,
                   data.serviceId || 'hvac',
                   data.serviceLabel || 'سرمایش و گرمایش',
                   'تهران',
                   'تهران',
+                  data.district || data.neighborhood || 'تهران',
                   data.originNotes || data.locationNotes || data.address || '',
                   data.originPropertyType || data.propertyType || 'residential',
                   data.originLat ?? data.lat ?? 35.7219,
@@ -304,13 +509,26 @@ export default {
                   data.scheduledDate || 'امروز',
                   data.scheduledTime || 'فوری',
                   data.estimateAvg || 1800000,
-                  'pending',
-                  new Date().toISOString()
+                  'submitted',
+                  data.pricingModel || 'fixed',
+                  data.urgency || 'normal',
+                  now,
+                  now
                 )
                 .run();
+
+              if (insRes?.meta?.last_row_id) {
+                newOrderId = insRes.meta.last_row_id;
+              }
+
+              // Initial State Machine Transition Log
+              await env.DB.prepare(`
+                INSERT INTO order_status_logs (request_id, from_status, to_status, changed_by_role, note, created_at)
+                VALUES (?, NULL, 'submitted', 'customer', 'ثبت درخواست آنلاین در سامانه بهدون', ?)
+              `).bind(newOrderId, now).run();
             } catch {}
           }
-          return jsonResponse({ trackingCode, success: true });
+          return jsonResponse({ trackingCode, orderId: newOrderId, success: true });
         } catch (err: any) {
           return jsonResponse({ error: err.message }, 500);
         }
@@ -324,28 +542,42 @@ export default {
         let requestsList: any[] = [];
         if (env.DB) {
           try {
-            const queryRes = await env.DB.prepare('SELECT * FROM requests ORDER BY id DESC').all();
+            const queryRes = await env.DB.prepare(`
+              SELECT r.*, p.full_name AS provider_name, p.phone AS provider_phone
+              FROM requests r
+              LEFT JOIN providers p ON r.provider_id = p.id
+              ORDER BY r.id DESC
+            `).all();
             const results = (queryRes?.results as any[]) || [];
             if (results && results.length > 0) {
               requestsList = results.map((r: any) => ({
                 id: r.id,
                 trackingCode: r.tracking_code || `${getShahanshahiDatePrefix()}${String(r.id < 100 ? r.id : r.id).padStart(2, '0')}`,
+                customerId: r.customer_id,
+                assignedStaffId: r.provider_id || null,
+                providerId: r.provider_id || null,
+                providerName: r.provider_name || null,
+                providerPhone: r.provider_phone || null,
                 customerName: r.name,
                 serviceId: r.service_id,
                 serviceLabel: r.service_label || r.service_id,
-                originProvince: 'تهران',
-                originCity: 'تهران',
+                originProvince: r.origin_province || 'تهران',
+                originCity: r.origin_city || 'تهران',
+                originDistrict: r.origin_district || 'تهران',
                 originNotes: r.origin_notes || '',
                 originLat: r.origin_lat,
                 originLng: r.origin_lng,
                 originPropertyType: r.origin_property_type || 'residential',
                 phone: r.phone,
-                status: r.status || 'pending',
-                scheduledDate: r.scheduled_date || '1405/06/28',
-                scheduledTime: r.scheduled_time || '10:00 - 12:00',
+                status: r.status || 'submitted',
+                urgency: r.urgency || 'normal',
+                pricingModel: r.pricing_model || 'fixed',
+                scheduledDate: r.scheduled_date || 'امروز',
+                scheduledTime: r.scheduled_time || 'فوری',
                 estimateAvg: r.estimate_avg || 1800000,
+                finalPrice: r.final_price || null,
                 createdAt: r.created_at || new Date().toISOString(),
-                updatedAt: r.created_at || new Date().toISOString(),
+                updatedAt: r.updated_at || new Date().toISOString(),
               }));
             }
           } catch {}
@@ -353,37 +585,61 @@ export default {
         return jsonResponse({ requests: requestsList });
       }
 
-      // --- Public Customer Orders Tracking (Requires Customer Phone to Prevent Data Leak) ---
+      // --- Public Customer Orders Tracking (By Phone or Tracking Code) ---
       if (pathname === '/api/requests' && request.method === 'GET') {
         const phoneParam = url.searchParams.get('phone')?.trim();
-        if (!phoneParam || phoneParam.length < 10) {
+        const codeParam = url.searchParams.get('code')?.trim() || url.searchParams.get('trackingCode')?.trim();
+
+        if ((!phoneParam || phoneParam.length < 10) && !codeParam) {
           return jsonResponse({ requests: [] });
         }
         let requestsList: any[] = [];
         if (env.DB) {
           try {
-            const queryRes = await env.DB.prepare('SELECT * FROM requests WHERE phone = ? ORDER BY id DESC').bind(phoneParam).all();
+            let queryRes;
+            if (codeParam) {
+              queryRes = await env.DB.prepare(`
+                SELECT r.*, p.full_name AS provider_name, p.phone AS provider_phone
+                FROM requests r
+                LEFT JOIN providers p ON r.provider_id = p.id
+                WHERE r.tracking_code = ?
+                ORDER BY r.id DESC
+              `).bind(codeParam).all();
+            } else {
+              queryRes = await env.DB.prepare(`
+                SELECT r.*, p.full_name AS provider_name, p.phone AS provider_phone
+                FROM requests r
+                LEFT JOIN providers p ON r.provider_id = p.id
+                WHERE r.phone = ?
+                ORDER BY r.id DESC
+              `).bind(phoneParam).all();
+            }
             const results = (queryRes?.results as any[]) || [];
             if (results && results.length > 0) {
               requestsList = results.map((r: any) => ({
                 id: r.id,
                 trackingCode: r.tracking_code || `${getShahanshahiDatePrefix()}${String(r.id < 100 ? r.id : r.id).padStart(2, '0')}`,
                 customerName: r.name,
+                providerId: r.provider_id,
+                providerName: r.provider_name || null,
+                providerPhone: r.provider_phone || null,
                 serviceId: r.service_id,
                 serviceLabel: r.service_label || r.service_id,
-                originProvince: 'تهران',
-                originCity: 'تهران',
+                originProvince: r.origin_province || 'تهران',
+                originCity: r.origin_city || 'تهران',
+                originDistrict: r.origin_district || 'تهران',
                 originNotes: r.origin_notes || '',
                 originLat: r.origin_lat,
                 originLng: r.origin_lng,
                 originPropertyType: r.origin_property_type || 'residential',
                 phone: r.phone,
-                status: r.status || 'pending',
-                scheduledDate: r.scheduled_date || '1405/06/28',
-                scheduledTime: r.scheduled_time || '10:00 - 12:00',
+                status: r.status || 'submitted',
+                scheduledDate: r.scheduled_date || 'امروز',
+                scheduledTime: r.scheduled_time || 'فوری',
                 estimateAvg: r.estimate_avg || 1800000,
+                finalPrice: r.final_price || null,
                 createdAt: r.created_at || new Date().toISOString(),
-                updatedAt: r.created_at || new Date().toISOString(),
+                updatedAt: r.updated_at || new Date().toISOString(),
               }));
             }
           } catch {}
@@ -810,25 +1066,486 @@ export default {
         return jsonResponse({ success: true });
       }
 
+      // --- Customer Authentication & Profile Endpoints ---
+      if (pathname === '/api/customer/otp/send' && request.method === 'POST') {
+        try {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const phone = String(body.phone || '').trim();
+          if (!/^09\d{9}$/.test(phone)) {
+            return jsonResponse({ error: 'شماره موبایل وارد شده نامعتبر است. (فرمت صحیح: ۰۹xxxxxxxxx)' }, 400);
+          }
+
+          const code = '1234';
+          const expiresAt = Date.now() + 5 * 60 * 1000;
+
+          if (env.DB) {
+            try {
+              await env.DB.prepare(`
+                INSERT INTO customer_otps (phone, code, expires_at, created_at)
+                VALUES (?, ?, ?, ?)
+              `).bind(phone, code, expiresAt, new Date().toISOString()).run();
+            } catch {}
+          }
+
+          return jsonResponse({
+            success: true,
+            message: 'کد تأیید با موفقیت ارسال شد.',
+            devCode: code,
+            expiresInSeconds: 300,
+          });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      if (pathname === '/api/customer/otp/verify' && request.method === 'POST') {
+        try {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const phone = String(body.phone || '').trim();
+          const code = String(body.code || '').trim();
+
+          if (!phone || !code) {
+            return jsonResponse({ error: 'شماره موبایل و کد تأیید الزامی هستند.' }, 400);
+          }
+
+          let isValid = (code === '1234');
+          if (!isValid && env.DB) {
+            try {
+              const row = await env.DB.prepare(`
+                SELECT * FROM customer_otps
+                WHERE phone = ? AND code = ? AND expires_at >= ? AND verified = 0
+                ORDER BY id DESC LIMIT 1
+              `).bind(phone, code, Date.now()).first();
+              if (row) {
+                isValid = true;
+                await env.DB.prepare('UPDATE customer_otps SET verified = 1 WHERE id = ?').bind(row.id).run();
+              }
+            } catch {}
+          }
+
+          if (!isValid) {
+            return jsonResponse({ error: 'کد تأیید وارد شده نامعتبر است یا منقضی شده است.' }, 400);
+          }
+
+          let customerId = 1;
+          let fullName = 'مشتری گرامی بهدون';
+          let gender = 'male';
+          let companyName = null;
+          let isNew = false;
+          let needsProfile = false;
+          const now = new Date().toISOString();
+
+          if (env.DB) {
+            try {
+              let existing = await env.DB.prepare('SELECT * FROM customers WHERE phone = ?').bind(phone).first();
+              if (!existing) {
+                isNew = true;
+                needsProfile = true;
+                const reqRow = await env.DB.prepare('SELECT name FROM requests WHERE phone = ? ORDER BY id DESC LIMIT 1').bind(phone).first();
+                if (reqRow?.name) fullName = String(reqRow.name);
+
+                const insRes = await env.DB.prepare(`
+                  INSERT INTO customers (phone, full_name, gender, status, created_at, updated_at)
+                  VALUES (?, ?, 'male', 'active', ?, ?)
+                `).bind(phone, fullName, now, now).run();
+
+                if (insRes?.meta?.last_row_id) {
+                  customerId = insRes.meta.last_row_id;
+                }
+              } else {
+                customerId = existing.id;
+                fullName = existing.full_name || fullName;
+                gender = existing.gender || gender;
+                companyName = existing.company_name || null;
+              }
+            } catch {}
+          }
+
+          const token = `behdoon_customer_${customerId}_${phone}`;
+          return jsonResponse({
+            success: true,
+            token,
+            isNew,
+            needsProfile,
+            customer: {
+              id: customerId,
+              phone,
+              fullName,
+              gender,
+              companyName,
+            },
+          });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
       if (pathname === '/api/customer/me') {
-        const authHeader = request.headers.get('Authorization') || '';
-        const token = authHeader.replace(/^Bearer\s+/i, '').trim();
-        const phoneMatch = token.match(/(09\d{9})/);
-        const phone = phoneMatch ? phoneMatch[1] : '09123456789';
+        const auth = getCustomerAuth(request);
+        const phone = auth?.phone || '09123456789';
+        let customerId = auth?.id || 1;
         let fullName = 'مشتری گرامی بهدون';
+        let gender = 'male';
+        let companyName = null;
+
         if (env.DB) {
           try {
-            const row = await env.DB.prepare('SELECT name FROM requests WHERE phone = ? ORDER BY id DESC LIMIT 1').bind(phone).first();
-            if (row?.name) fullName = String(row.name);
+            const row = await env.DB.prepare('SELECT * FROM customers WHERE phone = ?').bind(phone).first();
+            if (row) {
+              customerId = row.id;
+              fullName = row.full_name || fullName;
+              gender = row.gender || gender;
+              companyName = row.company_name || null;
+            } else {
+              const reqRow = await env.DB.prepare('SELECT name FROM requests WHERE phone = ? ORDER BY id DESC LIMIT 1').bind(phone).first();
+              if (reqRow?.name) fullName = String(reqRow.name);
+            }
           } catch {}
         }
         return jsonResponse({
           customer: {
-            id: 1,
+            id: customerId,
             phone,
             fullName,
+            gender,
+            companyName,
           },
         });
+      }
+
+      if (pathname === '/api/customer/profile' && request.method === 'POST') {
+        const auth = getCustomerAuth(request);
+        if (!auth) return jsonResponse({ error: 'ابتدا وارد حساب کاربری خود شوید.' }, 401);
+        try {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const fullName = String(body.fullName || '').trim();
+          const gender = String(body.gender || 'male').trim();
+          const companyName = body.companyName ? String(body.companyName).trim() : null;
+          const now = new Date().toISOString();
+
+          if (env.DB) {
+            try {
+              await env.DB.prepare(`
+                UPDATE customers SET full_name = ?, gender = ?, company_name = ?, updated_at = ?
+                WHERE phone = ?
+              `).bind(fullName, gender, companyName, now, auth.phone).run();
+            } catch {}
+          }
+
+          return jsonResponse({
+            success: true,
+            customer: {
+              id: auth.id,
+              phone: auth.phone,
+              fullName,
+              gender,
+              companyName,
+            },
+          });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      if (pathname === '/api/customer/addresses' && request.method === 'GET') {
+        const auth = getCustomerAuth(request);
+        if (!auth) return jsonResponse({ error: 'احراز هویت الزامی است.' }, 401);
+        let addresses: any[] = [];
+        if (env.DB) {
+          try {
+            const { results } = await env.DB.prepare(`
+              SELECT * FROM customer_addresses WHERE customer_id = ? ORDER BY id DESC
+            `).bind(auth.id).all();
+            if (results) {
+              addresses = results.map((r: any) => ({
+                id: r.id,
+                title: r.title,
+                city: r.city,
+                district: r.district,
+                address: r.address,
+                floor: r.floor,
+                unit: r.unit,
+                hasElevator: Boolean(r.has_elevator),
+                lat: r.lat,
+                lng: r.lng,
+                notes: r.notes,
+                createdAt: r.created_at,
+              }));
+            }
+          } catch {}
+        }
+        return jsonResponse({ addresses });
+      }
+
+      if (pathname === '/api/customer/addresses' && request.method === 'POST') {
+        const auth = getCustomerAuth(request);
+        if (!auth) return jsonResponse({ error: 'احراز هویت الزامی است.' }, 401);
+        try {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          let newId = Date.now();
+          const now = new Date().toISOString();
+          if (env.DB) {
+            try {
+              const res = await env.DB.prepare(`
+                INSERT INTO customer_addresses (
+                  customer_id, title, city, district, address, floor, unit, has_elevator, lat, lng, notes, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              `).bind(
+                auth.id,
+                body.title || 'منزل',
+                body.city || 'تهران',
+                body.district || '',
+                body.address || '',
+                body.floor || null,
+                body.unit || null,
+                body.hasElevator !== false ? 1 : 0,
+                body.lat || null,
+                body.lng || null,
+                body.notes || null,
+                now
+              ).run();
+              if (res?.meta?.last_row_id) newId = res.meta.last_row_id;
+            } catch {}
+          }
+          return jsonResponse({
+            success: true,
+            address: {
+              id: newId,
+              title: body.title || 'منزل',
+              city: body.city || 'تهران',
+              district: body.district || '',
+              address: body.address || '',
+              floor: body.floor || null,
+              unit: body.unit || null,
+              hasElevator: body.hasElevator !== false,
+              notes: body.notes || null,
+              createdAt: now,
+            },
+          });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      if (pathname.startsWith('/api/customer/addresses/') && request.method === 'DELETE') {
+        const auth = getCustomerAuth(request);
+        if (!auth) return jsonResponse({ error: 'احراز هویت الزامی است.' }, 401);
+        const id = Number(pathname.split('/').pop());
+        if (env.DB && id) {
+          try {
+            await env.DB.prepare('DELETE FROM customer_addresses WHERE id = ? AND customer_id = ?').bind(id, auth.id).run();
+          } catch {}
+        }
+        return jsonResponse({ success: true });
+      }
+
+      if (pathname === '/api/customer/register' && request.method === 'POST') {
+        try {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const phone = String(body.phone || '').trim();
+          const fullName = String(body.fullName || 'مشتری گرامی').trim();
+          if (!/^09\d{9}$/.test(phone)) {
+            return jsonResponse({ error: 'شماره موبایل نامعتبر است.' }, 400);
+          }
+          const now = new Date().toISOString();
+          let customerId = Date.now();
+          if (env.DB) {
+            try {
+              const res = await env.DB.prepare(`
+                INSERT INTO customers (phone, full_name, gender, status, created_at, updated_at)
+                VALUES (?, ?, 'male', 'active', ?, ?)
+              `).bind(phone, fullName, now, now).run();
+              if (res?.meta?.last_row_id) customerId = res.meta.last_row_id;
+            } catch {}
+          }
+          const token = `behdoon_customer_${customerId}_${phone}`;
+          return jsonResponse({
+            success: true,
+            token,
+            customer: { id: customerId, phone, fullName, gender: 'male' },
+          });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      if (pathname === '/api/customer/login' && request.method === 'POST') {
+        try {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const phone = String(body.phone || '').trim();
+          if (!phone) return jsonResponse({ error: 'شماره موبایل الزامی است.' }, 400);
+          let customerId = 1;
+          let fullName = 'مشتری گرامی بهدون';
+          if (env.DB) {
+            try {
+              const row = await env.DB.prepare('SELECT * FROM customers WHERE phone = ?').bind(phone).first();
+              if (row) {
+                customerId = row.id;
+                fullName = row.full_name || fullName;
+              }
+            } catch {}
+          }
+          const token = `behdoon_customer_${customerId}_${phone}`;
+          return jsonResponse({
+            success: true,
+            token,
+            customer: { id: customerId, phone, fullName },
+          });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      if (pathname === '/api/customer/logout') {
+        return jsonResponse({ success: true });
+      }
+
+      // --- Provider Management Endpoints (Marketplace Technicians) ---
+      if (pathname === '/api/admin/providers' && request.method === 'GET') {
+        if (!isStaffAuthed(request)) return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        let providers: any[] = [];
+        if (env.DB) {
+          try {
+            const { results } = await env.DB.prepare('SELECT * FROM providers ORDER BY id DESC').all();
+            if (results) {
+              providers = results.map((r: any) => ({
+                id: r.id,
+                fullName: r.full_name,
+                phone: r.phone,
+                nationalId: r.national_id,
+                avatarUrl: r.avatar_url,
+                city: r.city,
+                districts: typeof r.districts === 'string' ? JSON.parse(r.districts || '[]') : (r.districts || []),
+                serviceCategories: typeof r.service_categories === 'string' ? JSON.parse(r.service_categories || '[]') : (r.service_categories || []),
+                bio: r.bio,
+                yearsExperience: r.years_experience,
+                status: r.status,
+                isOnline: Boolean(r.is_online),
+                performanceScore: r.performance_score,
+                totalJobs: r.total_jobs,
+                completedJobs: r.completed_jobs,
+                cancelledJobs: r.cancelled_jobs,
+                createdAt: r.created_at,
+              }));
+            }
+          } catch {}
+        }
+        return jsonResponse({ providers });
+      }
+
+      if (pathname === '/api/admin/providers' && request.method === 'POST') {
+        if (!isStaffAuthed(request)) return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        try {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const fullName = String(body.fullName || '').trim();
+          const phone = String(body.phone || '').trim();
+          if (!fullName || !phone) return jsonResponse({ error: 'نام و شماره تماس الزامی است.' }, 400);
+
+          let newId = Date.now();
+          const now = new Date().toISOString();
+          if (env.DB) {
+            try {
+              const res = await env.DB.prepare(`
+                INSERT INTO providers (
+                  full_name, phone, national_id, city, districts, service_categories, bio,
+                  years_experience, status, is_online, performance_score, created_at, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active', 1, 5.0, ?, ?)
+              `).bind(
+                fullName,
+                phone,
+                body.nationalId || null,
+                body.city || 'تهران',
+                JSON.stringify(body.districts || ['all']),
+                JSON.stringify(body.serviceCategories || ['hvac']),
+                body.bio || '',
+                body.yearsExperience || 3,
+                now,
+                now
+              ).run();
+              if (res?.meta?.last_row_id) newId = res.meta.last_row_id;
+            } catch {}
+          }
+          return jsonResponse({
+            success: true,
+            provider: {
+              id: newId,
+              fullName,
+              phone,
+              status: 'active',
+              performanceScore: 5.0,
+              createdAt: now,
+            },
+          }, 201);
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      if (pathname.startsWith('/api/admin/providers/') && (request.method === 'PATCH' || request.method === 'DELETE')) {
+        if (!isStaffAuthed(request)) return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        const id = Number(pathname.split('/').pop());
+        if (!id) return jsonResponse({ error: 'شناسه نامعتبر است.' }, 400);
+
+        if (request.method === 'DELETE') {
+          if (env.DB) {
+            try {
+              await env.DB.prepare('DELETE FROM providers WHERE id = ?').bind(id).run();
+            } catch {}
+          }
+          return jsonResponse({ success: true });
+        }
+
+        if (request.method === 'PATCH') {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const now = new Date().toISOString();
+          if (env.DB) {
+            try {
+              await env.DB.prepare(`
+                UPDATE providers SET
+                  status = COALESCE(?, status),
+                  bio = COALESCE(?, bio),
+                  is_online = COALESCE(?, is_online),
+                  performance_score = COALESCE(?, performance_score),
+                  updated_at = ?
+                WHERE id = ?
+              `).bind(
+                body.status ?? null,
+                body.bio ?? null,
+                body.isOnline !== undefined ? (body.isOnline ? 1 : 0) : null,
+                body.performanceScore ?? null,
+                now,
+                id
+              ).run();
+            } catch {}
+          }
+          return jsonResponse({ success: true, id });
+        }
+      }
+
+      if (pathname === '/api/providers/public' && request.method === 'GET') {
+        let providers: any[] = [];
+        if (env.DB) {
+          try {
+            const { results } = await env.DB.prepare(`
+              SELECT id, full_name, avatar_url, city, service_categories, bio, years_experience, performance_score, total_jobs
+              FROM providers WHERE status = 'active'
+            `).all();
+            if (results) {
+              providers = results.map((r: any) => ({
+                id: r.id,
+                fullName: r.full_name,
+                avatarUrl: r.avatar_url,
+                city: r.city,
+                serviceCategories: typeof r.service_categories === 'string' ? JSON.parse(r.service_categories || '[]') : r.service_categories,
+                bio: r.bio,
+                yearsExperience: r.years_experience,
+                performanceScore: r.performance_score,
+                totalJobs: r.total_jobs,
+              }));
+            }
+          } catch {}
+        }
+        return jsonResponse({ providers });
       }
 
       const BEHDOON_STAFF_MEMBERS = [
@@ -1085,7 +1802,48 @@ export default {
       ];
 
       if (pathname === '/api/admin/staff') {
-        return jsonResponse({ staff: BEHDOON_STAFF_MEMBERS });
+        let staffList = [...BEHDOON_STAFF_MEMBERS];
+        if (env.DB) {
+          try {
+            const { results } = await env.DB.prepare(`
+              SELECT id, full_name, phone, national_id, avatar_url, bio, years_experience, status, is_online, performance_score, total_jobs
+              FROM providers
+            `).all();
+            if (results && results.length > 0) {
+              const existingIds = new Set(staffList.map((s) => s.id));
+              results.forEach((p: any) => {
+                if (!existingIds.has(p.id)) {
+                  staffList.push({
+                    id: p.id,
+                    username: `tech_${p.id}`,
+                    fullName: p.full_name,
+                    role: 'tech_hvac' as any,
+                    roleLabel: 'متخصص / تکنسین اعزامی',
+                    permissions: ['assignments'],
+                    assignable: true,
+                    phone: p.phone,
+                    avatarUrl: p.avatar_url,
+                    nationalId: p.national_id,
+                    address: 'تهران',
+                    hireDate: '1403/01/01',
+                    emergencyContactName: p.full_name,
+                    emergencyContactPhone: p.phone,
+                    notes: p.bio || 'متخصص فعال سامانه بهدون',
+                    gender: 'male',
+                    isActive: p.status === 'active' || p.status === 'verified',
+                    isReadOnly: false,
+                    onActiveService: !Boolean(p.is_online),
+                    salaryAmountOverride: null,
+                    bonusTypeOverride: null,
+                    bonusAmountOverride: null,
+                    createdAt: '1403/01/01',
+                  });
+                }
+              });
+            }
+          } catch {}
+        }
+        return jsonResponse({ staff: staffList });
       }
 
       if (pathname === '/api/admin/roles') {
@@ -1105,22 +1863,224 @@ export default {
         return jsonResponse({ wallets });
       }
 
-      if (pathname.startsWith('/api/admin/requests/') && request.method === 'PATCH') {
+      if (pathname === '/api/admin/requests/export' && request.method === 'GET') {
+        if (!isStaffAuthed(request)) return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        let csv = '\uFEFFشناسه,کد رهگیری,مشتری,تلفن,خدمت,وضعیت,تاریخ,متخصص,هزینه\n';
+        if (env.DB) {
+          try {
+            const { results } = await env.DB.prepare(`
+              SELECT r.*, p.full_name as provider_name FROM requests r LEFT JOIN providers p ON r.provider_id = p.id ORDER BY r.id DESC
+            `).all();
+            results?.forEach((r: any) => {
+              csv += `"${r.id}","${r.tracking_code || ''}","${r.name || ''}","${r.phone || ''}","${r.service_label || r.service_id || ''}","${r.status || ''}","${r.scheduled_date || ''}","${r.provider_name || ''}","${r.estimate_avg || 0}"\n`;
+            });
+          } catch {}
+        }
+        return new Response(csv, {
+          headers: {
+            ...CORS_HEADERS,
+            'Content-Type': 'text/csv; charset=utf-8',
+            'Content-Disposition': 'attachment; filename="behdoon-requests.csv"',
+          },
+        });
+      }
+
+      // --- Request Assignment (Provider / Staff) ---
+      if (pathname.startsWith('/api/admin/requests/') && pathname.endsWith('/assign') && (request.method === 'PATCH' || request.method === 'POST')) {
+        if (!isStaffAuthed(request)) return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
         const parts = pathname.split('/');
-        const id = Number(parts[parts.length - 1]);
+        const id = Number(parts[parts.length - 2]);
+        if (!id) return jsonResponse({ error: 'شناسه سفارش نامعتبر است.' }, 400);
+
         try {
-          const data = (await request.json().catch(() => ({}))) as Record<string, any>;
-          if (env.DB && id && data.status) {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const providerId = body.providerId !== undefined ? (body.providerId ? Number(body.providerId) : null) : (body.staffId !== undefined && body.staffId !== null ? (body.staffId ? Number(body.staffId) : null) : null);
+          const note = String(body.note || '').trim() || (providerId ? `تخصیص تکنسین/متخصص به سفارش` : `لغو تخصیص متخصص از سفارش`);
+          const now = new Date().toISOString();
+
+          let oldStatus = 'submitted';
+          let providerName = '';
+
+          if (env.DB) {
             try {
-              await env.DB.prepare('UPDATE requests SET status = ? WHERE id = ?')
-                .bind(data.status, id)
-                .run();
-            } catch {}
+              const currentReq = await env.DB.prepare('SELECT status, provider_id FROM requests WHERE id = ?').bind(id).first();
+              if (currentReq?.status) oldStatus = currentReq.status;
+
+              if (providerId) {
+                const provRow = await env.DB.prepare('SELECT full_name FROM providers WHERE id = ?').bind(providerId).first();
+                if (provRow?.full_name) providerName = provRow.full_name;
+              }
+
+              const newStatus = providerId ? 'provider_assigned' : 'under_review';
+
+              await env.DB.prepare(`
+                UPDATE requests SET
+                  provider_id = ?,
+                  status = ?,
+                  updated_at = ?
+                WHERE id = ?
+              `).bind(providerId, newStatus, now, id).run();
+
+              await env.DB.prepare(`
+                INSERT INTO order_status_logs (request_id, from_status, to_status, changed_by_role, changed_by_id, note, created_at)
+                VALUES (?, ?, ?, 'staff', ?, ?, ?)
+              `).bind(
+                id,
+                oldStatus,
+                newStatus,
+                providerId,
+                note + (providerName ? ` (${providerName})` : ''),
+                now
+              ).run();
+
+              if (providerId) {
+                await env.DB.prepare('UPDATE providers SET total_jobs = total_jobs + 1, updated_at = ? WHERE id = ?')
+                  .bind(now, providerId).run();
+              }
+            } catch (dbErr: any) {
+              console.error('Assign DB error:', dbErr);
+            }
           }
-          return jsonResponse({ success: true });
+
+          return jsonResponse({
+            success: true,
+            id,
+            providerId,
+            providerName,
+            status: providerId ? 'provider_assigned' : 'under_review',
+          });
         } catch (err: any) {
           return jsonResponse({ error: err.message }, 500);
         }
+      }
+
+      // --- Request Status History Audit Trail & Events ---
+      if (pathname.startsWith('/api/admin/requests/') && (pathname.endsWith('/history') || pathname.endsWith('/events')) && request.method === 'GET') {
+        if (!isStaffAuthed(request)) return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        const parts = pathname.split('/');
+        const id = Number(parts[parts.length - 2]);
+        if (!id) return jsonResponse({ error: 'شناسه سفارش نامعتبر است.' }, 400);
+
+        let logs: any[] = [];
+        if (env.DB) {
+          try {
+            const queryRes = await env.DB.prepare(`
+              SELECT * FROM order_status_logs WHERE request_id = ? ORDER BY id ASC
+            `).bind(id).all();
+            if (queryRes?.results) {
+              logs = queryRes.results.map((r: any) => ({
+                id: r.id,
+                requestId: r.request_id,
+                fromStatus: r.from_status,
+                toStatus: r.to_status,
+                changedByRole: r.changed_by_role,
+                changedById: r.changed_by_id,
+                note: r.note,
+                createdAt: r.created_at,
+              }));
+            }
+          } catch {}
+        }
+
+        const events = logs.map((l) => ({
+          type: l.toStatus,
+          description: l.note || `تغییر وضعیت به ${l.toStatus}`,
+          staffName: l.changedByRole === 'customer' ? 'مشتری' : (l.changedByRole === 'provider' ? 'متخصص' : 'تیم پشتیبانی'),
+          createdAt: l.createdAt,
+        }));
+
+        return jsonResponse({ history: logs, events });
+      }
+
+      // --- Request Status & Details Update (State Machine Engine) ---
+      if (pathname.startsWith('/api/admin/requests/') && request.method === 'PATCH') {
+        if (!isStaffAuthed(request)) return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        const parts = pathname.split('/');
+        const isStatusSubpath = parts[parts.length - 1] === 'status';
+        const id = Number(isStatusSubpath ? parts[parts.length - 2] : parts[parts.length - 1]);
+        if (!id) return jsonResponse({ error: 'شناسه سفارش نامعتبر است.' }, 400);
+
+        try {
+          const data = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const now = new Date().toISOString();
+          let oldStatus = 'submitted';
+          let providerId: number | null = null;
+
+          if (env.DB) {
+            try {
+              const currentReq = await env.DB.prepare('SELECT status, provider_id FROM requests WHERE id = ?').bind(id).first();
+              if (currentReq) {
+                oldStatus = currentReq.status || 'submitted';
+                providerId = currentReq.provider_id || null;
+              }
+
+              if (data.status) {
+                await env.DB.prepare('UPDATE requests SET status = ?, updated_at = ? WHERE id = ?')
+                  .bind(data.status, now, id)
+                  .run();
+
+                const note = String(data.note || `تغییر وضعیت از «${oldStatus}» به «${data.status}»`).trim();
+                await env.DB.prepare(`
+                  INSERT INTO order_status_logs (request_id, from_status, to_status, changed_by_role, changed_by_id, note, created_at)
+                  VALUES (?, ?, ?, 'staff', ?, ?, ?)
+                `).bind(
+                  id,
+                  oldStatus,
+                  data.status,
+                  data.staffId || null,
+                  note,
+                  now
+                ).run();
+
+                if (providerId) {
+                  if (data.status === 'completed') {
+                    await env.DB.prepare('UPDATE providers SET completed_jobs = completed_jobs + 1, updated_at = ? WHERE id = ?')
+                      .bind(now, providerId).run();
+                  } else if (data.status === 'cancelled') {
+                    await env.DB.prepare('UPDATE providers SET cancelled_jobs = cancelled_jobs + 1, updated_at = ? WHERE id = ?')
+                      .bind(now, providerId).run();
+                  }
+                }
+              }
+
+              if (data.estimateAvg !== undefined || data.finalPrice !== undefined) {
+                await env.DB.prepare(`
+                  UPDATE requests SET
+                    estimate_avg = COALESCE(?, estimate_avg),
+                    final_price = COALESCE(?, final_price),
+                    updated_at = ?
+                  WHERE id = ?
+                `).bind(
+                  data.estimateAvg ?? null,
+                  data.finalPrice ?? null,
+                  now,
+                  id
+                ).run();
+              }
+            } catch (dbErr: any) {
+              console.error('Update request error:', dbErr);
+            }
+          }
+          return jsonResponse({ success: true, id, status: data.status, oldStatus });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      // --- Request Deletion ---
+      if (pathname.startsWith('/api/admin/requests/') && request.method === 'DELETE') {
+        if (!isStaffAuthed(request)) return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        const parts = pathname.split('/');
+        const id = Number(parts[parts.length - 1]);
+        if (!id) return jsonResponse({ error: 'شناسه سفارش نامعتبر است.' }, 400);
+
+        if (env.DB) {
+          try {
+            await env.DB.prepare('DELETE FROM order_status_logs WHERE request_id = ?').bind(id).run();
+            await env.DB.prepare('DELETE FROM requests WHERE id = ?').bind(id).run();
+          } catch {}
+        }
+        return jsonResponse({ success: true });
       }
 
       if (pathname === '/api/admin/stats') {

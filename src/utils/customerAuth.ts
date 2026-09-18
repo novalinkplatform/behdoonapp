@@ -2,7 +2,10 @@ import { API_BASE_URL } from '../data/config.ts';
 import { pick } from '../i18n/lang.ts';
 import { notifyNativeApiBase, notifyNativeSession } from './nativeBridge.ts';
 
-const TOKEN_KEY = 'behbar_customer_token';
+const TOKEN_KEY = 'behdoon_customer_token';
+const LEGACY_TOKEN_KEY = 'behbar_customer_token';
+const INFO_KEY = 'behdoon_customer_info';
+const LEGACY_INFO_KEY = 'behbar_customer_info';
 
 // اگر همین الان (بارگذاری اولیه‌ی صفحه) توکنی موجود باشد، اپ بومی باید از قبلی‌بودنِ نشست باخبر شود —
 // نه فقط از لحظه‌ی ورود/خروج جدید.
@@ -50,7 +53,7 @@ export interface VerifyOtpResult {
 
 export function getCustomerToken(): string | null {
   try {
-    return localStorage.getItem(TOKEN_KEY);
+    return localStorage.getItem(TOKEN_KEY) || localStorage.getItem(LEGACY_TOKEN_KEY);
   } catch {
     return null;
   }
@@ -59,23 +62,25 @@ export function getCustomerToken(): string | null {
 export function saveCustomerToken(token: string): void {
   try {
     localStorage.setItem(TOKEN_KEY, token);
+    localStorage.removeItem(LEGACY_TOKEN_KEY);
   } catch {
-    /* localStorage unavailable — the customer will just need to log in again next visit */
+    /* localStorage unavailable */
   }
   notifyNativeSession(token);
 }
 
 export function saveCustomerSession(customer: CustomerInfo, token?: string): void {
-  const sessionToken = token || `behbar_customer_${Date.now()}_${customer.phone}`;
+  const sessionToken = token || `behdoon_customer_${customer.id || Date.now()}_${customer.phone}`;
   saveCustomerToken(sessionToken);
   try {
-    localStorage.setItem('behbar_customer_info', JSON.stringify(customer));
+    localStorage.setItem(INFO_KEY, JSON.stringify(customer));
+    localStorage.removeItem(LEGACY_INFO_KEY);
   } catch {}
 }
 
 export function getLocalCustomerInfo(): CustomerInfo | null {
   try {
-    const raw = localStorage.getItem('behbar_customer_info');
+    const raw = localStorage.getItem(INFO_KEY) || localStorage.getItem(LEGACY_INFO_KEY);
     return raw ? (JSON.parse(raw) as CustomerInfo) : null;
   } catch {
     return null;
@@ -85,6 +90,9 @@ export function getLocalCustomerInfo(): CustomerInfo | null {
 export function clearCustomerToken(): void {
   try {
     localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(INFO_KEY);
+    localStorage.removeItem(LEGACY_TOKEN_KEY);
+    localStorage.removeItem(LEGACY_INFO_KEY);
   } catch {
     /* non-critical */
   }

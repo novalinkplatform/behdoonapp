@@ -2152,3 +2152,83 @@ export async function processPayroll(month: string, entries: { staffId: number; 
   if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'پردازش حقوق ناموفق بود.');
   return body as { processed: number; skipped: { staffId: number; reason: string }[] };
 }
+
+// --- Provider & Technician Marketplace Management ---
+export interface ProviderRecord {
+  id: number;
+  fullName: string;
+  phone: string;
+  nationalId?: string | null;
+  avatarUrl?: string | null;
+  city: string;
+  districts?: string[];
+  serviceCategories: string[];
+  bio?: string | null;
+  yearsExperience: number;
+  status: 'pending' | 'under_review' | 'verified' | 'active' | 'suspended' | 'rejected';
+  isOnline: boolean;
+  pricingBase?: number;
+  performanceScore: number;
+  totalJobs: number;
+  completedJobs?: number;
+  cancelledJobs?: number;
+  verifiedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OrderStatusHistoryEntry {
+  id: number;
+  requestId: number;
+  fromStatus: string | null;
+  toStatus: string;
+  changedByRole: string;
+  changedById: number | null;
+  note: string | null;
+  createdAt: string;
+}
+
+export async function fetchProviders(status?: string): Promise<ProviderRecord[]> {
+  const url = status ? `/api/admin/providers?status=${encodeURIComponent(status)}` : '/api/admin/providers';
+  const res = await authedFetch(url);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت لیست متخصصان ناموفق بود.');
+  return (body.providers ?? []) as ProviderRecord[];
+}
+
+export async function createProvider(payload: Partial<ProviderRecord>): Promise<ProviderRecord> {
+  const res = await authedFetch('/api/admin/providers', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'افزودن متخصص جدید ناموفق بود.');
+  return body.provider as ProviderRecord;
+}
+
+export async function updateProviderStatus(
+  id: number,
+  payload: { status?: string; bio?: string; isOnline?: boolean; performanceScore?: number },
+): Promise<void> {
+  const res = await authedFetch(`/api/admin/providers/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'به‌روزرسانی اطلاعات متخصص ناموفق بود.');
+}
+
+export async function deleteProvider(id: number): Promise<void> {
+  const res = await authedFetch(`/api/admin/providers/${id}`, { method: 'DELETE' });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'حذف متخصص ناموفق بود.');
+}
+
+export async function fetchOrderHistory(orderId: number): Promise<OrderStatusHistoryEntry[]> {
+  const res = await authedFetch(`/api/admin/requests/${orderId}/history`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت تاریخچه وضعیت سفارش ناموفق بود.');
+  return (body.history ?? []) as OrderStatusHistoryEntry[];
+}
