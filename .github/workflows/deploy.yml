@@ -27,6 +27,16 @@ jobs:
         run: npm run build
 
       - name: Deploy to Cloudflare Workers
-        run: npx wrangler deploy --log-level debug
+        run: |
+          npx wrangler deploy > deploy_output.txt 2>&1 || true
+          cat deploy_output.txt
+          echo "### Cloudflare Deploy Log" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat deploy_output.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          if grep -qi "error" deploy_output.txt; then
+            echo "Deployment failed with error."
+            exit 1
+          fi
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
