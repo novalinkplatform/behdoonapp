@@ -1,4 +1,5 @@
 import { serviceCategories, DEFAULT_VEHICLE_TYPES, CATEGORY_VEHICLE_IDS } from '../data/services.ts';
+import { ALL_SERVICES_CATALOG } from '../data/allServicesData.ts';
 import { icons } from './icons.ts';
 import { pick } from '../i18n/lang.ts';
 import { toPersianDigits } from '../utils/jalali.ts';
@@ -79,6 +80,70 @@ export const SUBCATEGORY_DETAILS_MAP: Record<string, { desc: string; descEn: str
     desc: 'اجرای سقف کاذب کناف، باکس نور مخفی دکوراتیو، لاین نوری، تایل ۶۰×۶۰ و دیوار جداکننده ضد رطوبت',
     descEn: 'Knauf false ceiling, concealed ambient lighting coves, linear lights and drywall partitions',
   },
+  'emergency-lockout': {
+    desc: 'اعزام فوری کلیدساز سیار، باز کردن انواع درب‌های ضدسرقت، اتاقی و اتومبیل بدون آسیب به قفل و چهارچوب',
+    descEn: 'Emergency locksmith dispatch, non-destructive opening of anti-theft, room, and vehicle doors',
+  },
+  'smart-locks': {
+    desc: 'نصب و راه‌اندازی دستگیره‌های هوشمند رمزی، کارتی و اثرانگشتی با گارانتی معتبر شرکتی',
+    descEn: 'Smart digital lock installation with biometric, card, and passcode authentication',
+  },
+  'parking-gate': {
+    desc: 'نصب، عیب‌یابی و تعمیر جک‌های بازویی، ریلی، کرکره‌ای و کددهی انواع ریموت پارکینگ',
+    descEn: 'Automatic parking gate motor repair, hydraulic arms adjustment, and remote coding',
+  },
+  'cctv-alarm': {
+    desc: 'سیم‌کشی و نصب دوربین‌های مداربسته تحت شبکه IP، انتقال تصویر روی موبایل و سیستم دزدگیر اماکن',
+    descEn: 'CCTV IP camera installation, smartphone remote viewing configuration, and burglar alarms',
+  },
+  'cabinet-repair': {
+    desc: 'تعویض لولای آرام‌بند، ریل‌های ساچمه‌ای، صفحه کورین، ام‌دی‌اف، جک پمپی و رگلاژ کامل درب کابینت',
+    descEn: 'Cabinet hinge and ball-bearing slide replacement, Corian countertops, and full door alignment',
+  },
+  'closet-design': {
+    desc: 'طراحی، ساخت و نصب کمد دیواری‌های ریلی و لولایی، شلف، باکس و جاکفشی با متریال ضدخش استاندارد',
+    descEn: 'Custom sliding closets, shoe storage, shelves, and built-in wardrobe design & installation',
+  },
+  'door-repair': {
+    desc: 'کوتاه کردن و رنده‌کاری درب‌ها پس از سرامیک، رفع گیر و اصطکاک، تعویض قفل و لولا و صداگیری',
+    descEn: 'Wooden door trimming, friction elimination, lock and hinge replacement, and squeak fix',
+  },
+  'parquet-flooring': {
+    desc: 'زیرسازی با فوم سایلنت، نصب کلیکی لمینت و پارکت چوبی و قرنیز دور سالن با تضمین دوام',
+    descEn: 'Silent foam underlayment, click-lock laminate & wood parquet installation with baseboards',
+  },
+  'upvc-repair': {
+    desc: 'رگلاژ، عایق‌بندی صوتی و حرارتی، تعویض اسپانیولت، زاماک و لاستیک‌های درزبندی EPDM پنجره دوجداره',
+    descEn: 'UPVC window calibration, soundproofing, espagnolette, striker, and EPDM gasket replacement',
+  },
+  'pleated-mesh': {
+    desc: 'ساخت و نصب توری‌های ضدحشرات متحرک و پلیسه جمع‌شونده برای انواع پنجره و تراس با آلومینیوم مقاوم',
+    descEn: 'Custom retractable insect mesh screens for double-glazed windows and balconies',
+  },
+  'glass-replacement': {
+    desc: 'برش و تعویض شیشه‌های شکسته، دوجداره صنعتی با گاز آرگون، لمینت و شیشه‌های سکوریت نشکن',
+    descEn: 'Argon double-glazing, laminated, tempered, and reflective glass cutting and replacement',
+  },
+  'electric-shutter': {
+    desc: 'تعمیر موتور توبولار و ساید، تعویض تیغه‌های آسیب‌دیده آلومینیومی و تنظیم خلاص‌کن دستی کرکره',
+    descEn: 'Electric roller shutter repair, tubular/side motors, blade replacement, and manual release tuning',
+  },
+  'staircase-cleaning': {
+    desc: 'شستشوی پله‌ها، نرده، لابی، آسانسور و پارکینگ با مواد شوینده صنعتی استاندارد و ضدعفونی کامل',
+    descEn: 'Staircase, railing, lobby, elevator, and parking deep wash with professional cleaning agents',
+  },
+  'facade-cleaning': {
+    desc: 'واترجت و سندبلاست نمای سنگی، آجری و کامپوزیت با طناب کاربری (راپ‌اکسس) بدون نیاز به داربست',
+    descEn: 'High-pressure waterjet & sandblasting facade cleaning via industrial rope access (no scaffolding)',
+  },
+  'carpet-sofa-wash': {
+    desc: 'شستشوی تخصصی مبلمان، تشک خوشخواب و فرش با دستگاه‌های مکنده قوی سه‌موتوره و خشک‌کن در محل',
+    descEn: 'On-site sofa, mattress, and carpet extraction wash with powerful 3-motor vacuum equipment',
+  },
+  'pest-control': {
+    desc: 'طعمه‌گذاری و ریشه‌کنی قطعی ساس، سوسک ریز کابینت و موش با سموم ترکیبی بدون بو و دارای تاییدیه بهداشت',
+    descEn: 'Guaranteed pest control, odorless extermination of bedbugs, cockroaches, and rodents with certified formulas',
+  },
 };
 
 export function renderServiceCategoriesAccordion(): string {
@@ -89,15 +154,17 @@ export function renderServiceCategoriesAccordion(): string {
         .map((vid) => {
           const v = DEFAULT_VEHICLE_TYPES.find((item) => item.id === vid);
           if (!v) return null;
-          const extra = SUBCATEGORY_DETAILS_MAP[vid] || {
-            desc: pick(cat.subtitle || '', cat.subtitleEn || ''),
-            descEn: cat.subtitleEn || '',
-          };
+          const catCatalog = ALL_SERVICES_CATALOG[cat.id];
+          const subCatalog = catCatalog?.subServices?.find((s) => s.id === vid);
+          const extra = SUBCATEGORY_DETAILS_MAP[vid];
+          const desc = subCatalog?.shortDesc || extra?.desc || pick(cat.subtitle || '', cat.subtitleEn || '');
+          const descEn = subCatalog?.shortDescEn || extra?.descEn || cat.subtitleEn || '';
+
           return {
             id: v.id,
             label: pick(v.label, v.labelEn),
             basePrice: v.basePrice,
-            desc: pick(extra.desc, extra.descEn),
+            desc: pick(desc, descEn),
           };
         })
         .filter(Boolean);
@@ -145,7 +212,11 @@ export function renderServiceCategoriesAccordion(): string {
                   <div class="subcategory-item-top">
                     <div class="subcategory-item-title-wrap">
                       <span class="subcategory-bullet"></span>
-                      <h4 class="subcategory-title">${sub!.label}</h4>
+                      <h4 class="subcategory-title">
+                        <a href="/services/${cat.id}/${sub!.id}" style="color: inherit; text-decoration: none;" title="${pick('مشاهده صفحه اختصاصی و تعرفه', 'View dedicated page')}">
+                          ${sub!.label}
+                        </a>
+                      </h4>
                     </div>
                     <div class="subcategory-price-tag">
                       <span class="price-label">${pick('شروع از:', 'From:')}</span>
@@ -163,11 +234,24 @@ export function renderServiceCategoriesAccordion(): string {
                       <span class="icon">${icons.plusCircle}</span>
                       <span>${pick('ثبت درخواست آنلاین', 'Request Service')}</span>
                     </button>
+                    <a
+                      href="/services/${cat.id}/${sub!.id}"
+                      class="btn btn-outline btn-sm"
+                      style="padding: 0.4rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 0.6rem; font-size: 0.8rem; color: #475569; text-decoration: none; font-weight: 700;"
+                    >
+                      <span>${pick('صفحه خدمت', 'Page')}</span>
+                    </a>
                   </div>
                 </div>
               `,
                 )
                 .join('')}
+              <div style="grid-column: 1 / -1; display: flex; justify-content: flex-end; padding-top: 0.75rem; border-top: 1px dashed #e2e8f0;">
+                <a href="/services/${cat.id}" style="font-size: 0.85rem; font-weight: 800; color: #8B1C31; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
+                  <span>${pick(`مشاهده صفحه جامع و دانشنامه تخصصی ${cat.label}`, `Full ${cat.labelEn} Guide & Page`)}</span>
+                  <span>←</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -206,9 +290,13 @@ export function renderServiceCategoriesAccordion(): string {
               <span class="icon">${icons.plusCircle}</span>
               <span>${pick('ثبت سریع درخواست آنلاین', 'Quick Online Request')}</span>
             </button>
-            <a href="tel:02122345678" class="btn btn-secondary hero-quick-call-btn">
+            <a href="tel:09333256885" class="btn btn-secondary hero-quick-call-btn">
               <span class="icon">${icons.phone}</span>
-              <span>${pick('تماس تلفنی: ۰۲۱-۲۲۳۴۵۶۷۸', 'Call: 021-22345678')}</span>
+              <span>${pick('تماس مستقیم: ۰۹۳۳۳۲۵۶۸۸۵', 'Call: 09333256885')}</span>
+            </a>
+            <a href="/services" class="btn btn-outline" style="border: 1.5px solid #cbd5e1; border-radius: 0.75rem; padding: 0.65rem 1.25rem; font-weight: 800; text-decoration: none; color: #334155; display: inline-flex; align-items: center; gap: 0.4rem;">
+              <span class="icon">${icons.layers || icons.bolt}</span>
+              <span>${pick('کاتالوگ تمام ۵۳ خدمت', 'All 53 Services')}</span>
             </a>
           </div>
         </div>

@@ -995,6 +995,11 @@ export default {
       return env.ASSETS.fetch(new Request(assetUrl, request));
     }
 
+    if (pathname === '/services' || pathname.startsWith('/services/')) {
+      const assetUrl = new URL('/services.html' + url.search, url.origin);
+      return env.ASSETS.fetch(new Request(assetUrl, request));
+    }
+
     if (pathname.startsWith('/magazine/') && !pathname.includes('.')) {
       const assetUrl = new URL('/article-template.html' + url.search, url.origin);
       return env.ASSETS.fetch(new Request(assetUrl, request));

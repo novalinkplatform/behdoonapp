@@ -15,6 +15,10 @@ export const icons = {
   plumbing: `<svg ${ICON_ATTRS}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
   electrical: `<svg ${ICON_ATTRS}><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
   renovation: `<svg ${ICON_ATTRS}><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/><path d="m5 2 5 5M2 5l5 5M14 8l6 6M17 5l4 4"/></svg>`,
+  locksmith: `<svg ${ICON_ATTRS}><circle cx="8" cy="15" r="4"/><path d="m10.85 12.15 7.65-7.65a1.5 1.5 0 0 1 2.12 0l1.38 1.38-2.5 2.5 1.5 1.5-2 2-1.5-1.5-1.5 1.5"/></svg>`,
+  carpentry: `<svg ${ICON_ATTRS}><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="12" y1="3" x2="12" y2="21"/><circle cx="7.5" cy="7.5" r="1"/><circle cx="16.5" cy="7.5" r="1"/><circle cx="7.5" cy="16.5" r="1"/><circle cx="16.5" cy="16.5" r="1"/></svg>`,
+  doorsWindows: `<svg ${ICON_ATTRS}><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>`,
+  cleaning: `<svg ${ICON_ATTRS}><path d="m3 21 9-9"/><path d="M12.2 3.8a2 2 0 0 1 2.8 0l5.2 5.2a2 2 0 0 1 0 2.8L15 17l-8-8 5.2-5.2z"/><path d="m19 5-2 2M14 2l1 1M22 10l-1-1"/></svg>`,
 
   pickup: `<svg ${ICON_ATTRS}><path d="M3 16V9a1 1 0 0 1 1-1h8l4 4h4a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Z"/><circle cx="7.5" cy="17.5" r="1.7"/><circle cx="16.5" cy="17.5" r="1.7"/><path d="M12 8v4"/></svg>`,
 

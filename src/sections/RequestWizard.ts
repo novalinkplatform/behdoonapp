@@ -505,9 +505,9 @@ export function renderRequestWizard(
                 <span>${pick('پیگیری در درخواست‌های من', 'Track in My Orders')}</span>
               </a>
 
-              <a href="tel:02122345678" class="btn btn-secondary wizard-action-btn" id="wizard-call-support-btn">
+              <a href="tel:09333256885" class="btn btn-secondary wizard-action-btn" id="wizard-call-support-btn">
                 <span class="icon">${icons.phone}</span>
-                <span>${pick('تماس با پشتیبانی: ۰۲۱-۲۲۳۴۵۶۷۸', 'Support: 021-22345678')}</span>
+                <span>${pick('تماس با پشتیبانی: ۰۹۳۳۳۲۵۶۸۸۵', 'Support: 09333256885')}</span>
               </a>
 
               <a href="https://wa.me/989333256885" target="_blank" rel="noopener" class="btn btn-secondary wizard-action-btn wizard-whatsapp-action" id="wizard-whatsapp-btn">

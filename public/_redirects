@@ -2,8 +2,8 @@
 /demo/  /sale  301
 /preview  /sale  301
 /track  /orders  301
-/services  /#services  301
-/services/:slug  /magazine/:slug  301
+/services  /services.html  200
+/services/*  /services.html  200
 /management  /management.html  200
 /management/*  /management.html  200
 /admin  /management  301

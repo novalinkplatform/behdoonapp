@@ -316,14 +316,14 @@ export function renderFooter(settings?: SiteSettings): string {
               <span>${pick('خدمات تخصصی بهدون', 'Specialized Services')}</span>
             </h4>
             <ul class="footer-nav-list">
-              <li><a href="/#services-explorer" class="request-wizard-open-trigger" data-cat-trigger="hvac">${pick('سرویس و تعمیر انواع پکیج و شوفاژ', 'Gas Wall Boiler & Radiator Repair')}</a></li>
-              <li><a href="/#services-explorer" class="request-wizard-open-trigger" data-cat-trigger="hvac">${pick('نصب، شستشو و شارژ گاز اسپلیت و کولر گازی', 'Split AC Gas Recharge & Service')}</a></li>
-              <li><a href="/#services-explorer" class="request-wizard-open-trigger" data-cat-trigger="hvac">${pick('راه‌اندازی، تعویض موتور و سرویس کولر آبی', 'Evaporative Cooler Motor & Maintenance')}</a></li>
-              <li><a href="/#services-explorer" class="request-wizard-open-trigger" data-cat-trigger="plumbing">${pick('نشت‌یابی نقطه زن با دستگاه تصویری و آکوستیک', 'Acoustic Thermal Leak Detection')}</a></li>
-              <li><a href="/#services-explorer" class="request-wizard-open-trigger" data-cat-trigger="plumbing">${pick('لوله بازکنی فوری و بهداشتی با فنر فولادی', 'Urgent Sanitary Drain Unclogging')}</a></li>
-              <li><a href="/#services-explorer" class="request-wizard-open-trigger" data-cat-trigger="plumbing">${pick('نصب و تعمیر پمپ آب ساختمان و تنظیم کلید اتوماتیک', 'Water Booster Pump Repair & Tuning')}</a></li>
-              <li><a href="/#services-explorer" class="request-wizard-open-trigger" data-cat-trigger="electrical">${pick('رفع فوری اتصالی سیم‌کشی و پریدن فیوز برق', 'Emergency Electrical Short Circuit Fix')}</a></li>
-              <li><a href="/#services-explorer" class="request-wizard-open-trigger" data-cat-trigger="renovation">${pick('نقاشی ساختمان، کاشی‌کاری، ایزوگام و کناف مدرن', 'Wall Painting, Tiling, Waterproofing')}</a></li>
+              <li><a href="/services/hvac/package">${pick('سرویس و تعمیر انواع پکیج و شوفاژ', 'Gas Wall Boiler & Radiator Repair')}</a></li>
+              <li><a href="/services/hvac/split-ac">${pick('نصب، شستشو و شارژ گاز اسپلیت و کولر گازی', 'Split AC Gas Recharge & Service')}</a></li>
+              <li><a href="/services/hvac/water-cooler">${pick('راه‌اندازی، تعویض موتور و سرویس کولر آبی', 'Evaporative Cooler Motor & Maintenance')}</a></li>
+              <li><a href="/services/plumbing/leak-detection">${pick('نشت‌یابی نقطه زن با دستگاه تصویری و آکوستیک', 'Acoustic Thermal Leak Detection')}</a></li>
+              <li><a href="/services/electrical/short-circuit">${pick('رفع فوری اتصالی سیم‌کشی و پریدن فیوز برق', 'Emergency Electrical Short Circuit Fix')}</a></li>
+              <li><a href="/services/renovation/painting">${pick('نقاشی ساختمان، کاشی‌کاری، ایزوگام و کناف مدرن', 'Wall Painting, Tiling, Waterproofing')}</a></li>
+              <li><a href="/services/locksmith/emergency-lockout">${pick('کلیدسازی شبانه‌روزی و باز کردن درب ضدسرقت', '24/7 Locksmith & Emergency Lockout')}</a></li>
+              <li><a href="/services" style="font-weight: 800; color: #8B1C31;">${pick('مشاهده تمام ۵۳ خدمت تخصصی بهدون ←', 'View All 53 Services ←')}</a></li>
             </ul>
           </div>
 
@@ -338,6 +338,7 @@ export function renderFooter(settings?: SiteSettings): string {
                 <span class="icon">${icons.plusCircle}</span>
                 <span>${pick('ثبت سریع درخواست آنلاین تکنسین', 'Book a Technician Online')}</span>
               </a></li>
+              <li><a href="/services">${pick('کاتالوگ جامع ۵۳ خدمت ساختمان', 'Catalog of All 53 Services')}</a></li>
               <li><a href="/orders">${pick('پیگیری در درخواست‌های من و فاکتورها', 'Track Orders & Itemized Invoices')}</a></li>
               <li><a href="/magazine">${pick('مجله و دانشنامه تخصصی ساختمان', 'Building & Technical Magazine')}</a></li>
               <li><a href="/careers">${pick('فرصت‌های شغلی و همکاری متخصصین', 'Technician Recruitment & Jobs')}</a></li>
@@ -426,7 +427,7 @@ export function renderFooter(settings?: SiteSettings): string {
               <span class="sep">·</span>
               <a href="/about">${pick('درباره ما', 'About')}</a>
               <span class="sep">·</span>
-              <a href="tel:02122345678" class="footer-urgent-call">${pick('اعزام فوری: ۰۲۱-۲۲۳۴۵۶۷۸', 'Call: 021-22345678')}</a>
+              <a href="tel:09333256885" class="footer-urgent-call">${pick('اعزام فوری: ۰۹۳۳۳۲۵۶۸۸۵', 'Call: 09333256885')}</a>
             </div>
 
             <button type="button" class="footer-back-to-top" id="footer-back-to-top" title="${pick('بازگشت به بالای صفحه', 'Back to top')}" aria-label="${pick('بازگشت به بالای صفحه', 'Back to top')}">

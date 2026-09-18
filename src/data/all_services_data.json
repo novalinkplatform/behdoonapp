@@ -1,0 +1,1420 @@
+{
+  "hvac": {
+    "id": "hvac",
+    "slug": "hvac",
+    "persianSlug": "سرمایش-و-گرمایش",
+    "aliases": [
+      "hvac",
+      "سرمایش-گرمایش",
+      "cooling-heating",
+      "تهویه-مطبوع"
+    ],
+    "title": "سرمایش و گرمایش ساختمان در تهران | نصب، تعمیر و سرویس تخصصی بهدون",
+    "titleEn": "HVAC & Climate Systems in Tehran | Repair, Service & Installation | Behdoon",
+    "metaDesc": "خدمات تخصصی سرمایش و گرمایش در کلیه مناطق تهران با ضمانت کتبی. تعمیر و سرویس پکیج، کولر آبی، رادیاتور شوفاژ، آبگرمکن و کولر گازی توسط تکنسین‌های مجرب بهدون با نرخ مصوب اتحادیه.",
+    "subtitle": "آسایش دمایی و تهویه استاندارد ساختمان شما با تیم فنی بهدون؛ اعزام فوری تکنسین‌های متخصص در کمتر از ۴۵ دقیقه در سراسر تهران همراه با گارانتی معتبر قطعات و خدمات.",
+    "subtitleEn": "Full climate control & heating services across all 22 districts of Tehran; emergency technician dispatch in under 45 minutes.",
+    "icon": "<svg class=\"w-10 h-10\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"M12 3v18m-4-14h8m-8 10h8M6 8a6 6 0 1112 0 6 6 0 01-12 0z\"/></svg>",
+    "comprehensiveGuide": "\n        <!-- ================= COMPREHENSIVE SEO GUIDE (> 1200 WORDS) ================= -->\n        <article class=\"mt-12 pt-10 border-t border-slate-200 text-slate-700 leading-relaxed text-justify space-y-8\" dir=\"rtl\">\n            \n            <header class=\"text-center max-w-3xl mx-auto space-y-4 mb-10\">\n                <span class=\"inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-brand-50 text-brand-700 text-xs font-bold border border-brand-200\">\n                    <svg class=\"w-4 h-4 text-[#8B1C31]\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z\"></path></svg>\n                    دانشنامه و راهنمای تخصصی تأسیسات ساختمانی در تهران\n                </span>\n                <h2 class=\"text-2xl md:text-3xl font-black text-slate-800 leading-tight\">\n                    راهنمای جامع نگهداری، تعمیرات و بهینه‌سازی سیستم‌های سرمایش و گرمایش در تهران\n                </h2>\n                <p class=\"text-sm text-slate-500 leading-relaxed\">\n                    هر آنچه مالکان، مستاجران و مدیران ساختمان در خصوص بازدهی انرژی، عیب‌یابی، هزینه سرویس‌ها و انتخاب تکنسین مجرب در تهران باید بدانند.\n                </p>\n            </header>\n\n            <!-- Quick Action Alert Box -->\n            <div class=\"bg-gradient-to-r from-[#133458] to-[#1c4b7d] rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6\">\n                <div class=\"space-y-2 text-center md:text-right\">\n                    <h3 class=\"text-xl font-bold\">نیاز به خدمات اورژانسی تأسیسات در تهران دارید؟</h3>\n                    <p class=\"text-xs md:text-sm text-blue-100 max-w-xl leading-relaxed\">\n                        تکنسین‌های بهدون در تمامی مناطق ۲۲ گانه تهران (شمال، غرب، شرق، مرکز و جنوب) مستقر بوده و کمتر از ۴۵ دقیقه پس از ثبت درخواست در محل حاضر می‌شوند.\n                    </p>\n                </div>\n                <div class=\"flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0\">\n                    <button type=\"button\" onclick=\"openRequestModal('سرمایش و گرمایش')\" class=\"w-full sm:w-auto px-6 py-3 bg-[#8B1C31] hover:bg-[#701627] text-white text-xs md:text-sm font-black rounded-xl shadow-lg transition-all transform hover:scale-105 text-center\">\n                        ثبت فوری درخواست آنلاین\n                    </button>\n                    <a href=\"tel:09333256885\" class=\"w-full sm:w-auto px-6 py-3 bg-white/10 hover:bg-white/20 text-white text-xs md:text-sm font-bold rounded-xl backdrop-blur-sm border border-white/20 transition-all text-center flex items-center justify-center gap-2\">\n                        <svg class=\"w-4 h-4 text-emerald-400\" fill=\"currentColor\" viewBox=\"0 0 512 512\"><path d=\"M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z\"/></svg>\n                        <span>۰۹۳۳۳۲۵۶۸۸۵</span>\n                    </a>\n                </div>\n            </div>\n\n            <!-- SECTION 1: Overview -->\n            <section class=\"space-y-4\">\n                <h3 class=\"text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3\">\n                    مقدمه: اهمیت استراتژیک سرویس دوره‌ای تجهیزات سرمایشی و گرمایشی\n                </h3>\n                <p>\n                    تجهیزات تهویه مطبوع، سرمایشی و حرارتی، بیش از ۴۰ درصد از کل انرژی مصرفی یک واحد مسکونی یا اداری در کلانشهر تهران را به خود اختصاص می‌دهند. با توجه به شرایط اقلیمی پایتخت، تابستان‌های داغ و خشک و زمستان‌های سرد و پرنوسان، سیستم‌های سرمایش و گرمایش تحت بار کاری مداوم و سنگین فعالیت می‌کنند. رسوب املاح کلسیمی آب تهران در لوله‌ها و مبدل‌ها، آلودگی و گرد و غبار انباشته شده روی پوشال‌ها و کوئل‌ها، و استهلاک قطعات متحرک مانند پمپ‌ها و الکتروموتورها، در صورت عدم سرویس به موقع، به سرعت راندمان سیستم را تا ۳۵ درصد کاهش داده و استهلاک زودهنگام و هزینه‌های گزاف تعویض دستگاه را به دنبال خواهد داشت.\n                </p>\n                <p>\n                    پلتفرم خدمات ساختمانی <a href=\"/\" class=\"text-brand-600 font-bold hover:underline\">بهدون</a> با بهره‌گیری از کادر تکنسین‌های آموزش‌دیده و مجرب، با هدف شفاف‌سازی هزینه‌ها و ارتقای کیفیت استانداردهای اجرایی تأسیسات در تهران، بستری مستقیم برای ثبت، ارزیابی و اعزام کارشناسان فراهم ساخته است. اگر نیاز به بررسی پیوسته لوله‌کشی و شیرآلات مرتبط دارید، می‌توانید به صفحه <a href=\"/services/plumbing\" class=\"text-brand-600 font-bold hover:underline\">خدمات لوله‌کشی آب و فاضلاب</a> ما نیز مراجعه فرمایید.\n                </p>\n            </section>\n\n            <!-- SECTION 2: Deep Dive into Services -->\n            <section class=\"space-y-6\">\n                <h3 class=\"text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3\">\n                    بررسی تفصیلی ارکان چهارگانه خدمات سرمایش و گرمایش در بهدون\n                </h3>\n\n                <!-- Sub-block 1 -->\n                <div class=\"bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3\">\n                    <h4 class=\"text-lg font-bold text-slate-800 text-brand-600\">۱. نصب، راه‌اندازی و نگهداری تخصصی کولر آبی</h4>\n                    <p class=\"text-sm leading-relaxed\">\n                        کولر آبی دستگاهی به ظاهر ساده اما از نظر فنی نیازمند هماهنگی دقیق میان مدارهای هیدرولیکی و الکتریکی است. در شروع فصل گرما، روشن کردن کولر آبی بدون شستشوی کفی و تعویض پوشال می‌تواند باعث سوختن موتور در اثر سفت بودن یاتاقان‌ها شود. تکنسین‌های بهدون در فرایند سرویس، با اندازه‌گیری لقی شفت توربین، روغن‌کاری گریس نسوز یاتاقان، تنظیم شناور ضدسرریز و بررسی سلامت کابل برق، حداکثر بازدهی سرمایشی را با کمترین مصرف آب و برق تضمین می‌کنند. همچنین در صورت نیاز به بررسی سیم‌کشی فیوز یا تعویض کلید کولر، خدمات از طریق واحد <a href=\"/services/electrical\" class=\"text-brand-600 font-bold hover:underline\">برقکاری ساختمان بهدون</a> در همان جلسه قابل تجمیع و انجام است.\n                    </p>\n                </div>\n\n                <!-- Sub-block 2 -->\n                <div class=\"bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3\">\n                    <h4 class=\"text-lg font-bold text-slate-800 text-brand-600\">۲. تعمیر، رسوب‌زدایی و عیب‌یابی بردهای پکیج دیواری</h4>\n                    <p class=\"text-sm leading-relaxed\">\n                        پکیج‌های مدرن به علت راندمان بالا و استقلال هر واحد ساختمانی، محبوب‌ترین سیستم گرمایشی در تهران هستند. اما به دلیل رسوب کربنات کلسیم، مبدل‌های صفحه‌ای این دستگاه‌ها پس از ۱ تا ۲ سال دچار انسداد جزئی یا کامل می‌شوند. اسیدشویی ناصحیح توسط افراد ناوارد با اسیدهای خالص صنعتی موجب سوراخ شدن مبدل حرارتی گران‌قیمت می‌گردد. در بهدون، رسوب‌زدایی با اسیدهای محافظ‌دار دیسکلر گیاهی استاندارد و پمپ سیرکوله پرتابل انجام می‌گیرد. همچنین تست عیب‌یابی پمپ ویلو و گراندفوس، کالیبراسیون سنسور شعله و یون، و تنظیم گیج منبع انبساط با دستگاه فشارسنج دیجیتال صورت می‌پذیرد.\n                    </p>\n                </div>\n\n                <!-- Sub-block 3 -->\n                <div class=\"bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3\">\n                    <h4 class=\"text-lg font-bold text-slate-800 text-brand-600\">۳. نصب و هواگیری رادیاتور و بهینه‌سازی راندمان شوفاژ</h4>\n                    <p class=\"text-sm leading-relaxed\">\n                        مشکل شایع گرم نشدن شوفاژها در زمستان، عمدتاً ناشی از تجمع هوا در پره‌های فوقانی و لجن سیاه‌رنگ ناشی از اکسیداسیون داخل لوله‌ها در پره‌های پایینی است. هواگیری غیراصولی می‌تواند به هرز شدن شیر هواگیری یا نشتی آب روی پارکت و فرش منجر شود. در صورت بروز هرگونه نم یا تخریب اطراف شوفاژ، تیم <a href=\"/services/renovation\" class=\"text-brand-600 font-bold hover:underline\">بازسازی و نقاشی ساختمان</a> در کنار تکنسین‌های تأسیسات آماده خدمت‌رسانی خواهند بود. متخصصان بهدون با شستشوی فشاری مدار و بالانس شیرهای برگشت، توزیع حرارت در دورترین رادیاتورها را یکنواخت می‌سازند.\n                    </p>\n                </div>\n\n                <!-- Sub-block 4 -->\n                <div class=\"bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3\">\n                    <h4 class=\"text-lg font-bold text-slate-800 text-brand-600\">۴. تعمیرات، رفع افت فشار و سرویس آبگرمکن دیواری</h4>\n                    <p class=\"text-sm leading-relaxed\">\n                        نوسانات دمای آب در هنگام استحمام یا دیر روشن شدن آبگرمکن از شایع‌ترین مشکلات خانه‌ها است. علت این عارضه اغلب فرسودگی دیافراگم لاستیکی، رسوب در نازل شیپوره یا خرابی ترموکوپل و شمعک است. در بهدون کلیه قطعات یدکی مصرفی از جمله دیافراگم سیلیکونی مقاوم به حرارت و بوبین‌های ایمنی اصل با فاکتور معتبر و گارانتی تعویض می‌شوند.\n                    </p>\n                </div>\n            </section>\n\n            <!-- SECTION 3: Troubleshooting Table -->\n            <section class=\"space-y-4\">\n                <h3 class=\"text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3\">\n                    جدول راهنمای عیب‌یابی سریع مشکلات سرمایش و گرمایش\n                </h3>\n                <p class=\"text-sm text-slate-600\">\n                    قبل از تماس با تکنسین، می‌توانید با بررسی جدول زیر علت احتمالی و اقدامات اولیه را بررسی کنید:\n                </p>\n\n                <div class=\"overflow-x-auto rounded-2xl border border-slate-200 shadow-sm bg-white\">\n                    <table class=\"w-full text-right text-xs md:text-sm\">\n                        <thead class=\"bg-slate-100/80 text-slate-800 font-bold border-b border-slate-200\">\n                            <tr>\n                                <th class=\"p-3.5 md:p-4\">نشانه و مشکل مشاهده‌شده</th>\n                                <th class=\"p-3.5 md:p-4\">علت فنی و ریشه‌ای</th>\n                                <th class=\"p-3.5 md:p-4\">اقدام پیشنهادی بهدون</th>\n                            </tr>\n                        </thead>\n                        <tbody class=\"divide-y divide-slate-100 text-slate-600\">\n                            <tr class=\"hover:bg-slate-50/50\">\n                                <td class=\"p-3.5 md:p-4 font-bold text-slate-800\">باد کولر آبی خنک نیست اما موتور کار می‌کند</td>\n                                <td class=\"p-3.5 md:p-4\">خشک بودن پوشال‌ها، سوختن یا گرفتگی پمپ آب، پاره بودن تسمه</td>\n                                <td class=\"p-3.5 md:p-4\">سرویس پمپ و لوله‌های آبرسان، تنظیم یا تعویض تسمه</td>\n                            </tr>\n                            <tr class=\"hover:bg-slate-50/50\">\n                                <td class=\"p-3.5 md:p-4 font-bold text-slate-800\">فشار پکیج مدام صفر می‌شود و افت می‌کند</td>\n                                <td class=\"p-3.5 md:p-4\">نشتی در اتصالات شوفاژ، خرابی شیر پرکن یا تخلیه باد منبع انبساط</td>\n                                <td class=\"p-3.5 md:p-4\">شارژ باد منبع انبساط، نشت‌یابی با دستگاه نقطه زن</td>\n                            </tr>\n                            <tr class=\"hover:bg-slate-50/50\">\n                                <td class=\"p-3.5 md:p-4 font-bold text-slate-800\">آب مصرفی پکیج سرد و گرم می‌شود</td>\n                                <td class=\"p-3.5 md:p-4\">رسوب شدید در مبدل ثانویه، نقص در سنسور NTC آب گرم</td>\n                                <td class=\"p-3.5 md:p-4\">اسیدشویی تخصصی مبدل صفحه‌ای با دیسکلر استاندارد</td>\n                            </tr>\n                            <tr class=\"hover:bg-slate-50/50\">\n                                <td class=\"p-3.5 md:p-4 font-bold text-slate-800\">شوفاژها در بالا گرم و در پایین کاملاً سرد هستند</td>\n                                <td class=\"p-3.5 md:p-4\">تجمع لجن و براده در مدار رادیاتور، ضعف دور گردش پمپ</td>\n                                <td class=\"p-3.5 md:p-4\">شستشوی پرفشار مدار رادیاتور و هواگیری تخصصی</td>\n                            </tr>\n                            <tr class=\"hover:bg-slate-50/50\">\n                                <td class=\"p-3.5 md:p-4 font-bold text-slate-800\">شمعک آبگرمکن روشن نمی‌ماند</td>\n                                <td class=\"p-3.5 md:p-4\">خرابی ترموکوپل، سوختن بوبین ایمنی یا کثیفی نازل شمعک</td>\n                                <td class=\"p-3.5 md:p-4\">تمیزکاری پیلوت و تعویض قطعه ترموکوپل اورجینال</td>\n                            </tr>\n                        </tbody>\n                    </table>\n                </div>\n            </section>\n\n            <!-- SECTION 4: Why Behdoon -->\n            <section class=\"space-y-4\">\n                <h3 class=\"text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3\">\n                    چرا پلتفرم بهدون انتخابی مطمئن برای خدمات سرمایش و گرمایش در تهران است؟\n                </h3>\n                <p>\n                    یافتن سرویس‌کار کاربلد و متعهد در کلانشهری مانند تهران همواره یکی از دغدغه‌های خانواده‌ها بوده است. بهدون با هدف ساماندهی این فضا، استانداردهای سخت‌گیرانه‌ای برای پذیرش و اعزام تکنسین تدوین نموده است:\n                </p>\n\n                <div class=\"grid grid-cols-1 md:grid-cols-3 gap-4 pt-2\">\n                    <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-2.5\">\n                        <div class=\"w-12 h-12 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center mx-auto font-black text-lg\">\n                            ✓\n                        </div>\n                        <h4 class=\"font-bold text-slate-800 text-sm\">ضمانت کتبی کیفیت خدمات</h4>\n                        <p class=\"text-xs text-slate-500 leading-relaxed\">کلیه خدمات تعمیری و قطعات نصب‌شده دارای گارانتی رسمی بهدون بوده و در صورت بروز هرگونه ایراد در دوره ضمانت، رفع عیب کاملاً رایگان انجام می‌پذیرد.</p>\n                    </div>\n\n                    <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-2.5\">\n                        <div class=\"w-12 h-12 bg-blue-100 text-blue-700 rounded-2xl flex items-center justify-center mx-auto font-black text-lg\">\n                            ⏱\n                        </div>\n                        <h4 class=\"font-bold text-slate-800 text-sm\">سرعت حضور در محل (زیر ۴۵ دقیقه)</h4>\n                        <p class=\"text-xs text-slate-500 leading-relaxed\">با توزیع شبکه‌ای تکنسین‌ها در شمال، غرب، شرق و مرکز تهران، کارشناس از نزدیک‌ترین ایستگاه خدماتی به آدرس ثبت شده شما اعزام می‌گردد.</p>\n                    </div>\n\n                    <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-2.5\">\n                        <div class=\"w-12 h-12 bg-amber-100 text-amber-700 rounded-2xl flex items-center justify-center mx-auto font-black text-lg\">\n                            ⚖\n                        </div>\n                        <h4 class=\"font-bold text-slate-800 text-sm\">شفافیت نرخ و تعرفه مصوب</h4>\n                        <p class=\"text-xs text-slate-500 leading-relaxed\">هزینه‌ها دقیقاً منطبق بر نرخنامه مصوب اتحادیه تأسیسات مکانیکی و لوازم گازسوز تهران محاسبه شده و هیچ هزینه نامتعارفی دریافت نمی‌شود.</p>\n                    </div>\n                </div>\n            </section>\n\n            <!-- SECTION 5: How it works & Tracking -->\n            <section class=\"space-y-4\">\n                <h3 class=\"text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3\">\n                    فرایند ثبت و پیگیری هوشمند درخواست در بهدون\n                </h3>\n                <p>\n                    ما فرایند سفارش را به ساده‌ترین شکل ممکن طراحی کرده‌ایم تا در کمتر از ۱ دقیقه بتوانید درخواست خود را نهایی کنید:\n                </p>\n                <ol class=\"list-decimal list-inside space-y-2 text-sm text-slate-600 pr-2\">\n                    <li><strong>انتخاب خدمت:</strong> کلیک روی دکمه ثبت درخواست در بالای صفحه یا زیردسته‌های فوق و انتخاب نوع سرویس مورد نیاز.</li>\n                    <li><strong>تعیین موقعیت روی نقشه تهران:</strong> با کلیک روی نام محله خود یا جابجایی مارکر، لوکیشن دقیق خود را انتخاب می‌کنید.</li>\n                    <li><strong>تعیین زمان حضور:</strong> مشخص می‌کنید که کارشناس به صورت فوری اعزام شود یا در بازه زمانی خاصی از روزهای آتی مراجعه نماید.</li>\n                    <li><strong>دریافت آنی کد رهگیری:</strong> پس از ثبت شماره موبایل، سیستم یک کد پیگیری اختصاصی (مانند <code class=\"bg-slate-100 text-[#8B1C31] px-2 py-0.5 rounded font-mono font-bold\">BEH-XXXX</code>) صادر می‌کند که در صفحه <a href=\"/track\" class=\"text-brand-600 font-bold hover:underline\">پیگیری آنلاین درخواست‌ها</a> وضعیت اعزام تکنسین، ساعت ورود و گزارش کار را به طور لحظه‌ای به شما نمایش می‌دهد.</li>\n                </ol>\n            </section>\n\n            <!-- SECTION 6: Final CTA Banner -->\n            <div class=\"bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-6 md:p-8 text-center space-y-4 my-8\">\n                <h3 class=\"text-xl font-black text-slate-800\">آماده دریافت خدمات تخصصی سرمایش و گرمایش هستید؟</h3>\n                <p class=\"text-xs md:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed\">\n                    هم‌اکنون درخواست خود را به صورت آنلاین ثبت نمایید تا نزدیک‌ترین تکنسین مجرب در منطقه شما با ابزار و قطعات استاندارد در محل حاضر شود.\n                </p>\n                <div class=\"flex flex-wrap items-center justify-center gap-3 pt-2\">\n                    <button type=\"button\" onclick=\"openRequestModal('سرمایش و گرمایش')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-8 py-3.5 rounded-2xl font-black text-sm shadow-xl shadow-[#8B1C31]/25 hover:shadow-2xl transition-all transform hover:-translate-y-0.5\">\n                        ثبت فوری درخواست آنلاین (با کد رهگیری)\n                    </button>\n                    <a href=\"tel:09333256885\" class=\"bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-6 py-3.5 rounded-2xl font-bold text-sm shadow-sm transition-colors flex items-center gap-2\">\n                        <svg class=\"w-4 h-4 text-emerald-600\" fill=\"currentColor\" viewBox=\"0 0 512 512\"><path d=\"M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z\"/></svg>\n                        <span>پشتیبانی تلفنی مستقیم: ۰۹۳۳۳۲۵۶۸۸۵</span>\n                    </a>\n                </div>\n            </div>\n\n        </article>\n    ",
+    "faq": [
+      {
+        "q": "هزینه سرویس و تعمیر پکیج و کولر چگونه محاسبه می‌شود؟",
+        "a": "کلیه هزینه‌های خدمات بهدون طبق نرخ مصوب اتحادیه تأسیسات مکانیکی و گازسوز تهران محاسبه می‌گردد. قبل از شروع کار، کارشناس پس از عیب‌یابی دقیق هزینه کامل قطعات و اجرت را به اطلاع شما می‌رساند و پس از رضایت کامل شما پرداخت انجام می‌شود."
+      },
+      {
+        "q": "سرعت اعزام تکنسین به محل در تهران چقدر است؟",
+        "a": "بهدون با دارا بودن تیم‌های سیار در شمال، غرب، شرق و مرکز تهران، در صورت ثبت درخواست به صورت «فوری»، در کمتر از ۴۵ دقیقه کارشناس را به محل اعزام می‌نماید. همچنین می‌توانید زمان دلخواهی را در روزهای آینده انتخاب کنید."
+      },
+      {
+        "q": "آیا خدمات سرمایش و گرمایش بهدون دارای ضمانت کتبی است؟",
+        "a": "بله، کلیه خدمات تعمیری و سرویس شامل گارانتی رسمی بهدون بوده و فاکتور چاپی معتبر به همراه مهر و امضای کارشناس تقدیم مشتریان محترم می‌گردد."
+      },
+      {
+        "q": "چگونه می‌توانم وضعیت تکنسین اعزامی را پیگیری کنم؟",
+        "a": "بلافاصله پس از ثبت درخواست در سایت، یک کد پیگیری اختصاصی (مانند BEH-XXXX) برای شما صادر می‌شود. با وارد کردن این کد یا شماره تماس خود در بخش «پیگیری» سایت بهدون، وضعیت لحظه‌ای درخواست قابل رویت است."
+      },
+      {
+        "q": "آیا اسیدشویی پکیج به مبدل دستگاه آسیب نمی‌زند؟",
+        "a": "خیر، تکنسین‌های بهدون از اسیدهای محافظت‌شده استاندارد (Discaler با دوز مشخص) و پمپ‌های مخصوص شستشوی مدار استفاده می‌کنند که صرفاً رسوبات آهکی را حل کرده و به هیچ عنوان به آلیاژ مس مبدل آسیب نمی‌زند."
+      }
+    ],
+    "subServices": [
+      {
+        "id": "water-cooler",
+        "name": "نصب و سرویس کولر آبی",
+        "nameEn": "Water Cooler Service",
+        "slug": "water-cooler",
+        "persianSlug": "نصب-و-سرویس-کولر-آبی",
+        "aliases": [
+          "water-cooler",
+          "نصب-و-سرویس-کولر-آبی"
+        ],
+        "basePrice": 450000,
+        "shortDesc": "سرویس کامل دوره‌ای، تعویض پوشال، تست و تعویض پمپ و دینام و روغن‌کاری یاتاقان‌ها",
+        "shortDescEn": "Professional service with 30-day warranty in Tehran",
+        "features": [
+          "اعزام فوری تکنسین متخصص زیر ۴۵ دقیقه در تهران",
+          "تجهیزات مدرن و عیب‌یابی دقیق در محل",
+          "شفافیت هزینه بر اساس نرخنامه اتحادیه",
+          "ضمانت کتبی کیفیت خدمات بهدون"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n                    <div class=\"bg-gradient-to-l from-blue-50/70 to-white p-5 rounded-2xl border border-blue-100 mb-6\">\n                        <h3 class=\"text-lg font-black text-brand-700 mb-2\">سرویس تخصصی و راه اندازی کولر آبی در کلیه مناطق تهران</h3>\n                        <p class=\"text-sm text-slate-600\">کولرهای آبی یکی از متداول‌ترین تجهیزات خنک‌کننده در ساختمان‌های مسکونی و اداری تهران هستند. شروع فصل گرما نیازمند سرویس استاندارد برای ارتقای خنک‌کنندگی، کاهش مصرف برق و پیشگیری از سوختن موتور و پمپ است.</p>\n                    </div>\n\n                    <h4 class=\"text-base font-bold text-slate-800 flex items-center gap-2\">\n                        <span class=\"w-2 h-2 rounded-full bg-[#8B1C31]\"></span>\n                        اقدامات جامع سرویس دوره‌ای کولر آبی توسط تیم بهدون:\n                    </h4>\n                    <ul class=\"list-disc list-inside space-y-2 text-sm text-slate-600 pr-2\">\n                        <li><strong>شستشوی کامل کفی و رسوب‌زدایی بدنه:</strong> تخلیه آب مانده، رفع شوره و گل‌ولای انباشته شده و جرم‌گیری کامل با مواد غیرخورنده جهت جلوگیری از پوسیدگی کفی کولر.</li>\n                        <li><strong>بررسی و تعویض پوشال یا پد سلولزی:</strong> تعویض سالانه پوشال‌ها برای تضمین ورود هوای مطبوع، عاری از بوی نم و خاک و باکتری، و بهینه‌سازی تبخیر آب.</li>\n                        <li><strong>سرویس، روغن‌کاری و تست یاتاقان‌ها و شفت:</strong> بررسی بالانس پروانه، روغن‌کاری تخصصی یاتاقان‌های جلو و عقب با روغن مقاوم در برابر رطوبت برای جلوگیری از صدای ناهنجار و فشار به دینام.</li>\n                        <li><strong>تنظیم، تست سلامت و روغن‌کاری پمپ آب (واتر پمپ):</strong> بررسی عدم گرفتگی لوله‌های آبرسان، تمیزکاری صافی پمپ و اطمینان از خیس شدن یکنواخت تمامی پوشال‌ها.</li>\n                        <li><strong>بررسی الکتروموتور (دینام) و تست خازن:</strong> تست جریان و آمپراژ موتور در دور کند و تند، بادگیری فضای داخل موتور، تنظیم و تعویض تسمه در صورت ترک‌خوردگی یا شل بودن.</li>\n                        <li><strong>تنظیم دقیق شناور و سرریز آب:</strong> جلوگیری از هدررفت و سرریز مداوم آب روی پشت‌بام و جلوگیری از آسیب به ایزوگام که می‌تواند نیاز به <a href=\"/services/renovation\" class=\"text-[#8B1C31] font-bold hover:underline\">خدمات عایق‌کاری پشت‌بام</a> را به همراه داشته باشد.</li>\n                        <li><strong>بررسی برزنت دهانه کانال کولر:</strong> ترمیم یا تعویض برزنت پوسیده جهت ممانعت از اتلاف باد خنک و لرزش شدید کانال.</li>\n                    </ul>\n\n                    <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n                        <h5 class=\"font-bold text-slate-800 text-sm mb-2\">چه زمانی کولر آبی به حضور فوری تعمیرکار نیاز دارد؟</h5>\n                        <p class=\"text-xs text-slate-600 mb-3\">اگر بوی سوختگی، صدای جیرجیر ممتد، باد گرم، پرتاب قطرات آب به درون خانه یا روشن نشدن موتور را تجربه می‌کنید، فوراً کلید پمپ و موتور را قطع نمایید تا از سوختگی سیم‌پیچ گران‌قیمت موتور جلوگیری شود.</p>\n                        <div class=\"flex flex-wrap items-center gap-3\">\n                            <button type=\"button\" onclick=\"openRequestModal('نصب و سرویس کولر آبی')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                                ثبت درخواست اعزام تکنسین کولر آبی\n                            </button>\n                            <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                                تماس مستقیم: ۰۹۳۳۳۲۵۶۸۸۵\n                            </a>\n                        </div>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "package",
+        "name": "نصب و سرویس پکیج",
+        "nameEn": "Heating Package & Boiler",
+        "slug": "package",
+        "persianSlug": "نصب-و-سرویس-پکیج",
+        "aliases": [
+          "package",
+          "نصب-و-سرویس-پکیج"
+        ],
+        "basePrice": 650000,
+        "shortDesc": "رسوب‌زدایی مبدل، رفع افت فشار، عیب‌یابی کدهای خطا، تعمیر برد الکترونیک و سرویس رادیاتور",
+        "shortDescEn": "Professional service with 30-day warranty in Tehran",
+        "features": [
+          "اعزام فوری تکنسین متخصص زیر ۴۵ دقیقه در تهران",
+          "تجهیزات مدرن و عیب‌یابی دقیق در محل",
+          "شفافیت هزینه بر اساس نرخنامه اتحادیه",
+          "ضمانت کتبی کیفیت خدمات بهدون"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n                    <div class=\"bg-gradient-to-l from-amber-50/70 to-white p-5 rounded-2xl border border-amber-100 mb-6\">\n                        <h3 class=\"text-lg font-black text-brand-700 mb-2\">تعمیرات تخصصی و رسوب‌زدایی انواع پکیج دیواری و زمینی در تهران</h3>\n                        <p class=\"text-sm text-slate-600\">پکیج‌های گرمایشی به عنوان قلب تپنده تأسیسات حرارتی ساختمان، وظیفه تأمین همزمان آب گرم مصرفی و مدار گرمایش رادیاتورها را برعهده دارند. سختی بالای آب در مناطق مختلف تهران سبب ایجاد رسوب مداوم در مبدل‌ها و افت فشار شدید می‌شود.</p>\n                    </div>\n\n                    <h4 class=\"text-base font-bold text-slate-800 flex items-center gap-2\">\n                        <span class=\"w-2 h-2 rounded-full bg-[#8B1C31]\"></span>\n                        خدمات تخصصی پکیج در بهدون برای تمامی برندها (ایران رادیاتور، بوتان، لورچ، آریستون، ایساتیس، وایلانت و...):\n                    </h4>\n                    <ul class=\"list-disc list-inside space-y-2 text-sm text-slate-600 pr-2\">\n                        <li><strong>رسوب‌زدایی و اسیدشویی مبدل اصلی و ثانویه:</strong> شستشوی مدار با پمپ مخصوص اسیدشویی و مواد دیسکلر استاندارد بدون آسیب به آلیاژ مسی مبدل‌ها جهت بازگشت دمای یکنواخت آب گرم.</li>\n                        <li><strong>رفع مشکل افت بار و فشار پکیج:</strong> عیب‌یابی منبع انبساط، تست باد دیافراگم، شیر اطمینان ۳ بار و رفع نشتی‌های ریز در اتصالات و مدار لوله‌کشی (با همکاری تیم <a href=\"/services/plumbing\" class=\"text-[#8B1C31] font-bold hover:underline\">تشخیص ترکیدگی و لوله‌کشی بهدون</a>).</li>\n                        <li><strong>هواگیری مدار و تنظیم فشار سیستم:</strong> کالیبره کردن فشار روی ۱.۵ بار و تنظیم شیر پرکن و ارزیابی سنسورهای ان‌تی‌سی (NTC) آب گرم مصرفی و شوفاژ.</li>\n                        <li><strong>شستشو و تنظیم مشعل و الکترود جرقه‌زن:</strong> تنظیم ارتفاع شعله، تمیزکاری برنر، بهینه‌سازی راندمان احتراق و کاهش محسوس مصرف گاز ماهانه.</li>\n                        <li><strong>سرویس پمپ سیرکولاتور (گراندفوس، ویلو و...):</strong> رفع گیرپاژ پمپ، تست خازن، تعویض روتور یا اورینگ برای جلوگیری از صدای ناهنجار در حالت زمستانه.</li>\n                        <li><strong>عیب‌یابی تخصصی بردهای الکترونیکی و رفع کدهای خطای ارور:</strong> رفع ارورهای رایج مانند E51, E81, 70-80 در ایران رادیاتور، یا ارورهای چراغ قرمز در بوتان.</li>\n                    </ul>\n\n                    <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n                        <h5 class=\"font-bold text-slate-800 text-sm mb-2\">علائم خرابی که نیازمند تماس فوری با تکنسین پکیج بهدون است:</h5>\n                        <p class=\"text-xs text-slate-600 mb-3\">سرد و گرم شدن مکرر آب هنگام دوش گرفتن، افت خودبه‌خودی عقربه فشارسنج به زیر ۱ بار، بالا رفتن غیرعادی فشار و نشتی آب از زیر دستگاه، و خاموش شدن ناگهانی پکیج همراه با ارور.</p>\n                        <div class=\"flex flex-wrap items-center gap-3\">\n                            <button type=\"button\" onclick=\"openRequestModal('نصب و سرویس پکیج')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                                ثبت آنلاین درخواست تعمیر و اسیدشویی پکیج\n                            </button>\n                            <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                                پشتیبانی تلفنی: ۰۹۳۳۳۲۵۶۸۸۵\n                            </a>\n                        </div>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "radiator",
+        "name": "نصب و سرویس رادیاتور شوفاژ",
+        "nameEn": "Radiator & Heating Valve",
+        "slug": "radiator",
+        "persianSlug": "نصب-و-سرویس-رادیاتور-شوفاژ",
+        "aliases": [
+          "radiator",
+          "نصب-و-سرویس-رادیاتور-شوفاژ"
+        ],
+        "basePrice": 400000,
+        "shortDesc": "نصب و افزایش پره، رفع آب‌بندی و نشتی رادیاتور، تعویض شیر رفت‌وبرگشت و شیر ترموستاتیک",
+        "shortDescEn": "Professional service with 30-day warranty in Tehran",
+        "features": [
+          "اعزام فوری تکنسین متخصص زیر ۴۵ دقیقه در تهران",
+          "تجهیزات مدرن و عیب‌یابی دقیق در محل",
+          "شفافیت هزینه بر اساس نرخنامه اتحادیه",
+          "ضمانت کتبی کیفیت خدمات بهدون"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n                    <div class=\"bg-gradient-to-l from-rose-50/70 to-white p-5 rounded-2xl border border-rose-100 mb-6\">\n                        <h3 class=\"text-lg font-black text-brand-700 mb-2\">نصب، جابجایی، رفع نشتی و هواگیری اصولی رادیاتور در تهران</h3>\n                        <p class=\"text-sm text-slate-600\">رادیاتورهای پره‌ای آلومینیومی، پانلی و حوله‌خشک‌کن‌ها در صورتی که به درستی تراز و نصب نشوند یا مدار آنها دچار لجن و هواگرفتگی باشد، حرارت مطلوبی در فصول سرد سال به فضای داخلی انتقال نخواهند داد.</p>\n                    </div>\n\n                    <h4 class=\"text-base font-bold text-slate-800 flex items-center gap-2\">\n                        <span class=\"w-2 h-2 rounded-full bg-[#8B1C31]\"></span>\n                        اقدامات تخصصی خدمات شوفاژ و رادیاتور در بهدون:\n                    </h4>\n                    <ul class=\"list-disc list-inside space-y-2 text-sm text-slate-600 pr-2\">\n                        <li><strong>نصب و کوپل کردن پره‌های رادیاتور آلومینیومی:</strong> افزودن پره به رادیاتورهای موجود، نصب دقیق بست پرچمی و پایه زمینی جهت توزیع وزن رادیاتور روی دیوار.</li>\n                        <li><strong>هواگیری تخصصی و تخلیه رسوبات سیاه مدار:</strong> رفع پدیده نیمه‌گرم بودن شوفاژ (گرم بودن بالا و سرد بودن پایین رادیاتور) با آچار مخصوص و تنظیم بالانس هیدرولیکی مدار.</li>\n                        <li><strong>شستشوی کامل مدار شوفاژها:</strong> تخلیه آب سیاه و لجن‌های رسوب کرده در کف رادیاتورها که باعث انسداد مسیر برگشت آب به پکیج و آسیب به پمپ دستگاه می‌شوند.</li>\n                        <li><strong>تعویض و آب‌بندی شیر رفت و برگشت (زانویی):</strong> رفع نم‌زدگی و چکیدن آب از کنار اتصالات شوفاژ با مغزی‌های استاندارد و تفلون مایع مرغوب.</li>\n                        <li><strong>نصب انواع حوله‌خشک‌کن حمام:</strong> لوله‌کشی روکار یا توکار و عایق‌کاری اتصالات مرطوب برای پیشگیری از نم‌زدگی دیوارها که می‌تواند منجر به نیاز به <a href=\"/services/renovation\" class=\"text-[#8B1C31] font-bold hover:underline\">گچ‌کاری و لکه‌گیری ساختمان</a> گردد.</li>\n                    </ul>\n\n                    <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n                        <h5 class=\"font-bold text-slate-800 text-sm mb-2\">چرا رادیاتورهای منزل به درستی گرم نمی‌شوند؟</h5>\n                        <p class=\"text-xs text-slate-600 mb-3\">وجود هوا در قسمت‌های بالایی بلوک رادیاتور، رسوب‌گرفتگی شدید در رادیاتورهای انتهایی خانه، ضعف پمپ پکیج یا لوله‌کشی غیراستاندارد اصلی‌ترین دلایل هستند که تکنسین بهدون پس از بازدید، در سریع‌ترین زمان آن را برطرف خواهد کرد.</p>\n                        <div class=\"flex flex-wrap items-center gap-3\">\n                            <button type=\"button\" onclick=\"openRequestModal('نصب و سرویس رادیاتور شوفاژ')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                                ثبت درخواست اعزام تکنسین شوفاژ و رادیاتور\n                            </button>\n                            <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                                تماس با پشتیبانی: ۰۹۳۳۳۲۵۶۸۸۵\n                            </a>\n                        </div>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "water-heater",
+        "name": "تعمیر و سرویس آبگرمکن",
+        "nameEn": "Water Heater Service",
+        "slug": "water-heater",
+        "persianSlug": "تعمیر-و-سرویس-آبگرمکن",
+        "aliases": [
+          "water-heater",
+          "تعمیر-و-سرویس-آبگرمکن"
+        ],
+        "basePrice": 450000,
+        "shortDesc": "جرم‌گیری کوئل مسی، تعویض دیافراگم، سرویس پیلوت، شمعک و کاربراتور آبگرمکن دیواری",
+        "shortDescEn": "Professional service with 30-day warranty in Tehran",
+        "features": [
+          "اعزام فوری تکنسین متخصص زیر ۴۵ دقیقه در تهران",
+          "تجهیزات مدرن و عیب‌یابی دقیق در محل",
+          "شفافیت هزینه بر اساس نرخنامه اتحادیه",
+          "ضمانت کتبی کیفیت خدمات بهدون"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n                    <div class=\"bg-gradient-to-l from-orange-50/70 to-white p-5 rounded-2xl border border-orange-100 mb-6\">\n                        <h3 class=\"text-lg font-black text-brand-700 mb-2\">سرویس، رسوب‌زدایی و عیب‌یابی انواع آبگرمکن دیواری و ایستاده در تهران</h3>\n                        <p class=\"text-sm text-slate-600\">آبگرمکن‌های دیواری فوری به دلیل تماس مستقیم آب با لوله‌های فین‌دار مسی، به شدت مستعد جذب گچ و رسوبات کلسیمی هستند. اگر فشار آب گرم در آشپزخانه یا حمام ضعیف شده یا آبگرمکن با تأخیر روشن می‌شود، نیاز به سرویس تخصصی دارد.</p>\n                    </div>\n\n                    <h4 class=\"text-base font-bold text-slate-800 flex items-center gap-2\">\n                        <span class=\"w-2 h-2 rounded-full bg-[#8B1C31]\"></span>\n                        دامنه خدمات آبگرمکن در پلتفرم بهدون:\n                    </h4>\n                    <ul class=\"list-disc list-inside space-y-2 text-sm text-slate-600 pr-2\">\n                        <li><strong>جرم‌گیری و اسیدشویی کوئل و لوله‌های مسی:</strong> باز کردن مسیر عبور آب سرد و گرم، افزایش قابل توجه فشار آب خروجی و کاهش مصرف گاز با بهبود انتقال حرارت.</li>\n                        <li><strong>تعویض دیافراگم (لاستیک پیستون):</strong> رفع مشکل روشن نشدن مشعل با باز کردن شیر آب گرم ناشی از پارگی یا فرسایش دیافراگم رگلاتور آب.</li>\n                        <li><strong>سرویس رگلاتور برنجی آب و گاز:</strong> روان‌کاری میله پیستون، تعویض اورینگ‌ها و اطمینان از خاموش شدن به موقع مشعل پس از بستن شیر آب برای ایمنی ساکنین.</li>\n                        <li><strong>سرویس ترموکوپل و شمعک (پیلوت):</strong> برطرف کردن خاموش شدن مداوم شمعک، تمیزکاری نازل پیلوت و تست جریان میلی‌ولتی بوبین ایمنی.</li>\n                        <li><strong>تنظیم سیستم جرقه‌زن آیونایز و باتری:</strong> در مدل‌های بدون شمعک جدید بوتان، تنظیم فاصله الکترود جرقه‌زن و سوئیچ میکروسوئیچ.</li>\n                        <li><strong>تست سلامت دودکش و حسگر خروج گاز مونوکسید کربن:</strong> رعایت دقیق‌ترین استانداردهای سازمان آتش‌نشانی جهت جلوگیری از خطرات ناشی از پس‌زدن گازهای سمی احتراق.</li>\n                    </ul>\n\n                    <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n                        <h5 class=\"font-bold text-slate-800 text-sm mb-2\">توصیه ایمنی کارشناسان بهدون:</h5>\n                        <p class=\"text-xs text-slate-600 mb-3\">هرگز تعمیر بخش گازسوز آبگرمکن را به افراد غیرمتخصص نسپارید. کوچک‌ترین نشتی در اتصالات گازی یا عدم کارکرد سنسور دودکش می‌تواند خطرات جانی غیرقابل جبرانی به دنبال داشته باشد. تمامی تکنسین‌های اعزامی بهدون دارای گواهینامه معتبر فنی و حرفه‌ای هستند.</p>\n                        <div class=\"flex flex-wrap items-center gap-3\">\n                            <button type=\"button\" onclick=\"openRequestModal('تعمیر و سرویس آبگرمکن')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                                ثبت درخواست تعمیر فوری آبگرمکن در تهران\n                            </button>\n                            <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                                تماس با اعزام تکنسین: ۰۹۳۳۳۲۵۶۸۸۵\n                            </a>\n                        </div>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "split-ac",
+        "name": "نصب و سرویس کولر گازی و اسپلیت",
+        "nameEn": "Split AC & Air Conditioning",
+        "slug": "split-ac",
+        "persianSlug": "کولر-گازی-و-اسپلیت",
+        "aliases": [
+          "split-ac",
+          "کولر-گازی-و-اسپلیت"
+        ],
+        "basePrice": 850000,
+        "shortDesc": "شارژ گاز استاندارد R22 و R410، شستشوی پنل داخلی و کندانسور خارجی، نشت‌یابی و نصب",
+        "shortDescEn": "Professional service with 30-day warranty in Tehran",
+        "features": [
+          "شارژ گاز استاندارد R22 و R410a با گیج دیجیتال و ترازوی حساس",
+          "شستشوی پرفشار پنل داخلی و کندانسور با کارواش پرتابل و مواد نانو",
+          "نشت‌یابی لوله‌کشی مسی با کف صابون و نشت‌یاب الکترونیکی گاز",
+          "تست خازن راه‌انداز، تست آمپراژ و عیب‌یابی برد اینورتر",
+          "لوله‌کشی مسی رفت و برگشت با عایق الاستومری و داکت‌کشی تمیز"
+        ],
+        "detailHtml": "\n    <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n      <div class=\"bg-gradient-to-l from-sky-50/70 to-white p-5 rounded-2xl border border-sky-100 mb-6\">\n        <h3 class=\"text-lg font-black text-brand-700 mb-2\">نصب، جابجایی، شارژ گاز و سرویس دوره‌ای انواع اسپلیت در تهران</h3>\n        <p class=\"text-sm text-slate-600\">کولرهای گازی و داکت اسپلیت‌ها برای کارکرد بدون افت راندمان، نیازمند شستشوی سالانه کوئل‌ها، سنجش دقیق فشار گاز مبرد و تست خازن و فن هستند. انباشت خاک و رسوب روی کندانسور بیرونی موجب افزایش مصرف برق تا ۴۰ درصد و آسیب به کمپرسور می‌گردد.</p>\n      </div>\n\n      <h4 class=\"text-base font-bold text-slate-800 flex items-center gap-2\">\n        <span class=\"w-2 h-2 rounded-full bg-[#8B1C31]\"></span>\n        اقدامات تخصصی تکنسین‌های کولر گازی بهدون:\n      </h4>\n      <ul class=\"list-disc list-inside space-y-2 text-sm text-slate-600 pr-2\">\n        <li><strong>شستشوی تخصصی با کاور شستشو:</strong> شستشوی اواپراتور بدون باز کردن پنل و بدون کثیف‌کاری دیوار و فرش با مواد نانوشوینده ضدقارچ.</li>\n        <li><strong>شارژ گاز تکمیلی یا کامل:</strong> وکیوم کامل مدار با پمپ وکیوم قوی و تزریق گاز مبرد خالص هندی با وزنگیج استاندارد.</li>\n        <li><strong>رفع نشتی اتصالات و لوله‌ها:</strong> پرچ مجدد لوله‌های مسی، رفع شکستگی و عایق‌بندی کامل جهت جلوگیری از اتلاف سرما.</li>\n        <li><strong>رفع آب‌ریزش پنل داخلی:</strong> باز کردن مسیر درین، رفع شیب نامناسب و شستشوی تشتک تخلیه آب مقطر.</li>\n        <li><strong>نصب و جابجایی اصولی:</strong> بستن پایه دیواری یا زمینی تراز با جذب لرزش، سوراخ‌کاری تمیز دیوار و اتصال کابل شیلددار فرمان.</li>\n      </ul>\n\n      <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n        <h5 class=\"font-bold text-slate-800 text-sm mb-2\">چه موقع کولر گازی نیاز به بررسی فوری دارد؟</h5>\n        <p class=\"text-xs text-slate-600 mb-3\">اگر از پنل باد گرم خارج می‌شود، لوله‌های باریک مسی برفک یا یخ زده‌اند، یا آب از گوشه پنل به درون اتاق می‌چکد، فوراً دستگاه را خاموش کرده و با متخصصان بهدون تماس بگیرید.</p>\n        <div class=\"flex flex-wrap items-center gap-3\">\n          <button type=\"button\" data-order-service=\"split-ac\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n            ثبت درخواست سرویس کولر گازی\n          </button>\n          <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n            تماس مستقیم: ۰۹۳۳۳۲۵۶۸۸۵\n          </a>\n        </div>\n      </div>\n    </div>\n  "
+      }
+    ]
+  },
+  "plumbing": {
+    "id": "plumbing",
+    "slug": "plumbing",
+    "persianSlug": "لوله‌کشی-و-تأسیسات",
+    "aliases": [
+      "plumbing",
+      "تاسیسات",
+      "لوله-کشی",
+      "pipes"
+    ],
+    "title": "خدمات لوله‌کشی، نشت‌یابی و تأسیسات ساختمان در تهران | بهدون",
+    "titleEn": "Plumbing, Leak Detection & Water Infrastructure in Tehran | Behdoon",
+    "metaDesc": "خدمات تخصصی لوله‌کشی آب و فاضلاب، نشت‌یابی نقطه زن با دستگاه آکوستیک، رفع نم بدون تخریب، نصب شیرآلات، توالت فرنگی و منبع آب در تهران با ضمانت کتبی بهدون.",
+    "subtitle": "تشخیص ترکیدگی لوله با پیشرفته‌ترین دستگاه‌های آلمانی، رفع نم و نشتی بدون تخریب و اجرای اصولی لوله‌کشی آب و فاضلاب با تکنسین‌های دارای گواهینامه معتبر.",
+    "subtitleEn": "High-precision acoustic leak detection, no-demolition moisture repairs, sanitary fixture installations across Tehran.",
+    "icon": "<svg class=\"w-10 h-10\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z\"/></svg>",
+    "comprehensiveGuide": "\n        <!-- ================= COMPREHENSIVE PLUMBING SEO GUIDE (> 1300 WORDS) ================= -->\n        <article class=\"mt-12 pt-10 border-t border-slate-200 text-slate-700 leading-relaxed text-justify space-y-8\" dir=\"rtl\">\n            <header class=\"text-center max-w-3xl mx-auto space-y-4 mb-10\">\n                <span class=\"inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-cyan-50 text-cyan-800 text-xs font-bold border border-cyan-200\">\n                    <svg class=\"w-4 h-4 text-[#8B1C31]\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z\"></path></svg>\n                    دانشنامه تخصصی تأسیسات آبرسانی و فاضلاب ساختمان در تهران\n                </span>\n                <h2 class=\"text-2xl md:text-3xl font-black text-slate-800 leading-tight\">\n                    راهنمای جامع لوله‌کشی، تشخیص ترکیدگی لوله با دستگاه و رفع نم و رطوبت در تهران\n                </h2>\n                <p class=\"text-sm text-slate-500 leading-relaxed\">\n                    اصول مهندسی نشت‌یابی نقطه زن، رفع چکه و افت فشار آب ساختمان، نصب استاندارد تجهیزات بهداشتی و راه‌کارهای عایق‌بندی نانو بدون تخریب.\n                </p>\n            </header>\n\n            <!-- Quick Action Alert Box -->\n            <div class=\"bg-gradient-to-r from-[#0e2744] to-[#133458] rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6\">\n                <div class=\"space-y-2 text-center md:text-right\">\n                    <h3 class=\"text-xl font-bold\">آب از سقف چکه می‌کند یا قبض آب شما ناگهان نجومی شده است؟</h3>\n                    <p class=\"text-xs md:text-sm text-cyan-100 max-w-xl leading-relaxed\">\n                        تکنسین‌های نشت‌یاب بهدون مجهز به پیشرفته‌ترین دستگاه‌های صوتی و تصویری نقطه زن در کمتر از ۴۵ دقیقه در محل حاضر شده و موضع دقیق ترکیدگی لوله را بدون تخریب نامتعارف مشخص می‌نمایند.\n                    </p>\n                </div>\n                <div class=\"flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0\">\n                    <button type=\"button\" onclick=\"openRequestModal('تشخیص و ترمیم ترکیدگی لوله')\" class=\"w-full sm:w-auto px-6 py-3 bg-[#8B1C31] hover:bg-[#701627] text-white text-xs md:text-sm font-black rounded-xl shadow-lg transition-all transform hover:scale-105 text-center\">\n                        ثبت فوری درخواست نشت‌یابی\n                    </button>\n                    <a href=\"tel:09333256885\" class=\"w-full sm:w-auto px-6 py-3 bg-white/10 hover:bg-white/20 text-white text-xs md:text-sm font-bold rounded-xl backdrop-blur-sm border border-white/20 transition-all text-center flex items-center justify-center gap-2\">\n                        <svg class=\"w-4 h-4 text-emerald-400\" fill=\"currentColor\" viewBox=\"0 0 512 512\"><path d=\"M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z\"/></svg>\n                        <span>۰۹۳۳۳۲۵۶۸۸۵</span>\n                    </a>\n                </div>\n            </div>\n\n            <!-- SECTION 1: The challenge of plumbing in Tehran -->\n            <section class=\"space-y-4\">\n                <h3 class=\"text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3\">\n                    چالش‌های لوله‌کشی و فرسودگی سیستم تأسیسات در بافت‌های مسکونی تهران\n                </h3>\n                <p>\n                    شبکه آبرسانی و لوله‌کشی در مناطق مختلف تهران به دلیل قدمت بناها، نوسانات شدید فشار آب شبکه در ساعات اوج مصرف، و حضور املاح خورنده آهکی در آب شرب، به صورت مداوم در معرض فرسودگی و آسیب‌های جدی است. در ساختمان‌های ساخته شده در دهه‌های ۷۰ و ۸۰ خورشیدی، استفاده از لوله‌های فولادی گالوانیزه و سیاه باعث خوردگی از داخل، زنگ‌زدگی، و سوراخ‌شدگی‌های تدریجی می‌گردد. از سوی دیگر، نشست‌های ساختمانی و ارتعاشات خیابانی تهران سبب گسستگی اتصالات در لوله‌های پی‌وی‌سی (پلیکا) و چدنی فاضلاب می‌شود.\n                </p>\n                <p>\n                    پلتفرم تخصصی <a href=\"/\" class=\"text-brand-600 font-bold hover:underline\">بهدون</a> با بهره‌گیری از تجهیزات مدرن آکوستیک، حرارتی و سیستم‌های لوله‌کشی پلیمری ۵ لایه، راهکارهای ماندگار و تضمین‌شده‌ای برای حل معضلات تأسیساتی همشهریان تهرانی ارائه می‌دهد. همچنین با هماهنگی کامل میان واحدهای <a href=\"/services/hvac\" class=\"text-brand-600 font-bold hover:underline\">سرویس پکیج و شوفاژ</a> و <a href=\"/services/renovation\" class=\"text-brand-600 font-bold hover:underline\">بنایی و کاشی‌کاری</a>، صفر تا صد عیب‌یابی، ترمیم لوله، و بازسازی کف و دیوار در کمترین زمان و با کمترین هزینه انجام می‌پذیرد.\n                </p>\n            </section>\n\n            <!-- SECTION 2: Detection Technology -->\n            <section class=\"space-y-4\">\n                <h3 class=\"text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3\">\n                    فناوری نشت‌یابی نقطه زن تصویری: خداحافظی با تخریب‌های کورکورانه و پرهزینه\n                </h3>\n                <p>\n                    در گذشته نه چندان دور، هنگامی که لکه‌ای از نم روی سقف همسایه طبقه پایین پدیدار می‌شد، بناها اقدام به کندن کل کاشی‌های کف حمام و دستشویی می‌کردند تا منشأ نشتی را حدس بزنند! این فرآیند علاوه بر تحمیل میلیون‌ها تومان هزینه برای خرید مجدد کاشی، بنایی و ایزوگام، آرامش ساکنین را برای روزها برهم می‌زد.\n                </p>\n                <p>\n                    تکنسین‌های نشت‌یاب بهدون در تهران با استفاده از فناوری‌های ترکیبی ۳گانه:\n                </p>\n                <ul class=\"list-disc list-inside space-y-2 text-sm text-slate-600 pr-2\">\n                    <li><strong>دستگاه آکوستیک فوق‌حساس:</strong> فرکانس ریزترین ارتعاشات جریان خروج آب از درزها و سوراخ‌های میکروسکوپی لوله را تا عمق ۲ متر تقویت کرده و در هدفون کارشناس با وضوح بالا پخش می‌کند.</li>\n                    <li><strong>دوربین حرارتی مادون قرمز (ترموویژن):</strong> تغییرات دمایی سطح کف و دیوار را در اثر پخش شدن آب لوله‌های گرمایشی پکیج یا آب گرم مصرفی به صورت نقشه رنگی حرارتی نشان می‌دهد.</li>\n                    <li><strong>تست فشارسنج و گاز ردیاب هیدروژنی:</strong> برای خطوط لوله‌ای که نشتی بسیار نامحسوس دارند، با تزریق گاز بی‌خطر هیدروژن-نیتروژن و سنسور الکترونیکی بو، محل ترکیدگی در چند دقیقه کشف می‌شود.</li>\n                </ul>\n            </section>\n\n            <!-- SECTION 3: Troubleshooting table -->\n            <section class=\"space-y-4\">\n                <h3 class=\"text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3\">\n                    جدول عیب‌یابی سریع نشانه‌های نشتی و مشکلات متداول لوله‌کشی در ساختمان\n                </h3>\n                <div class=\"overflow-x-auto rounded-2xl border border-slate-200 shadow-sm bg-white\">\n                    <table class=\"w-full text-right text-xs md:text-sm\">\n                        <thead class=\"bg-slate-100 text-slate-800 font-bold border-b border-slate-200\">\n                            <tr>\n                                <th class=\"p-3.5 md:p-4\">نشانه مشاهده‌شده</th>\n                                <th class=\"p-3.5 md:p-4\">علت احتمالی</th>\n                                <th class=\"p-3.5 md:p-4\">اقدام پیشنهادی بهدون</th>\n                            </tr>\n                        </thead>\n                        <tbody class=\"divide-y divide-slate-100 text-slate-600\">\n                            <tr class=\"hover:bg-slate-50/50\">\n                                <td class=\"p-3.5 md:p-4 font-bold text-slate-800\">کنتور آب با وجود بسته بودن تمام شیرها می‌چرخد</td>\n                                <td class=\"p-3.5 md:p-4\">ترکیدگی لوله اصلی آب سرد زیر خاک حیاط یا کف واحد</td>\n                                <td class=\"p-3.5 md:p-4\">اعزام فوری نشت‌یاب با دستگاه صوتی دیجیتال</td>\n                            </tr>\n                            <tr class=\"hover:bg-slate-50/50\">\n                                <td class=\"p-3.5 md:p-4 font-bold text-slate-800\">زردی، تبله گچ دیوار و شوره زدن سرامیک</td>\n                                <td class=\"p-3.5 md:p-4\">خرابی بندکشی کف حمام، نشت تدریجی از اتصالات لوله فاضلاب</td>\n                                <td class=\"p-3.5 md:p-4\">آب‌بندی نانو بدون تخریب یا اصلاح سیفون شترگلو</td>\n                            </tr>\n                            <tr class=\"hover:bg-slate-50/50\">\n                                <td class=\"p-3.5 md:p-4 font-bold text-slate-800\">افت ناگهانی فشار آب در ساعات عصرگاهی طبقات ۳ به بالا</td>\n                                <td class=\"p-3.5 md:p-4\">نبود پمپ تحت فشار، رسوب در فیلترها، خرابی ست کنترل</td>\n                                <td class=\"p-3.5 md:p-4\">نصب پمپ آب خانگی و مخزن پلی‌اتیلن سه‌لایه</td>\n                            </tr>\n                            <tr class=\"hover:bg-slate-50/50\">\n                                <td class=\"p-3.5 md:p-4 font-bold text-slate-800\">بوی زننده گاز فاضلاب در سرویس و آشپزخانه</td>\n                                <td class=\"p-3.5 md:p-4\">عدم وجود ونت هواکش فاضلاب، خشک شدن آب شترگلو، نشتی بوگیر توالت</td>\n                                <td class=\"p-3.5 md:p-4\">تعویض بوگیر ژله‌ای توالت فرنگی و نصب لوله ونت بام</td>\n                            </tr>\n                        </tbody>\n                    </table>\n                </div>\n            </section>\n\n            <!-- SECTION 4: Trust & Quality -->\n            <section class=\"space-y-4\">\n                <h3 class=\"text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3\">\n                    مزایای رقابتی و استانداردهای خدمات لوله‌کشی بهدون در تهران\n                </h3>\n                <div class=\"grid grid-cols-1 md:grid-cols-3 gap-4 pt-2\">\n                    <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-2\">\n                        <div class=\"w-10 h-10 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center mx-auto font-black\">✓</div>\n                        <h4 class=\"font-bold text-slate-800 text-sm\">ضمانت کتبی عدم بازگشت نشتی</h4>\n                        <p class=\"text-xs text-slate-500\">کلیه خدمات نشت‌یابی و لوله‌کشی بهدون دارای ضمانت‌نامه رسمی و مهرشده هستند.</p>\n                    </div>\n                    <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-2\">\n                        <div class=\"w-10 h-10 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center mx-auto font-black\">⚡</div>\n                        <h4 class=\"font-bold text-slate-800 text-sm\">اعزام شبانه‌روزی در کمتر از ۴۵ دقیقه</h4>\n                        <p class=\"text-xs text-slate-500\">تیم‌های امداد تأسیسات بهدون در شمال، شرق، غرب و مرکز تهران در حالت آماده‌باش هستند.</p>\n                    </div>\n                    <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-2\">\n                        <div class=\"w-10 h-10 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center mx-auto font-black\">⚖</div>\n                        <h4 class=\"font-bold text-slate-800 text-sm\">محاسبه بر اساس نرخ مصوب اتحادیه</h4>\n                        <p class=\"text-xs text-slate-500\">هزینه‌ها کاملاً شفاف، منصفانه و طبق فاکتور رسمی اتحادیه تأسیسات مکانیکی تهران ارائه می‌گردد.</p>\n                    </div>\n                </div>\n            </section>\n\n            <!-- SECTION 5: How to track and submit -->\n            <section class=\"space-y-4\">\n                <h3 class=\"text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3\">\n                    نحوه ثبت سفارش آنلاین و دریافت کد رهگیری هوشمند\n                </h3>\n                <p>\n                    برای بهره‌مندی از خدمات لوله‌کشی و نشت‌یابی، کافیست روی دکمه‌های «ثبت آنلاین درخواست» کلیک کنید. در مرحله بعد موقعیت مکانی خود را روی نقشه تهران تعیین نمایید تا تکنسین کشیک منطقه شما مشخص شود. پس از تایید شماره موبایل، سیستم یک کد اختصاصی مانند <code class=\"bg-slate-100 text-[#8B1C31] px-2 py-0.5 rounded font-mono font-bold\">BEH-XXXX</code> صادر می‌کند که در صفحه <a href=\"/track\" class=\"text-brand-600 font-bold hover:underline\">پیگیری آنلاین درخواست‌ها</a> می‌توانید وضعیت اعزام و اطلاعات کارشناس را مشاهده نمایید.\n                </p>\n            </section>\n\n            <!-- Final CTA -->\n            <div class=\"bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-6 md:p-8 text-center space-y-4 my-8\">\n                <h3 class=\"text-xl font-black text-slate-800\">برای رفع مشکلات لوله‌کشی و نشت‌یابی ساختمان خود اقدام کنید</h3>\n                <p class=\"text-xs md:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed\">\n                    هم‌اکنون درخواست خود را ثبت کنید تا در سریع‌ترین زمان ممکن از حضور کارشناسان مجرب بهدون با تجهیزات کامل در محل بهره‌مند شوید.\n                </p>\n                <div class=\"flex flex-wrap items-center justify-center gap-3 pt-2\">\n                    <button type=\"button\" onclick=\"openRequestModal('لوله کشی آب و فاضلاب')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-8 py-3.5 rounded-2xl font-black text-sm shadow-xl shadow-[#8B1C31]/25 hover:shadow-2xl transition-all transform hover:-translate-y-0.5\">\n                        ثبت آنلاین درخواست خدمات لوله‌کشی\n                    </button>\n                    <a href=\"tel:09333256885\" class=\"bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-6 py-3.5 rounded-2xl font-bold text-sm shadow-sm transition-colors flex items-center gap-2\">\n                        <svg class=\"w-4 h-4 text-emerald-600\" fill=\"currentColor\" viewBox=\"0 0 512 512\"><path d=\"M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z\"/></svg>\n                        <span>پشتیبانی شبانه‌روزی: ۰۹۳۳۳۲۵۶۸۸۵</span>\n                    </a>\n                </div>\n            </div>\n        </article>\n    ",
+    "faq": [
+      {
+        "q": "دستگاه نشت‌یاب تا چه عمقی می‌تواند ترکیدگی لوله را تشخیص دهد؟",
+        "a": "دستگاه‌های آکوستیک و تصویری بهدون قادرند نشتی‌های موجود در عمق ۲۰ سانتی‌متر تا ۲ متر زیر لایه‌های بتن، سرامیک، موزاییک و خاک را با دقت بالا شناسایی نمایند."
+      },
+      {
+        "q": "آیا رفع نم با نانو بدون تخریب برای همیشه ماندگار است؟",
+        "a": "بله، در صورتی که منشأ رطوبت ناشی از فرسودگی بندکشی یا عدم آب‌بندی دور کاسه توالت و کفشور باشد، رزین‌های پلیمری نانو الاستومری با نفوذ به لایه‌های زیرین، سدی غیرقابل نفوذ ایجاد کرده و بهدون آن را به صورت کتبی تضمین می‌نماید."
+      },
+      {
+        "q": "هزینه نشت‌یابی با دستگاه در تهران چقدر است؟",
+        "a": "هزینه تشخیص نشتی با دستگاه نقطه زن دقیقاً طبق نرخ مصوب اتحادیه تأسیسات تهران محاسبه می‌شود و در صورت انجام ترمیم لوله توسط تکنسین بهدون، تخفیف ویژه در دستمزد لحاظ خواهد شد."
+      },
+      {
+        "q": "آیا برای نصب پمپ آب خانگی نیاز به مخزن آب است؟",
+        "a": "بله، طبق مقررات ملی ساختمان و شرکت آب و فاضلاب تهران، نصب مستقیم پمپ به شبکه آب شهری غیرقانونی است و حتماً باید یک مخزن ذخیره پلی‌اتیلن به عنوان واسط نصب شود تا از آلودگی آب و جریمه جلوگیری به عمل آید."
+      }
+    ],
+    "subServices": [
+      {
+        "id": "leak-detection",
+        "name": "تشخیص و ترمیم ترکیدگی لوله",
+        "nameEn": "Acoustic Pipe Leak Detection",
+        "slug": "leak-detection",
+        "persianSlug": "تشخیص-ترکیدگی-لوله",
+        "aliases": [
+          "leak-detection",
+          "تشخیص-ترکیدگی-لوله",
+          "unclogging"
+        ],
+        "basePrice": 950000,
+        "shortDesc": "نشت‌یابی نقطه زن با دستگاه آکوستیک و تصویری حرارتی پیشرفته بدون کمترین تخریب در ساختمان",
+        "shortDescEn": "Professional plumbing services with 30-day warranty in Tehran",
+        "features": [
+          "نشت‌یابی نقطه زن با دستگاه آکوستیک و ترموویژن بدون تخریب",
+          "استفاده از اتصالات پنج‌لایه و متریال استاندارد برندهای معتبر",
+          "رفع نم و نشتی همراه با بازسازی کامل بنایی در صورت لزوم",
+          "تست فشار مدار پس از اتمام کار و ارائه فاکتور رسمی"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-4 text-slate-700 leading-relaxed text-justify\">\n                    <div class=\"bg-gradient-to-l from-cyan-50 to-white p-5 rounded-2xl border border-cyan-100\">\n                        <h3 class=\"text-lg font-black text-brand-700 mb-2\">تشخیص دقیق ترکیدگی لوله با دستگاه نقطه زن آکوستیک و تصویری</h3>\n                        <p class=\"text-sm text-slate-600\">ترکیدگی لوله‌های آب و شوفاژ در زیر کف‌پوش یا پشت دیوارهای ساختمان اگر به سرعت شناسایی نشود، سازه را سست کرده و تخریب‌های پرهزینه به بار می‌آورد. بهدون با دستگاه‌های فوق‌پیشرفته آکوستیک، نقطه دقیق نشتی را تا عمق ۲ متر بدون حتی یک سانتی‌متر تخریب اضافی شناسایی می‌کند.</p>\n                    </div>\n                    <ul class=\"list-disc list-inside space-y-2 text-sm text-slate-600 pr-2\">\n                        <li><strong>نشت‌یابی با امواج صوتی فرکانس بالا:</strong> تشخیص صدای فرار آب از داخل لوله‌های پرفشار با خطای کمتر از ۵ سانتی‌متر.</li>\n                        <li><strong>تصویربرداری حرارتی (ترموویژن):</strong> پایش تفاوت دمای ناشی از نشتی لوله‌های آب گرم و مدار رادیاتور پکیج.</li>\n                        <li><strong>تخریب موضعی و ترمیم آنی لوله:</strong> بریدن قسمت آسیب‌دیده، تعویض با اتصالات کوپلی یا پرسی ۵ لایه نیوپایپ و تست فشار نهایی.</li>\n                        <li><strong>بازسازی کامل موضع تخریب‌شده:</strong> همکاری مستقیم با واحد <a href=\"/services/renovation\" class=\"text-[#8B1C31] font-bold hover:underline\">کاشی‌کاری و بنایی بهدون</a> برای بستن و بندکشی دقیق کاشی و سرامیک آسیب‌دیده.</li>\n                    </ul>\n                    <div class=\"flex flex-wrap gap-3 pt-2\">\n                        <button type=\"button\" onclick=\"openRequestModal('تشخیص و ترمیم ترکیدگی لوله')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md\">ثبت درخواست نشت‌یابی فوری</button>\n                        <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs\">تماس: ۰۹۳۳۳۲۵۶۸۸۵</a>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "moisture-repair",
+        "name": "رفع نم و نشتی و رطوبت",
+        "nameEn": "Damp & Moisture Repair",
+        "slug": "moisture-repair",
+        "persianSlug": "رفع-نم-و-رطوبت",
+        "aliases": [
+          "moisture-repair",
+          "رفع-نم-و-رطوبت"
+        ],
+        "basePrice": 850000,
+        "shortDesc": "رفع نم و رطوبت دیوارها و سقف، عایق‌کاری پلیمری نانو بدون نیاز به تخریب کاشی و سرامیک",
+        "shortDescEn": "Professional plumbing services with 30-day warranty in Tehran",
+        "features": [
+          "نشت‌یابی نقطه زن با دستگاه آکوستیک و ترموویژن بدون تخریب",
+          "استفاده از اتصالات پنج‌لایه و متریال استاندارد برندهای معتبر",
+          "رفع نم و نشتی همراه با بازسازی کامل بنایی در صورت لزوم",
+          "تست فشار مدار پس از اتمام کار و ارائه فاکتور رسمی"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-4 text-slate-700 leading-relaxed text-justify\">\n                    <div class=\"bg-gradient-to-l from-blue-50 to-white p-5 rounded-2xl border border-blue-100\">\n                        <h3 class=\"text-lg font-black text-brand-700 mb-2\">رفع تضمینی نم و رطوبت بدون تخریب در سرویس بهداشتی و حمام</h3>\n                        <p class=\"text-sm text-slate-600\">بسیاری از موارد چکه و زردی سقف طبقات پایین ناشی از فرسایش بندکشی کاشی‌ها و عایق کف حمام و توالت است، نه ترکیدگی لوله! بهدون با فناوری نانو و رزین‌های پلیمری، کف سرویس‌ها را ۱۰۰٪ آب‌بندی نفوذناپذیر می‌سازد.</p>\n                    </div>\n                    <ul class=\"list-disc list-inside space-y-2 text-sm text-slate-600 pr-2\">\n                        <li><strong>تراشیدن و تخلیه بندهای قدیمی و پوسیده:</strong> زدودن گچ و سیمان‌های قارچ‌زده و خشک‌شده با فرز مینیاتوری مخصوص.</li>\n                        <li><strong>تزریق ژل و چسب نانو ضدآب آنتی‌باکتریال:</strong> نفوذ عمیق پلیمر نانو به زیر کاشی‌ها و پر کردن کلیه خلل و فرج بدون نیاز به کندن کف سرویس.</li>\n                        <li><strong>آب‌بندی دور سنگ توالت فرنگی و لوله کفشور:</strong> رفع قطعی بوی بد فاضلاب و ممانعت از نفوذ آب شستشو به سقف زیرین.</li>\n                    </ul>\n                    <div class=\"flex flex-wrap gap-3 pt-2\">\n                        <button type=\"button\" onclick=\"openRequestModal('رفع نم و نشتی و رطوبت')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md\">ثبت درخواست رفع نم با نانو</button>\n                        <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs\">مشاوره رایگان: ۰۹۳۳۳۲۵۶۸۸۵</a>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "faucets",
+        "name": "نصب و تعمیر شیرآلات",
+        "nameEn": "Faucet & Tap Repair",
+        "slug": "faucets",
+        "persianSlug": "نصب-و-تعمیر-شیرآلات",
+        "aliases": [
+          "faucets",
+          "نصب-و-تعمیر-شیرآلات"
+        ],
+        "basePrice": 350000,
+        "shortDesc": "نصب و تعمیر انواع شیرآلات اهرمی، توکار، چشمی، دوش حمام، سیفون، فلاش‌تانک و روشویی",
+        "shortDescEn": "Professional plumbing services with 30-day warranty in Tehran",
+        "features": [
+          "نشت‌یابی نقطه زن با دستگاه آکوستیک و ترموویژن بدون تخریب",
+          "استفاده از اتصالات پنج‌لایه و متریال استاندارد برندهای معتبر",
+          "رفع نم و نشتی همراه با بازسازی کامل بنایی در صورت لزوم",
+          "تست فشار مدار پس از اتمام کار و ارائه فاکتور رسمی"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-4 text-slate-700 leading-relaxed text-justify\">\n                    <h3 class=\"text-lg font-black text-brand-700\">نصب انواع شیرآلات اهرمی، توکار، چشمی و دوش حمام</h3>\n                    <p class=\"text-sm text-slate-600\">نصب اصولی شیرآلات با شیلنگ‌های پیسوار استنلس استیل و لنگکی‌های برنجی تراز، مانع از افت فشار آب و شکستن اتصالات برنجی درون دیوار می‌شود. تعمیر کاتریج‌های هرز شده، تعویض واشرها و آب‌بندی با نوار تفلون استاندارد توسط تکنسین‌های بهدون در سراسر تهران انجام می‌شود.</p>\n                    <div class=\"flex flex-wrap gap-3 pt-2\">\n                        <button type=\"button\" onclick=\"openRequestModal('نصب و تعمیر شیرآلات')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md\">ثبت درخواست نصب شیرآلات</button>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "water-tank",
+        "name": "نصب و سرویس منبع آب",
+        "nameEn": "Water Storage Tank & Pump",
+        "slug": "water-tank",
+        "persianSlug": "نصب-منبع-آب",
+        "aliases": [
+          "water-tank",
+          "نصب-منبع-آب"
+        ],
+        "basePrice": 800000,
+        "shortDesc": "نصب مخازن پلی‌اتیلن سه‌لایه ضدجلبک، شناور برنجی، لوله‌کشی ورودی و خروجی و منبع ذخیره آب",
+        "shortDescEn": "Professional plumbing services with 30-day warranty in Tehran",
+        "features": [
+          "نشت‌یابی نقطه زن با دستگاه آکوستیک و ترموویژن بدون تخریب",
+          "استفاده از اتصالات پنج‌لایه و متریال استاندارد برندهای معتبر",
+          "رفع نم و نشتی همراه با بازسازی کامل بنایی در صورت لزوم",
+          "تست فشار مدار پس از اتمام کار و ارائه فاکتور رسمی"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-4 text-slate-700 leading-relaxed text-justify\">\n                    <h3 class=\"text-lg font-black text-brand-700\">نصب پمپ و مخزن ذخیره آب پلی‌اتیلن سه‌لایه ضدجلبک در تهران</h3>\n                    <p class=\"text-sm text-slate-600\">افت فشار آب شهری در فصول گرم در طبقات بالای ساختمان‌های تهران، نیاز به نصب سیستم پمپ تحت فشار و مخزن ذخیره را الزامی می‌کند. تکنسین‌های ما با نصب شیر یک‌طرفه برنجی، ست کنترل دیجیتال یا کلید اتوماتیک مکانیکی به همراه منبع تحت فشار دیافراگمی، فشار آب یکنواخت و دائمی واحدها را تامین می‌نمایند. در صورت نیاز به سیم‌کشی اختصاصی پمپ، تیم <a href=\"/services/electrical\" class=\"text-brand-600 font-bold hover:underline\">برقکاری بهدون</a> در محل حضور خواهد داشت.</p>\n                    <div class=\"flex flex-wrap gap-3 pt-2\">\n                        <button type=\"button\" onclick=\"openRequestModal('نصب و سرویس منبع آب')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md\">ثبت درخواست نصب پمپ و مخزن</button>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "toilet",
+        "name": "نصب و سرویس توالت فرنگی و ایرانی",
+        "nameEn": "Toilet Installation & Repair",
+        "slug": "toilet",
+        "persianSlug": "نصب-توالت-فرنگی",
+        "aliases": [
+          "toilet",
+          "نصب-توالت-فرنگی"
+        ],
+        "basePrice": 550000,
+        "shortDesc": "نصب توالت فرنگی، تبدیل توالت ایرانی به فرنگی بدون کثیف‌کاری و رفع گرفتگی و بوگیری کاسه",
+        "shortDescEn": "Professional plumbing services with 30-day warranty in Tehran",
+        "features": [
+          "نشت‌یابی نقطه زن با دستگاه آکوستیک و ترموویژن بدون تخریب",
+          "استفاده از اتصالات پنج‌لایه و متریال استاندارد برندهای معتبر",
+          "رفع نم و نشتی همراه با بازسازی کامل بنایی در صورت لزوم",
+          "تست فشار مدار پس از اتمام کار و ارائه فاکتور رسمی"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-4 text-slate-700 leading-relaxed text-justify\">\n                    <h3 class=\"text-lg font-black text-brand-700\">نصب توالت فرنگی استاندارد و تبدیل توالت ایرانی به فرنگی بدون تخریب</h3>\n                    <p class=\"text-sm text-slate-600\">نصب دقیق بوگیر ژله‌ای و چسب سیلیکون آنتی‌باکتریال دور پایه توالت فرنگی از انتشار بوی آزاردهنده فاضلاب و نشت آب کثیف جلوگیری می‌کند. همچنین در صورت تمایل، فرآیند تبدیل توالت ایرانی به فرنگی با سیستم‌های پرتابل تاشو یا بازسازی کامل سرامیک کف در کمتر از ۱ روز کاری اجرا می‌گردد.</p>\n                    <div class=\"flex flex-wrap gap-3 pt-2\">\n                        <button type=\"button\" onclick=\"openRequestModal('نصب و سرویس توالت فرنگی و ایرانی')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md\">ثبت درخواست نصب توالت فرنگی</button>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "piping",
+        "name": "لوله کشی آب و فاضلاب",
+        "nameEn": "Plumbing & Drainage Piping",
+        "slug": "piping",
+        "persianSlug": "لوله-کشی-آب-و-فاضلاب",
+        "aliases": [
+          "piping",
+          "لوله-کشی-آب-و-فاضلاب"
+        ],
+        "basePrice": 900000,
+        "shortDesc": "لوله‌کشی آب سرد و گرم پنج‌لایه، نیوپایپ، پلی‌پروپیلن (سبز) و لوله‌کشی فاضلاب پوش‌فیت و پلیکا",
+        "shortDescEn": "Professional plumbing services with 30-day warranty in Tehran",
+        "features": [
+          "نشت‌یابی نقطه زن با دستگاه آکوستیک و ترموویژن بدون تخریب",
+          "استفاده از اتصالات پنج‌لایه و متریال استاندارد برندهای معتبر",
+          "رفع نم و نشتی همراه با بازسازی کامل بنایی در صورت لزوم",
+          "تست فشار مدار پس از اتمام کار و ارائه فاکتور رسمی"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-4 text-slate-700 leading-relaxed text-justify\">\n                    <h3 class=\"text-lg font-black text-brand-700\">اجرای لوله‌کشی پنج‌لایه، پلی‌پروپیلن و پوش‌فیت فاضلاب</h3>\n                    <p class=\"text-sm text-slate-600\">اجرای استانداردهای مهندسی تأسیسات مکانیکی با لوله‌های نیوپایپ، سوپرپایپ، لوله‌های سبز آذین و لوله‌های بی‌صدای پوش‌فیت فاضلاب در پروژه‌های نوسازی و بازسازی کامل ساختمان در تهران همراه با تست هیدرواستاتیک ۱۰ بار.</p>\n                    <div class=\"flex flex-wrap gap-3 pt-2\">\n                        <button type=\"button\" onclick=\"openRequestModal('لوله کشی آب و فاضلاب')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md\">ثبت درخواست لوله‌کشی کلی و جزئی</button>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "sink",
+        "name": "نصب سینک ظرفشویی",
+        "nameEn": "Kitchen Sink & Trap",
+        "slug": "sink",
+        "persianSlug": "نصب-سینک-ظرفشویی",
+        "aliases": [
+          "sink",
+          "نصب-سینک-ظرفشویی"
+        ],
+        "basePrice": 400000,
+        "shortDesc": "نصب انواع سینک توکار و روکار استیل و گرانیتی، آب‌بندی با چسب سیلیکون ضدقارچ و نصب سیفون",
+        "shortDescEn": "Professional plumbing services with 30-day warranty in Tehran",
+        "features": [
+          "نشت‌یابی نقطه زن با دستگاه آکوستیک و ترموویژن بدون تخریب",
+          "استفاده از اتصالات پنج‌لایه و متریال استاندارد برندهای معتبر",
+          "رفع نم و نشتی همراه با بازسازی کامل بنایی در صورت لزوم",
+          "تست فشار مدار پس از اتمام کار و ارائه فاکتور رسمی"
+        ],
+        "detailHtml": "<p class=\"text-sm text-slate-600\">برش دقیق صفحه کورین و ام‌دی‌اف، نصب و آب‌بندی کامل سینک توکار و روکار با بست‌های استیل و سیلیکون آلمانی و اتصال سیفون ضدبو.</p>"
+      },
+      {
+        "id": "water-purifier",
+        "name": "نصب و تعمیر دستگاه تصفیه آب",
+        "nameEn": "Water Purifier Filter & Service",
+        "slug": "water-purifier",
+        "persianSlug": "دستگاه-تصفیه-آب",
+        "aliases": [
+          "water-purifier",
+          "دستگاه-تصفیه-آب"
+        ],
+        "basePrice": 450000,
+        "shortDesc": "نصب و جابجایی دستگاه‌های تصفیه آب خانگی، تعویض دوره‌ای فیلترهای ۱ تا ۶ و تنظیم باد مخزن",
+        "shortDescEn": "Professional plumbing services with 30-day warranty in Tehran",
+        "features": [
+          "نشت‌یابی نقطه زن با دستگاه آکوستیک و ترموویژن بدون تخریب",
+          "استفاده از اتصالات پنج‌لایه و متریال استاندارد برندهای معتبر",
+          "رفع نم و نشتی همراه با بازسازی کامل بنایی در صورت لزوم",
+          "تست فشار مدار پس از اتمام کار و ارائه فاکتور رسمی"
+        ],
+        "detailHtml": "<p class=\"text-sm text-slate-600\">سرویس، تعویض فیلترهای استاندارد گیاهی ۶ و ۸ مرحله‌ای، فیلتر ممبران اسمز معکوس (RO)، پمپ دیافراگمی و تنظیم سختی آب (TDS).</p>"
+      },
+      {
+        "id": "flush-tank",
+        "name": "نصب و تعمیر فلاش تانک و سیفون",
+        "nameEn": "Flush Tank & Valve Repair",
+        "slug": "flush-tank",
+        "persianSlug": "فلاش-تانک",
+        "aliases": [
+          "flush-tank",
+          "فلاش-تانک"
+        ],
+        "basePrice": 350000,
+        "shortDesc": "تعمیر و تنظیم مکانیزم تخلیه فلاش‌تانک، تعویض فلوتر، پمپ تخلیه و آب‌بندی لوله‌های رابط",
+        "shortDescEn": "Professional plumbing services with 30-day warranty in Tehran",
+        "features": [
+          "نشت‌یابی نقطه زن با دستگاه آکوستیک و ترموویژن بدون تخریب",
+          "استفاده از اتصالات پنج‌لایه و متریال استاندارد برندهای معتبر",
+          "رفع نم و نشتی همراه با بازسازی کامل بنایی در صورت لزوم",
+          "تست فشار مدار پس از اتمام کار و ارائه فاکتور رسمی"
+        ],
+        "detailHtml": "<p class=\"text-sm text-slate-600\">نصب فلاش‌تانک‌های روکار و توکار فوق‌باریک دوزمانه، تنظیم شناور ورودی و تخلیه و تعویض قطعات فرسوده بدون نشتی آب.</p>"
+      },
+      {
+        "id": "washbasin",
+        "name": "نصب روشویی",
+        "nameEn": "Washbasin & Vanity Mounting",
+        "slug": "washbasin",
+        "persianSlug": "نصب-روشویی",
+        "aliases": [
+          "washbasin",
+          "نصب-روشویی"
+        ],
+        "basePrice": 450000,
+        "shortDesc": "نصب انواع روشویی سنگی، کابینتی، پایه‌دار، آینه باکس، شیر مخلوط و آب‌بندی اتصالات",
+        "shortDescEn": "Professional plumbing services with 30-day warranty in Tehran",
+        "features": [
+          "نشت‌یابی نقطه زن با دستگاه آکوستیک و ترموویژن بدون تخریب",
+          "استفاده از اتصالات پنج‌لایه و متریال استاندارد برندهای معتبر",
+          "رفع نم و نشتی همراه با بازسازی کامل بنایی در صورت لزوم",
+          "تست فشار مدار پس از اتمام کار و ارائه فاکتور رسمی"
+        ],
+        "detailHtml": "<p class=\"text-sm text-slate-600\">نصب انواع روشویی‌های کابینتی پی‌وی‌سی ضدآب، سنگی، پایه‌دار با بست‌های بولت فولادی و اتصال آب گرم و سرد به همراه سیفون استاندارد.</p>"
+      },
+      {
+        "id": "wall-hung",
+        "name": "نصب و تعمیر وال هنگ",
+        "nameEn": "Wall-Hung Concealed Toilet",
+        "slug": "wall-hung",
+        "persianSlug": "وال-هنگ",
+        "aliases": [
+          "wall-hung",
+          "وال-هنگ"
+        ],
+        "basePrice": 750000,
+        "shortDesc": "نصب و سرویس استراکچر وال‌هنگ توکار، کلید تخلیه دو زمانه و رفع نشتی کاسه معلق",
+        "shortDescEn": "Professional plumbing services with 30-day warranty in Tehran",
+        "features": [
+          "نشت‌یابی نقطه زن با دستگاه آکوستیک و ترموویژن بدون تخریب",
+          "استفاده از اتصالات پنج‌لایه و متریال استاندارد برندهای معتبر",
+          "رفع نم و نشتی همراه با بازسازی کامل بنایی در صورت لزوم",
+          "تست فشار مدار پس از اتمام کار و ارائه فاکتور رسمی"
+        ],
+        "detailHtml": "<p class=\"text-sm text-slate-600\">نصب استراکچر توکار فلزی وال‌هنگ در دیوار، کلید تخلیه لمسی و کاسه توالت فرنگی معلق با تحمل وزن بالا طبق کاتالوگ شرکت سازنده.</p>"
+      },
+      {
+        "id": "sewage-connection",
+        "name": "اتصال به شبکه فاضلاب شهری",
+        "nameEn": "City Sewage Network Connection",
+        "slug": "sewage-connection",
+        "persianSlug": "فاضلاب-شهری",
+        "aliases": [
+          "sewage-connection",
+          "فاضلاب-شهری"
+        ],
+        "basePrice": 1200000,
+        "shortDesc": "حفر کانال، لوله‌گذاری اصولی شیب‌دار و اتصال استاندارد به شبکه اگو شهری با مجوز",
+        "shortDescEn": "Professional plumbing services with 30-day warranty in Tehran",
+        "features": [
+          "نشت‌یابی نقطه زن با دستگاه آکوستیک و ترموویژن بدون تخریب",
+          "استفاده از اتصالات پنج‌لایه و متریال استاندارد برندهای معتبر",
+          "رفع نم و نشتی همراه با بازسازی کامل بنایی در صورت لزوم",
+          "تست فشار مدار پس از اتمام کار و ارائه فاکتور رسمی"
+        ],
+        "detailHtml": "<p class=\"text-sm text-slate-600\">حفر مسیر، لوله‌کشی فاضلاب ساختمان به خط اگو شهری با شیب استاندارد، نصب سیفون دوبل و شستشوی چاه‌های جذبی قدیمی.</p>"
+      }
+    ]
+  },
+  "electrical": {
+    "id": "electrical",
+    "slug": "electrical",
+    "persianSlug": "برقکاری-ساختمان",
+    "aliases": [
+      "electrical",
+      "برق-ساختمان",
+      "الکتریکی",
+      "سیم-کشی"
+    ],
+    "title": "خدمات برقکاری ساختمان در تهران | رفع اتصالی، سیم‌کشی و روشنایی فوری بهدون",
+    "titleEn": "Building Electrical Services in Tehran | Short-Circuit Fix & Wiring | Behdoon",
+    "metaDesc": "خدمات تخصصی برق‌کاری ساختمان، عیب‌یابی و رفع فوری اتصالی شبانه‌روزی، سیم‌کشی کلی و جزئی، نصب لوستر، کلید و پریز، آیفون و تابلو برق در کلیه مناطق تهران.",
+    "subtitle": "روشنایی و ایمنی کامل مدار الکتریکی ساختمان شما با مهندسان و برقکاران مجرب بهدون؛ اعزام فوری کمتر از ۴۰ دقیقه برای موارد اتصالی اورژانسی.",
+    "subtitleEn": "Urgent short-circuit troubleshooting, complete architectural rewiring, and lighting fixtures across Tehran.",
+    "icon": "<svg class=\"w-10 h-10\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"M13 10V3L4 14h7v7l9-11h-7z\"/></svg>",
+    "comprehensiveGuide": "\n        <!-- ================= COMPREHENSIVE ELECTRICAL SEO GUIDE (> 1300 WORDS) ================= -->\n        <article class=\"mt-12 pt-10 border-t border-slate-200 text-slate-700 leading-relaxed text-justify space-y-8\" dir=\"rtl\">\n            <header class=\"text-center max-w-3xl mx-auto space-y-4 mb-10\">\n                <span class=\"inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-amber-50 text-amber-800 text-xs font-bold border border-amber-200\">\n                    <svg class=\"w-4 h-4 text-[#8B1C31]\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M13 10V3L4 14h7v7l9-11h-7z\"></path></svg>\n                    دانشنامه تخصصی تأسیسات الکتریکی و برقکاری ساختمان در تهران\n                </span>\n                <h2 class=\"text-2xl md:text-3xl font-black text-slate-800 leading-tight\">\n                    راهنمای جامع برقکاری ساختمان، رفع اتصالی، سیم‌کشی اصولی و سیستم‌های ایمنی در تهران\n                </h2>\n                <p class=\"text-sm text-slate-500 leading-relaxed\">\n                    اصول پیشگیری از اتصالی، استانداردهای کابل‌کشی، انتخاب کلید و پریز، نصب ایمن روشنایی و نقش حیاتی سیستم چاه ارت در حفاظت از ساکنان.\n                </p>\n            </header>\n\n            <!-- Quick Action Alert Box -->\n            <div class=\"bg-gradient-to-r from-[#1c2e42] to-[#263e59] rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6\">\n                <div class=\"space-y-2 text-center md:text-right\">\n                    <h3 class=\"text-xl font-bold\">برق منزلتان قطع شده یا بوی سوختگی از جعبه فیوز احساس می‌کنید؟</h3>\n                    <p class=\"text-xs md:text-sm text-amber-100 max-w-xl leading-relaxed\">\n                        اتصالی برق می‌تواند در چند ثانیه به آتش‌سوزی گسترده منجر شود! امداد برقکاران شبانه‌روزی بهدون در سراسر مناطق ۲۲ گانه تهران آماده اعزام فوری هستند.\n                    </p>\n                </div>\n                <div class=\"flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0\">\n                    <button type=\"button\" onclick=\"openRequestModal('رفع اتصالی')\" class=\"w-full sm:w-auto px-6 py-3 bg-[#8B1C31] hover:bg-[#701627] text-white text-xs md:text-sm font-black rounded-xl shadow-lg transition-all transform hover:scale-105 text-center\">\n                        اعزام فوری برقکار\n                    </button>\n                    <a href=\"tel:09333256885\" class=\"w-full sm:w-auto px-6 py-3 bg-white/10 hover:bg-white/20 text-white text-xs md:text-sm font-bold rounded-xl backdrop-blur-sm border border-white/20 transition-all text-center flex items-center justify-center gap-2\">\n                        <svg class=\"w-4 h-4 text-emerald-400\" fill=\"currentColor\" viewBox=\"0 0 512 512\"><path d=\"M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z\"/></svg>\n                        <span>۰۹۳۳۳۲۵۶۸۸۵</span>\n                    </a>\n                </div>\n            </div>\n\n            <!-- SECTION 1: Electrical safety -->\n            <section class=\"space-y-4\">\n                <h3 class=\"text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3\">\n                    اهمیت حیاتی ایمنی الکتریکی و استانداردهای سیم‌کشی ساختمان در تهران\n                </h3>\n                <p>\n                    طبق گزارش‌های رسمی سازمان آتش‌نشانی و خدمات ایمنی تهران، بیش از ۳۵ درصد از حریق‌های منازل مسکونی و واحدهای تجاری ناشی از عیوب اتصالات برقی، فرسودگی عایق کابل‌ها و اضافه‌بار بر روی سیم‌کشی‌های غیراستاندارد است. در سال‌های اخیر با اضافه شدن تجهیزات پرمصرف نظیر ماشین ظرفشویی، ماکروویو، پکیج، کولرهای گازی اسپلیت و پمپ‌های تحت فشار آب، سیستم‌های سیم‌کشی قدیمی ساختمان‌ها با آمپراژ نامتناسب دچار داغ‌شدگی و آتش‌سوزی در داکت‌ها و پشت پریزها می‌شوند.\n                </p>\n                <p>\n                    واحد تأسیسات الکتریکی <a href=\"/\" class=\"text-brand-600 font-bold hover:underline\">بهدون</a> با بهره‌گیری از تکنسین‌های دارای گواهینامه معتبر فنی و مهندسی، ضمن رعایت دقیق مقررات ملی ساختمان (مبحث ۱۳)، کلیه امور طراحی، ارتقای کابل‌کشی، نصب تجهیزات حفاظتی و عیب‌یابی برق را با بالاترین استانداردهای ایمنی به انجام می‌رساند. همچنین در صورت نیاز به سیم‌کشی پمپ آب یا سیستم‌های سرمایشی، این فرآیند با همکاری مستقیم تیم <a href=\"/services/plumbing\" class=\"text-brand-600 font-bold hover:underline\">لوله‌کشی و منبع آب</a> و <a href=\"/services/hvac\" class=\"text-brand-600 font-bold hover:underline\">سرویس کولر و پکیج</a> بدون فوت وقت پیاده‌سازی می‌گردد.\n                </p>\n            </section>\n\n            <!-- SECTION 2: Common electrical issues -->\n            <section class=\"space-y-4\">\n                <h3 class=\"text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3\">\n                    جدول عیب‌یابی سریع مشکلات شایع برقی ساختمان و اقدامات اضطراری\n                </h3>\n                <div class=\"overflow-x-auto rounded-2xl border border-slate-200 shadow-sm bg-white\">\n                    <table class=\"w-full text-right text-xs md:text-sm\">\n                        <thead class=\"bg-slate-100 text-slate-800 font-bold border-b border-slate-200\">\n                            <tr>\n                                <th class=\"p-3.5 md:p-4\">نشانه مشاهده‌شده</th>\n                                <th class=\"p-3.5 md:p-4\">علت احتمالی</th>\n                                <th class=\"p-3.5 md:p-4\">اقدام پیشنهادی بهدون</th>\n                            </tr>\n                        </thead>\n                        <tbody class=\"divide-y divide-slate-100 text-slate-600\">\n                            <tr class=\"hover:bg-slate-50/50\">\n                                <td class=\"p-3.5 md:p-4 font-bold text-slate-800\">فیوز اصلی با روشن شدن یک وسیله برقی قطع می‌شود</td>\n                                <td class=\"p-3.5 md:p-4\">اضافه بار مصرفی، ضعیف بودن آمپراژ فیوز مینیاتوری</td>\n                                <td class=\"p-3.5 md:p-4\">تقسیم بار خطوط و ارتقای فیوز به رنج متناسب استاندارد</td>\n                            </tr>\n                            <tr class=\"hover:bg-slate-50/50\">\n                                <td class=\"p-3.5 md:p-4 font-bold text-slate-800\">بدنه فلزی لوازم برقی یا شیرآلات برق‌دار است</td>\n                                <td class=\"p-3.5 md:p-4\">عدم وجود سیستم ارتینگ، نشت فاز به اسکلت یا لوله‌ها</td>\n                                <td class=\"p-3.5 md:p-4\">اجرای کابل هم‌بندی ارت و نصب کلید محافظ جان (RCD)</td>\n                            </tr>\n                            <tr class=\"hover:bg-slate-50/50\">\n                                <td class=\"p-3.5 md:p-4 font-bold text-slate-800\">چشمک زدن لامپ‌های ال‌ای‌دی در حالت خاموش بودن کلید</td>\n                                <td class=\"p-3.5 md:p-4\">جابجا بسته شدن فاز و نول در کلید یا القای ولتاژ نول</td>\n                                <td class=\"p-3.5 md:p-4\">اصلاح سرسیم‌بندی قوطی کلید و قرار دادن فاز در مسیر قطع</td>\n                            </tr>\n                            <tr class=\"hover:bg-slate-50/50\">\n                                <td class=\"p-3.5 md:p-4 font-bold text-slate-800\">تصویر آیفون تصویری پرش دارد یا آبی می‌شود</td>\n                                <td class=\"p-3.5 md:p-4\">سوختن برد تغذیه، پارگی کابل تصویر یا عدم استفاده از فویل</td>\n                                <td class=\"p-3.5 md:p-4\">تعمیر منبع تغذیه و تست خطوط کوپلر با تستر شبکه</td>\n                            </tr>\n                        </tbody>\n                    </table>\n                </div>\n            </section>\n\n            <!-- SECTION 3: Why Choose Behdoon -->\n            <section class=\"space-y-4\">\n                <h3 class=\"text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3\">\n                    چرا خدمات برقکاری ساختمان بهدون در تهران متمایز است؟\n                </h3>\n                <div class=\"grid grid-cols-1 md:grid-cols-3 gap-4 pt-2\">\n                    <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-2\">\n                        <div class=\"w-10 h-10 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center mx-auto font-black\">✓</div>\n                        <h4 class=\"font-bold text-slate-800 text-sm\">تکنسین‌های تایید صلاحیت‌شده</h4>\n                        <p class=\"text-xs text-slate-500\">تمامی برقکاران بهدون دارای گواهینامه معتبر فنی و حرفه‌ای و تاییدیه عدم سوءپیشینه هستند.</p>\n                    </div>\n                    <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-2\">\n                        <div class=\"w-10 h-10 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center mx-auto font-black\">⚡</div>\n                        <h4 class=\"font-bold text-slate-800 text-sm\">سرعت اعزام اورژانسی شبانه‌روزی</h4>\n                        <p class=\"text-xs text-slate-500\">پوشش کامل تمام مناطق تهران با تجهیزات تست مدار و قطعات یدکی استاندارد در کمتر از ۴۵ دقیقه.</p>\n                    </div>\n                    <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-2\">\n                        <div class=\"w-10 h-10 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center mx-auto font-black\">⚖</div>\n                        <h4 class=\"font-bold text-slate-800 text-sm\">نرخ شفاف مصوب اتحادیه الکتریک</h4>\n                        <p class=\"text-xs text-slate-500\">ارائه فاکتور رسمی بدون دریافت هزینه‌های متفرقه یا پیش‌بینی‌نشده قبل از شروع کار.</p>\n                    </div>\n                </div>\n            </section>\n\n            <!-- Final CTA -->\n            <div class=\"bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-6 md:p-8 text-center space-y-4 my-8\">\n                <h3 class=\"text-xl font-black text-slate-800\">برای سیم‌کشی، رفع اتصالی و روشنایی ساختمان خود نیاز به کارشناس دارید؟</h3>\n                <p class=\"text-xs md:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed\">\n                    هم‌اکنون درخواست خود را به صورت آنلاین ثبت کنید تا کد پیگیری آنی دریافت کرده و وضعیت اعزام تکنسین را به صورت زنده مشاهده فرمایید.\n                </p>\n                <div class=\"flex flex-wrap items-center justify-center gap-3 pt-2\">\n                    <button type=\"button\" onclick=\"openRequestModal('رفع اتصالی')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-8 py-3.5 rounded-2xl font-black text-sm shadow-xl shadow-[#8B1C31]/25 hover:shadow-2xl transition-all transform hover:-translate-y-0.5\">\n                        ثبت آنلاین درخواست برقکار در تهران\n                    </button>\n                    <a href=\"tel:09333256885\" class=\"bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-6 py-3.5 rounded-2xl font-bold text-sm shadow-sm transition-colors flex items-center gap-2\">\n                        <svg class=\"w-4 h-4 text-emerald-600\" fill=\"currentColor\" viewBox=\"0 0 512 512\"><path d=\"M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z\"/></svg>\n                        <span>امداد برق تهران: ۰۹۳۳۳۲۵۶۸۸۵</span>\n                    </a>\n                </div>\n            </div>\n        </article>\n    ",
+    "faq": [
+      {
+        "q": "چرا فیوز برق منزل بدون روشن بودن وسیله خاصی مدام می‌پرد؟",
+        "a": "این حالت معمولاً ناشی از اتصال ضعیف در اتصالات سیم‌کشی داخل قوطی کلیدها، نیم‌سوز شدن فیوز مینیاتوری در اثر حرارت، یا نفوذ رطوبت از حمام به جعبه‌تقسیم است که نیازمند بررسی تخصصی با اهم‌متر توسط برقکار بهدون می‌باشد."
+      },
+      {
+        "q": "کلید محافظ جان (RCD یا نشتی جریان) چیست و آیا نصب آن ضروری است؟",
+        "a": "کلید محافظ جان با رصد لحظه‌ای اختلاف جریان رفت و برگشت فاز و نول، در صورت تماس تصادفی انسان با برق یا نشت برق به آب، در کسری از ثانیه (کمتر از ۳۰ میلی‌ثانیه) برق را قطع کرده و جان افراد را از مرگ حتمی نجات می‌دهد. نصب آن طبق مبحث ۱۳ مقررات ملی ساختمان الزامی است."
+      },
+      {
+        "q": "هزینه نصب لوستر در تهران چگونه برآورد می‌شود؟",
+        "a": "هزینه نصب لوستر بر اساس وزن لوستر، نوع سقف (گچی، بتنی، کناف یا تیرچه بلوک) و نیاز به کابل‌کشی یا کلید دوپل محاسبه می‌شود و طبق تعرفه منصفانه اتحادیه الکتریک تهران خدمت شما اعلام می‌گردد."
+      }
+    ],
+    "subServices": [
+      {
+        "id": "short-circuit",
+        "name": "رفع اتصالی",
+        "nameEn": "Urgent Short-Circuit Troubleshooting",
+        "slug": "short-circuit",
+        "persianSlug": "رفع-اتصالی",
+        "aliases": [
+          "short-circuit",
+          "رفع-اتصالی"
+        ],
+        "basePrice": 550000,
+        "shortDesc": "اعزام فوری برقکار برای عیب‌یابی اتصالی سیم‌کشی، رفع پریدن کنتور، فیوز مینیاتوری و برق‌دار بودن بدنه",
+        "shortDescEn": "Professional electrical services with 30-day warranty in Tehran",
+        "features": [
+          "اعزام فوری برقکار مجهز به تستر دیجیتال و ابزار عایق ۱۰۰۰ ولت",
+          "تست مقاومت عایقی کابل‌ها و رفع خطر نشتی جریان برق",
+          "استفاده از سیم‌ها و کابل‌های استاندارد مسی با روکش نسوز",
+          "نصب تمیز و ایمن همراه با گارانتی اتصالات"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-4 text-slate-700 leading-relaxed text-justify\">\n                    <div class=\"bg-gradient-to-l from-amber-50 to-white p-5 rounded-2xl border border-amber-100\">\n                        <h3 class=\"text-lg font-black text-brand-700 mb-2\">رفع فوری اتصالی برق و پریدن فیوز در کلیه مناطق تهران</h3>\n                        <p class=\"text-sm text-slate-600\">پریدن مکرر فیوز مینیاتوری، بوی سوختگی سیم در دیوار، جرقه زدن پریزها و قطع برق ناگهانی می‌تواند ناشی از اتصال کوتاه یا بار مصرفی بیش از حد باشد. تکنسین‌های برقکار بهدون با اهم‌متر و تستر مدار، نقطه دقیق اتصالی را بدون آسیب به سیم‌کشی کلی ساختمان کشف و اصلاح می‌کنند.</p>\n                    </div>\n                    <ul class=\"list-disc list-inside space-y-2 text-sm text-slate-600 pr-2\">\n                        <li><strong>تست عایق سیم‌ها و مدار شنت:</strong> ارزیابی مقاومت اهمی کابل‌ها جهت پیشگیری از خطرات حریق الکتریکی.</li>\n                        <li><strong>تعویض فیوز مینیاتوری استاندارد (MCB):</strong> استفاده از برندهای معتبر با تیپ B و C متناسب با نوع مصرف‌کننده.</li>\n                        <li><strong>رفع اتصالی خطوط تلفن و آیفون:</strong> نویززدایی و رفع قطعی سیگنال خطوط ارتباطی ساختمان.</li>\n                    </ul>\n                    <div class=\"flex flex-wrap gap-3 pt-2\">\n                        <button type=\"button\" onclick=\"openRequestModal('رفع اتصالی')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md\">ثبت درخواست رفع اتصالی فوری</button>\n                        <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs\">امداد برق: ۰۹۳۳۳۲۵۶۸۸۵</a>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "wiring",
+        "name": "سیم کشی و کابل کشی",
+        "nameEn": "Building Electrical Wiring",
+        "slug": "wiring",
+        "persianSlug": "سیم-کشی-ساختمان",
+        "aliases": [
+          "wiring",
+          "سیم-کشی-ساختمان"
+        ],
+        "basePrice": 700000,
+        "shortDesc": "سیم‌کشی و کابل‌کشی کلی و جزئی مسکونی و تجاری، داکت‌کشی، خطوط تلفن و کابل شبکه",
+        "shortDescEn": "Professional electrical services with 30-day warranty in Tehran",
+        "features": [
+          "اعزام فوری برقکار مجهز به تستر دیجیتال و ابزار عایق ۱۰۰۰ ولت",
+          "تست مقاومت عایقی کابل‌ها و رفع خطر نشتی جریان برق",
+          "استفاده از سیم‌ها و کابل‌های استاندارد مسی با روکش نسوز",
+          "نصب تمیز و ایمن همراه با گارانتی اتصالات"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-4 text-slate-700 leading-relaxed text-justify\">\n                    <h3 class=\"text-lg font-black text-brand-700\">سیم‌کشی توکار و روکار استاندارد با سیم‌های مسی استاندارد</h3>\n                    <p class=\"text-sm text-slate-600\">اجرای کابل‌کشی کابل‌های فشار قوی، سیم‌کشی روشنایی و پریز، کابل‌کشی کولر گازی و آسانسور با محاسبه دقیق سطح مقطع سیم متناسب با آمپراژ مصرفی جهت جلوگیری از افت ولتاژ و داغ شدن کابل‌ها. در پروژه‌های نوسازی، این خدمات با هماهنگی واحد <a href=\"/services/renovation\" class=\"text-[#8B1C31] font-bold hover:underline\">شیارزنی و گچ‌کاری ساختمان</a> به انجام می‌رسد.</p>\n                    <div class=\"flex flex-wrap gap-3 pt-2\">\n                        <button type=\"button\" onclick=\"openRequestModal('سیم کشی و کابل کشی')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md\">ثبت درخواست سیم‌کشی ساختمان</button>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "chandelier",
+        "name": "نصب لوستر و چراغ",
+        "nameEn": "Chandelier & Lighting Installation",
+        "slug": "chandelier",
+        "persianSlug": "نصب-لوستر-و-چراغ",
+        "aliases": [
+          "chandelier",
+          "نصب-لوستر-و-چراغ"
+        ],
+        "basePrice": 450000,
+        "shortDesc": "نصب مطمئن و مهار سنگین انواع لوسترهای سقفی، کریستالی، مدرن، چراغ‌های خطی و هالوژن",
+        "shortDescEn": "Professional electrical services with 30-day warranty in Tehran",
+        "features": [
+          "اعزام فوری برقکار مجهز به تستر دیجیتال و ابزار عایق ۱۰۰۰ ولت",
+          "تست مقاومت عایقی کابل‌ها و رفع خطر نشتی جریان برق",
+          "استفاده از سیم‌ها و کابل‌های استاندارد مسی با روکش نسوز",
+          "نصب تمیز و ایمن همراه با گارانتی اتصالات"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-4 text-slate-700 leading-relaxed text-justify\">\n                    <h3 class=\"text-lg font-black text-brand-700\">نصب انواع لوسترهای سنگین، چراغ‌های خطی لاینر، هالوژن و ریسه نور مخفی</h3>\n                    <p class=\"text-sm text-slate-600\">مهار ایمن لوسترهای سنگین به سقف بتنی یا تیرچه با رول‌بولت‌های فولادی صنعتی، سیم‌کشی کلید دوپل، گردبر زدن کناف جهت نصب هالوژن و اجرای نورپردازی مدرن در سقف و نما.</p>\n                    <div class=\"flex flex-wrap gap-3 pt-2\">\n                        <button type=\"button\" onclick=\"openRequestModal('نصب لوستر و چراغ')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md\">ثبت درخواست نصب لوستر و روشنایی</button>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "switches",
+        "name": "کلید و پریز",
+        "nameEn": "Switches & Sockets Replacement",
+        "slug": "switches",
+        "persianSlug": "کلید-و-پریز",
+        "aliases": [
+          "switches",
+          "کلید-و-پریز"
+        ],
+        "basePrice": 300000,
+        "shortDesc": "تعویض کلید و پریزهای قدیمی با مدل‌های مدرن لمسی و ارت‌دار، رفع قطعی و نصب جعبه تقسیم",
+        "shortDescEn": "Professional electrical services with 30-day warranty in Tehran",
+        "features": [
+          "اعزام فوری برقکار مجهز به تستر دیجیتال و ابزار عایق ۱۰۰۰ ولت",
+          "تست مقاومت عایقی کابل‌ها و رفع خطر نشتی جریان برق",
+          "استفاده از سیم‌ها و کابل‌های استاندارد مسی با روکش نسوز",
+          "نصب تمیز و ایمن همراه با گارانتی اتصالات"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-4 text-slate-700 leading-relaxed text-justify\">\n                    <h3 class=\"text-lg font-black text-brand-700\">تعویض، جابجایی و نصب انواع کلید، پریز و جعبه فیوز مینیاتوری</h3>\n                    <p class=\"text-sm text-slate-600\">نصب مکانیزم‌های ارت‌دار استاندارد، کلیدهای لمسی هوشمند، دیمر، کلید تبدیل و پریزهای ضدآب در بالکن و حمام همراه با تراز دقیق قوطی کلیدها.</p>\n                    <div class=\"flex flex-wrap gap-3 pt-2\">\n                        <button type=\"button\" onclick=\"openRequestModal('کلید و پریز')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md\">ثبت درخواست تعویض کلید و پریز</button>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "intercom",
+        "name": "نصب و تعمیر آیفون صوتی و تصویری",
+        "nameEn": "Video & Audio Intercom Repair",
+        "slug": "intercom",
+        "persianSlug": "آیفون-تصویری",
+        "aliases": [
+          "intercom",
+          "آیفون-تصویری"
+        ],
+        "basePrice": 500000,
+        "shortDesc": "تعمیر و نصب آیفون‌های صوتی و تصویری، عیب‌یابی قفل‌بازکن، رفع پارازیت تصویر و صدا و سیم‌کشی",
+        "shortDescEn": "Professional electrical services with 30-day warranty in Tehran",
+        "features": [
+          "اعزام فوری برقکار مجهز به تستر دیجیتال و ابزار عایق ۱۰۰۰ ولت",
+          "تست مقاومت عایقی کابل‌ها و رفع خطر نشتی جریان برق",
+          "استفاده از سیم‌ها و کابل‌های استاندارد مسی با روکش نسوز",
+          "نصب تمیز و ایمن همراه با گارانتی اتصالات"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-4 text-slate-700 leading-relaxed text-justify\">\n                    <h3 class=\"text-lg font-black text-brand-700\">عیب‌یابی تخصصی، سیم‌کشی و تعمیر آیفون تصویری (تابا، سیماران، کوماکس، الکتروپیک)</h3>\n                    <p class=\"text-sm text-slate-600\">رفع قطعی تصویر، نداشتن زنگ، خرابی قفل دربازکن، نویز در صدا و تعویض پنل‌های ورودی ساختمان با کابل‌های فویل‌دار استاندارد ضدپارازیت.</p>\n                    <div class=\"flex flex-wrap gap-3 pt-2\">\n                        <button type=\"button\" onclick=\"openRequestModal('نصب و تعمیر آیفون صوتی و تصویری')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md\">ثبت درخواست تعمیر آیفون تصویری</button>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "electrical-panel",
+        "name": "ساخت و تعمیر تابلو برق",
+        "nameEn": "Electrical Breaker Panel Assembly",
+        "slug": "electrical-panel",
+        "persianSlug": "تابلو-برق",
+        "aliases": [
+          "electrical-panel",
+          "تابلو-برق"
+        ],
+        "basePrice": 900000,
+        "shortDesc": "طراحی، اسمبل و مرتب‌سازی تابلوهای برق مینیاتوری، کلیدهای محافظ جان (RCD) و کنتاکتور",
+        "shortDescEn": "Professional electrical services with 30-day warranty in Tehran",
+        "features": [
+          "اعزام فوری برقکار مجهز به تستر دیجیتال و ابزار عایق ۱۰۰۰ ولت",
+          "تست مقاومت عایقی کابل‌ها و رفع خطر نشتی جریان برق",
+          "استفاده از سیم‌ها و کابل‌های استاندارد مسی با روکش نسوز",
+          "نصب تمیز و ایمن همراه با گارانتی اتصالات"
+        ],
+        "detailHtml": "<p class=\"text-sm text-slate-600\">مونتاژ، شینه‌بندی، نصب کنتاکتور، رله بی‌متال و مرتب‌سازی سیم‌کشی جعبه‌فیوزهای اصلی و توزیع ساختمان.</p>"
+      },
+      {
+        "id": "earthing",
+        "name": "سیم کشی ارت",
+        "nameEn": "Earthing & Grounding System",
+        "slug": "earthing",
+        "persianSlug": "سیم-کشی-ارت",
+        "aliases": [
+          "earthing",
+          "سیم-کشی-ارت"
+        ],
+        "basePrice": 850000,
+        "shortDesc": "اجرای سیستم هم‌بندی و چاه ارت با بنتونیت و صاعقه‌گیر جهت حفاظت در برابر برق‌گرفتگی",
+        "shortDescEn": "Professional electrical services with 30-day warranty in Tehran",
+        "features": [
+          "اعزام فوری برقکار مجهز به تستر دیجیتال و ابزار عایق ۱۰۰۰ ولت",
+          "تست مقاومت عایقی کابل‌ها و رفع خطر نشتی جریان برق",
+          "استفاده از سیم‌ها و کابل‌های استاندارد مسی با روکش نسوز",
+          "نصب تمیز و ایمن همراه با گارانتی اتصالات"
+        ],
+        "detailHtml": "<p class=\"text-sm text-slate-600\">حفر چاه ارت، احیای چاه ارت با بنتونیت، نصب صفحه مسی و اجرای مدار هم‌بندی ارت طبق استانداردهای نظام مهندسی.</p>"
+      },
+      {
+        "id": "fire-alarm",
+        "name": "سیستم اعلام و اطفاء حریق",
+        "nameEn": "Fire Alarm & Detection Systems",
+        "slug": "fire-alarm",
+        "persianSlug": "اعلام-حریق",
+        "aliases": [
+          "fire-alarm",
+          "اعلام-حریق"
+        ],
+        "basePrice": 1100000,
+        "shortDesc": "نصب دتکتورهای دود، حرارت و گاز، پنل مرکزی اعلام حریق ساختمانی طبق تاییدیه آتش‌نشانی",
+        "shortDescEn": "Professional electrical services with 30-day warranty in Tehran",
+        "features": [
+          "اعزام فوری برقکار مجهز به تستر دیجیتال و ابزار عایق ۱۰۰۰ ولت",
+          "تست مقاومت عایقی کابل‌ها و رفع خطر نشتی جریان برق",
+          "استفاده از سیم‌ها و کابل‌های استاندارد مسی با روکش نسوز",
+          "نصب تمیز و ایمن همراه با گارانتی اتصالات"
+        ],
+        "detailHtml": "<p class=\"text-sm text-slate-600\">نصب و کالیبراسیون دتکتورهای دود، حرارت، شستی اعلام حریق و پنل مرکزی مورد تایید سازمان آتش‌نشانی تهران.</p>"
+      },
+      {
+        "id": "stabilizer",
+        "name": "نصب محافظ برق و استابلایزر",
+        "nameEn": "Voltage Stabilizer & Surge Protector",
+        "slug": "stabilizer",
+        "persianSlug": "محافظ-برق",
+        "aliases": [
+          "stabilizer",
+          "محافظ-برق"
+        ],
+        "basePrice": 650000,
+        "shortDesc": "نصب استابلایزر و محافظ ولتاژ پای کنتور جهت حفاظت از لوازم برقی گران‌قیمت در نوسانات برق",
+        "shortDescEn": "Professional electrical services with 30-day warranty in Tehran",
+        "features": [
+          "اعزام فوری برقکار مجهز به تستر دیجیتال و ابزار عایق ۱۰۰۰ ولت",
+          "تست مقاومت عایقی کابل‌ها و رفع خطر نشتی جریان برق",
+          "استفاده از سیم‌ها و کابل‌های استاندارد مسی با روکش نسوز",
+          "نصب تمیز و ایمن همراه با گارانتی اتصالات"
+        ],
+        "detailHtml": "<p class=\"text-sm text-slate-600\">نصب استابلایزر و محافظ ولتاژ مرکزی پای کنتور جهت حفاظت از پکیج، کولر گازی، یخچال و تلویزیون در برابر نوسانات شبکه برق.</p>"
+      },
+      {
+        "id": "cctv",
+        "name": "نصب و تعمیر دوربین مداربسته",
+        "nameEn": "CCTV Security Camera Installation",
+        "slug": "cctv",
+        "persianSlug": "دوربین-مداربسته",
+        "aliases": [
+          "cctv",
+          "دوربین-مداربسته"
+        ],
+        "basePrice": 950000,
+        "shortDesc": "سیم‌کشی و نصب دوربین‌های مداربسته تحت شبکه IP، انتقال تصویر روی موبایل و سیستم دزدگیر اماکن",
+        "shortDescEn": "Professional electrical services with 30-day warranty in Tehran",
+        "features": [
+          "اعزام فوری برقکار مجهز به تستر دیجیتال و ابزار عایق ۱۰۰۰ ولت",
+          "تست مقاومت عایقی کابل‌ها و رفع خطر نشتی جریان برق",
+          "استفاده از سیم‌ها و کابل‌های استاندارد مسی با روکش نسوز",
+          "نصب تمیز و ایمن همراه با گارانتی اتصالات"
+        ],
+        "detailHtml": "<p class=\"text-sm text-slate-600\">نصب دوربین‌های مداربسته تحت شبکه IP و AHD با قابلیت دید در شب، انتقال تصویر روی موبایل و آرشیو امن تصاویر ضبط‌شده.</p>"
+      }
+    ]
+  },
+  "renovation": {
+    "id": "renovation",
+    "slug": "renovation",
+    "persianSlug": "تعمیرات-و-بازسازی",
+    "aliases": [
+      "renovation",
+      "بازسازی",
+      "نقاشی-ساختمان",
+      "دکوراسیون"
+    ],
+    "title": "تعمیرات و بازسازی ساختمان در تهران | نقاشی، کاشی، کناف و بنایی بهدون",
+    "titleEn": "Home Renovation, Painting & Remodeling in Tehran | Behdoon",
+    "metaDesc": "خدمات بازسازی صفر تا صد و خرده‌کاری ساختمان در تهران. نقاشی، کاشی و سرامیک اسلب، ایزوگام، کناف، کاغذ دیواری، پارکت و بنایی با بهترین استادکاران و قیمت مصوب.",
+    "subtitle": "نوسازی و بازآفرینی فضای زندگی شما با اکیپ‌های حرفه‌ای بازسازی، مصالح مرغوب، قرارداد شفاف و نظارت مهندسی بر کلیه مراحل اجرا.",
+    "subtitleEn": "Interior remodeling, painting, tiling, gypsum board ceilings, and waterproofing across Tehran.",
+    "icon": "<svg class=\"w-10 h-10\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z\"/></svg>",
+    "comprehensiveGuide": "\n        <!-- ================= COMPREHENSIVE RENOVATION SEO GUIDE (> 1300 WORDS) ================= -->\n        <article class=\"mt-12 pt-10 border-t border-slate-200 text-slate-700 leading-relaxed text-justify space-y-8\" dir=\"rtl\">\n            <header class=\"text-center max-w-3xl mx-auto space-y-4 mb-10\">\n                <span class=\"inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-purple-50 text-purple-800 text-xs font-bold border border-purple-200\">\n                    <svg class=\"w-4 h-4 text-[#8B1C31]\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4\"></path></svg>\n                    دانشنامه و راهنمای تخصصی بازسازی و تعمیرات ساختمان در تهران\n                </span>\n                <h2 class=\"text-2xl md:text-3xl font-black text-slate-800 leading-tight\">\n                    راهنمای جامع نوسازی، بازسازی داخلی، نقاشی، کاشی‌کاری و دکوراسیون در تهران\n                </h2>\n                <p class=\"text-sm text-slate-500 leading-relaxed\">\n                    چگونه خانه یا آپارتمان خود را با بودجه مشخص، زمان‌بندی دقیق و بالاترین کیفیت مهندسی بازسازی کرده و ارزش افزوده چشمگیری در املاک تهران خلق کنیم.\n                </p>\n            </header>\n\n            <!-- Quick Action Alert Box -->\n            <div class=\"bg-gradient-to-r from-[#2c1d38] to-[#421d3f] rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6\">\n                <div class=\"space-y-2 text-center md:text-right\">\n                    <h3 class=\"text-xl font-bold\">قصد بازسازی کلی یا خرده‌کاری نقاشی و بنایی در تهران دارید؟</h3>\n                    <p class=\"text-xs md:text-sm text-purple-100 max-w-xl leading-relaxed\">\n                        مهندسان و کارشناسان مجرب بهدون با بازدید رایگان، متراژ دقیق و لیست آنالیز هزینه‌ها (L.O.M) را با برآورد زمان‌بندی شفاف خدمت شما ارائه می‌دهند.\n                    </p>\n                </div>\n                <div class=\"flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0\">\n                    <button type=\"button\" onclick=\"openRequestModal('نقاشی و رنگ کاری ساختمان')\" class=\"w-full sm:w-auto px-6 py-3 bg-[#8B1C31] hover:bg-[#701627] text-white text-xs md:text-sm font-black rounded-xl shadow-lg transition-all transform hover:scale-105 text-center\">\n                        درخواست بازدید و کارشناسی رایگان\n                    </button>\n                    <a href=\"tel:09333256885\" class=\"w-full sm:w-auto px-6 py-3 bg-white/10 hover:bg-white/20 text-white text-xs md:text-sm font-bold rounded-xl backdrop-blur-sm border border-white/20 transition-all text-center flex items-center justify-center gap-2\">\n                        <svg class=\"w-4 h-4 text-emerald-400\" fill=\"currentColor\" viewBox=\"0 0 512 512\"><path d=\"M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z\"/></svg>\n                        <span>۰۹۳۳۳۲۵۶۸۸۵</span>\n                    </a>\n                </div>\n            </div>\n\n            <!-- SECTION 1: Renovation value in Tehran -->\n            <section class=\"space-y-4\">\n                <h3 class=\"text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3\">\n                    چرا بازسازی ساختمان در کلانشهر تهران یک سرمایه‌گذاری پرسود است؟\n                </h3>\n                <p>\n                    با توجه به جهش‌های چشمگیر قیمت هر متر مربع مسکن در تهران، تعویض ملک و جابجایی به خانه‌ای نوساز برای بسیاری از خانواده‌ها بار مالی سنگینی به همراه دارد. بازسازی مهندسی و هوشمندانه آپارتمان نه‌تنها فضایی کاملاً لوکس و مطابق با سلیقه روز خلق می‌کند، بلکه ارزش افزوده ملک را بین ۳۰ تا ۵۰ درصد بیش از هزینه‌های صرف‌شده ارتقا می‌دهد. بهدون با اجرای پروژه‌های مدرن نوسازی در مناطق ۱ تا ۲۲ تهران، این فرآیند را با عقد قرارداد کتبی و ضمانت قطعی به انجام می‌رساند.\n                </p>\n                <p>\n                    نکته کلیدی در بازسازی پایدار، نوسازی زیرساخت‌های تأسیساتی پنهان پیش از اجرای نازک‌کاری است. بازسازی که بدون تعویض لوله‌های فرسوده یا اصلاح سیم‌کشی برق انجام شود، خیلی زود با یک نشتی آب یا اتصالی برقی نابود خواهد شد! تیم بهدون با بهره‌گیری از متخصصان <a href=\"/services/plumbing\" class=\"text-brand-600 font-bold hover:underline\">لوله‌کشی و تأسیسات آب</a> و <a href=\"/services/electrical\" class=\"text-brand-600 font-bold hover:underline\">برقکاری ساختمان</a>، ابتدا سلامت زیرساخت‌ها را تضمین کرده و سپس به اجرای کاشی، کناف، پارکت و نقاشی می‌پردازد.\n                </p>\n            </section>\n\n            <!-- SECTION 2: Step-by-step renovation table -->\n            <section class=\"space-y-4\">\n                <h3 class=\"text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3\">\n                    مراحل مهندسی بازسازی و جدول گام‌به‌گام اقدامات اجرایی\n                </h3>\n                <div class=\"overflow-x-auto rounded-2xl border border-slate-200 shadow-sm bg-white\">\n                    <table class=\"w-full text-right text-xs md:text-sm\">\n                        <thead class=\"bg-slate-100 text-slate-800 font-bold border-b border-slate-200\">\n                            <tr>\n                                <th class=\"p-3.5 md:p-4\">مرحله بازسازی</th>\n                                <th class=\"p-3.5 md:p-4\">شرح اقدامات اجرایی</th>\n                                <th class=\"p-3.5 md:p-4\">نکات حیاتی و استاندارد بهدون</th>\n                            </tr>\n                        </thead>\n                        <tbody class=\"divide-y divide-slate-100 text-slate-600\">\n                            <tr class=\"hover:bg-slate-50/50\">\n                                <td class=\"p-3.5 md:p-4 font-bold text-slate-800\">۱. تخریب و آهن‌کشی</td>\n                                <td class=\"p-3.5 md:p-4\">برداشتن دیوارهای مزاحم، کندن کاشی‌های قدیمی، حمل نخاله</td>\n                                <td class=\"p-3.5 md:p-4\">رعایت اصول ایمنی ستون‌ها و دیوارهای باربر سازه</td>\n                            </tr>\n                            <tr class=\"hover:bg-slate-50/50\">\n                                <td class=\"p-3.5 md:p-4 font-bold text-slate-800\">۲. زیرساخت تأسیسات</td>\n                                <td class=\"p-3.5 md:p-4\">لوله‌کشی ۵ لایه آب، پوش‌فیت فاضلاب، سیم‌کشی برق و شبکه</td>\n                                <td class=\"p-3.5 md:p-4\">تست فشار ۱۰ بار و ارزیابی عایق حرارتی کابل‌ها</td>\n                            </tr>\n                            <tr class=\"hover:bg-slate-50/50\">\n                                <td class=\"p-3.5 md:p-4 font-bold text-slate-800\">۳. عایق‌کاری و سفت‌کاری</td>\n                                <td class=\"p-3.5 md:p-4\">قیرگونی یا نانو در سرویس‌ها، شیب‌بندی و سیمان‌کاری</td>\n                                <td class=\"p-3.5 md:p-4\">تست ۲۴ ساعته آب‌بندی پیش از اجرای سرامیک</td>\n                            </tr>\n                            <tr class=\"hover:bg-slate-50/50\">\n                                <td class=\"p-3.5 md:p-4 font-bold text-slate-800\">۴. کاشی، کناف و کف‌پوش</td>\n                                <td class=\"p-3.5 md:p-4\">نصب سرامیک پرسلان، سقف کناف، نصب پارکت و لمینت</td>\n                                <td class=\"p-3.5 md:p-4\">تراز لیزری سه‌بعدی و بندکشی آنتی‌باکتریال نانو</td>\n                            </tr>\n                            <tr class=\"hover:bg-slate-50/50\">\n                                <td class=\"p-3.5 md:p-4 font-bold text-slate-800\">۵. نقاشی و دکوراسیون</td>\n                                <td class=\"p-3.5 md:p-4\">بتونه ماستیک، نقاشی اکریلیک بدون بو، نصب کاغذ دیواری</td>\n                                <td class=\"p-3.5 md:p-4\">تحویل تمیز و بدون گردوغبار طبق جدول زمان‌بندی</td>\n                            </tr>\n                        </tbody>\n                    </table>\n                </div>\n            </section>\n\n            <!-- SECTION 3: Why Behdoon -->\n            <section class=\"space-y-4\">\n                <h3 class=\"text-xl font-black text-slate-800 flex items-center gap-2 border-r-4 border-[#8B1C31] pr-3\">\n                    چرا کارفرمایان تهرانی بازسازی خود را به بهدون می‌سپارند؟\n                </h3>\n                <div class=\"grid grid-cols-1 md:grid-cols-3 gap-4 pt-2\">\n                    <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-2\">\n                        <div class=\"w-10 h-10 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center mx-auto font-black\">✓</div>\n                        <h4 class=\"font-bold text-slate-800 text-sm\">قرارداد رسمی با تعهد ضرر و زیان</h4>\n                        <p class=\"text-xs text-slate-500\">تاریخ دقیق تحویل پروژه در قرارداد ذکر شده و در صورت تاخیر، خسارت روزانه پرداخت می‌گردد.</p>\n                    </div>\n                    <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-2\">\n                        <div class=\"w-10 h-10 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center mx-auto font-black\">🏢</div>\n                        <h4 class=\"font-bold text-slate-800 text-sm\">تیم چندرشته‌ای مهندسی</h4>\n                        <p class=\"text-xs text-slate-500\">هماهنگی صفر تا صد میان بنا، کاشی‌کار، برقکار، لوله‌کش، کناف‌کار و نقاش بدون اتلاف وقت.</p>\n                    </div>\n                    <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center space-y-2\">\n                        <div class=\"w-10 h-10 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center mx-auto font-black\">⚖</div>\n                        <h4 class=\"font-bold text-slate-800 text-sm\">خرید مستقیم متریال به قیمت کارخانه</h4>\n                        <p class=\"text-xs text-slate-500\">تامین مستقیم کاشی، گچ، رنگ، سیم و لوله از کارخانجات معتبر با کمترین قیمت تمام‌شده برای کارفرما.</p>\n                    </div>\n                </div>\n            </section>\n\n            <!-- Final CTA -->\n            <div class=\"bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-6 md:p-8 text-center space-y-4 my-8\">\n                <h3 class=\"text-xl font-black text-slate-800\">آماده نوسازی و تبدیل خانه خود به محیطی مدرن هستید؟</h3>\n                <p class=\"text-xs md:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed\">\n                    هم‌اکنون درخواست بازدید اولیه را به صورت آنلاین ثبت کنید تا کارشناس ارشد بازسازی بهدون جهت مشاوره تخصصی و برآورد رایگان در محل حضور یابد.\n                </p>\n                <div class=\"flex flex-wrap items-center justify-center gap-3 pt-2\">\n                    <button type=\"button\" onclick=\"openRequestModal('نقاشی و رنگ کاری ساختمان')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-8 py-3.5 rounded-2xl font-black text-sm shadow-xl shadow-[#8B1C31]/25 hover:shadow-2xl transition-all transform hover:-translate-y-0.5\">\n                        ثبت آنلاین درخواست بازسازی و نقاشی\n                    </button>\n                    <a href=\"tel:09333256885\" class=\"bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-6 py-3.5 rounded-2xl font-bold text-sm shadow-sm transition-colors flex items-center gap-2\">\n                        <svg class=\"w-4 h-4 text-emerald-600\" fill=\"currentColor\" viewBox=\"0 0 512 512\"><path d=\"M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z\"/></svg>\n                        <span>مشاوره بازسازی تهران: ۰۹۳۳۳۲۵۶۸۸۵</span>\n                    </a>\n                </div>\n            </div>\n        </article>\n    ",
+    "faq": [
+      {
+        "q": "مدت زمان بازسازی کامل یک آپارتمان مسکونی در تهران چقدر است؟",
+        "a": "بسته به متراژ و حجم تخریب، بازسازی کامل یک آپارتمان ۱۰۰ متری معمولاً بین ۲۰ الی ۳۵ روز کاری زمان می‌برد که زمان‌بندی مرحله‌به‌مرحله به صورت دقیق در قرارداد قید می‌گردد."
+      },
+      {
+        "q": "آیا برای بازسازی نیاز به تخلیه کامل خانه است؟",
+        "a": "برای نقاشی جزئی یا خرده‌کاری‌های ساختمانی نیازی به تخلیه نیست و اسباب‌اثاثیه با کاورهای نایلونی محافظت می‌شوند؛ اما در بازسازی‌های صفر تا صد (تخریب، تعویض لوله‌کشی و سرامیک کف) تخلیه واحد جهت پیشبرد سریع‌تر کار الزامی است."
+      },
+      {
+        "q": "هزینه نقاشی ساختمان چگونه محاسبه می‌شود؟",
+        "a": "هزینه نقاشی ساختمان بر اساس متر مربع سطح کار (دیوارها و سقف)، نوع رنگ انتخابی (روغنی، پلاستیک، اکریلیک یا پتینه) و میزان زیرسازی و بتونه‌کاری مورد نیاز، طبق نرخ مصوب اتحادیه نقاشان تهران محاسبه می‌شود."
+      }
+    ],
+    "subServices": [
+      {
+        "id": "painting",
+        "name": "نقاشی و رنگ کاری ساختمان",
+        "nameEn": "Building Wall & Ceiling Painting",
+        "slug": "painting",
+        "persianSlug": "نقاشی-ساختمان",
+        "aliases": [
+          "painting",
+          "نقاشی-ساختمان"
+        ],
+        "basePrice": 1200000,
+        "shortDesc": "نقاشی ساختمان با رنگ‌های روغنی، پلاستیک، اکرلیک بی‌بو، بتونه‌کاری کناف و اجرای پتینه‌کاری مدرن",
+        "shortDescEn": "Professional renovation services with 30-day warranty in Tehran",
+        "features": [
+          "اجرا توسط استادکاران نام‌آشنا با سابقه درخشان در تهران",
+          "تضمین کیفیت رنگ، چسب و مصالح مصرفی درجه یک",
+          "تحویل تمیز و بدون گردوغبار طبق برنامه زمان‌بندی دقیق",
+          "ضمانت کتبی ۱۰ ساله برای عایق‌کاری‌ها و ضمانت ۳۰ روزه خدمات"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-4 text-slate-700 leading-relaxed text-justify\">\n                    <div class=\"bg-gradient-to-l from-purple-50 to-white p-5 rounded-2xl border border-purple-100\">\n                        <h3 class=\"text-lg font-black text-brand-700 mb-2\">نقاشی و رنگ‌آمیزی حرفه‌ای ساختمان با رنگ‌های روغنی، اکریلیک و پلاستیک</h3>\n                        <p class=\"text-sm text-slate-600\">زیرسازی اصولی، ماستیک کامل، بتونه‌کاری دو دست و سنباده‌زنی دقیق قبل از رنگ، تضمین‌کننده سطحی یکدست و آینه‌ای بدون موج است. استادکاران بهدون با استفاده از مرغوب‌ترین رنگ‌های بدون بو، کار را با پوشش کامل کاور نایلونی اسباب‌اثاثیه و در زمان‌بندی دقیق تحویل می‌دهند.</p>\n                    </div>\n                    <ul class=\"list-disc list-inside space-y-2 text-sm text-slate-600 pr-2\">\n                        <li><strong>رنگ اکریلیک قابل شستشو (بدون بو):</strong> مناسب برای فضای داخلی با خشک‌شدن سریع و بدون ایجاد حساسیت برای کودکان.</li>\n                        <li><strong>رنگ روغنی براق، نیمه‌براق و مات:</strong> مقاوم در برابر رطوبت جهت درب‌ها، پنجره‌ها و چهارچوب‌های فلزی.</li>\n                        <li><strong>پتینه‌کاری و رنگ‌های دکوراتیو مدرن:</strong> اجرای میکروسمنت، طرح بتن، ورق طلا و طرح سنگ برای دیوارهای شاخص سالن.</li>\n                    </ul>\n                    <div class=\"flex flex-wrap gap-3 pt-2\">\n                        <button type=\"button\" onclick=\"openRequestModal('نقاشی و رنگ کاری ساختمان')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md\">ثبت درخواست بازدید و برآورد نقاشی</button>\n                        <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs\">مشاوره نقاشی: ۰۹۳۳۳۲۵۶۸۸۵</a>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "tiling",
+        "name": "کاشی کاری و سرامیک",
+        "nameEn": "Floor & Wall Ceramic Tiling",
+        "slug": "tiling",
+        "persianSlug": "کاشی-کاری-و-سرامیک",
+        "aliases": [
+          "tiling",
+          "کاشی-کاری-و-سرامیک"
+        ],
+        "basePrice": 1500000,
+        "shortDesc": "کاشی و سرامیک‌کاری کف و بدنه، اسلب و پرسلان چسبی و ملاتی برای سرویس بهداشتی و آشپزخانه",
+        "shortDescEn": "Professional renovation services with 30-day warranty in Tehran",
+        "features": [
+          "اجرا توسط استادکاران نام‌آشنا با سابقه درخشان در تهران",
+          "تضمین کیفیت رنگ، چسب و مصالح مصرفی درجه یک",
+          "تحویل تمیز و بدون گردوغبار طبق برنامه زمان‌بندی دقیق",
+          "ضمانت کتبی ۱۰ ساله برای عایق‌کاری‌ها و ضمانت ۳۰ روزه خدمات"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-4 text-slate-700 leading-relaxed text-justify\">\n                    <h3 class=\"text-lg font-black text-brand-700\">نصب کاشی و سرامیک اسلب و پرسلان با چسب پودری و ملات</h3>\n                    <p class=\"text-sm text-slate-600\">اجرای همتراز کاشی‌های بزرگ‌مقیاس اسلب در حمام، سرویس بهداشتی و کف سالن با کلیپس همتراز و چسب‌های پلیمری پرسلان درجه یک. در صورت وجود نشتی قبلی در کف سرویس، این مرحله با همکاری تیم <a href=\"/services/plumbing\" class=\"text-[#8B1C31] font-bold hover:underline\">عایق‌بندی و لوله‌کشی بهدون</a> پیش از نصب سرامیک تضمین می‌گردد.</p>\n                    <div class=\"flex flex-wrap gap-3 pt-2\">\n                        <button type=\"button\" onclick=\"openRequestModal('کاشی کاری و سرامیک')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md\">ثبت درخواست کاشی‌کاری</button>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "masonry",
+        "name": "بنایی و تخریب",
+        "nameEn": "Masonry, Brickwork & Demolition",
+        "slug": "masonry",
+        "persianSlug": "بنایی-و-تخریب",
+        "aliases": [
+          "masonry",
+          "بنایی-و-تخریب"
+        ],
+        "basePrice": 1100000,
+        "shortDesc": "تخریب دیوارهای مزاحم، تیغه‌چینی، سیمان‌کاری سیاه و سفید، نصب نعل درگاه و حمل نخاله",
+        "shortDescEn": "Professional renovation services with 30-day warranty in Tehran",
+        "features": [
+          "اجرا توسط استادکاران نام‌آشنا با سابقه درخشان در تهران",
+          "تضمین کیفیت رنگ، چسب و مصالح مصرفی درجه یک",
+          "تحویل تمیز و بدون گردوغبار طبق برنامه زمان‌بندی دقیق",
+          "ضمانت کتبی ۱۰ ساله برای عایق‌کاری‌ها و ضمانت ۳۰ روزه خدمات"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-4 text-slate-700 leading-relaxed text-justify\">\n                    <h3 class=\"text-lg font-black text-brand-700\">تخریب اصولی، تیغه‌چینی، تغییر پلان و حمل نخاله</h3>\n                    <p class=\"text-sm text-slate-600\">حذف دیوارهای اضافی غیرباربر جهت سالن‌بزرگ‌تر، اجرای دیوارهای عایق سبک هبلکس یا بلوک لیکا، شیارزنی تأسیسات و جمع‌آوری و حمل سریع نخاله‌های ساختمانی در کلیه مناطق تهران.</p>\n                    <div class=\"flex flex-wrap gap-3 pt-2\">\n                        <button type=\"button\" onclick=\"openRequestModal('بنایی و تخریب')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md\">ثبت درخواست بنایی و تخریب</button>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "plastering",
+        "name": "گچ کاری و لکه گیری",
+        "nameEn": "Plastering & Drywall Patching",
+        "slug": "plastering",
+        "persianSlug": "گچ-کاری-و-لکه-گیری",
+        "aliases": [
+          "plastering",
+          "گچ-کاری-و-لکه-گیری"
+        ],
+        "basePrice": 850000,
+        "shortDesc": "گچ‌کاری روی بلوک، سفیدکاری صیقلی، لکه‌گیری جای نم و رطوبت و اجرای ابزارهای گچی",
+        "shortDescEn": "Professional renovation services with 30-day warranty in Tehran",
+        "features": [
+          "اجرا توسط استادکاران نام‌آشنا با سابقه درخشان در تهران",
+          "تضمین کیفیت رنگ، چسب و مصالح مصرفی درجه یک",
+          "تحویل تمیز و بدون گردوغبار طبق برنامه زمان‌بندی دقیق",
+          "ضمانت کتبی ۱۰ ساله برای عایق‌کاری‌ها و ضمانت ۳۰ روزه خدمات"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-4 text-slate-700 leading-relaxed text-justify\">\n                    <h3 class=\"text-lg font-black text-brand-700\">گچ‌کاری، سفیدکاری و ترمیم لکه‌های ناشی از نم و ترکیدگی لوله</h3>\n                    <p class=\"text-sm text-slate-600\">سفیدکاری مجدد سقف و دیوارها، گچ‌بری مدرن و ترمیم فوری تبله‌های گچی ناشی از نشتی لوله یا رطوبت در کوتاه‌ترین زمان با متریال گچ سوپر مرغوب.</p>\n                    <div class=\"flex flex-wrap gap-3 pt-2\">\n                        <button type=\"button\" onclick=\"openRequestModal('گچ کاری و لکه گیری')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md\">ثبت درخواست گچ‌کاری و لکه‌گیری</button>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "roof-insulation",
+        "name": "عایق کاری پشت بام (ایزوگام و قیرگونی و...)",
+        "nameEn": "Roof Waterproofing & Tar Coating",
+        "slug": "roof-insulation",
+        "persianSlug": "عایق-کاری-پشت-بام",
+        "aliases": [
+          "roof-insulation",
+          "عایق-کاری-پشت-بام",
+          "waterproofing"
+        ],
+        "basePrice": 900000,
+        "shortDesc": "عایق‌کاری رطوبتی، قیرگونی و نصب استاندارد ایزوگام مرغوب با ضمانت کتبی ۱۰ ساله برای بام و استخر",
+        "shortDescEn": "Professional renovation services with 30-day warranty in Tehran",
+        "features": [
+          "اجرا توسط استادکاران نام‌آشنا با سابقه درخشان در تهران",
+          "تضمین کیفیت رنگ، چسب و مصالح مصرفی درجه یک",
+          "تحویل تمیز و بدون گردوغبار طبق برنامه زمان‌بندی دقیق",
+          "ضمانت کتبی ۱۰ ساله برای عایق‌کاری‌ها و ضمانت ۳۰ روزه خدمات"
+        ],
+        "detailHtml": "\n                <div class=\"space-y-4 text-slate-700 leading-relaxed text-justify\">\n                    <h3 class=\"text-lg font-black text-brand-700\">نصب ایزوگام فویل‌دار دولایه، قیرگونی و عایق‌های رطوبتی نانو در پشت‌بام</h3>\n                    <p class=\"text-sm text-slate-600\">آب‌بندی ۱۰۰٪ پشت‌بام، دور ناودانی‌ها و پایه‌های کولر آبی با مرغوب‌ترین ایزوگام‌های دلیجان با ضمانت‌نامه ۱۰ ساله کتبی.</p>\n                    <div class=\"flex flex-wrap gap-3 pt-2\">\n                        <button type=\"button\" onclick=\"openRequestModal('عایق کاری پشت بام')\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md\">ثبت درخواست ایزوگام و عایق‌کاری</button>\n                    </div>\n                </div>\n            "
+      },
+      {
+        "id": "knauf",
+        "name": "کنافکاری",
+        "nameEn": "Knauf False Ceilings & Lighting Boxes",
+        "slug": "knauf",
+        "persianSlug": "کناف-کاری",
+        "aliases": [
+          "knauf",
+          "کناف-کاری"
+        ],
+        "basePrice": 1800000,
+        "shortDesc": "اجرای سقف کاذب کناف، باکس نور مخفی دکوراتیو، لاین نوری، تایل ۶۰×۶۰ و دیوار جداکننده ضد رطوبت",
+        "shortDescEn": "Professional renovation services with 30-day warranty in Tehran",
+        "features": [
+          "اجرا توسط استادکاران نام‌آشنا با سابقه درخشان در تهران",
+          "تضمین کیفیت رنگ، چسب و مصالح مصرفی درجه یک",
+          "تحویل تمیز و بدون گردوغبار طبق برنامه زمان‌بندی دقیق",
+          "ضمانت کتبی ۱۰ ساله برای عایق‌کاری‌ها و ضمانت ۳۰ روزه خدمات"
+        ],
+        "detailHtml": "<p class=\"text-sm text-slate-600\">طراحی و اجرای سقف کاذب کناف، دورباکس نور مخفی، دیوار جداکننده پارتیشن درای‌وال با سازه‌های استاندارد کناف و بتونه درزگیر فایبرگلاس.</p>"
+      },
+      {
+        "id": "wallpaper",
+        "name": "نصب کاغذ دیواری",
+        "nameEn": "Wallpaper & Wall Decal Mounting",
+        "slug": "wallpaper",
+        "persianSlug": "نصب-کاغذ-دیواری",
+        "aliases": [
+          "wallpaper",
+          "نصب-کاغذ-دیواری"
+        ],
+        "basePrice": 950000,
+        "shortDesc": "نصب انواع کاغذ دیواری خارجی، پوستر سه‌بعدی و پارچه دیواری با چسب متیلان ضدکپک بدون درز",
+        "shortDescEn": "Professional renovation services with 30-day warranty in Tehran",
+        "features": [
+          "اجرا توسط استادکاران نام‌آشنا با سابقه درخشان در تهران",
+          "تضمین کیفیت رنگ، چسب و مصالح مصرفی درجه یک",
+          "تحویل تمیز و بدون گردوغبار طبق برنامه زمان‌بندی دقیق",
+          "ضمانت کتبی ۱۰ ساله برای عایق‌کاری‌ها و ضمانت ۳۰ روزه خدمات"
+        ],
+        "detailHtml": "<p class=\"text-sm text-slate-600\">نصب انواع کاغذ دیواری‌های پی‌وی‌سی قابل شستشو، پوستر سه‌بعدی و پارچه دیواری با چسب‌های ارجینال بدون تاول و خط درز.</p>"
+      },
+      {
+        "id": "parquet",
+        "name": "پارکت و لمینت",
+        "nameEn": "Parquet & Laminate Flooring",
+        "slug": "parquet",
+        "persianSlug": "پارکت-و-لمینت",
+        "aliases": [
+          "parquet",
+          "پارکت-و-لمینت"
+        ],
+        "basePrice": 1400000,
+        "shortDesc": "زیرسازی با فوم سایلنت، نصب کلیکی لمینت و پارکت چوبی و قرنیز دور سالن با تضمین دوام",
+        "shortDescEn": "Professional renovation services with 30-day warranty in Tehran",
+        "features": [
+          "اجرا توسط استادکاران نام‌آشنا با سابقه درخشان در تهران",
+          "تضمین کیفیت رنگ، چسب و مصالح مصرفی درجه یک",
+          "تحویل تمیز و بدون گردوغبار طبق برنامه زمان‌بندی دقیق",
+          "ضمانت کتبی ۱۰ ساله برای عایق‌کاری‌ها و ضمانت ۳۰ روزه خدمات"
+        ],
+        "detailHtml": "<p class=\"text-sm text-slate-600\">نصب لمینت و پارکت چوبی به همراه فوم سایلنت ۲ میلی‌متری، نصب قرنیز، گرده و میانه با چسب‌های مخصوص ساختمانی.</p>"
+      },
+      {
+        "id": "stone-work",
+        "name": "سنگ کاری",
+        "nameEn": "Building Stonework & Stairs",
+        "slug": "stone-work",
+        "persianSlug": "سنگ-کاری",
+        "aliases": [
+          "stone-work",
+          "سنگ-کاری"
+        ],
+        "basePrice": 1600000,
+        "shortDesc": "سنگ‌کاری پله، راهرو، لابی، کف سالن و صیقل‌کاری با دستگاه‌های کفسابی صنعتی",
+        "shortDescEn": "Professional renovation services with 30-day warranty in Tehran",
+        "features": [
+          "اجرا توسط استادکاران نام‌آشنا با سابقه درخشان در تهران",
+          "تضمین کیفیت رنگ، چسب و مصالح مصرفی درجه یک",
+          "تحویل تمیز و بدون گردوغبار طبق برنامه زمان‌بندی دقیق",
+          "ضمانت کتبی ۱۰ ساله برای عایق‌کاری‌ها و ضمانت ۳۰ روزه خدمات"
+        ],
+        "detailHtml": "<p class=\"text-sm text-slate-600\">اجرای سنگ پله، سنگ کف حیاط و پارکینگ، نصب سنگ‌های آنتیک دکوراتیو و سنگ اسلب با اسکوپ فلزی ایمن.</p>"
+      },
+      {
+        "id": "facade-repair",
+        "name": "تعمیرات نما",
+        "nameEn": "Building Facade Anchoring & Restoration",
+        "slug": "facade-repair",
+        "persianSlug": "تعمیرات-نما",
+        "aliases": [
+          "facade-repair",
+          "تعمیرات-نما"
+        ],
+        "basePrice": 1750000,
+        "shortDesc": "پیچ و رولپلاک سنگ‌های نمای ساختمان با پیچ گالوانیزه، ترمیم سنگ‌های افتاده و درزبندی نما",
+        "shortDescEn": "Professional renovation services with 30-day warranty in Tehran",
+        "features": [
+          "اجرا توسط استادکاران نام‌آشنا با سابقه درخشان در تهران",
+          "تضمین کیفیت رنگ، چسب و مصالح مصرفی درجه یک",
+          "تحویل تمیز و بدون گردوغبار طبق برنامه زمان‌بندی دقیق",
+          "ضمانت کتبی ۱۰ ساله برای عایق‌کاری‌ها و ضمانت ۳۰ روزه خدمات"
+        ],
+        "detailHtml": "<p class=\"text-sm text-slate-600\">پیچ و رولپلاک سنگ نما با طناب بدون داربست، شستشوی نما با واترجت، ترمیم آجر و بندکشی نانو نمای ساختمان.</p>"
+      }
+    ]
+  },
+  "locksmith": {
+    "id": "locksmith",
+    "slug": "locksmith",
+    "persianSlug": "کلیدسازی-قفل-امنیت",
+    "aliases": [
+      "locksmith",
+      "locks",
+      "security",
+      "کلیدسازی"
+    ],
+    "title": "خدمات کلیدسازی شبانه‌روزی، قفل هوشمند و امنیت ساختمان در تهران | بهدون",
+    "titleEn": "24/7 Locksmith, Smart Locks & Building Security in Tehran | Behdoon",
+    "metaDesc": "خدمات فوری کلیدسازی شبانه‌روزی در کلیه مناطق ۲۲ گانه تهران در کمتر از ۳۰ دقیقه. باز کردن انواع قفل ضدسرقت و اتومبیل بدون آسیب، نصب قفل دیجیتال رمزی و کارتی، تعمیر جک پارکینگ و دزدگیر با ضمانت رسمی بهدون.",
+    "subtitle": "اعزام فوری کلیدساز سیار در کمتر از ۳۰ دقیقه در سراسر تهران؛ باز کردن ایمن درب‌های ضدسرقت بدون تخریب، نصب دستگیره هوشمند و جک پارکینگ.",
+    "subtitleEn": "Emergency locksmith dispatch under 30 minutes across Tehran; damage-free lock picking, smart door lock installations, and automatic gates.",
+    "icon": "<svg class=\"w-10 h-10\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><circle cx=\"8\" cy=\"15\" r=\"4\" stroke-width=\"1.5\"/><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"m10.85 12.15 7.65-7.65a1.5 1.5 0 0 1 2.12 0l1.38 1.38-2.5 2.5 1.5 1.5-2 2-1.5-1.5-1.5 1.5\"/></svg>",
+    "subServices": [
+      {
+        "id": "emergency-lockout",
+        "name": "باز کردن فوری قفل درب (ضدسرقت و اتاقی)",
+        "nameEn": "Emergency Lockout Service",
+        "slug": "emergency-lockout",
+        "persianSlug": "باز-کردن-قفل-درب",
+        "aliases": [
+          "emergency-lockout",
+          "lockout",
+          "کلیدساز-سیار",
+          "باز-کردن-درب"
+        ],
+        "basePrice": 400000,
+        "shortDesc": "اعزام فوری کلیدساز سیار، باز کردن انواع درب ضدسرقت، اتاقی و اتومبیل بدون کمترین آسیب به قفل و چهارچوب",
+        "shortDescEn": "Emergency mobile locksmith, damage-free unlocking of anti-theft, interior, and car doors",
+        "features": [
+          "اعزام سریع کلیدساز مجهز به موتور در کمتر از ۳۰ دقیقه در تهران",
+          "باز کردن انواع قفل کالی، داف، یال و مولتی لاک با ابزار هوازنی تخصصی",
+          "بازگشایی بدون شکستن قفل، بدون سوراخ‌کاری و بدون آسیب به روکش درب",
+          "تعویض سیلندر (توپی) در محل با توپی‌های ضدبرش و ضداسید",
+          "ساخت کلید کامپیوتری یدک در محل با دستگاه پرتابل"
+        ],
+        "detailHtml": "\n        <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n          <div class=\"bg-gradient-to-l from-rose-50/70 to-white p-5 rounded-2xl border border-rose-100 mb-6\">\n            <h3 class=\"text-lg font-black text-brand-700 mb-2\">باز کردن شبانه‌روزی قفل‌های ضدسرقت و معمولی در کلیه محلات تهران</h3>\n            <p class=\"text-sm text-slate-600\">پشت در ماندن یا گم کردن کلید می‌تواند بسیار اضطراب‌آور باشد. تکنسین‌های کلیدسازی سیار بهدون با داشتن ابزارآلات پیکینگ پیشرفته و مهارت فنی بالا، درب ساختمان را بدون نیاز به تخریب قفل یا آسیب به چهارچوب چوبی/فلزی باز می‌نمایند.</p>\n          </div>\n          <h4 class=\"text-base font-bold text-slate-800 flex items-center gap-2\">\n            <span class=\"w-2 h-2 rounded-full bg-[#8B1C31]\"></span>\n            مراحل ارائه خدمات کلیدسازی بهدون:\n          </h4>\n          <ul class=\"list-disc list-inside space-y-2 text-sm text-slate-600 pr-2\">\n            <li><strong>احراز هویت مالکیت:</strong> جهت رعایت کامل امنیت و ضوابط قانونی، پیش از بازگشایی درب، مدارک هویتی یا سکونت بررسی می‌گردد.</li>\n            <li><strong>بازگشایی با هوازنی و شاه‌کلیدهای مدرن:</strong> باز کردن ساچمه‌های قفل بدون نیاز به سوراخ‌کاری توپی.</li>\n            <li><strong>تعویض یا ارتقای سیلندر:</strong> در صورت مفقودی کلید قبلی، تعویض آنی مغزی با سیلندرهای ضد دریل با بسته‌بندی پلمپ شرکتی.</li>\n          </ul>\n          <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n            <div class=\"flex flex-wrap items-center gap-3\">\n              <button type=\"button\" data-order-service=\"emergency-lockout\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                درخواست فوری کلیدساز سیار\n              </button>\n              <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                تماس شبانه‌روزی: ۰۹۳۳۳۲۵۶۸۸۵\n              </a>\n            </div>\n          </div>\n        </div>\n      "
+      },
+      {
+        "id": "smart-locks",
+        "name": "نصب و راه‌اندازی قفل هوشمند دیجیتال",
+        "nameEn": "Smart Digital Lock Installation",
+        "slug": "smart-locks",
+        "persianSlug": "نصب-قفل-هوشمند-دیجیتال",
+        "aliases": [
+          "smart-locks",
+          "digital-lock",
+          "قفل-رمزی",
+          "دستگیره-هوشمند"
+        ],
+        "basePrice": 850000,
+        "shortDesc": "نصب و راه‌اندازی دستگیره‌های هوشمند رمزی، کارتی، اثرانگشتی و تشخیص چهره با گارانتی شرکتی",
+        "shortDescEn": "Installation and setup of biometric, card, PIN, and facial recognition smart door locks",
+        "features": [
+          "نصب انواع برندهای سامسونگ، شیائومی، یال، کاداس و فیلیپس",
+          "برش دقیق جای زبانه و شابلون‌زنی روی درب‌های چوبی و ضدسرقت",
+          "اتصال قفل به وای‌فای و اپلیکیشن موبایل جهت کنترل تردد از راه دور",
+          "تنظیم سناریوهای رمز موقت، کارت ضدکپی و اسکن اثر انگشت",
+          "آموزش کامل کاربری و تنظیمات امنیتی به خریدار"
+        ],
+        "detailHtml": "\n        <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n          <div class=\"bg-gradient-to-l from-indigo-50/70 to-white p-5 rounded-2xl border border-indigo-100 mb-6\">\n            <h3 class=\"text-lg font-black text-brand-700 mb-2\">ارتقای امنیت منزل و دفتر کار با قفل‌های هوشمند بیومتریک</h3>\n            <p class=\"text-sm text-slate-600\">دستگیره‌ها و قفل‌های دیجیتال آسایش بی‌نظیری را با حذف کلیدهای سنتی فراهم می‌آورند. نصب غیرتخصصی این قفل‌ها می‌تواند باعث گیر کردن زبانه‌ها یا آسیب به سیم‌کشی باتری گردد. کارشناسان بهدون نصب دقیق و استاندارد آن را تضمین می‌کنند.</p>\n          </div>\n          <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n            <div class=\"flex flex-wrap items-center gap-3\">\n              <button type=\"button\" data-order-service=\"smart-locks\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                ثبت درخواست نصب قفل دیجیتال\n              </button>\n              <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                مشاوره تلفنی: ۰۹۳۳۳۲۵۶۸۸۵\n              </a>\n            </div>\n          </div>\n        </div>\n      "
+      },
+      {
+        "id": "parking-gate",
+        "name": "نصب و تعمیر جک پارکینگ و آرام‌بند",
+        "nameEn": "Parking Gate Motor & Door Closer",
+        "slug": "parking-gate",
+        "persianSlug": "جک-پارکینگ-و-آرام-بند",
+        "aliases": [
+          "parking-gate",
+          "gate-motor",
+          "آرام-بند",
+          "جک-برقی"
+        ],
+        "basePrice": 750000,
+        "shortDesc": "نصب، عیب‌یابی و تعمیر جک‌های بازویی، ریلی، هیدرولیک و کددهی ریموت کنترل پارکینگ",
+        "shortDescEn": "Installation and repair of hydraulic/electromechanical gate motors and remote coding",
+        "features": [
+          "تعمیر تخصصی بردهای الکترونیکی جک پارکینگ (سیماران، بی اف تی، پروتکو، وی تو)",
+          "تعویض چرخ‌دنده‌ها، میل ماردون، بلبرینگ و روغن هیدرولیک جک",
+          "تنظیم فتوسل چشمی ضدبرخورد و فلاشر چشمک‌زن",
+          "نصب آرام‌بندهای دو زمانه و سه زمانه برای درب ورودی ضدحریق و لابی",
+          "کددهی و ست کردن انواع ریموت کنترل‌های ضدکپی هاپینگ کد"
+        ],
+        "detailHtml": "\n        <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n          <div class=\"bg-gradient-to-l from-amber-50/70 to-white p-5 rounded-2xl border border-amber-100 mb-6\">\n            <h3 class=\"text-lg font-black text-brand-700 mb-2\">تعمیرات فوری جک برقی پارکینگ ساختمان در تهران</h3>\n            <p class=\"text-sm text-slate-600\">باز نشدن درب پارکینگ یا کوبیده شدن شدید آن موجب سلب آسایش ساکنین و ایجاد خطر سرقت می‌شود. سرویس دوره‌ای مدار خلاص‌کن و بالانس بازوها از هزینه‌های سنگین تعویض موتور جلوگیری می‌کند.</p>\n          </div>\n          <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n            <div class=\"flex flex-wrap items-center gap-3\">\n              <button type=\"button\" data-order-service=\"parking-gate\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                ثبت درخواست تعمیر جک پارکینگ\n              </button>\n              <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                تماس فوری: ۰۹۳۳۳۲۵۶۸۸۵\n              </a>\n            </div>\n          </div>\n        </div>\n      "
+      },
+      {
+        "id": "cctv-alarm",
+        "name": "دوربین مداربسته و دزدگیر اماکن",
+        "nameEn": "CCTV & Security Alarm Systems",
+        "slug": "cctv-alarm",
+        "persianSlug": "دوربین-مداربسته-و-دزدگیر",
+        "aliases": [
+          "cctv-alarm",
+          "cctv",
+          "alarm",
+          "دزدگیر",
+          "دوربین"
+        ],
+        "basePrice": 1100000,
+        "shortDesc": "سیم‌کشی و نصب دوربین‌های مداربسته تحت شبکه IP، انتقال تصویر روی موبایل و سیستم دزدگیر سیم‌کارتی",
+        "shortDescEn": "CCTV IP camera installation, smartphone remote live feed, and GSM burglar alarms",
+        "features": [
+          "نصب دوربین‌های دید در شب رنگی (ColorVu) و با کیفیت 4K",
+          "انتقال تصویر بدون قطعی روی تلفن همراه با سرورهای پرسرعت",
+          "نصب دزدگیرهای سیم‌کارتی با قابلیت تماس خودکار و ارسال پیامک هشدار",
+          "نصب چشمی‌های حرکتی ضدحیوان (پت)، مگنت درب و سنسور ضربه",
+          "عیب‌یابی خرابی هارددیسک، آداپتور، قطعی تصویر و تعویض BNC"
+        ],
+        "detailHtml": "\n        <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n          <div class=\"bg-gradient-to-l from-emerald-50/70 to-white p-5 rounded-2xl border border-emerald-100 mb-6\">\n            <h3 class=\"text-lg font-black text-brand-700 mb-2\">سیستم‌های حفاظتی و نظارت تصویری ساختمان با بهدون</h3>\n            <p class=\"text-sm text-slate-600\">پوشش کامل نقاط کور پارکینگ، لابی، پشت‌بام و حیاط با دوربین‌های دید در شب و دزدگیرهای ضدسرقت هوشمند، امنیت کامل ساختمان و دارایی‌های ساکنین را تضمین می‌نماید.</p>\n          </div>\n          <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n            <div class=\"flex flex-wrap items-center gap-3\">\n              <button type=\"button\" data-order-service=\"cctv-alarm\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                درخواست نصب و تعمیر دوربین و دزدگیر\n              </button>\n              <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                مشاوره فنی: ۰۹۳۳۳۲۵۶۸۸۵\n              </a>\n            </div>\n          </div>\n        </div>\n      "
+      }
+    ],
+    "comprehensiveGuide": "\n    <article class=\"mt-12 pt-10 border-t border-slate-200 text-slate-700 leading-relaxed text-justify space-y-8\" dir=\"rtl\">\n      <header class=\"text-center max-w-3xl mx-auto space-y-4 mb-10\">\n        <span class=\"inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-brand-50 text-brand-700 text-xs font-bold border border-brand-200\">\n          دانشنامه و راهنمای قفل، کلیدسازی و امنیت ساختمان در تهران\n        </span>\n        <h2 class=\"text-2xl md:text-3xl font-black text-slate-800 leading-tight\">\n          راهنمای جامع خدمات کلیدسازی شبانه‌روزی، دستگیره‌های هوشمند و جک پارکینگ در پایتخت\n        </h2>\n        <p class=\"text-sm text-slate-500 leading-relaxed\">\n          نکات ضروری در زمان گم شدن کلید، روش‌های ایمن باز کردن درب ضدسرقت بدون تخریب و استانداردهای نصب تجهیزات حفاظتی در تهران.\n        </p>\n      </header>\n      <div class=\"bg-gradient-to-r from-[#133458] to-[#1c4b7d] rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6\">\n        <div class=\"space-y-2 text-center md:text-right\">\n          <h3 class=\"text-xl font-bold\">پشت در مانده‌اید یا نیاز به کلیدساز سیار فوری دارید؟</h3>\n          <p class=\"text-xs md:text-sm text-blue-100 max-w-xl leading-relaxed\">\n            کلیدسازان بهدون با موتورسیکلت مجهز در کمتر از ۳۰ دقیقه در سراسر تهران به محل شما می‌رسند.\n          </p>\n        </div>\n        <div class=\"flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0\">\n          <button type=\"button\" data-order-service=\"emergency-lockout\" class=\"w-full sm:w-auto px-6 py-3 bg-[#8B1C31] hover:bg-[#701627] text-white text-xs md:text-sm font-black rounded-xl shadow-lg transition-all text-center\">\n            اعزام فوری کلیدساز سیار\n          </button>\n          <a href=\"tel:09333256885\" class=\"w-full sm:w-auto px-6 py-3 bg-white/10 hover:bg-white/20 text-white text-xs md:text-sm font-bold rounded-xl border border-white/20 transition-all text-center\">\n            تماس: ۰۹۳۳۳۲۵۶۸۸۵\n          </a>\n        </div>\n      </div>\n    </article>\n  ",
+    "faq": [
+      {
+        "q": "آیا باز کردن درب ضدسرقت باعث آسیب به قفل یا روکش درب می‌شود؟",
+        "a": "خیر، کارشناسان بهدون با استفاده از ابزارهای هوازنی و ابزارهای تخصصی ساچمه، درب را بدون شکستن قفل، تخریب سیلندر یا خط انداختن روی روکش چوب باز می‌کنند."
+      },
+      {
+        "q": "سرعت اعزام کلیدساز سیار در مناطق مختلف تهران چقدر است؟",
+        "a": "با توجه به استقرار کارشناسان در سراسر شمال، شرق، غرب، مرکز و جنوب تهران، میانگین زمان حضور کمتر از ۳۰ دقیقه است."
+      },
+      {
+        "q": "آیا برای باز کردن درب منزل احراز هویت لازم است؟",
+        "a": "بله، جهت امنیت ساکنین و قوانین پلیس آگاهی، رویت کارت شناسایی معتبر یا تاییدیه همسایگان و مدیر ساختمان الزامی است."
+      }
+    ]
+  },
+  "carpentry": {
+    "id": "carpentry",
+    "slug": "carpentry",
+    "persianSlug": "کابینت-نجاری-mdf",
+    "aliases": [
+      "carpentry",
+      "cabinet",
+      "نجاری",
+      "کابینت"
+    ],
+    "title": "خدمات نجاری، تعمیر کابینت، کمد دیواری و دکوراسیون چوبی در تهران | بهدون",
+    "titleEn": "Carpentry, Cabinet Repairs, Custom Closets & Woodwork in Tehran | Behdoon",
+    "metaDesc": "تعمیر و رگلاژ تخصصی انواع کابینت MDF، هایگلاس و ممبران، ساخت کمد دیواری ریلی، تعمیر و کوتاه‌کردن درب چوبی و نصب پارکت در تهران با استادکاران مجرب بهدون با فاکتور معتبر.",
+    "subtitle": "طراحی، ساخت و رگلاژ انواع مصنوعات چوبی، کابینت آشپزخانه و کمد دیواری با قطعات درجه یک و برش دقیق نجاری.",
+    "subtitleEn": "Design, repair, and alignment of kitchen cabinets, closets, interior wooden doors, and parquet flooring in Tehran.",
+    "icon": "<svg class=\"w-10 h-10\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z\"/></svg>",
+    "subServices": [
+      {
+        "id": "cabinet-repair",
+        "name": "تعمیر و رگلاژ کابینت آشپزخانه",
+        "nameEn": "Cabinet Repair & Alignment",
+        "slug": "cabinet-repair",
+        "persianSlug": "تعمیر-کابینت-آشپزخانه",
+        "aliases": [
+          "cabinet-repair",
+          "کابینت",
+          "رگلاژ-کابینت"
+        ],
+        "basePrice": 600000,
+        "shortDesc": "تعویض لولای آرام‌بند، ریل‌های ساچمه‌ای کشو، صفحه کورین، ام‌دی‌اف، جک پمپی و رگلاژ کامل درب کابینت",
+        "shortDescEn": "Hinge replacement, drawer slides repair, countertop repairs, pneumatic lift cylinder replacement",
+        "features": [
+          "تعویض لولاهای مستهلک با لولاهای آرام‌بند استیل ضدزنگ پمپ برنجی",
+          "تعویض ریل‌های خراب کشو با ریل‌های سه‌تکه ساچمه‌ای سنگین",
+          "ترمیم بادکردگی و آب‌خوردگی یونیت زیر سینک با ورق ضدآب PVC",
+          "رگلاژ و هم‌سطح‌سازی دقیق درهای هایگلاس، ممبران و چوب طبیعی",
+          "تعویض صفحه روی کابینت، قرنیز آب‌بند و دستگیره‌ها"
+        ],
+        "detailHtml": "\n        <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n          <div class=\"bg-gradient-to-l from-amber-50/70 to-white p-5 rounded-2xl border border-amber-100 mb-6\">\n            <h3 class=\"text-lg font-black text-brand-700 mb-2\">تعمیرات تخصصی انواع کابینت‌های مدرن و کلاسیک در تهران</h3>\n            <p class=\"text-sm text-slate-600\">افتادگی درب‌های کابینت، صدای ناهنجار ریل کشوها یا بادکردگی چوب یونیت زیر سینک، علاوه بر ظاهر ناخوشایند، ارگونومی آشپزخانه را برهم می‌زند. تکنسین‌های بهدون در کوتاه‌ترین زمان کابینت‌های شما را مانند روز اول نو و منظم می‌سازند.</p>\n          </div>\n          <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n            <div class=\"flex flex-wrap items-center gap-3\">\n              <button type=\"button\" data-order-service=\"cabinet-repair\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                ثبت درخواست تعمیر و رگلاژ کابینت\n              </button>\n              <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                تماس با استادکار: ۰۹۳۳۳۲۵۶۸۸۵\n              </a>\n            </div>\n          </div>\n        </div>\n      "
+      },
+      {
+        "id": "closet-design",
+        "name": "کمد دیواری و جاکفشی سفارشی",
+        "nameEn": "Custom Closets & Wardrobes",
+        "slug": "closet-design",
+        "persianSlug": "کمد-دیواری-و-جاکفشی",
+        "aliases": [
+          "closet-design",
+          "کمد-دیواری",
+          "جاکفشی"
+        ],
+        "basePrice": 1800000,
+        "shortDesc": "طراحی، ساخت و نصب کمد دیواری‌های ریلی و لولایی، شلف، باکس و جاکفشی با متریال ضدخش استاندارد",
+        "shortDescEn": "Sliding and hinged custom closet design, shelving, shoe organizers with scratch-proof materials",
+        "features": [
+          "ساخت کمد دیواری ریلی با ریل‌های ترک و قرقره‌های بلبرینگی آرام",
+          "طراحی داخلی بهینه شامل رگال، طبقات لباس، کشوهای مخفی و باکس چمدان",
+          "تبدیل کمدهای قدیمی لولایی به ریلی مدرن بدون تخریب",
+          "استفاده از MDF استاندارد دانسیته بالا با روکش ملامینه ضدخش",
+          "نصب اکسسوری‌های جا شلواری، آینه قدی کشویی و نورپردازی لاین نوری"
+        ],
+        "detailHtml": "\n        <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n          <div class=\"bg-gradient-to-l from-emerald-50/70 to-white p-5 rounded-2xl border border-emerald-100 mb-6\">\n            <h3 class=\"text-lg font-black text-brand-700 mb-2\">طراحی و اجرای مدرن‌ترین کمدهای دیواری و کلوزت روم در تهران</h3>\n            <p class=\"text-sm text-slate-600\">کمدهای دیواری فضاسازی هوشمندانه خانه هستند. اجرای استاندارد ریل‌ها و اتصالات الیت استحکام فوق‌العاده‌ای به سازه بخشیده و حرکت درب‌ها را بی‌صدا و نرم می‌سازد.</p>\n          </div>\n          <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n            <div class=\"flex flex-wrap items-center gap-3\">\n              <button type=\"button\" data-order-service=\"closet-design\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                ثبت سفارش کمد دیواری\n              </button>\n              <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                مشاوره و اندازه‌گیری: ۰۹۳۳۳۲۵۶۸۸۵\n              </a>\n            </div>\n          </div>\n        </div>\n      "
+      },
+      {
+        "id": "door-repair",
+        "name": "تعمیر و رگلاژ درب چوبی",
+        "nameEn": "Wooden Door Adjustment & Repair",
+        "slug": "door-repair",
+        "persianSlug": "تعمیر-درب-چوبی",
+        "aliases": [
+          "door-repair",
+          "درب-چوبی",
+          "رگلاژ-درب"
+        ],
+        "basePrice": 450000,
+        "shortDesc": "کوتاه کردن و رنده‌کاری درب‌ها پس از سرامیک، رفع گیر و اصطکاک، تعویض قفل و لولا و صداگیری",
+        "shortDescEn": "Wooden door bottom trimming after flooring, friction removal, squeak silencing, hinge fix",
+        "features": [
+          "رنده‌کاری و کوتاه کردن لبه پایین درب با اره فارسی‌بر و رنده برقی بدون لب‌پریدگی",
+          "رفع گیر کردن درب به چهارچوب ناشی از نشست ساختمان یا بادکردگی چوب",
+          "تعویض لولاهای مستهلک و مقاوم‌سازی جای پیچ‌های هرز شده",
+          "تعویض قفل کلیدی، قفل سرویسی و دستگیره‌های اتاقی",
+          "روغن‌کاری و صداگیری تخصصی لولاها"
+        ],
+        "detailHtml": "\n        <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n          <div class=\"bg-gradient-to-l from-sky-50/70 to-white p-5 rounded-2xl border border-sky-100 mb-6\">\n            <h3 class=\"text-lg font-black text-brand-700 mb-2\">رگلاژ، صداگیری و کوتاه کردن درب‌های چوبی در محل</h3>\n            <p class=\"text-sm text-slate-600\">پس از نصب پارکت، لمینت یا سرامیک جدید، کف واحد بالا آمده و درب‌ها به کف کشیده می‌شوند. نجاران بهدون در محل با ابزار برقی لبه درب را تراز و کوتاه نموده و رنگ‌آمیزی لبه را انجام می‌دهند.</p>\n          </div>\n          <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n            <div class=\"flex flex-wrap items-center gap-3\">\n              <button type=\"button\" data-order-service=\"door-repair\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                ثبت درخواست تعمیر درب چوبی\n              </button>\n              <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                تماس: ۰۹۳۳۳۲۵۶۸۸۵\n              </a>\n            </div>\n          </div>\n        </div>\n      "
+      },
+      {
+        "id": "parquet-flooring",
+        "name": "نصب پارکت و لمینت",
+        "nameEn": "Parquet & Laminate Flooring",
+        "slug": "parquet-flooring",
+        "persianSlug": "نصب-پارکت-و-لمینت",
+        "aliases": [
+          "parquet-flooring",
+          "پارکت",
+          "لمینت"
+        ],
+        "basePrice": 1400000,
+        "shortDesc": "زیرسازی با فوم سایلنت، نصب کلیکی لمینت و پارکت چوبی و قرنیز دور سالن با تضمین دوام",
+        "shortDescEn": "Silent foam underlayment, click-lock laminate/parquet installation, baseboard mounting",
+        "features": [
+          "پهن کردن فوم سایلنت ۲ میلی‌متری متالایز جهت عایق صوت و حرارت",
+          "نصب دقیق کلیک‌های لمینت ضدآب AC4 و AC5 بدون درز و لغزش",
+          "رعایت ژوئن و درز انبساط دور تا دور دیوارها جهت جلوگیری از بادکردن در گرما",
+          "برش فارسی‌بر و نصب قرنیزهای PVC و MDF به همراه گرده و نبشی تودلی",
+          "ساب و لاک پارکت‌های چوب طبیعی با سنباده ماشینی و پلی‌اورتان ضدخش"
+        ],
+        "detailHtml": "\n        <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n          <div class=\"bg-gradient-to-l from-rose-50/70 to-white p-5 rounded-2xl border border-rose-100 mb-6\">\n            <h3 class=\"text-lg font-black text-brand-700 mb-2\">نصب حرفه‌ای انواع کفپوش، پارکت چوبی و لمینت در تهران</h3>\n            <p class=\"text-sm text-slate-600\">کفپوش چوبی گرمابخش دکوراسیون است. زیرسازی دقیق و رعایت درزهای حرارتی از ایجاد صدای جیرجیر هنگام راه رفتن یا بالا آمدن لمینت جلوگیری به عمل می‌آورد.</p>\n          </div>\n          <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n            <div class=\"flex flex-wrap items-center gap-3\">\n              <button type=\"button\" data-order-service=\"parquet-flooring\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                درخواست نصب پارکت و لمینت\n              </button>\n              <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                تماس: ۰۹۳۳۳۲۵۶۸۸۵\n              </a>\n            </div>\n          </div>\n        </div>\n      "
+      }
+    ],
+    "comprehensiveGuide": "\n    <article class=\"mt-12 pt-10 border-t border-slate-200 text-slate-700 leading-relaxed text-justify space-y-8\" dir=\"rtl\">\n      <header class=\"text-center max-w-3xl mx-auto space-y-4 mb-10\">\n        <span class=\"inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-brand-50 text-brand-700 text-xs font-bold border border-brand-200\">\n          دانشنامه نجاری و دکوراسیون داخلی در تهران\n        </span>\n        <h2 class=\"text-2xl md:text-3xl font-black text-slate-800 leading-tight\">\n          راهنمای کاربردی نگهداری کابینت، کمد دیواری و مصنوعات چوبی ساختمان\n        </h2>\n      </header>\n    </article>\n  ",
+    "faq": [
+      {
+        "q": "آیا رگلاژ درب‌های کابینت و تعویض لولاها در همان روز انجام می‌شود؟",
+        "a": "بله، استادکاران بهدون با داشتن قطعات مصرفی استاندارد، در همان جلسه اول کلیه لولاها و ریل‌ها را تعویض و تنظیم می‌نمایند."
+      },
+      {
+        "q": "علت گیر کردن درب‌های چوبی پس از بازسازی چیست؟",
+        "a": "کف‌سازی مجدد با سرامیک یا لمینت ارتفاع کف را افزایش می‌دهد. نجار با رنده برقی دقیقاً به میزان لازم لبه پایین درب را رنده‌کاری می‌کند."
+      }
+    ]
+  },
+  "doors_windows": {
+    "id": "doors_windows",
+    "slug": "doors_windows",
+    "persianSlug": "در-پنجره-upvc",
+    "aliases": [
+      "doors_windows",
+      "doors-windows",
+      "upvc",
+      "پنجره-دوجداره"
+    ],
+    "title": "تعمیرات پنجره دوجداره UPVC، توری پلیسه و شیشه سکوریت در تهران | بهدون",
+    "titleEn": "UPVC Window Repairs, Pleated Mesh & Glass Replacement in Tehran | Behdoon",
+    "metaDesc": "رگلاژ تخصصی در و پنجره دوجداره UPVC و آلومینیومی، تعویض لاستیک درزبندی، ساخت انواع توری پلیسه کشویی و تعویض شیشه سکوریت و دوجداره با اعزام فوری در تهران.",
+    "subtitle": "عایق‌بندی کامل صوتی و حرارتی، تعویض یراق‌آلات اسپانیولت و ممانعت از ورود گرد و غبار به محیط زندگی شما.",
+    "subtitleEn": "100% sound and thermal insulation, UPVC espagnolette hardware repair, pleated mesh, and glass replacement.",
+    "icon": "<svg class=\"w-10 h-10\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"M3 21h18M4 18V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13M9 3v15m6-15v15M3 11h18\"/></svg>",
+    "subServices": [
+      {
+        "id": "upvc-repair",
+        "name": "رگلاژ و تعمیر پنجره UPVC",
+        "nameEn": "UPVC Window Adjustment & Repair",
+        "slug": "upvc-repair",
+        "persianSlug": "رگلاژ-پنجره-upvc",
+        "aliases": [
+          "upvc-repair",
+          "رگلاژ-پنجره",
+          "تعمیر-پنجره-دوجداره"
+        ],
+        "basePrice": 500000,
+        "shortDesc": "رگلاژ، عایق‌بندی صوتی و حرارتی، تعویض اسپانیولت، زاماک و لاستیک‌های درزبندی EPDM پنجره دوجداره",
+        "shortDescEn": "UPVC window calibration, soundproofing, espagnolette, striker, and EPDM gasket replacement",
+        "features": [
+          "رگلاژ تخصصی بازشو با آچار آلن مخصوص و زیرشیشه‌ای‌های استاندارد",
+          "تعویض یراق‌آلات اسپانیولت تک‌حالته و دوحالته ترک و آلمانی (روتو، کاله)",
+          "تعویض لاستیک‌های پوسیده درزبندی با گسکت‌های منعطف EPDM مقاوم در برابر آفتاب",
+          "رفع زوزه باد، صدای خیابان و جلوگیری از نفوذ آب باران از درزهای پنجره",
+          "تعویض دستگیره‌های شکسته و زاماک‌های قفل‌کننده"
+        ],
+        "detailHtml": "\n        <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n          <div class=\"bg-gradient-to-l from-cyan-50/70 to-white p-5 rounded-2xl border border-cyan-100 mb-6\">\n            <h3 class=\"text-lg font-black text-brand-700 mb-2\">رگلاژ و آب‌بندی پنجره‌های دوجداره در کلیه مناطق تهران</h3>\n            <p class=\"text-sm text-slate-600\">پنجره‌های UPVC با گذشت زمان و وزن شیشه‌های دوجداره سنگین دچار افتادگی لنگه شده و به سختی باز و بسته می‌شوند یا صدای ترافیک را از خود عبور می‌دهند. رگلاژ تخصصی با زیرشیشه‌ای‌های مهندسی، پنجره را به حالت کاملاً عایق بازمی‌گرداند.</p>\n          </div>\n          <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n            <div class=\"flex flex-wrap items-center gap-3\">\n              <button type=\"button\" data-order-service=\"upvc-repair\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                ثبت درخواست رگلاژ پنجره UPVC\n              </button>\n              <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                تماس فوری: ۰۹۳۳۳۲۵۶۸۸۵\n              </a>\n            </div>\n          </div>\n        </div>\n      "
+      },
+      {
+        "id": "pleated-mesh",
+        "name": "نصب توری پلیسه کشویی",
+        "nameEn": "Pleated Insect Mesh Screen",
+        "slug": "pleated-mesh",
+        "persianSlug": "نصب-توری-پلیسه",
+        "aliases": [
+          "pleated-mesh",
+          "توری-پلیسه",
+          "توری-پنجره"
+        ],
+        "basePrice": 650000,
+        "shortDesc": "ساخت و نصب توری‌های ضدحشرات متحرک و پلیسه جمع‌شونده برای انواع پنجره و تراس با آلومینیوم مقاوم",
+        "shortDescEn": "Custom retractable insect mesh screens for double-glazed windows, doors, and balconies",
+        "features": [
+          "توری فایبرگلاس درجه یک با بافت ریز ضدپوسیدگی و ضدگردوغبار",
+          "پروفیل آلومینیومی سنگین با رنگ کوره‌ای الکترواستاتیک هماهنگ با نمای پنجره",
+          "مگنتی محکم با نخ‌های کورد مقاوم کره‌ای بدون پارگی در باد شدید",
+          "قابلیت شستشوی آسان با آب و جمع‌شدن روان درون قاب",
+          "اندازه‌گیری دقیق و ساخت فوری ظرف ۲۴ الی ۴۸ ساعت در تهران"
+        ],
+        "detailHtml": "\n        <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n          <div class=\"bg-gradient-to-l from-teal-50/70 to-white p-5 rounded-2xl border border-teal-100 mb-6\">\n            <h3 class=\"text-lg font-black text-brand-700 mb-2\">ساخت و نصب انواع توری‌های پلیسه ضدحشرات کشویی در تهران</h3>\n            <p class=\"text-sm text-slate-600\">توری‌های پلیسه مدرن بدون اشغال فضا در زمان عدم نیاز درون محفظه کناری جمع می‌شوند و دید منظره را مسدود نمی‌کنند. این توری‌ها مانع ورود پشه، مگس و حشرات موذی به داخل منزل می‌شوند.</p>\n          </div>\n          <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n            <div class=\"flex flex-wrap items-center gap-3\">\n              <button type=\"button\" data-order-service=\"pleated-mesh\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                ثبت سفارش توری پلیسه\n              </button>\n              <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                تماس: ۰۹۳۳۳۲۵۶۸۸۵\n              </a>\n            </div>\n          </div>\n        </div>\n      "
+      },
+      {
+        "id": "glass-replacement",
+        "name": "تعویض شیشه دوجداره و سکوریت",
+        "nameEn": "Double-Glazed & Tempered Glass Replacement",
+        "slug": "glass-replacement",
+        "persianSlug": "تعویض-شیشه-دوجداره",
+        "aliases": [
+          "glass-replacement",
+          "شیشه-دوجداره",
+          "شیشه-سکوریت"
+        ],
+        "basePrice": 800000,
+        "shortDesc": "برش و تعویض شیشه‌های شکسته، دوجداره صنعتی با گاز آرگون، لمینت و شیشه‌های سکوریت نشکن",
+        "shortDescEn": "Argon double-glazing, laminated, tempered, and reflective glass cutting and replacement",
+        "features": [
+          "تولید شیشه دوجداره با تزریق گاز آرگون و چسب پلی‌سولفاید صنعتی ضدبخار",
+          "تعویض شیشه‌های بخارگرفته، مات‌شده یا شکسته در و پنجره ساختمان",
+          "نصب و برش انواع شیشه‌های سکوریت ۶، ۸ و ۱۰ میل دوراستخر، بالکن و مغازه",
+          "تزریق سیلیکون ماستیک آب‌بندی در دور قاب",
+          "نصب شیشه‌های رفلکس، برفی، سندبلاست و ضدگلوله"
+        ],
+        "detailHtml": "\n        <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n          <div class=\"bg-gradient-to-l from-blue-50/70 to-white p-5 rounded-2xl border border-blue-100 mb-6\">\n            <h3 class=\"text-lg font-black text-brand-700 mb-2\">تعویض سریع شیشه‌های شکسته و بخارگرفته دوجداره در تهران</h3>\n            <p class=\"text-sm text-slate-600\">بخارگرفتگی بین دو جداره شیشه نشان‌دهنده از بین رفتن چسب عایق و خروج گاز آرگون است که زیبایی پنجره را مخدوش می‌کند. تعویض جام شیشه در محل با دقت بالا انجام می‌گردد.</p>\n          </div>\n          <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n            <div class=\"flex flex-wrap items-center gap-3\">\n              <button type=\"button\" data-order-service=\"glass-replacement\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                درخواست تعویض شیشه\n              </button>\n              <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                تماس: ۰۹۳۳۳۲۵۶۸۸۵\n              </a>\n            </div>\n          </div>\n        </div>\n      "
+      },
+      {
+        "id": "electric-shutter",
+        "name": "کرکره برقی و رول‌آپ",
+        "nameEn": "Electric Roll-up Shutter",
+        "slug": "electric-shutter",
+        "persianSlug": "کرکره-برقی",
+        "aliases": [
+          "electric-shutter",
+          "کرکره-برقی",
+          "رول-آپ"
+        ],
+        "basePrice": 950000,
+        "shortDesc": "تعمیر موتور توبولار و ساید، تعویض تیغه‌های آسیب‌دیده آلومینیومی و تنظیم خلاص‌کن دستی کرکره",
+        "shortDescEn": "Electric roller shutter repair, tubular/side motors, blade replacement, manual release tuning",
+        "features": [
+          "تعمیر و تعویض موتورهای ساید صنعتی، توبلار و سانترال",
+          "تعویض تیغه‌های آلومینیومی دوجداره، تیغه فولادی و پلی‌کربنات شفاف",
+          "تنظیم میکروسوئیچ حد بالا و پایین جهت جلوگیری از گیر کردن کرکره در ریل",
+          "کددهی ریموت و نصب یوپی‌اس (UPS) برق اضطراری برای مواقع قطعی برق",
+          "روان‌کاری ریل‌ها، صداگیری تیغه‌ها و تعویض لاستیک انتهایی"
+        ],
+        "detailHtml": "\n        <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n          <div class=\"bg-gradient-to-l from-violet-50/70 to-white p-5 rounded-2xl border border-violet-100 mb-6\">\n            <h3 class=\"text-lg font-black text-brand-700 mb-2\">تعمیرات تخصصی انواع کرکره‌های برقی پارکینگ و فروشگاه در تهران</h3>\n            <p class=\"text-sm text-slate-600\">بالا نرفتن کرکره برقی یا خارج شدن تیغه‌ها از ریل، تردد وسایل نقلیه را فلج می‌کند. تکنسین‌های بهدون با تجهیزات کامل در کمترین زمان مشکل برقی و مکانیکی کرکره را مرتفع می‌سازند.</p>\n          </div>\n          <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n            <div class=\"flex flex-wrap items-center gap-3\">\n              <button type=\"button\" data-order-service=\"electric-shutter\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                درخواست تعمیر کرکره برقی\n              </button>\n              <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                تماس: ۰۹۳۳۳۲۵۶۸۸۵\n              </a>\n            </div>\n          </div>\n        </div>\n      "
+      }
+    ],
+    "comprehensiveGuide": "\n    <article class=\"mt-12 pt-10 border-t border-slate-200 text-slate-700 leading-relaxed text-justify space-y-8\" dir=\"rtl\">\n      <header class=\"text-center max-w-3xl mx-auto space-y-4 mb-10\">\n        <span class=\"inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-brand-50 text-brand-700 text-xs font-bold border border-brand-200\">\n          دانشنامه در، پنجره و شیشه در تهران\n        </span>\n        <h2 class=\"text-2xl md:text-3xl font-black text-slate-800 leading-tight\">\n          روش‌های رگلاژ، کاهش آلودگی صوتی و بهینه‌سازی انرژی با پنجره‌های دوجداره\n        </h2>\n      </header>\n    </article>\n  ",
+    "faq": [
+      {
+        "q": "آیا رگلاژ پنجره UPVC مانع عبور صدای سرسام‌آور خیابان می‌شود؟",
+        "a": "بله، در صورت رگلاژ اصولی و تعویض گسکت‌های لاستیکی، فشار لنگه روی چهارچوب یکنواخت شده و عبور صدا تا ۸۰٪ کاهش می‌یابد."
+      }
+    ]
+  },
+  "cleaning": {
+    "id": "cleaning",
+    "slug": "cleaning",
+    "persianSlug": "نظافت-مشاعات-ساختمان",
+    "aliases": [
+      "cleaning",
+      "wash",
+      "نظافت",
+      "نماشویی",
+      "سمپاشی"
+    ],
+    "title": "خدمات نظافت ساختمان، نماشویی و سم‌پاشی تخصصی در تهران | بهدون",
+    "titleEn": "Building Cleaning, Facade Washing & Pest Control in Tehran | Behdoon",
+    "metaDesc": "نظافت حرفه‌ای راه‌پله، پارکینگ، لابی و مشاعات، شستشوی نما با طناب بدون داربست (راپ‌اکسس)، مبل‌شویی و قالیشویی در محل، و سم‌پاشی سوسک و ساس با مواد استاندارد وزارت بهداشت.",
+    "subtitle": "نیروهای متعهد و آموزش‌دیده، مجهز به تجهیزات پیشرفته شستشو، شوینده‌های نانو و سموم بی‌خطر با گارانتی نتیجه.",
+    "subtitleEn": "Professional cleaning crews, rope-access facade washing, sofa/carpet shampooing, and certified pest extermination.",
+    "icon": "<svg class=\"w-10 h-10\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"M19 11H5m14 0a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2m14 0V9a2 2 0 0 0-2-2M5 11V9a2 2 0 0 1 2-2m0 0V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2M7 7h10\"/></svg>",
+    "subServices": [
+      {
+        "id": "staircase-cleaning",
+        "name": "نظافت راه‌پله و مشاعات",
+        "nameEn": "Staircase & Common Area Cleaning",
+        "slug": "staircase-cleaning",
+        "persianSlug": "نظافت-راه-پله-و-مشاعات",
+        "aliases": [
+          "staircase-cleaning",
+          "نظافت-پله",
+          "نظافت-مشاعات"
+        ],
+        "basePrice": 450000,
+        "shortDesc": "شستشوی پله‌ها، نرده، لابی، آسانسور و پارکینگ با مواد شوینده صنعتی استاندارد و ضدعفونی کامل",
+        "shortDescEn": "Staircase, railing, lobby, elevator, and parking deep wash with professional cleaning agents",
+        "features": [
+          "نظافت کامل پله‌ها و پاگردها از بالا به پایین با تی مپ مرغوب و کف‌سابی ملایم",
+          "دستمال‌کشی و جلادهی نرده‌های استیل، درهای ورودی و کابین آسانسور",
+          "شستشوی کف پارکینگ با مواد چربی‌زدا جهت رفع لکه‌های روغن موتور اتومبیل",
+          "شستشوی درب پارکینگ، آیفون، حیاط و تخلیه سطل‌های زباله مشاعات",
+          "اعزام نیروهای منظم، متعهد و دارای گواهی عدم سوء‌پیشینه"
+        ],
+        "detailHtml": "\n        <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n          <div class=\"bg-gradient-to-l from-emerald-50/70 to-white p-5 rounded-2xl border border-emerald-100 mb-6\">\n            <h3 class=\"text-lg font-black text-brand-700 mb-2\">نظافت دوره‌ای و اصولی مشاعات مجتمع‌های مسکونی و اداری تهران</h3>\n            <p class=\"text-sm text-slate-600\">مشاعات ساختمان نخستین جلوه بصری خانه شماست. پرسنل خدماتی بهدون طبق چک‌لیست مدون، تمیزی و درخشش سنگ پله‌ها و لابی را تضمین می‌کنند.</p>\n          </div>\n          <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n            <div class=\"flex flex-wrap items-center gap-3\">\n              <button type=\"button\" data-order-service=\"staircase-cleaning\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                ثبت درخواست نظافت مشاعات\n              </button>\n              <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                تماس: ۰۹۳۳۳۲۵۶۸۸۵\n              </a>\n            </div>\n          </div>\n        </div>\n      "
+      },
+      {
+        "id": "facade-cleaning",
+        "name": "نماشویی ساختمان",
+        "nameEn": "Building Facade Washing",
+        "slug": "facade-cleaning",
+        "persianSlug": "نماشویی-ساختمان",
+        "aliases": [
+          "facade-cleaning",
+          "نماشویی",
+          "شستشوی-نما"
+        ],
+        "basePrice": 2200000,
+        "shortDesc": "واترجت و سندبلاست نمای سنگی، آجری و کامپوزیت با طناب کاربری (راپ‌اکسس) بدون نیاز به داربست",
+        "shortDescEn": "High-pressure waterjet & sandblasting facade cleaning via industrial rope access (no scaffolding)",
+        "features": [
+          "شستشوی تخصصی نما با واترجت صنعتی ۳۰۰ بار بدون آسیب به بندکشی سنگ",
+          "اجرای سندبلاست تر با سیلیس مرغوب برای رفع دوده، جرم و شوره آجر و سنگ",
+          "شستشوی شیشه‌ها و کامپوزیت با ابر و تی نانو و مواد ضدجرم گریزی",
+          "پیچ و رولپلاک سنگ‌های نما با پیچ گالوانیزه ۶ سانتی و بتونه همرنگ",
+          "استفاده از کارشناسان راپ‌اکسس دارای مدرک بین‌المللی IRATA و بیمه حوادث"
+        ],
+        "detailHtml": "\n        <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n          <div class=\"bg-gradient-to-l from-sky-50/70 to-white p-5 rounded-2xl border border-sky-100 mb-6\">\n            <h3 class=\"text-lg font-black text-brand-700 mb-2\">نماشویی بدون داربست و پیچ و رولپلاک سنگ نما در تهران</h3>\n            <p class=\"text-sm text-slate-600\">آلودگی هوا و دوده در تهران به مرور زمان نمای ساختمان‌ها را کدر و تیره می‌کند. شستشو با سیستم طناب و واترجت، بدون ایجاد سدمعبر پیاده‌رو، درخشندگی اولیه سنگ و آجر را احیا می‌نماید.</p>\n          </div>\n          <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n            <div class=\"flex flex-wrap items-center gap-3\">\n              <button type=\"button\" data-order-service=\"facade-cleaning\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                درخواست بازدید و نماشویی\n              </button>\n              <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                مشاوره فنی: ۰۹۳۳۳۲۵۶۸۸۵\n              </a>\n            </div>\n          </div>\n        </div>\n      "
+      },
+      {
+        "id": "carpet-sofa-wash",
+        "name": "مبل‌شویی و قالیشویی در محل",
+        "nameEn": "On-site Sofa & Carpet Wash",
+        "slug": "carpet-sofa-wash",
+        "persianSlug": "مبل-شویی-در-محل",
+        "aliases": [
+          "carpet-sofa-wash",
+          "مبل-شویی",
+          "قالیشویی-در-محل"
+        ],
+        "basePrice": 700000,
+        "shortDesc": "شستشوی تخصصی مبلمان، تشک خوشخواب و فرش با دستگاه‌های مکنده قوی سه‌موتوره و خشک‌کن در محل",
+        "shortDescEn": "On-site sofa, mattress, and carpet extraction wash with powerful 3-motor vacuum equipment",
+        "features": [
+          "شستشوی انواع مبلمان راحتی، سلطنتی، چرم و مخمل با شامپو نانو آلمانی",
+          "مکش چرک‌آب با موتورهای مکنده وکیوم قوی و خشک شدن ظرف ۳ الی ۴ ساعت",
+          "لکه‌بری قوی چربی، جوهر، قهوه و لکه‌های کهنه بدون تغییر رنگ پارچه",
+          "شستشوی تشک دونفره و تک‌نفره خوشخواب و ضدعفونی با بخارشوی",
+          "شستشوی موکت‌های چسبیده و فرش‌های دستباف و ماشینی بدون جابجایی"
+        ],
+        "detailHtml": "\n        <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n          <div class=\"bg-gradient-to-l from-rose-50/70 to-white p-5 rounded-2xl border border-rose-100 mb-6\">\n            <h3 class=\"text-lg font-black text-brand-700 mb-2\">مبل‌شویی حرفه‌ای در منزل با دستگاه وکیوم در تهران</h3>\n            <p class=\"text-sm text-slate-600\">شستشوی مبلمان با دستگاه دریل فرچه‌ای و مکنده آب و خاک، آلودگی‌ها و مایت‌های نفوذ کرده در عمق اسفنج را به طور کامل تخلیه کرده و لطافت و بوی مطبوع را به خانه شما بازمی‌گرداند.</p>\n          </div>\n          <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n            <div class=\"flex flex-wrap items-center gap-3\">\n              <button type=\"button\" data-order-service=\"carpet-sofa-wash\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                ثبت سفارش مبل‌شویی در محل\n              </button>\n              <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                تماس: ۰۹۳۳۳۲۵۶۸۸۵\n              </a>\n            </div>\n          </div>\n        </div>\n      "
+      },
+      {
+        "id": "pest-control",
+        "name": "سم‌پاشی و ضدعفونی تخصصی",
+        "nameEn": "Professional Pest Control",
+        "slug": "pest-control",
+        "persianSlug": "سم-پاشی-ساختمان",
+        "aliases": [
+          "pest-control",
+          "سمپاشی",
+          "ریشه-کنی-ساس"
+        ],
+        "basePrice": 850000,
+        "shortDesc": "طعمه‌گذاری و ریشه‌کنی قطعی ساس، سوسک ریز کابینت و موش با سموم ترکیبی بدون بو و دارای تاییدیه بهداشت",
+        "shortDescEn": "Guaranteed pest control, odorless extermination of bedbugs, cockroaches, and rodents with certified formulas",
+        "features": [
+          "ریشه‌کنی قطعی سوسک ریز آشپزخانه (آلمانی) با ژل‌های طعمه‌گذاری بدون بو و بدون نیاز به ترک منزل",
+          "سم‌پاشی گازسوز و مایع تخصصی برای نابودی کامل ساس در تشک‌ها و درزهای تختخواب",
+          "طعمه‌گذاری و انسداد منافذ جهت ریشه‌کنی موش‌های فاضلاب شهری",
+          "استفاده از سموم پیرتروئید ارگانیک دارای تاییدیه وزارت بهداشت بدون خطر برای کودکان و حیوانات خانگی",
+          "ارائه ضمانت‌نامه کتبی تکرار رایگان در صورت مشاهده مجدد حشرات"
+        ],
+        "detailHtml": "\n        <div class=\"space-y-6 text-slate-700 leading-relaxed text-justify\">\n          <div class=\"bg-gradient-to-l from-amber-50/70 to-white p-5 rounded-2xl border border-amber-100 mb-6\">\n            <h3 class=\"text-lg font-black text-brand-700 mb-2\">سم‌پاشی بهداشتی و ریشه‌کنی تضمینی حشرات موذی در تهران</h3>\n            <p class=\"text-sm text-slate-600\">وجود ساس یا سوسک در خانه آرامش خانواده را مختل می‌کند. کارشناسان بهداشت بهدون با شناخت چرخه تخم‌گذاری حشرات، سم‌پاشی را به گونه‌ای انجام می‌دهند که تا آخرین نسل آفات ریشه‌کن گردند.</p>\n          </div>\n          <div class=\"bg-slate-50 border border-slate-200 rounded-2xl p-5 my-6\">\n            <div class=\"flex flex-wrap items-center gap-3\">\n              <button type=\"button\" data-order-service=\"pest-control\" class=\"bg-[#8B1C31] hover:bg-[#701627] text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all\">\n                ثبت درخواست سم‌پاشی تضمینی\n              </button>\n              <a href=\"tel:09333256885\" class=\"bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors\">\n                تماس فوری: ۰۹۳۳۳۲۵۶۸۸۵\n              </a>\n            </div>\n          </div>\n        </div>\n      "
+      }
+    ],
+    "comprehensiveGuide": "\n    <article class=\"mt-12 pt-10 border-t border-slate-200 text-slate-700 leading-relaxed text-justify space-y-8\" dir=\"rtl\">\n      <header class=\"text-center max-w-3xl mx-auto space-y-4 mb-10\">\n        <span class=\"inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-brand-50 text-brand-700 text-xs font-bold border border-brand-200\">\n          دانشنامه نظافت، نماشویی و بهداشت محیط در تهران\n        </span>\n        <h2 class=\"text-2xl md:text-3xl font-black text-slate-800 leading-tight\">\n          استانداردهای بهداشتی نظافت مشاعات، نماشویی با طناب و مبارزه با آفات خانگی\n        </h2>\n      </header>\n    </article>\n  ",
+    "faq": [
+      {
+        "q": "آیا سم‌پاشی سوسک ریز کابینت نیازمند جمع‌آوری ظروف آشپزخانه است؟",
+        "a": "خیر، با روش طعمه‌گذاری ژله‌ای نوین بهدون، هیچ نیازی به خالی کردن کابینت‌ها، شستشوی ظروف یا ترک منزل نیست."
+      }
+    ]
+  }
+}

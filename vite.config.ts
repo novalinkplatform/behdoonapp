@@ -14,6 +14,7 @@ const input: Record<string, string> = {
   orders: fileURLToPath(new URL('./orders.html', import.meta.url)),
   profile: fileURLToPath(new URL('./profile.html', import.meta.url)),
   careers: fileURLToPath(new URL('./careers.html', import.meta.url)),
+  services: fileURLToPath(new URL('./services.html', import.meta.url)),
 };
 
 // صفحه‌ی فروش قالب («خرید بهبار») فقط تبلیغ خودمان است، نه بخشی از محصولی که خریدار تحویل می‌گیرد.
@@ -34,6 +35,9 @@ function managementRewritePlugin() {
           if (path === '/management' || path.startsWith('/management/')) {
             const query = req.url.includes('?') ? '?' + req.url.split('?')[1] : '';
             req.url = '/management.html' + query;
+          } else if (path === '/services' || path.startsWith('/services/')) {
+            const query = req.url.includes('?') ? '?' + req.url.split('?')[1] : '';
+            req.url = '/services.html' + query;
           } else if (path === '/admin' || path.startsWith('/admin/')) {
             const query = req.url.includes('?') ? '?' + req.url.split('?')[1] : '';
             _res.writeHead(302, { Location: '/management' + query });

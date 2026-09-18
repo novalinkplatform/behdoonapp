@@ -21,6 +21,8 @@ import { initBehaviorTracking } from './utils/analytics.ts';
 import { pick } from './i18n/lang.ts';
 import { markAppReady } from './utils/appReady.ts';
 
+import { DEFAULT_LEGAL_PAGES } from './data/defaultLegalPages.ts';
+
 function currentSlug(): LegalPage['slug'] {
   if (location.pathname.startsWith('/terms')) return 'terms';
   if (location.pathname.startsWith('/privacy')) return 'privacy';
@@ -53,7 +55,8 @@ async function init(): Promise<void> {
   forceSiteLanguageIfSingleMode(settings.language_mode);
   applyTheme(settings.theme);
   applySiteSeoSettings(settings.seo);
-  const page = settings.legal_pages?.[currentSlug()] ?? null;
+  const slug = currentSlug();
+  const page = settings.legal_pages?.[slug] ?? DEFAULT_LEGAL_PAGES[slug] ?? null;
   renderApp(page, settings);
   markAppReady();
   applyBranding(settings.branding);

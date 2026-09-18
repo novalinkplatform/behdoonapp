@@ -1544,27 +1544,139 @@ body.modal-open {
 }
 
 @media (max-width: 768px) {
-  .category-accordion-header {
-    padding: 1rem;
+  /* 2x2 Square Cards Layout on Mobile */
+  .category-accordion-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 
-  .category-header-main {
-    gap: 10px;
+  .category-accordion-card {
+    border-radius: 16px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .category-icon-box {
+  /* When collapsed: neat square card */
+  .category-accordion-card:not(.is-open) {
+    grid-column: span 1;
+    display: flex;
+    flex-direction: column;
+    aspect-ratio: 1 / 1;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0;
+  }
+
+  .category-accordion-card:not(.is-open) .category-accordion-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0.85rem 0.6rem;
+    height: 100%;
+    width: 100%;
+    gap: 6px;
+  }
+
+  .category-accordion-card:not(.is-open) .category-header-main {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .category-accordion-card:not(.is-open) .category-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+  }
+
+  .category-accordion-card:not(.is-open) .category-icon-box svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .category-accordion-card:not(.is-open) .category-title-row {
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .category-accordion-card:not(.is-open) .category-title {
+    font-size: 0.86rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.35;
+  }
+
+  .category-accordion-card:not(.is-open) .category-badge {
+    font-size: 0.68rem;
+    padding: 1px 6px;
+  }
+
+  .category-accordion-card:not(.is-open) .category-subtitle,
+  .category-accordion-card:not(.is-open) .category-toggle-indicator {
+    display: none;
+  }
+
+  /* When open: spans both columns to show sub-services cleanly underneath */
+  .category-accordion-card.is-open {
+    grid-column: 1 / -1;
+    aspect-ratio: auto;
+    background: rgba(255, 255, 255, 0.98);
+    border-color: var(--primary, #7c3aed);
+    box-shadow: 0 10px 28px rgba(124, 58, 237, 0.14);
+  }
+
+  .category-accordion-card.is-open .category-accordion-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    text-align: right;
+    padding: 1rem 1.15rem;
+    width: 100%;
+  }
+
+  .category-accordion-card.is-open .category-header-main {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .category-accordion-card.is-open .category-icon-box {
     width: 44px;
     height: 44px;
     border-radius: 12px;
   }
 
-  .category-icon-box svg {
+  .category-accordion-card.is-open .category-icon-box svg {
     width: 22px;
     height: 22px;
   }
 
-  .category-title {
-    font-size: 1.02rem;
+  .category-accordion-card.is-open .category-title-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .category-accordion-card.is-open .category-title {
+    font-size: 1rem;
+  }
+
+  .category-accordion-card.is-open .category-subtitle {
+    display: block;
+    font-size: 0.78rem;
+  }
+
+  .category-accordion-card.is-open .category-toggle-indicator {
+    display: flex;
+  }
+
+  .category-accordion-card.is-open .category-accordion-panel {
+    padding: 0 1rem 1.25rem;
   }
 
   .subcategories-grid {
@@ -1590,7 +1702,14 @@ body.modal-open {
   }
 
   .request-wizard-modal-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
     padding: 0 !important;
+    z-index: 10000 !important;
+    background: var(--bg, #f8fafc) !important;
   }
 
   .request-wizard-modal-dialog {
@@ -1600,6 +1719,9 @@ body.modal-open {
     max-height: 100dvh !important;
     border-radius: 0 !important;
     border: none !important;
+    box-shadow: none !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   .request-wizard-modal-topbar {
@@ -1608,8 +1730,10 @@ body.modal-open {
   }
 
   .request-wizard-modal-body {
+    flex: 1 !important;
+    overflow-y: auto !important;
     padding: 1rem;
-    padding-bottom: 2rem;
+    padding-bottom: 3rem;
   }
 }
 

@@ -34,25 +34,25 @@ export function renderSaleView(): string {
       <div class="nobex-hero-container">
         <div class="nobex-hero-badge">
           <span class="nobex-badge-dot"></span>
-          <span>اولین سامانه اختصاصی اسباب‌کشی و حمل بار با معماری مدرن Node.js</span>
+          <span>سامانه پیشرفته خدمات فنی و مهندسی ساختمان با معماری ابری و مدرن</span>
         </div>
 
         <h1 class="nobex-hero-title">
-          اسکریپت و سامانه پیشرفته <span class="nobex-gold-text">بـه‌بـار</span>
+          پلتفرم و سامانه هوشمند <span class="nobex-gold-text">بـه‌دون</span>
         </h1>
 
         <p class="nobex-hero-desc">
-          راهکار یکپارچه و هوشمند برای شرکت‌های باربری، اتوبار و ترابری شهری با پنل مدیریت فوق‌سریع و اپلیکیشن اختصاصی وب ثبت سفارش آنلاین مشتریان با نقشه زنده و سیستم محاسبه آنی.
+          راهکار یکپارچه و مدرن برای شرکت‌های خدمات فنی، تأسیسات و تعمیرات ساختمانی تهران با پنل مدیریت فوق‌سریع و اپلیکیشن وب ثبت آنلاین سفارشات تکنسین با نقشه زنده و سیستم محاسبه آنی هزینه.
         </p>
 
         <div class="nobex-hero-actions">
-          <a href="https://www.zhaket.com/web/behbar-script" target="_blank" rel="noopener" class="nobex-btn-gold nobex-btn-lg">
-            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-            <span>خرید از مارکت بزرگ ژاکت</span>
-          </a>
-          <a href="#showcase" class="nobex-btn-glass nobex-btn-lg">
+          <a href="#showcase" class="nobex-btn-gold nobex-btn-lg">
             <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-            <span>مشاهده پیش‌نمایش زنده</span>
+            <span>مشاهده پیش‌نمایش سامانه بهدون</span>
+          </a>
+          <a href="/management" class="nobex-btn-glass nobex-btn-lg">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>ورود به پنل مدیریت</span>
           </a>
         </div>
 
@@ -63,18 +63,18 @@ export function renderSaleView(): string {
               <span class="nobex-dot red"></span>
               <span class="nobex-dot yellow"></span>
               <span class="nobex-dot green"></span>
-              <span class="nobex-stage-title">پنل مدیریت و ناوبری ناوگان (Management Panel)</span>
+              <span class="nobex-stage-title">پنل مدیریت اعزام و تکنسین‌ها (Management Panel)</span>
             </div>
-            <img src="/admin_showcase.png" alt="پیش‌نمایش پنل مدیریت بهبار" class="nobex-stage-img" />
+            <img src="/admin_showcase.png" alt="پیش‌نمایش پنل مدیریت بهدون" class="nobex-stage-img" />
           </div>
           <div class="nobex-stage-card nobex-stage-card-client">
             <div class="nobex-stage-header">
               <span class="nobex-dot red"></span>
               <span class="nobex-dot yellow"></span>
               <span class="nobex-dot green"></span>
-              <span class="nobex-stage-title">وب‌اپلیکیشن سفارش مشتری (Client App)</span>
+              <span class="nobex-stage-title">وب‌اپلیکیشن ثبت درخواست مشتریان (Client App)</span>
             </div>
-            <img src="/client_showcase.png" alt="پیش‌نمایش سفارش مشتری بهبار" class="nobex-stage-img" />
+            <img src="/client_showcase.png" alt="پیش‌نمایش سفارش مشتری بهدون" class="nobex-stage-img" />
           </div>
         </div>
       </div>
@@ -84,9 +84,9 @@ export function renderSaleView(): string {
     <section id="features" class="nobex-section">
       <div class="nobex-container">
         <div class="nobex-section-head">
-          <span class="nobex-section-tag">چرا اسکریپت بهبار؟</span>
+          <span class="nobex-section-tag">چرا پلتفرم بهدون؟</span>
           <h2 class="nobex-section-title">امکانات استاندارد، پرسرعت و بدون رقیب</h2>
-          <p class="nobex-section-subtitle">سامانه‌ای مستقل و مدرن، بدون وابستگی‌های سنگین و آماده راه‌اندازی با یک کلیک</p>
+          <p class="nobex-section-subtitle">سامانه‌ای مستقل و مدرن، بدون وابستگی‌های سنگین و آماده بهره‌برداری فوری</p>
         </div>
 
         <div class="nobex-grid-3">
@@ -94,16 +94,16 @@ export function renderSaleView(): string {
             <div class="nobex-card-icon-wrap">
               <svg viewBox="0 0 24 24" width="28" height="28" stroke="#ffae11" stroke-width="2" fill="none"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
             </div>
-            <h3 class="nobex-card-title">هسته مستقل و پرسرعت Node.js</h3>
-            <p class="nobex-card-text">معماری سبک بدون نیاز به سامانه‌های سنگین سنتی، با مصرف بسیار پایین رم و منابع سرور و بازدهی حداکثری در ترافیک بالا.</p>
+            <h3 class="nobex-card-title">هسته مستقل و پرسرعت ابری</h3>
+            <p class="nobex-card-text">معماری سبک بدون نیاز به سامانه‌های سنگین سنتی، با مصرف بسیار پایین منابع سرور و بازدهی حداکثری در ترافیک بالای کاربران.</p>
           </div>
 
           <div class="nobex-card">
             <div class="nobex-card-icon-wrap">
               <svg viewBox="0 0 24 24" width="28" height="28" stroke="#ffae11" stroke-width="2" fill="none"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
             </div>
-            <h3 class="nobex-card-title">نقشه ماهواره‌ای و زنده</h3>
-            <p class="nobex-card-text">انتخاب مبدأ و مقصد روی نقشه اختصاصی با محاسبه خودکار مسافت، پیش‌بینی زمان سفر و محاسبه دقیق هزینه بر اساس تعرفه ناوگان.</p>
+            <h3 class="nobex-card-title">نقشه زنده و هوشمند تهران</h3>
+            <p class="nobex-card-text">انتخاب دقیق موقعیت ملک روی نقشه اختصاصی تهران با تفکیک ۲۲ منطقه، پلاک و طبقه، و محاسبه خودکار زمان اعزام تکنسین.</p>
           </div>
 
           <div class="nobex-card">
@@ -111,22 +111,22 @@ export function renderSaleView(): string {
               <svg viewBox="0 0 24 24" width="28" height="28" stroke="#ffae11" stroke-width="2" fill="none"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
             </div>
             <h3 class="nobex-card-title">ورود سریع با پیامک یکبار مصرف (OTP)</h3>
-            <p class="nobex-card-text">پشتیبانی از ارائه‌دهندگان پیامکی معتبر (مانند کاوه‌نگار، پیام‌اس‌ام‌اس و ملی‌پیامک) برای ورود امن و تایید آنی شماره تماس کاربران.</p>
+            <p class="nobex-card-text">پشتیبانی از ارائه‌دهندگان پیامکی معتبر برای ورود امن و تایید آنی شماره تماس کاربران و ارسال پیامک وضعیت اعزام تکنسین.</p>
           </div>
 
           <div class="nobex-card">
             <div class="nobex-card-icon-wrap">
               <svg viewBox="0 0 24 24" width="28" height="28" stroke="#ffae11" stroke-width="2" fill="none"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
             </div>
-            <h3 class="nobex-card-title">پنل مدیریت ناوگان و رانندگان</h3>
-            <p class="nobex-card-text">مدیریت یکپارچه سفارش‌ها، تخصیص هوشمند خودرو و کارگران، مشاهده موقعیت خودروها و گزارش‌گیری پیشرفته از عملکرد کسب‌وکار.</p>
+            <h3 class="nobex-card-title">پنل مدیریت اعزام و تکنسین‌ها</h3>
+            <p class="nobex-card-text">مدیریت یکپارچه سفارش‌ها، تخصیص هوشمند تکنسین‌های مجرب، مشاهده گزارش‌های فنی و گزارش‌گیری پیشرفته از عملکرد کسب‌وکار.</p>
           </div>
 
           <div class="nobex-card">
             <div class="nobex-card-icon-wrap">
               <svg viewBox="0 0 24 24" width="28" height="28" stroke="#ffae11" stroke-width="2" fill="none"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
             </div>
-            <h3 class="nobex-card-title">پشتیبان‌گیری خودکار در گوگل درایو</h3>
+            <h3 class="nobex-card-title">پشتیبان‌گیری خودکار و امنیت ابری</h3>
             <p class="nobex-card-text">امنیت صددرصدی داده‌ها؛ پایگاه داده سامانه به‌طور منظم پشتیبان‌گیری شده و نسخه محافظت‌شده در فضای ابری ذخیره می‌گردد.</p>
           </div>
 
@@ -134,8 +134,8 @@ export function renderSaleView(): string {
             <div class="nobex-card-icon-wrap">
               <svg viewBox="0 0 24 24" width="28" height="28" stroke="#ffae11" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </div>
-            <h3 class="nobex-card-title">نصب خودکار با یک دستور</h3>
-            <p class="nobex-card-text">اسکریپت نصب جادویی لینوکس؛ کلیه نیازمندی‌ها، Nginx، SSL و سرویس‌ها را در کمتر از ۳ دقیقه بر روی سرور شما پیاده‌سازی می‌کند.</p>
+            <h3 class="nobex-card-title">نصب خودکار و بهینه‌سازی شده</h3>
+            <p class="nobex-card-text">استقرار آنی بر بستر کلادفلر و لینوکس با SSL خودکار و سرعت بارگذاری فوق‌العاده در سرتاسر ایران.</p>
           </div>
         </div>
       </div>

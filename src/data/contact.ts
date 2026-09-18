@@ -1,9 +1,12 @@
 import { localeDigits } from '../i18n/lang.ts';
 import type { ContactSettings } from '../utils/dynamicContent.ts';
 
+export const SUPPORT_PHONE = '09333256885';
+export const SUPPORT_PHONE_DISPLAY = '۰۹۳۳۳۲۵۶۸۸۵';
+
 const FALLBACK_CONTACT: ContactSettings = {
-  phoneDisplay: '021-22345678',
-  phoneTelHref: 'tel:02122345678',
+  phoneDisplay: SUPPORT_PHONE,
+  phoneTelHref: `tel:${SUPPORT_PHONE}`,
   socialLinks: [
     { id: 'wa1', platform: 'whatsapp', label: 'واتساپ', url: 'https://wa.me/989333256885' },
     { id: 'tg1', platform: 'telegram', label: 'تلگرام', url: 'https://t.me/behdoon' },
