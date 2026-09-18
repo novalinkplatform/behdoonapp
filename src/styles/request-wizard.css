@@ -888,17 +888,18 @@
   position: fixed;
   inset: 0;
   z-index: 99999;
-  background: rgba(15, 23, 42, 0.72);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(15, 23, 42, 0.76);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1.25rem;
-  overflow-y: auto;
+  overflow: hidden;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  overscroll-behavior: contain;
 }
 
 .request-wizard-modal-overlay.is-open,
@@ -916,19 +917,21 @@
 
 body.modal-open {
   overflow: hidden !important;
+  touch-action: none;
 }
 
 .request-wizard-modal-dialog {
   position: relative;
   width: 100%;
-  max-width: 800px;
+  max-width: 840px;
+  height: min(92vh, 860px);
   max-height: 92vh;
   display: flex;
   flex-direction: column;
   background: var(--surface, #ffffff);
   border: 1px solid var(--border, #e2e8f0);
   border-radius: 24px;
-  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.12);
   overflow: hidden;
   animation: wizardModalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -1586,17 +1589,27 @@ body.modal-open {
     grid-template-columns: 1fr 1fr;
   }
 
+  .request-wizard-modal-overlay {
+    padding: 0 !important;
+  }
+
   .request-wizard-modal-dialog {
-    max-height: 96vh;
-    border-radius: 18px;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100vh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+    border: none !important;
   }
 
   .request-wizard-modal-topbar {
-    padding: 1rem 1.25rem;
+    padding: 0.85rem 1.1rem;
+    border-radius: 0;
   }
 
   .request-wizard-modal-body {
     padding: 1rem;
+    padding-bottom: 2rem;
   }
 }
 

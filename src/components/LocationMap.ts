@@ -45,6 +45,11 @@ export function initLocationMap(
   const container = document.getElementById(id);
   if (!container) return null;
 
+  // اگر نقشه قبلاً روی این کانتینر ایجاد شده باشد، کنترلر موجود را بازمی‌گردانیم تا نقشه مجدداً لود نشود
+  if ((container as any)._locationMapController) {
+    return (container as any)._locationMapController;
+  }
+
   // نقشه صرفاً بر روی محدوده شهر تهران قفل شده است و خروج از آن ناممکن است
   const map = L.map(id, {
     center: TEHRAN_CENTER,
@@ -114,7 +119,7 @@ export function initLocationMap(
 
   window.setTimeout(() => map.invalidateSize(), 100);
 
-  return {
+  const controller: LocationMapController = {
     setCenter: (lat, lng, zoom = 13) => {
       if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
       const [clampedLat, clampedLng] = clampToTehran(lat, lng);
@@ -136,9 +141,9 @@ export function initLocationMap(
       markInteraction();
     },
     refresh: () => {
-      map.invalidateSize();
-      window.setTimeout(() => map.invalidateSize(), 50);
-      window.setTimeout(() => map.invalidateSize(), 200);
+      window.requestAnimationFrame(() => {
+        map.invalidateSize({ pan: false });
+      });
     },
     setBoundsMode: () => {
       map.setMaxBounds(TEHRAN_BOUNDS);
@@ -160,4 +165,7 @@ export function initLocationMap(
       map.setView(TEHRAN_CENTER, 12, { animate: true });
     },
   };
+
+  (container as any)._locationMapController = controller;
+  return controller;
 }

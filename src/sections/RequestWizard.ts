@@ -2,7 +2,7 @@ import { CATEGORY_VEHICLE_IDS, serviceCategories, DEFAULT_VEHICLE_TYPES } from '
 import { SUBCATEGORY_DETAILS_MAP } from '../components/ServiceCategoriesAccordion.ts';
 import type { VehicleTypeSetting, ServiceCitiesSettings, ServiceCategoriesSettings } from '../utils/dynamicContent.ts';
 import { icons } from '../components/icons.ts';
-import { renderLocationMap, initLocationMap } from '../components/LocationMap.ts';
+import { renderLocationMap, initLocationMap, type LocationMapController } from '../components/LocationMap.ts';
 import type { MapSettings } from '../utils/mapProvider.ts';
 import { renderCalendarPicker, initCalendarPicker } from '../components/PersianCalendar.ts';
 import { renderTimePicker, initTimePicker, formatTime } from '../components/TimePicker.ts';
@@ -627,7 +627,13 @@ export function initRequestWizard(
   if (cachedPhone) phoneInput.value = cachedPhone;
 
   let locationMap: ReturnType<typeof initLocationMap> = null;
-  locationMap = initLocationMap('wizard-location-map', undefined, mapSettings);
+
+  function ensureLocationMap(): LocationMapController | null {
+    if (!locationMap) {
+      locationMap = initLocationMap('wizard-location-map', undefined, mapSettings);
+    }
+    return locationMap;
+  }
 
   const calendar = initCalendarPicker('wizard-calendar', { maxDaysAhead: 7 });
   const timePicker = initTimePicker('wizard-time');
@@ -755,7 +761,10 @@ export function initRequestWizard(
     }
     updateStepUI();
 
-    if (card) {
+    const modalBody = card.closest('.request-wizard-modal-body');
+    if (modalBody) {
+      modalBody.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (card) {
       const rect = card.getBoundingClientRect();
       if (rect.top < 64 || rect.top > 220) {
         const targetY = window.pageYOffset + rect.top - 68;
@@ -787,11 +796,12 @@ export function initRequestWizard(
     updateNextButtonLabel();
 
     if (step.id === 'location') {
-      locationMap?.refresh();
+      const lm = ensureLocationMap();
+      lm?.refresh();
     }
 
     if (step.id === 'estimate') {
-      const locPos = locationMap?.getPosition();
+      const locPos = ensureLocationMap()?.getPosition();
       const pricing = resolveVehiclePricing(state.vehicleId);
       const estimateInput: CostEstimateInput = {
         ...pricing,
@@ -825,7 +835,8 @@ export function initRequestWizard(
       return valid;
     }
     if (step.id === 'location') {
-      const hasInteracted = locationMap?.hasInteracted() ?? false;
+      const lm = ensureLocationMap();
+      const hasInteracted = lm?.hasInteracted() ?? false;
       const mapError = document.getElementById('wizard-location-map-error');
       if (mapError) mapError.hidden = hasInteracted;
       return hasInteracted;
@@ -876,7 +887,7 @@ export function initRequestWizard(
       return;
     }
 
-    const locPos = locationMap?.getPosition();
+    const locPos = ensureLocationMap()?.getPosition();
     const addressInput = document.getElementById('wizard-location-address') as HTMLInputElement | null;
     const address = addressInput?.value.trim() || '';
     const notesInput = document.getElementById('wizard-location-notes') as HTMLTextAreaElement | null;
