@@ -31,8 +31,15 @@
    فاصله بزرگ بالای هیرو دیگر لازم نیست — یک فاصله کم و ظریف کافی است تا از استوری جدا شود.
    از ~ (نه +) استفاده شده چون خود StoriesStrip.ts یک #story-viewer مخفی هم بین نوار استوری و
    main-content رندر می‌کند — یعنی main-content همسایه‌ی مستقیم نیست، فقط یک همسایه‌ی بعدی است. */
-.stories-strip-wrap ~ #main-content .hero-inner {
+.stories-strip-wrap ~ #main-content .hero-inner,
+.hero-slider-wrap ~ #main-content .hero-inner {
   padding-top: var(--space-4);
+}
+
+@media (max-width: 768px) {
+  .hero-slider-wrap ~ #main-content .hero-inner {
+    padding-top: 1rem;
+  }
 }
 
 .hero-content {
