@@ -1,4 +1,6 @@
 import { icons } from '../components/icons.ts';
+import { icons as publicIcons } from '../../components/icons.ts';
+import { applyTheme } from '../../utils/theme.ts';
 import {
   fetchSettings,
   updateSetting,
@@ -103,65 +105,171 @@ interface GoogleDrivePluginConfig {
 interface ThemeField {
   key: string;
   label: string;
+  desc: string;
   group: string;
 }
 
 const THEME_FIELDS: ThemeField[] = [
-  { key: 'primary', label: 'رنگ اصلی', group: 'برند اصلی' },
-  { key: 'primaryDark', label: 'رنگ اصلی (تیره)', group: 'برند اصلی' },
-  { key: 'secondary', label: 'رنگ ثانویه', group: 'برند اصلی' },
-  { key: 'secondaryLight', label: 'رنگ ثانویه (روشن)', group: 'برند اصلی' },
-  { key: 'background', label: 'پس‌زمینه', group: 'پس‌زمینه و متن' },
-  { key: 'surface', label: 'سطح (کارت‌ها)', group: 'پس‌زمینه و متن' },
-  { key: 'surfaceAlt', label: 'سطح جایگزین', group: 'پس‌زمینه و متن' },
-  { key: 'text', label: 'متن', group: 'پس‌زمینه و متن' },
-  { key: 'muted', label: 'متن کم‌رنگ', group: 'پس‌زمینه و متن' },
-  { key: 'border', label: 'خط دور', group: 'پس‌زمینه و متن' },
-  { key: 'success', label: 'موفقیت', group: 'وضعیت‌ها' },
-  { key: 'successDark', label: 'موفقیت (تیره)', group: 'وضعیت‌ها' },
-  { key: 'successBg', label: 'پس‌زمینه موفقیت', group: 'وضعیت‌ها' },
-  { key: 'warning', label: 'هشدار', group: 'وضعیت‌ها' },
-  { key: 'callGreen', label: 'رنگ تماس/واتس‌اپ', group: 'تماس' },
-  { key: 'callGreenDark', label: 'رنگ تماس (تیره)', group: 'تماس' },
-  { key: 'accentPurple', label: 'رنگ تاکیدی', group: 'سایر' },
-  { key: 'accentPurpleLight', label: 'رنگ تاکیدی (روشن)', group: 'سایر' },
-  { key: 'accentPurpleLightHover', label: 'رنگ تاکیدی (هاور)', group: 'سایر' },
-  { key: 'gooseGreen', label: 'رنگ نشان‌های شماره‌دار', group: 'سایر' },
-  { key: 'gooseGreenLight', label: 'رنگ نشان‌های شماره‌دار (روشن)', group: 'سایر' },
+  { key: 'primary', label: 'رنگ اصلی برند', desc: 'دکمه‌های اقدام، المان‌های شاخص، آیکون‌ها و لینک‌های اصلی', group: 'رنگ‌های اصلی' },
+  { key: 'secondary', label: 'رنگ مکمل و ثانویه', desc: 'بج‌های تایید، گرادیان‌ها و دکمه‌های فرعی', group: 'رنگ‌های اصلی' },
+  { key: 'background', label: 'پس‌زمینه سایت', desc: 'رنگ کلی فضای خالی و پس‌زمینه صفحات', group: 'سطوح و متون' },
+  { key: 'surface', label: 'سطح کارت‌ها و فرم‌ها', desc: 'پس‌زمینه کارت‌های خدمات، کادرها و پنل‌ها', group: 'سطوح و متون' },
+  { key: 'text', label: 'رنگ متون اصلی', desc: 'تیترها و پاراگراف‌های اصلی با کنتراست خوانا', group: 'سطوح و متون' },
+  { key: 'muted', label: 'متن کم‌رنگ و راهنما', desc: 'توضیحات تکمیلی، زیرعنوان‌ها و راهنمای فیلدها', group: 'سطوح و متون' },
+  { key: 'border', label: 'خطوط دور و کادرها', desc: 'حاشیه کارت‌ها، جداکننده‌ها و لبه‌های فیلدها', group: 'سطوح و متون' },
+  { key: 'callGreen', label: 'رنگ تماس و واتس‌اپ', desc: 'دکمه‌های تماس تلفنی، واتس‌اپ و پشتیبانی فوری', group: 'اقدام و هشدار' },
+  { key: 'warning', label: 'رنگ فوریت و هشدار', desc: 'نشان‌های فوریت اعزام، تخفیف‌ها و گارانتی کتبی', group: 'اقدام و هشدار' },
 ];
 
 const THEME_DEFAULTS: Record<string, string> = {
-  primary: '#1656c9',
-  primaryDark: '#0f3f9c',
-  secondary: '#3b7ff0',
-  secondaryLight: '#e9f0fd',
-  background: '#fdfcfa',
-  surface: '#f6f5f1',
-  surfaceAlt: '#eeece5',
-  text: '#1c1b18',
-  muted: '#78766f',
-  border: '#e3e1d9',
-  success: '#4a5940',
-  successDark: '#363f2e',
-  successBg: '#eef1e9',
-  warning: '#a3714c',
-  callGreen: '#008080',
-  callGreenDark: '#005f5f',
-  accentPurple: '#8b5cf6',
-  accentPurpleLight: '#f2ecfd',
-  accentPurpleLightHover: '#e8ddfb',
-  gooseGreen: '#008080',
-  gooseGreenLight: '#d9efee',
+  primary: '#7c3aed',
+  secondary: '#8b5cf6',
+  background: '#f8fafc',
+  surface: '#ffffff',
+  text: '#0f172a',
+  muted: '#64748b',
+  border: '#e2e8f0',
+  callGreen: '#059669',
+  warning: '#ea580c',
 };
+
+export interface ThemePreset {
+  id: string;
+  name: string;
+  badge: string;
+  colors: Record<string, string>;
+}
+
+const THEME_PRESETS: ThemePreset[] = [
+  {
+    id: 'behdoon_purple',
+    name: 'بنفش مدرن بهدون (پیش‌فرض)',
+    badge: '🔮 رسمی',
+    colors: {
+      primary: '#7c3aed',
+      secondary: '#8b5cf6',
+      background: '#f8fafc',
+      surface: '#ffffff',
+      text: '#0f172a',
+      muted: '#64748b',
+      border: '#e2e8f0',
+      callGreen: '#059669',
+      warning: '#ea580c',
+    },
+  },
+  {
+    id: 'emerald_technic',
+    name: 'سبز زمردی و خدمات تأسیسات',
+    badge: '🌿 فنی',
+    colors: {
+      primary: '#059669',
+      secondary: '#10b981',
+      background: '#f8fafc',
+      surface: '#ffffff',
+      text: '#064e3b',
+      muted: '#6b7280',
+      border: '#d1fae5',
+      callGreen: '#047857',
+      warning: '#d97706',
+    },
+  },
+  {
+    id: 'ocean_blue',
+    name: 'آبی اقیانوسی و شرکتی',
+    badge: '🌊 مدرن',
+    colors: {
+      primary: '#0284c7',
+      secondary: '#38bdf8',
+      background: '#f0f9ff',
+      surface: '#ffffff',
+      text: '#0c4a6e',
+      muted: '#64748b',
+      border: '#bae6fd',
+      callGreen: '#059669',
+      warning: '#e11d48',
+    },
+  },
+  {
+    id: 'warm_amber',
+    name: 'نارنجی ساختمانی و پرانرژی',
+    badge: '⚡ پرانرژی',
+    colors: {
+      primary: '#ea580c',
+      secondary: '#f97316',
+      background: '#fff7ed',
+      surface: '#ffffff',
+      text: '#431407',
+      muted: '#78716c',
+      border: '#fed7aa',
+      callGreen: '#059669',
+      warning: '#dc2626',
+    },
+  },
+  {
+    id: 'dark_luxury',
+    name: 'تاریک شیشه‌ای و نایت‌مود',
+    badge: '🌙 Dark',
+    colors: {
+      primary: '#8b5cf6',
+      secondary: '#a78bfa',
+      background: '#0b0f19',
+      surface: '#111827',
+      text: '#f9fafb',
+      muted: '#9ca3af',
+      border: '#1f2937',
+      callGreen: '#10b981',
+      warning: '#f59e0b',
+    },
+  },
+];
+
+export interface TypographySettings {
+  fontFamily: string;
+  fontScale: string;
+  persianDigits: boolean;
+  fontSmoothing: boolean;
+}
+
+const TYPOGRAPHY_FONTS: { id: string; name: string; desc: string }[] = [
+  { id: 'vazirmatn', name: 'وزیرمتن (Vazirmatn)', desc: 'قلم پیش‌فرض و استاندارد وب فارسی، فوق‌العاده خوانا و مدرن' },
+  { id: 'yekan', name: 'ایران یکان / یکان‌بخش (Yekan Bakh)', desc: 'قلم رسمی، هندسی و بسیار محبوب در اپلیکیشن‌های مدرن ایرانی' },
+  { id: 'dana', name: 'دانا (Dana)', desc: 'قلم یکپارچه، هندسی و خلاقانه با توازن بالا در تیترها' },
+  { id: 'shabnam', name: 'شبنم (Shabnam)', desc: 'قلم نرم با زوایای گرد، چشم‌نواز و صمیمی' },
+  { id: 'sahel', name: 'ساحل (Sahel)', desc: 'قلم سنتی، مطبوعاتی و باوقار' },
+  { id: 'iransans', name: 'ایران‌سنس (IRANSans)', desc: 'قلم کلاسیک سازمانی و شرکتی' },
+  { id: 'system', name: 'قلم پیش‌فرض سیستم‌عامل (System UI)', desc: 'بدون دانلود فونت وب، استفاده از فونت پیش‌فرض دستگاه' },
+];
+
+export interface CoreSocialItem {
+  id: string;
+  name: string;
+  nameEn: string;
+  brandColor: string;
+  placeholder: string;
+  iconSvg: string;
+}
+
+const CORE_SOCIAL_LIST: CoreSocialItem[] = [
+  { id: 'whatsapp', name: 'واتس‌اپ (WhatsApp)', nameEn: 'WhatsApp', brandColor: '#25D366', placeholder: 'https://wa.me/989333256885 یا ۰۹۳۳۳۲۵۶۸۸۵', iconSvg: publicIcons.whatsappFilled },
+  { id: 'telegram', name: 'تلگرام (Telegram)', nameEn: 'Telegram', brandColor: '#229ED9', placeholder: 'https://t.me/behdoon_ir یا @behdoon_ir', iconSvg: publicIcons.telegramFilled },
+  { id: 'instagram', name: 'اینستاگرام (Instagram)', nameEn: 'Instagram', brandColor: '#E4405F', placeholder: 'https://instagram.com/behdoon.ir یا behdoon.ir', iconSvg: publicIcons.instagramFilled },
+  { id: 'bale', name: 'پیام‌رسان بله (Bale)', nameEn: 'Bale', brandColor: '#15803D', placeholder: 'https://ble.ir/behdoon یا @behdoon', iconSvg: publicIcons.baleFilled },
+  { id: 'eitaa', name: 'پیام‌رسان ایتا (Eitaa)', nameEn: 'Eitaa', brandColor: '#F97316', placeholder: 'https://eitaa.com/behdoon یا @behdoon', iconSvg: publicIcons.eitaaFilled },
+  { id: 'rubika', name: 'روبیکا (Rubika)', nameEn: 'Rubika', brandColor: '#8B5CF6', placeholder: 'https://rubika.ir/behdoon یا @behdoon', iconSvg: publicIcons.rubikaFilled },
+  { id: 'aparat', name: 'آپارات (Aparat)', nameEn: 'Aparat', brandColor: '#EA1D5D', placeholder: 'https://aparat.com/behdoon', iconSvg: publicIcons.aparatFilled },
+  { id: 'linkedin', name: 'لینکدین (LinkedIn)', nameEn: 'LinkedIn', brandColor: '#0A66C2', placeholder: 'https://linkedin.com/company/behdoon', iconSvg: publicIcons.linkedinFilled },
+];
 
 const SETTINGS_TABS: { id: string; label: string; permission: Permission }[] = [
   { id: 'pages', label: 'صفحات سایت', permission: 'settings' },
   { id: 'sliders', label: 'اسلایدر موبایل و وب‌سایت', permission: 'settings' },
-  { id: 'language', label: 'زبان', permission: 'settings' },
   { id: 'general', label: 'نام سایت و فوتر', permission: 'settings' },
-  { id: 'map', label: 'نقشه', permission: 'settings' },
-  { id: 'contact', label: 'تماس و شبکه‌های اجتماعی', permission: 'settings' },
   { id: 'theme', label: 'رنگ‌بندی و تم', permission: 'settings' },
+  { id: 'typography', label: 'تنظیمات فونت و قلم', permission: 'settings' },
+  { id: 'social', label: 'شبکه‌های اجتماعی', permission: 'settings' },
+  { id: 'contact', label: 'تماس و دکمه‌ها', permission: 'settings' },
+  { id: 'map', label: 'نقشه', permission: 'settings' },
+  { id: 'language', label: 'زبان', permission: 'settings' },
   { id: 'license', label: 'لایسنس', permission: 'settings' },
   { id: 'backup-update', label: 'پشتیبان‌گیری و به‌روزرسانی', permission: 'settings' },
 ];
@@ -391,21 +499,12 @@ export function renderSettingsView(): string {
 
       <div class="editor-sidebar-card">
         <div class="card-header-action">
-          <h3 style="margin: 0;">شبکه‌های اجتماعی</h3>
-          <button type="button" class="btn btn-primary btn-sm" data-save-setting="contact">ذخیره</button>
+          <h3 style="margin: 0;">شبکه‌های اجتماعی و پیام‌رسان‌ها</h3>
+          <button type="button" class="btn btn-secondary btn-sm" data-switch-to-tab="social">رفتن به تنظیمات شبکه‌های اجتماعی</button>
         </div>
-        <div class="form-field" style="max-width: 260px">
-          <label for="social-color-hex">رنگ آیکون‌ها (اختیاری)</label>
-          <div class="theme-color-input-row">
-            <input type="color" id="social-color-picker" />
-            <input type="text" id="social-color-hex" dir="ltr" maxlength="7" placeholder="پیش‌فرض" />
-          </div>
-        </div>
-        <div id="social-links-list"></div>
-        <button type="button" class="btn btn-secondary btn-sm" id="social-link-add-btn">
-          <span class="icon">${icons.plusCircle}</span>
-          افزودن شبکه اجتماعی
-        </button>
+        <p class="settings-panel-hint" style="margin: 6px 0 0 0;">
+          کلیه پیام‌رسان‌های ایرانی (بله، ایتا، روبیکا، آپارات) و خارجی (واتس‌اپ، تلگرام، اینستاگرام) به همراه تنظیم آیکون‌ها و لینک‌های دلخواه به تب اختصاصی <strong>«شبکه‌های اجتماعی»</strong> منتقل شده است.
+        </p>
       </div>
 
       <div class="editor-sidebar-card">
@@ -462,45 +561,214 @@ export function renderSettingsView(): string {
       </div>
     </div>
 
-
+    <!-- تب رنگ‌بندی و تم -->
     <div class="settings-panel" data-settings-panel="theme" ${hiddenAttr('theme')}>
-      <div class="card-header-action" style="background: var(--surface); padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: var(--space-4);">
-        <div>
-          <h3 style="margin: 0; font-size: 1.05rem;">تنظیمات رنگ‌بندی و تم</h3>
-          <p class="settings-panel-hint" style="margin: 4px 0 0 0;">شخصی‌سازی پالت رنگی هدر، دکمه‌ها و عناصر سایت</p>
-        </div>
-        <div style="display: flex; gap: 8px; align-items: center;">
+      <div class="editor-sidebar-card">
+        <div class="card-header-action">
+          <h3 style="margin: 0;">پالت‌های رنگی آماده بهدون (یک کلیک)</h3>
           <button type="button" class="btn btn-secondary btn-sm" id="theme-reset-btn">بازگردانی به پیش‌فرض</button>
-          <button type="button" class="btn btn-primary btn-sm" data-save-setting="theme">ذخیره</button>
+        </div>
+        <p class="settings-panel-hint">
+          با کلیک روی هر پالت، تم کلی سایت فوراً هماهنگ شده و در پیش‌نمایش زنده زیر قابل مشاهده خواهد بود.
+        </p>
+        <div class="theme-presets-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; margin-top: 14px;">
+          ${THEME_PRESETS.map((p) => `
+            <button type="button" class="theme-preset-card" data-preset-id="${p.id}" style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: var(--radius-md); border: 1.5px solid var(--border); background: var(--surface); cursor: pointer; text-align: right; transition: all 0.2s ease;">
+              <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <span style="font-weight: 700; font-size: 0.86rem; color: var(--text);">${p.name}</span>
+                <span style="font-size: 0.72rem; background: var(--background); padding: 2px 6px; border-radius: 4px; color: var(--muted);">${p.badge}</span>
+              </div>
+              <div style="display: flex; gap: 5px; align-items: center; margin-top: 4px;">
+                <span style="width: 18px; height: 18px; border-radius: 50%; background: ${p.colors.primary}; border: 1px solid rgba(0,0,0,0.1);" title="رنگ اصلی"></span>
+                <span style="width: 18px; height: 18px; border-radius: 50%; background: ${p.colors.secondary}; border: 1px solid rgba(0,0,0,0.1);" title="رنگ ثانویه"></span>
+                <span style="width: 18px; height: 18px; border-radius: 50%; background: ${p.colors.background}; border: 1px solid rgba(0,0,0,0.1);" title="پس‌زمینه"></span>
+                <span style="width: 18px; height: 18px; border-radius: 50%; background: ${p.colors.callGreen}; border: 1px solid rgba(0,0,0,0.1);" title="رنگ تماس"></span>
+                <span style="width: 18px; height: 18px; border-radius: 50%; background: ${p.colors.warning}; border: 1px solid rgba(0,0,0,0.1);" title="هشدار"></span>
+              </div>
+            </button>
+          `).join('')}
         </div>
       </div>
-      ${Array.from(new Set(THEME_FIELDS.map((f) => f.group)))
-        .map(
-          (group) => `
-        <div class="editor-sidebar-card">
-          <div class="card-header-action">
-            <h3>${group}</h3>
-            <button type="button" class="btn btn-primary btn-sm" data-save-setting="theme">ذخیره</button>
-          </div>
-          <div class="theme-color-grid">
-            ${THEME_FIELDS.filter((f) => f.group === group)
-              .map(
-                (f) => `
-              <div class="theme-color-field">
-                <label for="theme-${f.key}">${f.label}</label>
-                <div class="theme-color-input-row">
-                  <input type="color" id="theme-${f.key}-picker" data-theme-picker="${f.key}" />
-                  <input type="text" id="theme-${f.key}" dir="ltr" data-theme-hex="${f.key}" maxlength="7" placeholder="#000000" />
-                </div>
+
+      <div class="editor-sidebar-card" style="margin-top: var(--space-4);">
+        <div class="card-header-action">
+          <h3 style="margin: 0;">شخصی‌سازی دقیق رنگ‌ها</h3>
+          <button type="button" class="btn btn-primary btn-sm" data-save-setting="theme">ذخیره رنگ‌ها</button>
+        </div>
+        <p class="settings-panel-hint">
+          رنگ‌های کاربردی زیر را متناسب با هویت برند خود تنظیم کنید. سایر کدهای هدر، فوتر و المان‌ها خودکار منطبق می‌شوند.
+        </p>
+        <div class="theme-color-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 14px;">
+          ${THEME_FIELDS.map((f) => `
+            <div class="theme-color-field" style="background: var(--background); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border);">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+                <label for="theme-${f.key}" style="font-weight: 700; font-size: 0.88rem; color: var(--text);">${f.label}</label>
+                <span style="font-size: 0.72rem; color: var(--muted);">${f.group}</span>
               </div>
-            `,
-              )
-              .join('')}
+              <p style="font-size: 0.76rem; color: var(--muted); margin: 0 0 8px 0; line-height: 1.4;">${f.desc}</p>
+              <div class="theme-color-input-row" style="display: flex; gap: 8px; align-items: center;">
+                <input type="color" id="theme-${f.key}-picker" data-theme-picker="${f.key}" style="width: 40px; height: 36px; border: none; cursor: pointer; border-radius: 6px; padding: 0; background: transparent;" />
+                <input type="text" id="theme-${f.key}" dir="ltr" data-theme-hex="${f.key}" maxlength="7" placeholder="#000000" style="flex: 1; font-family: monospace; font-size: 0.9rem;" />
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="editor-sidebar-card" style="margin-top: var(--space-4);">
+        <div class="card-header-action">
+          <h3 style="margin: 0;">پیش‌نمایش زنده تم</h3>
+          <span class="settings-panel-hint">شبیه‌سازی فوری کارت‌ها و دکمه‌ها</span>
+        </div>
+        <div id="theme-live-preview-box" style="margin-top: 14px; padding: 20px; border-radius: 12px; border: 1.5px solid var(--border); background: var(--background); transition: all 0.2s ease;">
+          <div id="theme-preview-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; max-width: 480px; margin: 0 auto; box-shadow: 0 4px 14px rgba(0,0,0,0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span id="theme-preview-badge" style="background: var(--primary); color: #ffffff; padding: 3px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 700;">گارانتی کتبی ۱۸۰ روزه</span>
+              <span id="theme-preview-urgent" style="color: var(--warning); font-size: 0.78rem; font-weight: 700;">اعزام فوری کمتر از ۳۰ دقیقه</span>
+            </div>
+            <h4 id="theme-preview-title" style="margin: 0 0 6px 0; font-size: 1.05rem; font-weight: 800; color: var(--text);">تعمیر و سرویس تخصصی پکیج دیواری</h4>
+            <p id="theme-preview-desc" style="font-size: 0.85rem; color: var(--muted); margin: 0 0 16px 0; line-height: 1.6;">
+              عیب‌یابی برد، رفع کدهای ارور، شستشوی مبدل و تنظیم فشار توسط متخصصین دارای گواهی معتبر.
+            </p>
+            <div style="display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+              <button type="button" id="theme-preview-btn-primary" style="background: var(--primary); color: #ffffff; border: none; padding: 8px 16px; border-radius: 8px; font-size: 0.84rem; font-weight: 700; cursor: default;">
+                ثبت آنلاین درخواست
+              </button>
+              <button type="button" id="theme-preview-btn-call" style="background: var(--call-green); color: #ffffff; border: none; padding: 8px 14px; border-radius: 8px; font-size: 0.84rem; font-weight: 700; cursor: default; display: flex; align-items: center; gap: 6px;">
+                تماس فوری ۰۲۱-۲۲۳۴۵۶۷۸
+              </button>
+            </div>
           </div>
         </div>
-      `,
-        )
-        .join('')}
+      </div>
+    </div>
+
+    <!-- تب فونت و قلم -->
+    <div class="settings-panel" data-settings-panel="typography" ${hiddenAttr('typography')}>
+      <div class="editor-sidebar-card">
+        <div class="card-header-action">
+          <h3 style="margin: 0;">تنظیمات فونت و قلم (تایپوگرافی)</h3>
+          <button type="button" class="btn btn-primary btn-sm" data-save-setting="typography">ذخیره فونت</button>
+        </div>
+        <p class="settings-panel-hint">
+          قلم و ابعاد نمایشی متون در سراسر سایت (هدر، منوها، کارت‌های خدمت، مقالات و فوتر) را مدیریت کنید.
+        </p>
+        <div class="settings-form-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 16px;">
+          <div class="form-field">
+            <label for="typography-font-family">انتخاب قلم فارسی</label>
+            <select id="typography-font-family">
+              ${TYPOGRAPHY_FONTS.map((f) => `<option value="${f.id}">${f.name}</option>`).join('')}
+            </select>
+            <p class="settings-panel-hint" id="typography-font-desc" style="margin-top: 6px; font-size: 0.78rem;">قلم پیش‌فرض و استاندارد وب فارسی</p>
+          </div>
+
+          <div class="form-field">
+            <label for="typography-font-scale">مقیاس اندازه کلی متون</label>
+            <select id="typography-font-scale">
+              <option value="90">۹۰٪ (جمع‌وجورتر)</option>
+              <option value="100" selected>۱۰۰٪ (استاندارد و پیش‌فرض)</option>
+              <option value="110">۱۱۰٪ (بزرگ‌تر و بسیار خوانا)</option>
+            </select>
+            <p class="settings-panel-hint" style="margin-top: 6px; font-size: 0.78rem;">تنظیم اندازه پایه فونت برای نمایشگرهای مختلف</p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 20px; align-items: center; margin-top: 16px; flex-wrap: wrap;">
+          <label class="settings-inline-toggle" style="margin: 0;">
+            <input type="checkbox" id="typography-persian-digits" checked />
+            تبدیل خودکار ارقام به فارسی (۱۲۳۴۵۶۷۸۹۰)
+          </label>
+          <label class="settings-inline-toggle" style="margin: 0;">
+            <input type="checkbox" id="typography-font-smoothing" checked />
+            بهینه‌سازی لبه‌های فونت برای صفحات نمایش (Font Smoothing)
+          </label>
+        </div>
+      </div>
+
+      <div class="editor-sidebar-card" style="margin-top: var(--space-4);">
+        <div class="card-header-action">
+          <h3 style="margin: 0;">پیش‌نمایش زنده قلم</h3>
+          <span class="settings-panel-hint">شبیه‌سازی زنده فونت و اندازه انتخابی</span>
+        </div>
+        <div id="typography-live-preview" style="margin-top: 14px; padding: 24px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); transition: all 0.2s ease;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 14px;">
+            <h2 id="typo-preview-title" style="margin: 0; font-size: 1.35rem; font-weight: 800; color: var(--text);">بهدون؛ سامانه هوشمند خدمات تخصصی منزل و ساختمان در تهران</h2>
+            <span style="font-size: 0.85rem; color: var(--primary); font-weight: 700;">شماره تماس: ۰۲۱-۲۲۳۴۵۶۷۸</span>
+          </div>
+          <p id="typo-preview-body" style="font-size: 0.95rem; line-height: 1.8; color: var(--muted); margin: 0 0 14px 0;">
+            ارائه کلیه خدمات تأسیسات، سرمایش، گرمایش، لوله‌کشی و برقکاری با بیش از ۵۰ تکنسین مجرب، گارانتی کتبی ۱۸۰ روزه و اعزام کمتر از ۳۰ دقیقه در تمام مناطق ۲۲گانه تهران.
+          </p>
+          <div style="display: flex; gap: 10px; align-items: center; font-size: 0.82rem; color: var(--text); flex-wrap: wrap;">
+            <span style="background: rgba(124, 58, 237, 0.1); color: var(--primary); padding: 4px 10px; border-radius: 6px; font-weight: 700;">ارقام فارسی: ۰ ۱ ۲ ۳ ۴ ۵ ۶ ۷ ۸ ۹</span>
+            <span style="background: var(--background); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border);">English: Behdoon Specialized Home Repairs 2026</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- تب شبکه‌های اجتماعی -->
+    <div class="settings-panel" data-settings-panel="social" ${hiddenAttr('social')}>
+      <div class="editor-sidebar-card">
+        <div class="card-header-action">
+          <h3 style="margin: 0;">پیام‌رسان‌ها و شبکه‌های اجتماعی</h3>
+          <button type="button" class="btn btn-primary btn-sm" data-save-setting="social">ذخیره شبکه‌های اجتماعی</button>
+        </div>
+        <p class="settings-panel-hint">
+          پیام‌رسان‌های ایرانی و بین‌المللی کسب‌وکار خود را فعال و آدرس یا شناسه آن‌ها را وارد کنید. این آیکون‌ها در هدر، فوتر و دکمه‌های ارتباطی سایت قرار می‌گیرند.
+        </p>
+
+        <div style="display: flex; gap: 16px; align-items: center; margin: 16px 0; background: var(--background); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border);">
+          <label for="social-tab-color-hex" style="font-weight: 700; font-size: 0.88rem; color: var(--text);">رنگ یکدست برای آیکون‌های فوتر (اختیاری):</label>
+          <div class="theme-color-input-row" style="display: flex; gap: 8px; align-items: center;">
+            <input type="color" id="social-tab-color-picker" style="width: 36px; height: 32px; border: none; cursor: pointer; border-radius: 6px; background: transparent;" />
+            <input type="text" id="social-tab-color-hex" dir="ltr" maxlength="7" placeholder="رنگ رسمی برندها" style="max-width: 140px; font-family: monospace; font-size: 0.88rem;" />
+          </div>
+          <span style="font-size: 0.78rem; color: var(--muted);">(در صورت خالی بودن، هر پیام‌رسان با رنگ رسمی خودش نمایش می‌یابد)</span>
+        </div>
+
+        <div class="social-core-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 14px; margin-top: 14px;">
+          ${CORE_SOCIAL_LIST.map((item) => `
+            <div class="social-network-card" data-core-social="${item.id}" style="background: var(--background); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px; display: flex; flex-direction: column; gap: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="icon" style="width: 24px; height: 24px; color: ${item.brandColor}; display: inline-flex; align-items: center; justify-content: center;">${item.iconSvg}</span>
+                  <span style="font-weight: 700; font-size: 0.88rem; color: var(--text);">${item.name}</span>
+                </div>
+                <label class="settings-inline-toggle" style="margin: 0;">
+                  <input type="checkbox" id="social-core-toggle-${item.id}" data-social-core-toggle="${item.id}" />
+                  فعال
+                </label>
+              </div>
+              <div>
+                <input type="text" id="social-core-url-${item.id}" data-social-core-url="${item.id}" dir="ltr" placeholder="${item.placeholder}" style="width: 100%; font-size: 0.84rem; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border);" />
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="editor-sidebar-card" style="margin-top: var(--space-4);">
+        <div class="card-header-action">
+          <h3 style="margin: 0;">لینک‌ها و کانال‌های دلخواه اضافی</h3>
+          <button type="button" class="btn btn-secondary btn-sm" id="social-tab-custom-add-btn">
+            <span class="icon">${icons.plusCircle}</span>
+            افزودن لینک سفارشی
+          </button>
+        </div>
+        <p class="settings-panel-hint">اگر کانال، گروه یا صفحه دیگری در پلتفرم‌های دیگر دارید، در این بخش اضافه نمایید.</p>
+        <div id="social-tab-custom-list" style="margin-top: 12px; display: flex; flex-direction: column; gap: 10px;"></div>
+      </div>
+
+      <div class="editor-sidebar-card" style="margin-top: var(--space-4);">
+        <div class="card-header-action">
+          <h3 style="margin: 0;">پیش‌نمایش آیکون‌ها در فوتر سایت</h3>
+          <span class="settings-panel-hint">چیدمان و رنگ آیکون‌ها در بخش پایین سایت</span>
+        </div>
+        <div id="social-tab-preview-row" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 12px; padding: 16px; background: #0f172a; border-radius: 8px;">
+          <span style="color: #94a3b8; font-size: 0.82rem;">آیکون‌های فعال در فوتر:</span>
+          <div id="social-tab-preview-icons" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;"></div>
+        </div>
+      </div>
     </div>
 
     <div class="settings-panel" data-settings-panel="license" ${hiddenAttr('license')}>
@@ -647,6 +915,14 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
       if (tab.dataset.settingsTab === 'map') {
         window.setTimeout(() => previewMapInstance?.invalidateSize(), 150);
       }
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-switch-to-tab]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const targetTab = btn.dataset.switchToTab;
+      const targetBtn = document.querySelector<HTMLButtonElement>(`[data-settings-tab="${targetTab}"]`);
+      targetBtn?.click();
     });
   });
 
@@ -1221,6 +1497,34 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
   }
 
   // ----- theme -----
+  function updateThemeLivePreview(): void {
+    const box = document.getElementById('theme-live-preview-box');
+    const card = document.getElementById('theme-preview-card');
+    const badge = document.getElementById('theme-preview-badge');
+    const urgent = document.getElementById('theme-preview-urgent');
+    const title = document.getElementById('theme-preview-title');
+    const desc = document.getElementById('theme-preview-desc');
+    const btnPrimary = document.getElementById('theme-preview-btn-primary');
+    const btnCall = document.getElementById('theme-preview-btn-call');
+
+    const getVal = (k: string) => {
+      const v = (document.getElementById(`theme-${k}`) as HTMLInputElement)?.value.trim();
+      return /^#[0-9a-fA-F]{6}$/.test(v) ? v : THEME_DEFAULTS[k];
+    };
+
+    if (box) box.style.background = getVal('background');
+    if (card) {
+      card.style.background = getVal('surface');
+      card.style.borderColor = getVal('border');
+    }
+    if (badge) badge.style.background = getVal('primary');
+    if (urgent) urgent.style.color = getVal('warning');
+    if (title) title.style.color = getVal('text');
+    if (desc) desc.style.color = getVal('muted');
+    if (btnPrimary) btnPrimary.style.background = getVal('primary');
+    if (btnCall) btnCall.style.background = getVal('callGreen');
+  }
+
   function applyThemeFieldValue(key: string, hex: string): void {
     const hexInput = document.getElementById(`theme-${key}`) as HTMLInputElement | null;
     const pickerInput = document.getElementById(`theme-${key}-picker`) as HTMLInputElement | null;
@@ -1231,17 +1535,44 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
   function renderTheme(): void {
     const theme = (settings.theme as Record<string, string> | undefined) ?? {};
     THEME_FIELDS.forEach((f) => applyThemeFieldValue(f.key, theme[f.key] ?? THEME_DEFAULTS[f.key]));
+    updateThemeLivePreview();
   }
 
   document.querySelectorAll<HTMLInputElement>('[data-theme-picker]').forEach((picker) => {
     picker.addEventListener('input', () => {
       const key = picker.dataset.themePicker!;
       applyThemeFieldValue(key, picker.value);
+      updateThemeLivePreview();
+    });
+  });
+
+  document.querySelectorAll<HTMLInputElement>('[data-theme-hex]').forEach((hexInput) => {
+    hexInput.addEventListener('input', () => {
+      const key = hexInput.dataset.themeHex!;
+      const picker = document.getElementById(`theme-${key}-picker`) as HTMLInputElement | null;
+      if (picker && /^#[0-9a-fA-F]{6}$/.test(hexInput.value.trim())) {
+        picker.value = hexInput.value.trim();
+      }
+      updateThemeLivePreview();
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-preset-id]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const presetId = btn.dataset.presetId;
+      const preset = THEME_PRESETS.find((p) => p.id === presetId);
+      if (!preset) return;
+      THEME_FIELDS.forEach((f) => {
+        const val = preset.colors[f.key] || THEME_DEFAULTS[f.key];
+        applyThemeFieldValue(f.key, val);
+      });
+      updateThemeLivePreview();
     });
   });
 
   document.getElementById('theme-reset-btn')?.addEventListener('click', () => {
     THEME_FIELDS.forEach((f) => applyThemeFieldValue(f.key, THEME_DEFAULTS[f.key]));
+    updateThemeLivePreview();
   });
 
   document.querySelectorAll<HTMLButtonElement>('[data-save-setting="theme"]').forEach((btn) => {
@@ -1257,6 +1588,293 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
           theme.quickActionsStyle = existingTheme.quickActionsStyle === 'fixed' ? 'fixed' : 'floating';
           await updateSetting('theme', theme);
           settings.theme = theme;
+          applyTheme(theme, settings.typography as any);
+        });
+        showSaved();
+      } catch (err) {
+        showError(err);
+      }
+    });
+  });
+
+  // ----- typography -----
+  function updateTypographyLivePreview(): void {
+    const familyId = (document.getElementById('typography-font-family') as HTMLSelectElement)?.value || 'vazirmatn';
+    const scale = (document.getElementById('typography-font-scale') as HTMLSelectElement)?.value || '100';
+    const persianDigits = (document.getElementById('typography-persian-digits') as HTMLInputElement)?.checked ?? true;
+
+    const preview = document.getElementById('typography-live-preview');
+    if (!preview) return;
+
+    const fontObj = TYPOGRAPHY_FONTS.find((f) => f.id === familyId);
+    const descEl = document.getElementById('typography-font-desc');
+    if (descEl && fontObj) descEl.textContent = fontObj.desc;
+
+    const FONT_FAMILIES_PREVIEW: Record<string, string> = {
+      vazirmatn: "'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif",
+      yekan: "'Yekan Bakh', 'IRANYekan', 'Vazirmatn', sans-serif",
+      dana: "'Dana', 'Vazirmatn', sans-serif",
+      shabnam: "'Shabnam', 'Vazirmatn', sans-serif",
+      sahel: "'Sahel', 'Vazirmatn', sans-serif",
+      iransans: "'IRANSans', 'IRANSansX', 'Vazirmatn', sans-serif",
+      system: "system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+    };
+    preview.style.fontFamily = FONT_FAMILIES_PREVIEW[familyId] || 'sans-serif';
+    const scaleFactor = scale === '90' ? 0.92 : scale === '110' ? 1.08 : 1.0;
+    preview.style.fontSize = `${scaleFactor * 16}px`;
+    preview.style.fontFeatureSettings = persianDigits ? '"ss01", "ss02"' : 'normal';
+  }
+
+  function renderTypography(): void {
+    const typo = (settings.typography as TypographySettings | undefined) ?? {
+      fontFamily: 'vazirmatn',
+      fontScale: '100',
+      persianDigits: true,
+      fontSmoothing: true,
+    };
+    const famSelect = document.getElementById('typography-font-family') as HTMLSelectElement | null;
+    const scaleSelect = document.getElementById('typography-font-scale') as HTMLSelectElement | null;
+    const digitsCheckbox = document.getElementById('typography-persian-digits') as HTMLInputElement | null;
+    const smoothCheckbox = document.getElementById('typography-font-smoothing') as HTMLInputElement | null;
+
+    if (famSelect) famSelect.value = typo.fontFamily || 'vazirmatn';
+    if (scaleSelect) scaleSelect.value = typo.fontScale || '100';
+    if (digitsCheckbox) digitsCheckbox.checked = typo.persianDigits !== false;
+    if (smoothCheckbox) smoothCheckbox.checked = typo.fontSmoothing !== false;
+
+    updateTypographyLivePreview();
+  }
+
+  document.getElementById('typography-font-family')?.addEventListener('change', updateTypographyLivePreview);
+  document.getElementById('typography-font-scale')?.addEventListener('change', updateTypographyLivePreview);
+  document.getElementById('typography-persian-digits')?.addEventListener('change', updateTypographyLivePreview);
+  document.getElementById('typography-font-smoothing')?.addEventListener('change', updateTypographyLivePreview);
+
+  document.querySelectorAll<HTMLButtonElement>('[data-save-setting="typography"]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      try {
+        await handleSaveButton(btn, async () => {
+          const typoData: TypographySettings = {
+            fontFamily: (document.getElementById('typography-font-family') as HTMLSelectElement)?.value || 'vazirmatn',
+            fontScale: (document.getElementById('typography-font-scale') as HTMLSelectElement)?.value || '100',
+            persianDigits: (document.getElementById('typography-persian-digits') as HTMLInputElement)?.checked ?? true,
+            fontSmoothing: (document.getElementById('typography-font-smoothing') as HTMLInputElement)?.checked ?? true,
+          };
+          await updateSetting('typography', typoData);
+          settings.typography = typoData;
+          applyTheme(settings.theme as any, typoData);
+        });
+        showSaved();
+      } catch (err) {
+        showError(err);
+      }
+    });
+  });
+
+  // ----- social networks tab -----
+  interface CustomSocialItem {
+    id: string;
+    platform: string;
+    label: string;
+    url: string;
+  }
+  let customSocialList: CustomSocialItem[] = [];
+
+  function updateSocialTabPreview(): void {
+    const previewContainer = document.getElementById('social-tab-preview-icons');
+    if (!previewContainer) return;
+
+    const iconColor = (document.getElementById('social-tab-color-hex') as HTMLInputElement)?.value.trim();
+
+    const activeIcons: { name: string; brandColor: string; iconSvg: string }[] = [];
+
+    CORE_SOCIAL_LIST.forEach((core) => {
+      const toggle = document.querySelector<HTMLInputElement>(`[data-social-core-toggle="${core.id}"]`);
+      const urlInput = document.querySelector<HTMLInputElement>(`[data-social-core-url="${core.id}"]`);
+      if (toggle?.checked && urlInput?.value.trim()) {
+        activeIcons.push({
+          name: core.nameEn,
+          brandColor: iconColor && /^#[0-9a-fA-F]{6}$/.test(iconColor) ? iconColor : core.brandColor,
+          iconSvg: core.iconSvg,
+        });
+      }
+    });
+
+    customSocialList.forEach((c) => {
+      if (c.url.trim()) {
+        activeIcons.push({
+          name: c.label || c.platform,
+          brandColor: iconColor && /^#[0-9a-fA-F]{6}$/.test(iconColor) ? iconColor : '#94a3b8',
+          iconSvg: publicIcons.globeFilled || icons.link,
+        });
+      }
+    });
+
+    if (activeIcons.length === 0) {
+      previewContainer.innerHTML = '<span style="color: #64748b; font-size: 0.78rem;">هنوز هیچ شبکه‌ای فعال نشده است.</span>';
+      return;
+    }
+
+    previewContainer.innerHTML = activeIcons
+      .map(
+        (ic) => `
+        <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; color: ${ic.brandColor}; border: 1px solid rgba(255,255,255,0.15);" title="${ic.name}">
+          <span style="width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center;">${ic.iconSvg}</span>
+        </div>
+      `,
+      )
+      .join('');
+  }
+
+  function renderCustomSocialList(): void {
+    const list = document.getElementById('social-tab-custom-list');
+    if (!list) return;
+    list.innerHTML = customSocialList
+      .map(
+        (item, idx) => `
+        <div class="settings-form-grid" data-custom-social-index="${idx}" style="grid-template-columns: 140px 160px 1fr auto; align-items: end; gap: 8px;">
+          <div class="form-field">
+            <label>نوع پلتفرم</label>
+            <select data-field="platform">
+              ${SOCIAL_PLATFORMS.map((p) => `<option value="${p.value}" ${p.value === item.platform ? 'selected' : ''}>${p.label}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-field">
+            <label>عنوان / برچسب</label>
+            <input type="text" data-field="label" value="${item.label}" placeholder="مثال: کانال دوم یا پیج پشتیبانی" />
+          </div>
+          <div class="form-field">
+            <label>آدرس اینترنتی (URL)</label>
+            <input type="text" dir="ltr" data-field="url" value="${item.url}" placeholder="https://..." />
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" data-remove-custom-social="${idx}" style="margin-bottom: 4px; color: var(--danger);">حذف</button>
+        </div>
+      `,
+      )
+      .join('');
+  }
+
+  function readCustomSocialFromDom(): void {
+    const rows = Array.from(document.querySelectorAll<HTMLElement>('[data-custom-social-index]'));
+    customSocialList = rows.map((r, i) => ({
+      id: customSocialList[i]?.id ?? `custom-soc-${crypto.randomUUID().slice(0, 8)}`,
+      platform: r.querySelector<HTMLSelectElement>('[data-field="platform"]')!.value,
+      label: r.querySelector<HTMLInputElement>('[data-field="label"]')!.value.trim(),
+      url: r.querySelector<HTMLInputElement>('[data-field="url"]')!.value.trim(),
+    }));
+  }
+
+  document.getElementById('social-tab-custom-add-btn')?.addEventListener('click', () => {
+    readCustomSocialFromDom();
+    customSocialList.push({ id: `custom-soc-${crypto.randomUUID().slice(0, 8)}`, platform: 'bale', label: '', url: '' });
+    renderCustomSocialList();
+    updateSocialTabPreview();
+  });
+
+  document.getElementById('social-tab-custom-list')?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-remove-custom-social]');
+    if (!btn) return;
+    readCustomSocialFromDom();
+    customSocialList.splice(Number(btn.dataset.removeCustomSocial), 1);
+    renderCustomSocialList();
+    updateSocialTabPreview();
+  });
+
+  document.getElementById('social-tab-color-picker')?.addEventListener('input', (e) => {
+    (document.getElementById('social-tab-color-hex') as HTMLInputElement).value = (e.currentTarget as HTMLInputElement).value;
+    updateSocialTabPreview();
+  });
+  document.getElementById('social-tab-color-hex')?.addEventListener('input', updateSocialTabPreview);
+
+  document.querySelectorAll<HTMLInputElement>('[data-social-core-toggle]').forEach((toggle) => {
+    toggle.addEventListener('change', updateSocialTabPreview);
+  });
+  document.querySelectorAll<HTMLInputElement>('[data-social-core-url]').forEach((input) => {
+    input.addEventListener('input', updateSocialTabPreview);
+  });
+
+  function renderSocialTab(): void {
+    const contact = (settings.contact as ContactSettings | undefined) ?? { phoneDisplay: '', phoneTelHref: '', socialLinks: [] };
+    const savedLinks = (settings.social_links as SocialLinkSetting[] | undefined) ?? contact.socialLinks ?? [];
+
+    const iconColorHex = document.getElementById('social-tab-color-hex') as HTMLInputElement | null;
+    const iconColorPicker = document.getElementById('social-tab-color-picker') as HTMLInputElement | null;
+    if (iconColorHex && contact.socialIconColor) {
+      iconColorHex.value = contact.socialIconColor;
+      if (iconColorPicker && /^#[0-9a-fA-F]{6}$/.test(contact.socialIconColor)) {
+        iconColorPicker.value = contact.socialIconColor;
+      }
+    }
+
+    // Populate core items
+    const customItems: CustomSocialItem[] = [];
+    savedLinks.forEach((link) => {
+      const core = CORE_SOCIAL_LIST.find((c) => c.id === link.platform || c.id === link.id);
+      if (core) {
+        const toggle = document.getElementById(`social-core-toggle-${core.id}`) as HTMLInputElement | null;
+        const urlInput = document.getElementById(`social-core-url-${core.id}`) as HTMLInputElement | null;
+        if (toggle) toggle.checked = Boolean(link.url);
+        if (urlInput) urlInput.value = link.url || '';
+      } else {
+        customItems.push({
+          id: link.id,
+          platform: link.platform,
+          label: link.label,
+          url: link.url,
+        });
+      }
+    });
+
+    customSocialList = customItems;
+    renderCustomSocialList();
+    updateSocialTabPreview();
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-save-setting="social"]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      try {
+        await handleSaveButton(btn, async () => {
+          readCustomSocialFromDom();
+          const socialColor = (document.getElementById('social-tab-color-hex') as HTMLInputElement)?.value.trim() || undefined;
+
+          const linksToSave: SocialLinkSetting[] = [];
+          CORE_SOCIAL_LIST.forEach((core) => {
+            const toggle = document.querySelector<HTMLInputElement>(`[data-social-core-toggle="${core.id}"]`);
+            const urlInput = document.querySelector<HTMLInputElement>(`[data-social-core-url="${core.id}"]`);
+            if (toggle?.checked && urlInput?.value.trim()) {
+              linksToSave.push({
+                id: core.id,
+                platform: core.id,
+                label: core.name,
+                url: urlInput.value.trim(),
+              });
+            }
+          });
+
+          customSocialList.forEach((c) => {
+            if (c.url.trim()) {
+              linksToSave.push({
+                id: c.id,
+                platform: c.platform,
+                label: c.label,
+                url: c.url.trim(),
+              });
+            }
+          });
+
+          // Save to social_links
+          await updateSetting('social_links', linksToSave);
+          settings.social_links = linksToSave;
+
+          // Also synchronize with contact settings so Footer.ts and other consumers stay 100% updated
+          const existingContact = (settings.contact as ContactSettings | undefined) ?? { phoneDisplay: '', phoneTelHref: '', socialLinks: [] };
+          const updatedContact = {
+            ...existingContact,
+            socialIconColor: socialColor,
+            socialLinks: linksToSave,
+          };
+          await updateSetting('contact', updatedContact);
+          settings.contact = updatedContact;
         });
         showSaved();
       } catch (err) {
@@ -1398,6 +2016,8 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
       renderGeneral();
       renderContact();
       renderTheme();
+      renderTypography();
+      renderSocialTab();
       renderAppLinks();
       renderCertifications();
       renderMapSettings();

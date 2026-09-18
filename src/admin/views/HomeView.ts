@@ -49,7 +49,6 @@ export function renderContentHomeView(staff: StaffInfo): string {
   if (hasPermission(staff, 'content')) tiles.push(tile('testimonials', icons.message, 'نظرات مشتریان'));
   if (hasPermission(staff, 'stories')) tiles.push(tile('stories', icons.story, 'استوری‌ها'));
   if (hasPermission(staff, 'content') || hasPermission(staff, 'settings')) tiles.push(tile('sliders', icons.image, 'اسلایدر موبایل و سایت'));
-  if (hasPermission(staff, 'content') || hasPermission(staff, 'settings')) tiles.push(tile('services', icons.wrench, 'مدیریت خدمات'));
   if (hasPermission(staff, 'seo')) tiles.push(tile('seo', icons.seo, 'مدیریت سئو'));
   if (hasPermission(staff, 'content') || hasPermission(staff, 'settings')) tiles.push(tile('media', icons.image, 'مدیریت فایل'));
   return `<div class="home-grid">${tiles.join('')}</div>`;

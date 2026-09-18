@@ -190,6 +190,8 @@ export interface SiteSettings {
   }>;
   site_sliders?: import('../admin/utils/api.ts').SliderConfig;
   service_categories_custom?: import('../admin/utils/api.ts').ManagedServiceCategory[];
+  typography?: import('./theme.ts').TypographySettings;
+  social_links?: any;
 }
 
 let cached: SiteSettings | null = null;

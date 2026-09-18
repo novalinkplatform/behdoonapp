@@ -123,7 +123,7 @@ async function init(): Promise<void> {
   initBehaviorTracking();
   const [settings, testimonials, stories] = await Promise.all([loadSettings(), fetchPublicTestimonials(), fetchPublicStories()]);
   forceSiteLanguageIfSingleMode(settings.language_mode);
-  applyTheme(settings.theme);
+  applyTheme(settings.theme, settings.typography);
   applySiteSeoSettings(settings.seo);
   applyHeroSloganSeo(settings.hero_slogan, settings.site_name);
   const vehicleTypes = settings.vehicle_types?.length ? settings.vehicle_types : DEFAULT_VEHICLE_TYPES;

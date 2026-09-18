@@ -172,7 +172,9 @@ export function renderRequestWizard(
             ${pick('روی دسته‌بندی مورد نظر خود کلیک کنید تا تخصص‌های زیرمجموعه نمایش داده شوند:', 'Click on your desired service category to view specialized sub-services:')}
           </p>
           <div class="wizard-categories-grid">
-            ${serviceCategories.map((cat) => {
+            ${serviceCategories
+              .filter((c) => ['hvac', 'plumbing', 'electrical', 'renovation'].includes(c.id))
+              .map((cat) => {
               const vehicleIds = CATEGORY_VEHICLE_IDS[cat.id] || [];
               return `
                 <div class="wizard-category-card" data-wizard-select-cat="${cat.id}">
@@ -629,7 +631,29 @@ export function initRequestWizard(
 
   function ensureLocationMap(): LocationMapController | null {
     if (!locationMap) {
-      locationMap = initLocationMap('wizard-location-map', undefined, mapSettings);
+      locationMap = initLocationMap(
+        'wizard-location-map',
+        (lat, lng) => {
+          const addrInput = document.getElementById('wizard-location-address') as HTMLInputElement | null;
+          if (addrInput && !addrInput.value.trim()) {
+            let closestName = 'تهران';
+            let minDistance = Infinity;
+            TEHRAN_KEY_AREAS.forEach((area) => {
+              const d = Math.hypot(area.lat - lat, area.lng - lng);
+              if (d < minDistance) {
+                minDistance = d;
+                closestName = area.name;
+              }
+            });
+            addrInput.value = `تهران، محدوده ${closestName}، `;
+          }
+          const addrError = document.getElementById('wizard-address-error');
+          if (addrError) addrError.hidden = true;
+          const mapErr = document.getElementById('wizard-location-map-error');
+          if (mapErr) mapErr.hidden = true;
+        },
+        mapSettings,
+      );
     }
     return locationMap;
   }
