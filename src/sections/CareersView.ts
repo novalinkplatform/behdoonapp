@@ -12,8 +12,15 @@ const FALLBACK_POSITIONS: { id: string; label: string; labelEn: string; requires
   { id: 'other', label: 'سایر تخصص‌های ساختمانی', labelEn: 'Other Building Trades', requiresVehicle: false },
 ];
 
+const TECH_VEHICLE_OPTIONS = [
+  { id: 'motorcycle', label: 'موتورسیکلت (اعزام سریع شهری)', labelEn: 'Motorcycle (Fast City Dispatch)' },
+  { id: 'car', label: 'خودرو سواری شخصی (جابه‌جایی ابزار)', labelEn: 'Car (Personal Toolkit)' },
+  { id: 'pickup', label: 'وانت بار سبک / پراید وانت', labelEn: 'Small Pickup' },
+  { id: 'public_transit', label: 'فاقد وسیله (حمل‌ونقل عمومی)', labelEn: 'Public Transit' },
+];
+
 export function renderCareersView(
-  vehicleTypes: VehicleTypeSetting[] = DEFAULT_VEHICLE_TYPES,
+  _vehicleTypes: VehicleTypeSetting[] = DEFAULT_VEHICLE_TYPES,
   careerPositions?: CareerPositionSetting[],
   siteName?: { fa?: string; en?: string },
 ): string {
@@ -32,34 +39,32 @@ export function renderCareersView(
 
   return `
     <article class="orders-page careers-page">
-      <div class="container orders-container">
+      <div class="orders-header">
         <nav class="article-breadcrumb" aria-label="${pick('مسیر صفحه', 'Breadcrumb')}">
           <a href="/">${pick('خانه', 'Home')}</a>
-          <span aria-hidden="true">/</span>
+          <span class="icon breadcrumb-separator">${icons.chevronLeft}</span>
           <span aria-current="page">${pick('فرصت‌های شغلی', 'Careers')}</span>
         </nav>
-
         <h1 class="article-title">${pick(`فرصت‌های شغلی ${brandFa}`, `Careers at ${brandEn}`)}</h1>
-        <p class="article-excerpt">${pick(
-          `به تیم ${brandFa} بپیوندید؛ به نیروی راننده، کارگر و سایر همکاران نیاز داریم. فرم زیر را پر کنید تا همکاران ما با شما تماس بگیرند.`,
-          `Join the ${brandEn} team — we’re hiring drivers, laborers, and other roles. Fill out the form below and our team will get in touch.`,
-        )}</p>
+        <p class="article-meta">${pick('پیوستن به شبکه متخصصین، تکنسین‌ها و استادکاران مجرب بهدون در تهران', 'Join Behdoon network of certified technicians and master craftspeople in Tehran')}</p>
+      </div>
 
+      <div class="article-body">
         <div class="careers-form-card" id="careers-form-card">
           <form id="careers-form">
             <div class="careers-form-grid">
               <div class="form-field">
                 <label for="careers-name">${pick('نام و نام خانوادگی', 'Full name')}</label>
                 <div class="input-wrapper">
-                  <span class="icon input-icon">${icons.user}</span>
                   <input type="text" id="careers-name" autocomplete="name" required />
+                  <span class="icon input-icon">${icons.user}</span>
                 </div>
               </div>
               <div class="form-field">
                 <label for="careers-phone">${pick('شماره موبایل', 'Mobile number')}</label>
                 <div class="input-wrapper">
-                  <span class="icon input-icon">${icons.phone}</span>
                   <input type="tel" id="careers-phone" placeholder="${pick('۰۹xxxxxxxxx', '09xxxxxxxxx')}" inputmode="numeric" autocomplete="tel" required />
+                  <span class="icon input-icon">${icons.phone}</span>
                 </div>
               </div>
             </div>
@@ -69,16 +74,17 @@ export function renderCareersView(
                 <label for="careers-position">${pick('موقعیت شغلی مورد نظر', 'Position of interest')}</label>
                 <div class="select-wrapper">
                   <select id="careers-position">
-                    ${positionsToUse.map((p) => `<option value="${p.id}" data-requires-vehicle="${Boolean(p.requiresVehicle)}">${pick(p.label, p.labelEn)}</option>`).join('')}
+                    ${positionsToUse.map((p) => `<option value="${p.id}" ${p.requiresVehicle ? 'data-requires-vehicle="true"' : ''}>${pick(p.label, p.labelEn)}</option>`).join('')}
+                    <option value="other">${pick('سایر تخصص‌های فنی', 'Other technical trades')}</option>
                   </select>
                   <span class="icon select-chevron">${icons.chevronDown}</span>
                 </div>
               </div>
               <div class="form-field">
-                <label for="careers-city">${pick('شهر محل سکونت (اختیاری)', 'City (optional)')}</label>
+                <label for="careers-city">${pick('منطقه / محله سکونت در تهران', 'District / Neighborhood in Tehran')}</label>
                 <div class="input-wrapper">
+                  <input type="text" id="careers-city" placeholder="${pick('مثال: منطقه ۲، ستارخان', 'e.g. District 2')}" autocomplete="address-level2" />
                   <span class="icon input-icon">${icons.pin}</span>
-                  <input type="text" id="careers-city" autocomplete="address-level2" />
                 </div>
               </div>
             </div>
@@ -86,7 +92,6 @@ export function renderCareersView(
             <div class="form-field" id="careers-custom-position-field" hidden>
               <label for="careers-custom-position">${pick('عنوان شغلی مورد نظر', 'Desired position title')}</label>
               <div class="input-wrapper">
-                <span class="icon input-icon">${icons.briefcase}</span>
                 <input type="text" id="careers-custom-position" />
               </div>
             </div>
@@ -103,10 +108,10 @@ export function renderCareersView(
                 </div>
               </div>
               <div class="form-field" id="careers-vehicle-type-field">
-                <label for="careers-vehicle-type">${pick('نوع وسیله', 'Vehicle type')}</label>
+                <label for="careers-vehicle-type">${pick('نوع وسیله رفت‌وآمد', 'Transportation type')}</label>
                 <div class="select-wrapper">
                   <select id="careers-vehicle-type">
-                    ${vehicleTypes.map((v) => `<option value="${v.id}">${pick(v.label, v.labelEn)}</option>`).join('')}
+                    ${TECH_VEHICLE_OPTIONS.map((v) => `<option value="${v.id}">${pick(v.label, v.labelEn)}</option>`).join('')}
                   </select>
                   <span class="icon select-chevron">${icons.chevronDown}</span>
                 </div>

@@ -32,6 +32,12 @@ function jsonResponse(data: unknown, status = 200): Response {
   });
 }
 
+function isStaffAuthed(request: Request): boolean {
+  const auth = request.headers.get('Authorization') || '';
+  const token = auth.replace(/^Bearer\s+/i, '').trim();
+  return token.length > 5 && (token.startsWith('behdoon_') || token.startsWith('behbar_'));
+}
+
 // --- Shahanshahi / Imperial Tracking Code Utilities ---
 function gregorianToJalali(gy: number, gm: number, gd: number): { jy: number; jm: number; jd: number } {
   const g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
@@ -186,6 +192,9 @@ export default {
         (pathname === '/api/settings' || pathname === '/api/admin/settings') &&
         (request.method === 'POST' || request.method === 'PATCH')
       ) {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است. لطفاً وارد حساب مدیریت شوید.' }, 401);
+        }
         try {
           const data = (await request.json().catch(() => ({}))) as Record<string, any>;
           if (env.DB) {
@@ -307,19 +316,16 @@ export default {
         }
       }
 
-      if ((pathname === '/api/admin/requests' || pathname === '/api/requests') && request.method === 'GET') {
-        const phoneParam = url.searchParams.get('phone');
+      // --- Admin Orders List (Requires Staff Auth) ---
+      if (pathname === '/api/admin/requests' && request.method === 'GET') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
         let requestsList: any[] = [];
         if (env.DB) {
           try {
-            let results: any[] = [];
-            if (phoneParam) {
-              const queryRes = await env.DB.prepare('SELECT * FROM requests WHERE phone = ? ORDER BY id DESC').bind(phoneParam).all();
-              results = (queryRes?.results as any[]) || [];
-            } else {
-              const queryRes = await env.DB.prepare('SELECT * FROM requests ORDER BY id DESC').all();
-              results = (queryRes?.results as any[]) || [];
-            }
+            const queryRes = await env.DB.prepare('SELECT * FROM requests ORDER BY id DESC').all();
+            const results = (queryRes?.results as any[]) || [];
             if (results && results.length > 0) {
               requestsList = results.map((r: any) => ({
                 id: r.id,
@@ -347,8 +353,190 @@ export default {
         return jsonResponse({ requests: requestsList });
       }
 
-      // --- Plugins Endpoints ---
+      // --- Public Customer Orders Tracking (Requires Customer Phone to Prevent Data Leak) ---
+      if (pathname === '/api/requests' && request.method === 'GET') {
+        const phoneParam = url.searchParams.get('phone')?.trim();
+        if (!phoneParam || phoneParam.length < 10) {
+          return jsonResponse({ requests: [] });
+        }
+        let requestsList: any[] = [];
+        if (env.DB) {
+          try {
+            const queryRes = await env.DB.prepare('SELECT * FROM requests WHERE phone = ? ORDER BY id DESC').bind(phoneParam).all();
+            const results = (queryRes?.results as any[]) || [];
+            if (results && results.length > 0) {
+              requestsList = results.map((r: any) => ({
+                id: r.id,
+                trackingCode: r.tracking_code || `${getShahanshahiDatePrefix()}${String(r.id < 100 ? r.id : r.id).padStart(2, '0')}`,
+                customerName: r.name,
+                serviceId: r.service_id,
+                serviceLabel: r.service_label || r.service_id,
+                originProvince: 'تهران',
+                originCity: 'تهران',
+                originNotes: r.origin_notes || '',
+                originLat: r.origin_lat,
+                originLng: r.origin_lng,
+                originPropertyType: r.origin_property_type || 'residential',
+                phone: r.phone,
+                status: r.status || 'pending',
+                scheduledDate: r.scheduled_date || '1405/06/28',
+                scheduledTime: r.scheduled_time || '10:00 - 12:00',
+                estimateAvg: r.estimate_avg || 1800000,
+                createdAt: r.created_at || new Date().toISOString(),
+                updatedAt: r.created_at || new Date().toISOString(),
+              }));
+            }
+          } catch {}
+        }
+        return jsonResponse({ requests: requestsList });
+      }
+
+      // --- Job Applications (Careers & Technician Recruitment) ---
+      if (pathname === '/api/job-applications' && request.method === 'POST') {
+        try {
+          const data = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const fullName = String(data.fullName || data.name || '').trim();
+          const phone = String(data.phone || '').trim();
+          if (!fullName || !phone) {
+            return jsonResponse({ error: 'نام و شماره تماس الزامی است.' }, 400);
+          }
+
+          let newId = Date.now();
+          if (env.DB) {
+            try {
+              await env.DB.prepare(`
+                CREATE TABLE IF NOT EXISTS job_applications (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  full_name TEXT NOT NULL,
+                  phone TEXT NOT NULL,
+                  position TEXT,
+                  position_label TEXT,
+                  city TEXT,
+                  message TEXT,
+                  has_vehicle INTEGER,
+                  vehicle_type TEXT,
+                  status TEXT DEFAULT 'new',
+                  created_at TEXT
+                )
+              `).run();
+
+              const insertRes = await env.DB.prepare(`
+                INSERT INTO job_applications (
+                  full_name, phone, position, position_label, city, message, has_vehicle, vehicle_type, status, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'new', ?)
+              `).bind(
+                fullName,
+                phone,
+                data.position || 'tech',
+                data.positionLabel || 'متخصص فنی',
+                data.city || 'تهران',
+                data.message || '',
+                data.hasVehicle ? 1 : 0,
+                data.vehicleType || '',
+                new Date().toISOString()
+              ).run();
+
+              if (insertRes?.meta?.last_row_id) {
+                newId = insertRes.meta.last_row_id;
+              }
+            } catch {}
+          }
+
+          return jsonResponse({
+            success: true,
+            application: {
+              id: newId,
+              fullName,
+              phone,
+              position: data.position || 'tech',
+              positionLabel: data.positionLabel || 'متخصص فنی',
+              status: 'new',
+              createdAt: new Date().toISOString(),
+            },
+          });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      if (pathname === '/api/admin/job-applications' && request.method === 'GET') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        let applications: any[] = [];
+        if (env.DB) {
+          try {
+            await env.DB.prepare(`
+              CREATE TABLE IF NOT EXISTS job_applications (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                full_name TEXT NOT NULL,
+                phone TEXT NOT NULL,
+                position TEXT,
+                position_label TEXT,
+                city TEXT,
+                message TEXT,
+                has_vehicle INTEGER,
+                vehicle_type TEXT,
+                status TEXT DEFAULT 'new',
+                created_at TEXT
+              )
+            `).run();
+
+            const { results } = await env.DB.prepare('SELECT * FROM job_applications ORDER BY id DESC').all();
+            if (results) {
+              applications = results.map((r: any) => ({
+                id: r.id,
+                fullName: r.full_name,
+                phone: r.phone,
+                position: r.position,
+                positionLabel: r.position_label || r.position,
+                city: r.city,
+                message: r.message,
+                hasVehicle: Boolean(r.has_vehicle),
+                vehicleType: r.vehicle_type,
+                status: r.status || 'new',
+                createdAt: r.created_at,
+              }));
+            }
+          } catch {}
+        }
+        return jsonResponse({ applications });
+      }
+
+      if (pathname.startsWith('/api/admin/job-applications/') && (request.method === 'PATCH' || request.method === 'DELETE')) {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        const idStr = pathname.split('/').pop() || '';
+        const id = parseInt(idStr, 10);
+        if (isNaN(id)) return jsonResponse({ error: 'شناسه نامعتبر است.' }, 400);
+
+        if (request.method === 'DELETE') {
+          if (env.DB) {
+            try {
+              await env.DB.prepare('DELETE FROM job_applications WHERE id = ?').bind(id).run();
+            } catch {}
+          }
+          return jsonResponse({ success: true });
+        }
+
+        if (request.method === 'PATCH') {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const status = body.status || 'new';
+          if (env.DB) {
+            try {
+              await env.DB.prepare('UPDATE job_applications SET status = ? WHERE id = ?').bind(status, id).run();
+            } catch {}
+          }
+          return jsonResponse({ success: true, application: { id, status } });
+        }
+      }
+
+      // --- Plugins Endpoints (Requires Staff Auth) ---
       if (pathname === '/api/admin/plugins' && request.method === 'GET') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
         let plugins: Record<string, any> = {
           sms: {
             enabled: false,
@@ -378,6 +566,9 @@ export default {
       }
 
       if (pathname === '/api/admin/plugins' && (request.method === 'POST' || request.method === 'PUT')) {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
         try {
           const data = (await request.json().catch(() => ({}))) as Record<string, any>;
           const pluginsData = data.plugins || data;
