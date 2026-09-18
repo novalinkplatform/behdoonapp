@@ -209,38 +209,47 @@ export function renderServiceCategoriesAccordion(): string {
                 .map(
                   (sub) => `
                 <div class="subcategory-item" data-subcategory-id="${sub!.id}">
-                  <div class="subcategory-item-top">
+                  <button
+                    type="button"
+                    class="subcategory-item-header"
+                    data-sub-toggle="${sub!.id}"
+                    aria-expanded="false"
+                    title="${pick('مشاهده توضیحات و ثبت درخواست', 'View details & request')}"
+                  >
                     <div class="subcategory-item-title-wrap">
                       <span class="subcategory-bullet"></span>
-                      <h4 class="subcategory-title">
-                        <a href="/services/${cat.id}/${sub!.id}" style="color: inherit; text-decoration: none;" title="${pick('مشاهده صفحه اختصاصی و تعرفه', 'View dedicated page')}">
-                          ${sub!.label}
-                        </a>
-                      </h4>
+                      <h4 class="subcategory-title">${sub!.label}</h4>
                     </div>
-                    <div class="subcategory-price-tag">
-                      <span class="price-label">${pick('شروع از:', 'From:')}</span>
-                      <span class="price-value">${formatToman(sub!.basePrice)}</span>
+                    <div class="subcategory-header-meta">
+                      <div class="subcategory-price-tag">
+                        <span class="price-label">${pick('شروع از:', 'From:')}</span>
+                        <span class="price-value">${formatToman(sub!.basePrice)}</span>
+                      </div>
+                      <span class="sub-chevron-icon">${icons.chevronDown}</span>
                     </div>
-                  </div>
-                  <p class="subcategory-desc">${sub!.desc}</p>
-                  <div class="subcategory-item-footer">
-                    <button
-                      type="button"
-                      class="btn btn-primary btn-sm service-order-trigger"
-                      data-service-id="${cat.id}"
-                      data-vehicle-id="${sub!.id}"
-                    >
-                      <span class="icon">${icons.plusCircle}</span>
-                      <span>${pick('ثبت درخواست آنلاین', 'Request Service')}</span>
-                    </button>
-                    <a
-                      href="/services/${cat.id}/${sub!.id}"
-                      class="btn btn-outline btn-sm"
-                      style="padding: 0.4rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 0.6rem; font-size: 0.8rem; color: #475569; text-decoration: none; font-weight: 700;"
-                    >
-                      <span>${pick('صفحه خدمت', 'Page')}</span>
-                    </a>
+                  </button>
+
+                  <div class="subcategory-item-body" hidden>
+                    <p class="subcategory-desc">${sub!.desc}</p>
+                    <div class="subcategory-item-footer">
+                      <button
+                        type="button"
+                        class="btn btn-primary btn-sm service-order-trigger"
+                        data-service-id="${cat.id}"
+                        data-vehicle-id="${sub!.id}"
+                      >
+                        <span class="icon">${icons.plusCircle}</span>
+                        <span>${pick('ثبت درخواست آنلاین', 'Request Service')}</span>
+                      </button>
+                      <a
+                        href="/services/${cat.id}/${sub!.id}"
+                        class="btn btn-outline btn-sm subcategory-page-btn"
+                        style="padding: 0.4rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 0.6rem; font-size: 0.8rem; color: #475569; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;"
+                      >
+                        <span>${pick('صفحه اختصاصی و تعرفه', 'Dedicated Page')}</span>
+                        <span>←</span>
+                      </a>
+                    </div>
                   </div>
                 </div>
               `,
@@ -261,20 +270,6 @@ export function renderServiceCategoriesAccordion(): string {
 
   return `
     <div class="services-explorer" id="services-explorer">
-      <div class="services-explorer-header">
-        <div class="services-explorer-badge">
-          <span class="icon">${icons.bolt}</span>
-          <span>${pick('خدمات سریع و تضمینی ساختمان در تهران', 'Fast & Guaranteed Building Services in Tehran')}</span>
-        </div>
-        <h2 class="services-explorer-title">${pick('دسته‌بندی خدمات فنی بهدون', 'Behdoon Technical Service Categories')}</h2>
-        <p class="services-explorer-desc">
-          ${pick(
-            'روی هر دسته‌بندی کلیک کنید تا خدمات زیرمجموعه، نرخ شروع قیمت و جزئیات تخصصی نمایش داده شود:',
-            'Click on any category to view its sub-services, starting rates, and technician details:',
-          )}
-        </p>
-      </div>
-
       <div class="category-accordion-list">
         ${categoriesHtml}
       </div>
@@ -346,6 +341,19 @@ export function initServiceCategoriesAccordion(
         if (panel) panel.hidden = true;
         if (toggleText) toggleText.textContent = pick('مشاهده خدمات', 'View services');
       } else {
+        // Optionally close sibling cards so one category stays in focus across the row
+        cards.forEach((otherCard) => {
+          if (otherCard !== card && otherCard.classList.contains('is-open')) {
+            otherCard.classList.remove('is-open');
+            const otherBtn = otherCard.querySelector<HTMLButtonElement>('[data-category-toggle]');
+            const otherPanel = otherCard.querySelector<HTMLElement>('.category-accordion-panel');
+            const otherText = otherCard.querySelector<HTMLElement>('.category-toggle-text');
+            otherBtn?.setAttribute('aria-expanded', 'false');
+            if (otherPanel) otherPanel.hidden = true;
+            if (otherText) otherText.textContent = pick('مشاهده خدمات', 'View services');
+          }
+        });
+
         card.classList.add('is-open');
         toggleBtn.setAttribute('aria-expanded', 'true');
         if (panel) panel.hidden = false;
@@ -354,7 +362,28 @@ export function initServiceCategoriesAccordion(
     });
   });
 
-  // Wire subcategory buttons
+  // Wire subcategory item accordion toggles ("و برای زیر دسته ها هم")
+  container.querySelectorAll<HTMLElement>('.subcategory-item').forEach((subItem) => {
+    const subToggle = subItem.querySelector<HTMLButtonElement>('[data-sub-toggle]');
+    const subBody = subItem.querySelector<HTMLElement>('.subcategory-item-body');
+
+    subToggle?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = subItem.classList.contains('sub-is-open');
+
+      if (isOpen) {
+        subItem.classList.remove('sub-is-open');
+        subToggle.setAttribute('aria-expanded', 'false');
+        if (subBody) subBody.hidden = true;
+      } else {
+        subItem.classList.add('sub-is-open');
+        subToggle.setAttribute('aria-expanded', 'true');
+        if (subBody) subBody.hidden = false;
+      }
+    });
+  });
+
+  // Wire subcategory order buttons
   container.querySelectorAll<HTMLButtonElement>('.service-order-trigger').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -369,3 +398,4 @@ export function initServiceCategoriesAccordion(
     onSelectService('');
   });
 }
+

@@ -1234,13 +1234,15 @@ body.modal-open {
 }
 
 .category-accordion-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
+  align-items: start;
 }
 
 .category-accordion-card {
-  background: rgba(255, 255, 255, 0.85);
+  grid-column: span 1;
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border, #e2e8f0);
@@ -1253,12 +1255,83 @@ body.modal-open {
 .category-accordion-card:hover {
   border-color: rgba(147, 51, 234, 0.4);
   box-shadow: 0 8px 30px rgba(124, 58, 237, 0.08);
+  transform: translateY(-2px);
 }
 
+/* Collapsed State: 4 categories horizontally in a row */
+.category-accordion-card:not(.is-open) .category-accordion-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.25rem 0.85rem;
+  gap: 10px;
+  min-height: 140px;
+}
+
+.category-accordion-card:not(.is-open) .category-header-main {
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.category-accordion-card:not(.is-open) .category-title-row {
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.category-accordion-card:not(.is-open) .category-title {
+  font-size: 0.98rem;
+  text-align: center;
+}
+
+.category-accordion-card:not(.is-open) .category-subtitle,
+.category-accordion-card:not(.is-open) .category-toggle-indicator {
+  display: none;
+}
+
+/* When open: spans all 4 columns across the row so panel displays underneath */
 .category-accordion-card.is-open {
+  grid-column: 1 / -1;
   border-color: var(--primary, #7c3aed);
-  background: rgba(255, 255, 255, 0.96);
+  background: rgba(255, 255, 255, 0.98);
   box-shadow: 0 12px 36px rgba(124, 58, 237, 0.12);
+  transform: none;
+}
+
+.category-accordion-card.is-open .category-accordion-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.75rem;
+  text-align: right;
+}
+
+.category-accordion-card.is-open .category-header-main {
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+}
+
+.category-accordion-card.is-open .category-title-row {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.category-accordion-card.is-open .category-title {
+  font-size: 1.15rem;
+}
+
+.category-accordion-card.is-open .category-subtitle {
+  display: block;
+}
+
+.category-accordion-card.is-open .category-toggle-indicator {
+  display: flex;
 }
 
 .category-accordion-header {
@@ -1373,19 +1446,17 @@ body.modal-open {
 
 .subcategories-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 12px;
   margin-top: 1rem;
 }
 
+/* Subcategory Items with Accordion Details ("و برای زیر دسته ها هم") */
 .subcategory-item {
   background: var(--surface-alt, #f8fafc);
   border: 1px solid var(--border, #e2e8f0);
   border-radius: 14px;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  overflow: hidden;
   transition: all 0.2s ease;
 }
 
@@ -1395,11 +1466,24 @@ body.modal-open {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 
-.subcategory-item-top {
+.subcategory-item.sub-is-open {
+  background: #ffffff;
+  border-color: var(--primary, #7c3aed);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.1);
+}
+
+.subcategory-item-header {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  padding: 0.95rem 1.15rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: right;
+  gap: 10px;
+  font-family: inherit;
 }
 
 .subcategory-item-title-wrap {
@@ -1417,10 +1501,16 @@ body.modal-open {
 }
 
 .subcategory-title {
-  font-size: 0.98rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: var(--text, #0f172a);
   margin: 0;
+}
+
+.subcategory-header-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .subcategory-price-tag {
@@ -1429,7 +1519,7 @@ body.modal-open {
   gap: 4px;
   background: rgba(5, 150, 105, 0.08);
   border: 1px solid rgba(5, 150, 105, 0.2);
-  padding: 2px 8px;
+  padding: 3px 8px;
   border-radius: 8px;
   font-size: 0.78rem;
   white-space: nowrap;
@@ -1444,22 +1534,56 @@ body.modal-open {
   color: #059669;
 }
 
+.sub-chevron-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: var(--primary, #7c3aed);
+  transition: transform 0.22s ease;
+}
+
+.sub-chevron-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.subcategory-item.sub-is-open .sub-chevron-icon {
+  transform: rotate(180deg);
+}
+
+.subcategory-item-body {
+  padding: 0.9rem 1.15rem 1.15rem;
+  border-top: 1px dashed var(--border, #e2e8f0);
+  background: rgba(248, 250, 252, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.subcategory-item-body[hidden] {
+  display: none;
+}
+
 .subcategory-desc {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--muted, #64748b);
-  line-height: 1.6;
+  line-height: 1.65;
   margin: 0;
-  flex-grow: 1;
 }
 
 .subcategory-item-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
   margin-top: 4px;
 }
 
 .subcategory-item-footer .service-order-trigger {
-  width: 100%;
-  justify-content: center;
-  padding: 8px 12px;
+  padding: 8px 16px;
   font-size: 0.84rem;
   border-radius: 10px;
 }
