@@ -80,75 +80,45 @@ export const SUBCATEGORY_DETAILS_MAP: Record<string, { desc: string; descEn: str
     desc: 'اجرای سقف کاذب کناف، باکس نور مخفی دکوراتیو، لاین نوری، تایل ۶۰×۶۰ و دیوار جداکننده ضد رطوبت',
     descEn: 'Knauf false ceiling, concealed ambient lighting coves, linear lights and drywall partitions',
   },
-  'emergency-lockout': {
-    desc: 'اعزام فوری کلیدساز سیار، باز کردن انواع درب‌های ضدسرقت، اتاقی و اتومبیل بدون آسیب به قفل و چهارچوب',
-    descEn: 'Emergency locksmith dispatch, non-destructive opening of anti-theft, room, and vehicle doors',
-  },
-  'smart-locks': {
-    desc: 'نصب و راه‌اندازی دستگیره‌های هوشمند رمزی، کارتی و اثرانگشتی با گارانتی معتبر شرکتی',
-    descEn: 'Smart digital lock installation with biometric, card, and passcode authentication',
-  },
-  'parking-gate': {
-    desc: 'نصب، عیب‌یابی و تعمیر جک‌های بازویی، ریلی، کرکره‌ای و کددهی انواع ریموت پارکینگ',
-    descEn: 'Automatic parking gate motor repair, hydraulic arms adjustment, and remote coding',
-  },
-  'cctv-alarm': {
-    desc: 'سیم‌کشی و نصب دوربین‌های مداربسته تحت شبکه IP، انتقال تصویر روی موبایل و سیستم دزدگیر اماکن',
-    descEn: 'CCTV IP camera installation, smartphone remote viewing configuration, and burglar alarms',
-  },
-  'cabinet-repair': {
-    desc: 'تعویض لولای آرام‌بند، ریل‌های ساچمه‌ای، صفحه کورین، ام‌دی‌اف، جک پمپی و رگلاژ کامل درب کابینت',
-    descEn: 'Cabinet hinge and ball-bearing slide replacement, Corian countertops, and full door alignment',
-  },
-  'closet-design': {
-    desc: 'طراحی، ساخت و نصب کمد دیواری‌های ریلی و لولایی، شلف، باکس و جاکفشی با متریال ضدخش استاندارد',
-    descEn: 'Custom sliding closets, shoe storage, shelves, and built-in wardrobe design & installation',
-  },
-  'door-repair': {
-    desc: 'کوتاه کردن و رنده‌کاری درب‌ها پس از سرامیک، رفع گیر و اصطکاک، تعویض قفل و لولا و صداگیری',
-    descEn: 'Wooden door trimming, friction elimination, lock and hinge replacement, and squeak fix',
-  },
-  'parquet-flooring': {
-    desc: 'زیرسازی با فوم سایلنت، نصب کلیکی لمینت و پارکت چوبی و قرنیز دور سالن با تضمین دوام',
-    descEn: 'Silent foam underlayment, click-lock laminate & wood parquet installation with baseboards',
-  },
-  'upvc-repair': {
-    desc: 'رگلاژ، عایق‌بندی صوتی و حرارتی، تعویض اسپانیولت، زاماک و لاستیک‌های درزبندی EPDM پنجره دوجداره',
-    descEn: 'UPVC window calibration, soundproofing, espagnolette, striker, and EPDM gasket replacement',
-  },
-  'pleated-mesh': {
-    desc: 'ساخت و نصب توری‌های ضدحشرات متحرک و پلیسه جمع‌شونده برای انواع پنجره و تراس با آلومینیوم مقاوم',
-    descEn: 'Custom retractable insect mesh screens for double-glazed windows and balconies',
-  },
-  'glass-replacement': {
-    desc: 'برش و تعویض شیشه‌های شکسته، دوجداره صنعتی با گاز آرگون، لمینت و شیشه‌های سکوریت نشکن',
-    descEn: 'Argon double-glazing, laminated, tempered, and reflective glass cutting and replacement',
-  },
-  'electric-shutter': {
-    desc: 'تعمیر موتور توبولار و ساید، تعویض تیغه‌های آسیب‌دیده آلومینیومی و تنظیم خلاص‌کن دستی کرکره',
-    descEn: 'Electric roller shutter repair, tubular/side motors, blade replacement, and manual release tuning',
-  },
-  'staircase-cleaning': {
-    desc: 'شستشوی پله‌ها، نرده، لابی، آسانسور و پارکینگ با مواد شوینده صنعتی استاندارد و ضدعفونی کامل',
-    descEn: 'Staircase, railing, lobby, elevator, and parking deep wash with professional cleaning agents',
-  },
-  'facade-cleaning': {
-    desc: 'واترجت و سندبلاست نمای سنگی، آجری و کامپوزیت با طناب کاربری (راپ‌اکسس) بدون نیاز به داربست',
-    descEn: 'High-pressure waterjet & sandblasting facade cleaning via industrial rope access (no scaffolding)',
-  },
-  'carpet-sofa-wash': {
-    desc: 'شستشوی تخصصی مبلمان، تشک خوشخواب و فرش با دستگاه‌های مکنده قوی سه‌موتوره و خشک‌کن در محل',
-    descEn: 'On-site sofa, mattress, and carpet extraction wash with powerful 3-motor vacuum equipment',
-  },
-  'pest-control': {
-    desc: 'طعمه‌گذاری و ریشه‌کنی قطعی ساس، سوسک ریز کابینت و موش با سموم ترکیبی بدون بو و دارای تاییدیه بهداشت',
-    descEn: 'Guaranteed pest control, odorless extermination of bedbugs, cockroaches, and rodents with certified formulas',
-  },
 };
 
+// Only the 4 primary categories on the homepage (in 1 row)
+export const PRIMARY_CATEGORY_IDS = ['hvac', 'plumbing', 'electrical', 'renovation'];
+
 export function renderServiceCategoriesAccordion(): string {
-  const categoriesHtml = serviceCategories
-    .map((cat) => {
+  const primaryCategories = serviceCategories.filter((cat) => PRIMARY_CATEGORY_IDS.includes(cat.id));
+
+  // 1. Horizontal row tabs for the 4 primary categories
+  const tabsHtml = primaryCategories
+    .map((cat, idx) => {
+      const vehicleIds = CATEGORY_VEHICLE_IDS[cat.id] || [];
+      const isSelected = idx === 0;
+
+      return `
+        <button
+          type="button"
+          class="category-row-tab ${isSelected ? 'is-active' : ''}"
+          data-category-select="${cat.id}"
+          role="tab"
+          aria-selected="${isSelected}"
+          aria-controls="category-panel-${cat.id}"
+          id="cat-tab-${cat.id}"
+        >
+          <div class="cat-tab-icon-box">
+            <span class="icon">${cat.icon}</span>
+          </div>
+          <div class="cat-tab-info">
+            <h3 class="cat-tab-title">${pick(cat.label, cat.labelEn)}</h3>
+            <span class="cat-tab-badge">${toPersianDigits(vehicleIds.length)} ${pick('خدمت', 'services')}</span>
+          </div>
+        </button>
+      `;
+    })
+    .join('');
+
+  // 2. Underneath panels for each category
+  const panelsHtml = primaryCategories
+    .map((cat, idx) => {
       const vehicleIds = CATEGORY_VEHICLE_IDS[cat.id] || [];
       const subcategories = vehicleIds
         .map((vid) => {
@@ -169,99 +139,79 @@ export function renderServiceCategoriesAccordion(): string {
         })
         .filter(Boolean);
 
-      // In normal state, categories start collapsed and open upon user click
-      const isOpen = false;
+      const isSelected = idx === 0;
 
       return `
-        <div class="category-accordion-card ${isOpen ? 'is-open' : ''}" data-category-card="${cat.id}">
-          <button
-            type="button"
-            class="category-accordion-header"
-            data-category-toggle="${cat.id}"
-            aria-expanded="${isOpen}"
-            aria-controls="category-panel-${cat.id}"
-          >
-            <div class="category-header-main">
-              <div class="category-icon-box">
-                <span class="icon">${cat.icon}</span>
-              </div>
-              <div class="category-header-info">
-                <div class="category-title-row">
-                  <h3 class="category-title">${pick(cat.label, cat.labelEn)}</h3>
-                  <span class="category-badge">${toPersianDigits(subcategories.length)} ${pick('خدمت تخصصی', 'Specialties')}</span>
-                </div>
-                <p class="category-subtitle">${pick(cat.subtitle || '', cat.subtitleEn || '')}</p>
-              </div>
+        <div
+          class="category-display-panel ${isSelected ? 'is-active' : ''}"
+          id="category-panel-${cat.id}"
+          role="tabpanel"
+          aria-labelledby="cat-tab-${cat.id}"
+          ${isSelected ? '' : 'hidden'}
+        >
+          <!-- Category Header Info Underneath the 4 Cards -->
+          <div class="category-panel-intro">
+            <div class="category-panel-intro-text">
+              <h4 class="category-panel-title">${pick(cat.label, cat.labelEn)}</h4>
+              <p class="category-panel-desc">${pick(cat.subtitle || '', cat.subtitleEn || '')}</p>
             </div>
-            <div class="category-toggle-indicator">
-              <span class="category-toggle-text">${pick(isOpen ? 'بستن' : 'مشاهده خدمات', isOpen ? 'Close' : 'View services')}</span>
-              <span class="icon chevron-icon">${icons.chevronDown}</span>
-            </div>
-          </button>
+            <a href="/services/${cat.id}" class="category-panel-guide-link">
+              <span>${pick(`مشاهده صفحه جامع و دانشنامه تخصصی ${cat.label}`, `Full ${cat.labelEn} Guide & Page`)}</span>
+              <span class="icon" style="width: 14px; height: 14px;">${icons.chevronLeft}</span>
+            </a>
+          </div>
 
-          <div
-            class="category-accordion-panel"
-            id="category-panel-${cat.id}"
-            ${isOpen ? '' : 'hidden'}
-          >
-            <div class="subcategories-grid">
-              ${subcategories
-                .map(
-                  (sub) => `
-                <div class="subcategory-item" data-subcategory-id="${sub!.id}">
-                  <button
-                    type="button"
-                    class="subcategory-item-header"
-                    data-sub-toggle="${sub!.id}"
-                    aria-expanded="false"
-                    title="${pick('مشاهده توضیحات و ثبت درخواست', 'View details & request')}"
-                  >
-                    <div class="subcategory-item-title-wrap">
-                      <span class="subcategory-bullet"></span>
-                      <h4 class="subcategory-title">${sub!.label}</h4>
+          <!-- Subcategories Grid with Accordion expansion -->
+          <div class="subcategories-grid">
+            ${subcategories
+              .map(
+                (sub) => `
+              <div class="subcategory-item" data-subcategory-id="${sub!.id}">
+                <button
+                  type="button"
+                  class="subcategory-item-header"
+                  data-sub-toggle="${sub!.id}"
+                  aria-expanded="false"
+                  title="${pick('مشاهده توضیحات و ثبت درخواست', 'View details & request')}"
+                >
+                  <div class="subcategory-item-title-wrap">
+                    <span class="subcategory-bullet"></span>
+                    <h5 class="subcategory-title">${sub!.label}</h5>
+                  </div>
+                  <div class="subcategory-header-meta">
+                    <div class="subcategory-price-tag">
+                      <span class="price-label">${pick('شروع از:', 'From:')}</span>
+                      <span class="price-value">${formatToman(sub!.basePrice)}</span>
                     </div>
-                    <div class="subcategory-header-meta">
-                      <div class="subcategory-price-tag">
-                        <span class="price-label">${pick('شروع از:', 'From:')}</span>
-                        <span class="price-value">${formatToman(sub!.basePrice)}</span>
-                      </div>
-                      <span class="sub-chevron-icon">${icons.chevronDown}</span>
-                    </div>
-                  </button>
+                    <span class="sub-chevron-icon">${icons.chevronDown}</span>
+                  </div>
+                </button>
 
-                  <div class="subcategory-item-body" hidden>
-                    <p class="subcategory-desc">${sub!.desc}</p>
-                    <div class="subcategory-item-footer">
-                      <button
-                        type="button"
-                        class="btn btn-primary btn-sm service-order-trigger"
-                        data-service-id="${cat.id}"
-                        data-vehicle-id="${sub!.id}"
-                      >
-                        <span class="icon">${icons.plusCircle}</span>
-                        <span>${pick('ثبت درخواست آنلاین', 'Request Service')}</span>
-                      </button>
-                      <a
-                        href="/services/${cat.id}/${sub!.id}"
-                        class="btn btn-outline btn-sm subcategory-page-btn"
-                        style="padding: 0.4rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 0.6rem; font-size: 0.8rem; color: #475569; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;"
-                      >
-                        <span>${pick('صفحه اختصاصی و تعرفه', 'Dedicated Page')}</span>
-                        <span>←</span>
-                      </a>
-                    </div>
+                <div class="subcategory-item-body" hidden>
+                  <p class="subcategory-desc">${sub!.desc}</p>
+                  <div class="subcategory-item-footer">
+                    <button
+                      type="button"
+                      class="btn btn-primary btn-sm service-order-trigger"
+                      data-service-id="${cat.id}"
+                      data-vehicle-id="${sub!.id}"
+                    >
+                      <span class="icon">${icons.plusCircle}</span>
+                      <span>${pick('ثبت درخواست آنلاین', 'Request Service')}</span>
+                    </button>
+                    <a
+                      href="/services/${cat.id}/${sub!.id}"
+                      class="btn btn-outline btn-sm subcategory-page-btn"
+                    >
+                      <span>${pick('صفحه اختصاصی و تعرفه', 'Dedicated Page')}</span>
+                      <span>←</span>
+                    </a>
                   </div>
                 </div>
-              `,
-                )
-                .join('')}
-              <div style="grid-column: 1 / -1; display: flex; justify-content: flex-end; padding-top: 0.75rem; border-top: 1px dashed #e2e8f0;">
-                <a href="/services/${cat.id}" style="font-size: 0.85rem; font-weight: 800; color: #8B1C31; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
-                  <span>${pick(`مشاهده صفحه جامع و دانشنامه تخصصی ${cat.label}`, `Full ${cat.labelEn} Guide & Page`)}</span>
-                  <span>←</span>
-                </a>
               </div>
-            </div>
+            `,
+              )
+              .join('')}
           </div>
         </div>
       `;
@@ -270,10 +220,17 @@ export function renderServiceCategoriesAccordion(): string {
 
   return `
     <div class="services-explorer" id="services-explorer">
-      <div class="category-accordion-list">
-        ${categoriesHtml}
+      <!-- 4 Categories Strictly in 1 Horizontal Row -->
+      <div class="categories-row-nav" role="tablist" aria-label="دسته‌بندی‌های اصلی خدمات بهدون">
+        ${tabsHtml}
       </div>
 
+      <!-- Selected Category Subservices & Details Panel Underneath -->
+      <div class="categories-panels-container">
+        ${panelsHtml}
+      </div>
+
+      <!-- Quick Action & Trust Bar -->
       <div class="services-quick-bar">
         <div class="quick-bar-content">
           <div class="quick-bar-text">
@@ -325,44 +282,30 @@ export function initServiceCategoriesAccordion(
   const container = document.getElementById('services-explorer');
   if (!container) return;
 
-  const cards = container.querySelectorAll<HTMLElement>('.category-accordion-card');
+  const tabs = container.querySelectorAll<HTMLButtonElement>('[data-category-select]');
+  const panels = container.querySelectorAll<HTMLElement>('.category-display-panel');
 
-  cards.forEach((card) => {
-    const toggleBtn = card.querySelector<HTMLButtonElement>('[data-category-toggle]');
-    const panel = card.querySelector<HTMLElement>('.category-accordion-panel');
-    const toggleText = card.querySelector<HTMLElement>('.category-toggle-text');
+  // Category Tab switching (selecting category in row shows its subcategories underneath)
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const selectedId = tab.dataset.categorySelect;
+      if (!selectedId) return;
 
-    toggleBtn?.addEventListener('click', () => {
-      const isCurrentlyOpen = card.classList.contains('is-open');
+      tabs.forEach((t) => {
+        const isMatch = t.dataset.categorySelect === selectedId;
+        t.classList.toggle('is-active', isMatch);
+        t.setAttribute('aria-selected', isMatch ? 'true' : 'false');
+      });
 
-      if (isCurrentlyOpen) {
-        card.classList.remove('is-open');
-        toggleBtn.setAttribute('aria-expanded', 'false');
-        if (panel) panel.hidden = true;
-        if (toggleText) toggleText.textContent = pick('مشاهده خدمات', 'View services');
-      } else {
-        // Optionally close sibling cards so one category stays in focus across the row
-        cards.forEach((otherCard) => {
-          if (otherCard !== card && otherCard.classList.contains('is-open')) {
-            otherCard.classList.remove('is-open');
-            const otherBtn = otherCard.querySelector<HTMLButtonElement>('[data-category-toggle]');
-            const otherPanel = otherCard.querySelector<HTMLElement>('.category-accordion-panel');
-            const otherText = otherCard.querySelector<HTMLElement>('.category-toggle-text');
-            otherBtn?.setAttribute('aria-expanded', 'false');
-            if (otherPanel) otherPanel.hidden = true;
-            if (otherText) otherText.textContent = pick('مشاهده خدمات', 'View services');
-          }
-        });
-
-        card.classList.add('is-open');
-        toggleBtn.setAttribute('aria-expanded', 'true');
-        if (panel) panel.hidden = false;
-        if (toggleText) toggleText.textContent = pick('بستن', 'Close');
-      }
+      panels.forEach((p) => {
+        const isMatch = p.id === `category-panel-${selectedId}`;
+        p.classList.toggle('is-active', isMatch);
+        p.hidden = !isMatch;
+      });
     });
   });
 
-  // Wire subcategory item accordion toggles ("و برای زیر دسته ها هم")
+  // Wire subcategory item accordion toggles
   container.querySelectorAll<HTMLElement>('.subcategory-item').forEach((subItem) => {
     const subToggle = subItem.querySelector<HTMLButtonElement>('[data-sub-toggle]');
     const subBody = subItem.querySelector<HTMLElement>('.subcategory-item-body');
@@ -388,14 +331,13 @@ export function initServiceCategoriesAccordion(
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const catId = btn.dataset.serviceId || '';
-      const vId = btn.dataset.vehicleId || '';
-      onSelectService(catId, vId);
+      const vehicleId = btn.dataset.vehicleId;
+      onSelectService(catId, vehicleId);
     });
   });
 
   // Wire hero quick request button
   document.getElementById('hero-quick-request-btn')?.addEventListener('click', () => {
-    onSelectService('');
+    onSelectService(PRIMARY_CATEGORY_IDS[0]);
   });
 }
-

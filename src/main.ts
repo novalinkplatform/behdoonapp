@@ -14,6 +14,7 @@ import { initServiceCategoriesAccordion } from './components/ServiceCategoriesAc
 import { renderBottomNav, initBottomNav } from './components/BottomNav.ts';
 import { renderDemoBadges } from './components/DemoBadges.ts';
 import { renderStoriesStrip, initStoriesStrip } from './components/StoriesStrip.ts';
+import { renderHeroSlider, initHeroSlider } from './components/HeroSlider.ts';
 import { initLangToggle } from './components/LangToggle.ts';
 import { bootstrapI18n } from './i18n/bootstrap.ts';
 import { initBehaviorTracking } from './utils/analytics.ts';
@@ -101,6 +102,7 @@ function renderApp(settings: Awaited<ReturnType<typeof loadSettings>>, testimoni
     <a class="skip-link" href="#main-content">${pick('رفتن به محتوای اصلی', 'Skip to main content')}</a>
     ${renderHeader(settings)}
     ${renderStoriesStrip(visibleStories)}
+    ${renderHeroSlider(settings)}
     <main id="main-content">
       ${body}
     </main>
@@ -143,6 +145,7 @@ async function init(): Promise<void> {
   initLangToggle();
   initQuickActions(settings);
   initStoriesStrip(settings.homepage_layout?.storiesEnabled === false ? [] : stories);
+  initHeroSlider(settings);
 
   scrollToHashIfPresent();
 

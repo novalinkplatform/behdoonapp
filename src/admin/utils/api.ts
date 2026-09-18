@@ -1496,6 +1496,147 @@ export async function deleteStory(id: number): Promise<void> {
   if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'حذف استوری ناموفق بود.');
 }
 
+// ===== Sliders (Mobile & Web) =====
+
+export interface SlideItem {
+  id: string;
+  imageUrl: string;
+  title: string;
+  titleEn?: string;
+  subtitle?: string;
+  subtitleEn?: string;
+  target: 'both' | 'mobile' | 'web';
+  linkUrl: string;
+  buttonText?: string;
+  sortOrder: number;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface SliderConfig {
+  enabled: boolean;
+  autoplay: boolean;
+  intervalMs: number;
+  showIndicators: boolean;
+  slides: SlideItem[];
+}
+
+export const DEFAULT_SLIDER_CONFIG: SliderConfig = {
+  enabled: true,
+  autoplay: true,
+  intervalMs: 5000,
+  showIndicators: true,
+  slides: [
+    {
+      id: 'slide-1',
+      imageUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1200&q=80',
+      title: 'سرویس و تعمیرات تخصصی سرمایش و پکیج',
+      titleEn: 'HVAC & Heating Systems Specialist Services',
+      subtitle: 'اعزام فوری تکنسین مجرب در سراسر تهران با ضمانت کتبی ۳۰ روزه',
+      subtitleEn: 'Immediate technician dispatch across Tehran with 30-day warranty',
+      target: 'both',
+      linkUrl: '/services/hvac',
+      buttonText: 'ثبت فوری درخواست',
+      sortOrder: 1,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: 'slide-2',
+      imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80',
+      title: 'نشت‌یابی نقطه زن لوله و تأسیسات بدون تخریب',
+      titleEn: 'Acoustic Pipe Leak Detection Without Damage',
+      subtitle: 'تشخیص با دستگاه‌های آکوستیک و حرارتی پیشرفته و رفع نم ۱۰۰٪ تضمینی',
+      subtitleEn: 'High-tech acoustic leak detection and guaranteed moisture repair',
+      target: 'both',
+      linkUrl: '/services/plumbing',
+      buttonText: 'مشاهده خدمات لوله‌کشی',
+      sortOrder: 2,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: 'slide-3',
+      imageUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80',
+      title: 'برقکاری ساختمانی فوری و رفع اتصالی شبانه‌روزی',
+      titleEn: '24/7 Building Electrical Emergency & Wiring',
+      subtitle: 'حضور برقکار در کمتر از ۴۵ دقیقه، تعویض فیوز، سیم‌کشی و رفع اتصالی',
+      subtitleEn: 'Electrician arrival in under 45 mins with Union-approved pricing',
+      target: 'both',
+      linkUrl: '/services/electrical',
+      buttonText: 'اعزام برقکار فوری',
+      sortOrder: 3,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+    },
+  ],
+};
+
+export async function fetchSliderConfig(): Promise<SliderConfig> {
+  try {
+    const settings = await fetchSettings();
+    const config = settings.site_sliders as SliderConfig | undefined;
+    if (config && Array.isArray(config.slides)) {
+      return config;
+    }
+  } catch {}
+  return DEFAULT_SLIDER_CONFIG;
+}
+
+export async function updateSliderConfig(config: SliderConfig): Promise<void> {
+  await updateSetting('site_sliders', config);
+}
+
+// ===== Managed Service Categories & Articles =====
+
+export interface ManagedSubService {
+  id: string;
+  title: string;
+  titleEn: string;
+  basePrice: number;
+  description: string;
+  descriptionEn?: string;
+  guaranteeDays?: number;
+  estimatedTime?: string;
+}
+
+export interface ManagedServiceCategory {
+  id: string;
+  label: string;
+  labelEn: string;
+  icon: string;
+  subtitle: string;
+  subtitleEn: string;
+  showInHeader: boolean;
+  headerOrder: number;
+  headerUrl?: string;
+  article: {
+    title: string;
+    excerpt: string;
+    contentHtml: string;
+    metaTitle?: string;
+    metaDescription?: string;
+    readingTimeMinutes?: number;
+  };
+  subServices: ManagedSubService[];
+  isCustom?: boolean;
+}
+
+export async function fetchManagedCategories(): Promise<ManagedServiceCategory[]> {
+  try {
+    const settings = await fetchSettings();
+    const custom = settings.service_categories_custom as ManagedServiceCategory[] | undefined;
+    if (Array.isArray(custom) && custom.length > 0) {
+      return custom;
+    }
+  } catch {}
+  return [];
+}
+
+export async function updateManagedCategories(categories: ManagedServiceCategory[]): Promise<void> {
+  await updateSetting('service_categories_custom', categories);
+}
+
 // ===== Job applications (careers form) =====
 
 export interface JobApplication {

@@ -5,8 +5,26 @@ import { createConfiguredTileLayer, type MapSettings } from '../utils/mapProvide
 
 export const TEHRAN_CENTER: [number, number] = [35.7219, 51.3347];
 export const TEHRAN_BOUNDS: [[number, number], [number, number]] = [
-  [35.55, 51.15], // محدوده جنوب غربی تهران
-  [35.85, 51.65], // محدوده شمال شرقی تهران
+  [35.50, 51.10], // محدوده جنوب غربی تهران
+  [35.90, 51.70], // محدوده شمال شرقی تهران
+];
+
+export interface TehranArea {
+  name: string;
+  nameEn: string;
+  lat: number;
+  lng: number;
+}
+
+export const TEHRAN_KEY_AREAS: TehranArea[] = [
+  { name: 'سعادت‌آباد و شهرک غرب', nameEn: 'Saadat Abad', lat: 35.7765, lng: 51.3705 },
+  { name: 'ونک و ملاصدرا', nameEn: 'Vanak', lat: 35.7575, lng: 51.4100 },
+  { name: 'پاسداران و نیاوران', nameEn: 'Pasdaran', lat: 35.7950, lng: 51.4600 },
+  { name: 'تهرانپارس و شرق', nameEn: 'Tehranpars', lat: 35.7280, lng: 51.5280 },
+  { name: 'صادقیه و پونک', nameEn: 'Sadeghiyeh', lat: 35.7200, lng: 51.3200 },
+  { name: 'پیروزی و نیروهوایی', nameEn: 'Piroozi', lat: 35.6960, lng: 51.4850 },
+  { name: 'انقلاب و ولیعصر', nameEn: 'Valiasr / Center', lat: 35.7010, lng: 51.3915 },
+  { name: 'نازی‌آباد و ری', nameEn: 'Nazi Abad / South', lat: 35.6350, lng: 51.4100 },
 ];
 
 const PIN_SVG = `
@@ -29,6 +47,7 @@ export function renderLocationMap(id: string): string {
 
 export interface LocationMapController {
   setCenter: (lat: number, lng: number, zoom?: number) => void;
+  panToArea: (lat: number, lng: number) => void;
   getPosition: () => { lat: number; lng: number };
   hasInteracted: () => boolean;
   markInteracted: () => void;
@@ -50,14 +69,14 @@ export function initLocationMap(
     return (container as any)._locationMapController;
   }
 
-  // نقشه صرفاً بر روی محدوده شهر تهران قفل شده است و خروج از آن ناممکن است
+  // نقشه بر روی محدوده شهر تهران با انعطاف بالا تنظیم شده است
   const map = L.map(id, {
     center: TEHRAN_CENTER,
     zoom: 12,
     minZoom: 10,
     maxZoom: 18,
     maxBounds: TEHRAN_BOUNDS,
-    maxBoundsViscosity: 1.0,
+    maxBoundsViscosity: 0.7,
   });
 
   const tileLayer = createConfiguredTileLayer(mapSettings);
@@ -132,6 +151,15 @@ export function initLocationMap(
         map.setView([clampedLat, clampedLng], zoom, { animate: false });
       }
     },
+    panToArea: (lat: number, lng: number) => {
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+      const [clampedLat, clampedLng] = clampToTehran(lat, lng);
+      map.invalidateSize();
+      marker.setLatLng([clampedLat, clampedLng]);
+      map.flyTo([clampedLat, clampedLng], 14, { duration: 0.6 });
+      markInteraction();
+      onUserMove?.(clampedLat, clampedLng);
+    },
     getPosition: () => {
       const pos = marker.getLatLng();
       return { lat: pos.lat, lng: pos.lng };
@@ -144,6 +172,12 @@ export function initLocationMap(
       window.requestAnimationFrame(() => {
         map.invalidateSize({ pan: false });
       });
+      window.setTimeout(() => {
+        map.invalidateSize({ pan: false });
+      }, 80);
+      window.setTimeout(() => {
+        map.invalidateSize({ pan: false });
+      }, 250);
     },
     setBoundsMode: () => {
       map.setMaxBounds(TEHRAN_BOUNDS);

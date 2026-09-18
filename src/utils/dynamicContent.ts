@@ -188,6 +188,8 @@ export interface SiteSettings {
     showInHeader: boolean;
     showInFooter: boolean;
   }>;
+  site_sliders?: import('../admin/utils/api.ts').SliderConfig;
+  service_categories_custom?: import('../admin/utils/api.ts').ManagedServiceCategory[];
 }
 
 let cached: SiteSettings | null = null;

@@ -23,6 +23,7 @@ export function renderHomeView(staff: StaffInfo): string {
   const tiles: string[] = [];
   tiles.push(tile('dashboard', icons.chart, 'داشبورد'));
   if (showRequests) tiles.push(tile('requests', icons.columns, 'درخواست‌ها'));
+  if (showSettings || showContent) tiles.push(tile('services', icons.wrench, 'مدیریت خدمات'));
   if (showFinance) tiles.push(tile('finance', icons.finance, 'مدیریت مالی'));
   if (showSettings) tiles.push(tile('settings', icons.settings, 'تنظیمات سایت'));
   if (hasPermission(staff, 'chat')) tiles.push(tile('chat', icons.chat, 'چت پشتیبانی'));
@@ -41,12 +42,14 @@ export function renderRequestsHomeView(staff: StaffInfo): string {
   return `<div class="home-grid">${tiles.join('')}</div>`;
 }
 
-// زیرمجموعه‌ی «مدیریت محتوا»: مجله، نظرات مشتریان، استوری‌ها، مدیریت سئو و مدیریت فایل همگی یک دسته‌اند.
+// زیرمجموعه‌ی «مدیریت محتوا»: مجله، نظرات مشتریان، استوری‌ها، اسلایدر، سئو و مدیریت فایل همگی یک دسته‌اند.
 export function renderContentHomeView(staff: StaffInfo): string {
   const tiles: string[] = [];
   if (hasPermission(staff, 'content')) tiles.push(tile('magazine', icons.article, 'مجله'));
   if (hasPermission(staff, 'content')) tiles.push(tile('testimonials', icons.message, 'نظرات مشتریان'));
   if (hasPermission(staff, 'stories')) tiles.push(tile('stories', icons.story, 'استوری‌ها'));
+  if (hasPermission(staff, 'content') || hasPermission(staff, 'settings')) tiles.push(tile('sliders', icons.image, 'اسلایدر موبایل و سایت'));
+  if (hasPermission(staff, 'content') || hasPermission(staff, 'settings')) tiles.push(tile('services', icons.wrench, 'مدیریت خدمات'));
   if (hasPermission(staff, 'seo')) tiles.push(tile('seo', icons.seo, 'مدیریت سئو'));
   if (hasPermission(staff, 'content') || hasPermission(staff, 'settings')) tiles.push(tile('media', icons.image, 'مدیریت فایل'));
   return `<div class="home-grid">${tiles.join('')}</div>`;

@@ -30,6 +30,8 @@ import { renderPageEditorView, initPageEditorView } from './views/PageEditorView
 import { renderTestimonialsView, initTestimonialsView } from './views/TestimonialsView.ts';
 import { renderChatView, initChatView } from './views/ChatView.ts';
 import { renderStoriesView, initStoriesView } from './views/StoriesView.ts';
+import { renderServicesManagerView, initServicesManagerView } from './views/ServicesManagerView.ts';
+import { renderSlidersManagerView, initSlidersManagerView } from './views/SlidersManagerView.ts';
 import { renderJobApplicationsView, initJobApplicationsView } from './views/JobApplicationsView.ts';
 import { renderActivityLogView, initActivityLogView } from './views/ActivityLogView.ts';
 import { renderSettingsView, initSettingsView } from './views/SettingsView.ts';
@@ -68,6 +70,8 @@ type AdminView =
   | 'pipeline'
   | 'map'
   | 'staff'
+  | 'services'
+  | 'sliders'
   | 'magazine'
   | 'magazine-editor'
   | 'pages'
@@ -98,9 +102,9 @@ type AdminScreen = 'home' | 'requests' | 'content' | 'personnel' | 'dashboard' |
 // عملکرد کارمندان زیرمجموعه‌ی «آمار و گزارش» هستند).
 function screenParent(screen: AdminScreen): AdminScreen | null {
   if (screen === 'home') return null;
-  if (screen === 'requests' || screen === 'content' || screen === 'personnel' || screen === 'dashboard' || screen === 'settings' || screen === 'plugins' || screen === 'chat' || screen === 'finance') return 'home';
+  if (screen === 'requests' || screen === 'content' || screen === 'personnel' || screen === 'dashboard' || screen === 'settings' || screen === 'plugins' || screen === 'chat' || screen === 'finance' || screen === 'services') return 'home';
   if (screen === 'pipeline' || screen === 'map') return 'requests';
-  if (screen === 'magazine' || screen === 'testimonials' || screen === 'stories' || screen === 'seo' || screen === 'media') return 'content';
+  if (screen === 'magazine' || screen === 'testimonials' || screen === 'stories' || screen === 'seo' || screen === 'media' || screen === 'sliders') return 'content';
   if (screen === 'staff' || screen === 'jobApplications' || screen === 'roles' || screen === 'activityLog' || screen === 'payroll') return 'personnel';
   if (screen === 'staffHistory') return 'staff';
   if (screen === 'dashboardOrders' || screen === 'dashboardVisitors' || screen === 'dashboardStaff') return 'dashboard';
@@ -139,6 +143,8 @@ const SCREEN_TO_PATH: Record<AdminScreen, string> = {
   roles: 'roles',
   testimonials: 'testimonials',
   stories: 'stories',
+  services: 'services',
+  sliders: 'sliders',
   jobApplications: 'job-applications',
   activityLog: 'activity-log',
   accountSecurity: 'account-security',
@@ -173,6 +179,8 @@ const PATH_TO_SCREEN: Record<string, AdminScreen> = {
   roles: 'roles',
   testimonials: 'testimonials',
   stories: 'stories',
+  services: 'services',
+  sliders: 'sliders',
   'job-applications': 'jobApplications',
   'activity-log': 'activityLog',
   'account-security': 'accountSecurity',
@@ -302,6 +310,12 @@ function showScreen(screen: AdminScreen, editingDetailId: number | null = null, 
   } else if (screen === 'stories') {
     container.innerHTML = renderStoriesView();
     initStoriesView();
+  } else if (screen === 'services') {
+    container.innerHTML = renderServicesManagerView();
+    initServicesManagerView();
+  } else if (screen === 'sliders') {
+    container.innerHTML = renderSlidersManagerView();
+    initSlidersManagerView();
   } else if (screen === 'jobApplications') {
     container.innerHTML = renderJobApplicationsView();
     initJobApplicationsView();

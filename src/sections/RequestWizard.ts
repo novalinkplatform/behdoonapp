@@ -2,7 +2,7 @@ import { CATEGORY_VEHICLE_IDS, serviceCategories, DEFAULT_VEHICLE_TYPES } from '
 import { SUBCATEGORY_DETAILS_MAP } from '../components/ServiceCategoriesAccordion.ts';
 import type { VehicleTypeSetting, ServiceCitiesSettings, ServiceCategoriesSettings } from '../utils/dynamicContent.ts';
 import { icons } from '../components/icons.ts';
-import { renderLocationMap, initLocationMap, type LocationMapController } from '../components/LocationMap.ts';
+import { renderLocationMap, initLocationMap, type LocationMapController, TEHRAN_KEY_AREAS } from '../components/LocationMap.ts';
 import type { MapSettings } from '../utils/mapProvider.ts';
 import { renderCalendarPicker, initCalendarPicker } from '../components/PersianCalendar.ts';
 import { renderTimePicker, initTimePicker, formatTime } from '../components/TimePicker.ts';
@@ -109,12 +109,12 @@ export function getSiteBrandName(siteName?: { fa?: string; en?: string } | strin
 }
 
 const STEPS = [
-  { id: 'service', question: 'به چه خدمتی در ساختمان نیاز دارید؟', questionEn: 'What building service do you need?' },
+  { id: 'category', question: 'به چه خدمتی در ساختمان نیاز دارید؟ (انتخاب دسته‌بندی)', questionEn: 'What building service do you need? (Category)' },
+  { id: 'subcategory', question: 'انتخاب خدمت و تخصص دقیق زیرمجموعه', questionEn: 'Select specific sub-service' },
   { id: 'location', question: 'نشانی و موقعیت مکانی انجام خدمت در تهران', questionEn: 'Where is your location in Tehran?' },
   { id: 'packing', question: 'آیا نیاز به تأمین قطعات و مصالح مصرفی دارید؟', questionEn: 'Do you need spare parts or materials provided?' },
   { id: 'labor', question: 'میزان فوریت و تعداد تکنسین مورد نیاز', questionEn: 'Select urgency and technician team size' },
-  { id: 'schedule', question: 'تکنسین چه زمانی به محل مراجعه کند؟', questionEn: 'When should the technician visit?' },
-  { id: 'estimate', question: 'برآورد هزینه و انتخاب پوشش بیمه و تضمین بهدون', questionEn: 'Preliminary service cost estimate & insurance coverage' },
+  { id: 'schedule', question: 'زمان مراجعه تکنسین، برآورد هزینه و پوشش بیمه', questionEn: 'When should technician visit, cost estimate & insurance' },
   { id: 'phone', question: 'مشخصات متقاضی و ثبت نهایی درخواست', questionEn: 'Enter your details to finalize and dispatch' },
 ];
 const TOTAL_STEPS = STEPS.length;
@@ -166,85 +166,65 @@ export function renderRequestWizard(
       <h2 class="wizard-question" id="wizard-question"></h2>
 
       <div class="wizard-body">
-        <!-- گام ۱: انتخاب خدمت و تخصص بهدون (آکاردئون با باز شدن زیردسته‌ها در زیر هر دسته) -->
+        <!-- گام ۱: انتخاب دسته‌بندی خدمات (دسته) -->
         <section class="request-panel" data-panel="1">
-          <p class="wizard-panel-hint" style="font-size: 0.88rem; color: #64748b; margin-bottom: 12px;">
-            ${pick('روی هر دسته کلیک کنید تا خدمات تخصصی، نرخ شروع و توضیحات در زیر آن نمایش داده شود، سپس تخصص مورد نظر را انتخاب نمایید:', 'Click any category to expand sub-services, starting rates, and details underneath:')}
+          <p class="wizard-panel-hint" style="font-size: 0.88rem; color: #64748b; margin-bottom: 14px;">
+            ${pick('روی دسته‌بندی مورد نظر خود کلیک کنید تا تخصص‌های زیرمجموعه نمایش داده شوند:', 'Click on your desired service category to view specialized sub-services:')}
           </p>
-          <div class="wizard-categories-accordion">
+          <div class="wizard-categories-grid">
             ${serviceCategories.map((cat) => {
               const vehicleIds = CATEGORY_VEHICLE_IDS[cat.id] || [];
-              const subcategories = vehicleIds
-                .map((vid) => {
-                  const v = DEFAULT_VEHICLE_TYPES.find((item) => item.id === vid);
-                  if (!v) return null;
-                  const extra = SUBCATEGORY_DETAILS_MAP[vid] || {
-                    desc: pick(cat.subtitle || '', cat.subtitleEn || ''),
-                    descEn: cat.subtitleEn || '',
-                  };
-                  return {
-                    id: v.id,
-                    label: pick(v.label, v.labelEn),
-                    basePrice: v.basePrice,
-                    desc: pick(extra.desc, extra.descEn),
-                    icon: v.icon,
-                  };
-                })
-                .filter(Boolean);
-
               return `
-                <div class="wizard-cat-item" data-wizard-cat-item="${cat.id}">
-                  <button type="button" class="wizard-cat-header" data-wizard-cat-header="${cat.id}">
-                    <div class="wizard-cat-header-main">
-                      <span class="icon wizard-cat-icon">${cat.icon}</span>
-                      <div class="wizard-cat-info">
-                        <div class="wizard-cat-title-row">
-                          <h3 class="wizard-cat-title">${pick(cat.label, cat.labelEn)}</h3>
-                          <span class="wizard-cat-badge">${toPersianDigits(subcategories.length)} ${pick('تخصص', 'Specialties')}</span>
-                        </div>
-                        <p class="wizard-cat-sub">${pick(cat.subtitle, cat.subtitleEn)}</p>
-                      </div>
-                    </div>
-                    <div class="wizard-cat-header-action">
-                      <span class="wizard-cat-toggle-hint">${pick('مشاهده خدمات', 'View')}</span>
-                      <span class="icon chevron-icon">${icons.chevronDown}</span>
-                    </div>
-                  </button>
-
-                  <div class="wizard-subcat-panel" data-wizard-subcat-panel="${cat.id}" hidden>
-                    <div class="wizard-subcat-grid">
-                      ${subcategories
-                        .map(
-                          (sub) => `
-                        <div class="wizard-subcat-card" data-wizard-subcat="${sub!.id}" data-parent-cat="${cat.id}">
-                          <div class="wizard-subcat-top">
-                            <div class="wizard-subcat-title-wrap">
-                              <span class="wizard-subcat-indicator"></span>
-                              <h4 class="wizard-subcat-title">${sub!.label}</h4>
-                            </div>
-                            <span class="wizard-subcat-price">${pick('شروع از:', 'From:')} ${formatToman(sub!.basePrice)}</span>
-                          </div>
-                          <p class="wizard-subcat-desc">${sub!.desc}</p>
-                          <div class="wizard-subcat-radio">
-                            <span class="wizard-subcat-select-btn">${pick('انتخاب این خدمت', 'Select this service')}</span>
-                          </div>
-                        </div>
-                      `,
-                        )
-                        .join('')}
-                    </div>
+                <div class="wizard-category-card" data-wizard-select-cat="${cat.id}">
+                  <div class="wizard-cat-card-top">
+                    <span class="icon wizard-cat-card-icon">${cat.icon}</span>
+                    <span class="wizard-cat-card-badge">${toPersianDigits(vehicleIds.length)} ${pick('تخصص', 'Services')}</span>
+                  </div>
+                  <h3 class="wizard-cat-card-title">${pick(cat.label, cat.labelEn)}</h3>
+                  <p class="wizard-cat-card-desc">${pick(cat.subtitle || '', cat.subtitleEn || '')}</p>
+                  <div class="wizard-cat-card-action">
+                    <span>${pick('انتخاب این دسته', 'Select Category')}</span>
+                    <span class="icon" style="width: 14px; height: 14px;">${icons.chevronLeft}</span>
                   </div>
                 </div>
               `;
             }).join('')}
           </div>
-          <p class="request-panel-error" id="wizard-service-error" hidden style="font-weight: 700; color: #dc2626; margin-top: 10px; padding: 8px 12px; background: #fef2f2; border-radius: 8px; border: 1px solid #fecaca;">
-            ${pick('لطفاً یکی از خدمات تخصصی را با کلیک روی دسته و زیرمجموعه آن انتخاب نمایید.', 'Please select a specific service by expanding a category above.')}
+          <p class="request-panel-error" id="wizard-category-error" hidden style="font-weight: 700; color: #dc2626; margin-top: 10px; padding: 8px 12px; background: #fef2f2; border-radius: 8px; border: 1px solid #fecaca;">
+            ${pick('لطفاً ابتدا یکی از دسته‌بندی‌های بالا را انتخاب فرمایید.', 'Please select one of the categories above.')}
           </p>
         </section>
 
-        <!-- گام ۲: نشانی و موقعیت مکانی انجام خدمت در تهران (لوکیشن متمرکز و بدون مبدأ/مقصد) -->
+        <!-- گام ۲: انتخاب خدمت تخصصی زیرمجموعه (زیر دسته) -->
         <section class="request-panel" data-panel="2" hidden>
+          <div class="wizard-selected-cat-banner" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #f5f3ff; border: 1.5px solid #ddd6fe; border-radius: 12px; margin-bottom: 14px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="icon" style="color: #7c3aed;">${icons.checkCircle || icons.shield}</span>
+              <div>
+                <span style="font-size: 0.78rem; color: #6d28d9; font-weight: 600;">${pick('دسته‌بندی فعال:', 'Active Category:')}</span>
+                <span id="wizard-active-cat-name" style="font-size: 0.92rem; font-weight: 800; color: #4c1d95; margin-right: 6px;"></span>
+              </div>
+            </div>
+            <button type="button" id="wizard-change-cat-btn" class="btn btn-outline btn-sm" style="font-size: 0.8rem; padding: 4px 10px; border-color: #a78bfa; color: #6d28d9;">
+              ${pick('تغییر دسته', 'Change')}
+            </button>
+          </div>
+
+          <p class="wizard-panel-hint" style="font-size: 0.88rem; color: #64748b; margin-bottom: 12px;">
+            ${pick('تخصص و خدمت دقیق مورد نظر را انتخاب نمایید:', 'Select the specific specialty and service:')}
+          </p>
+
+          <div class="wizard-subcategories-grid" id="wizard-subcategories-container">
+            <!-- Dynamically populated when category is selected -->
+          </div>
+
+          <p class="request-panel-error" id="wizard-subcategory-error" hidden style="font-weight: 700; color: #dc2626; margin-top: 10px; padding: 8px 12px; background: #fef2f2; border-radius: 8px; border: 1px solid #fecaca;">
+            ${pick('لطفاً یکی از خدمات تخصصی زیر را انتخاب فرمایید.', 'Please select a specific service below.')}
+          </p>
+        </section>
+
+        <!-- گام ۳: نشانی و موقعیت مکانی انجام خدمت در تهران (آدرس و نقشه) -->
+        <section class="request-panel" data-panel="3" hidden>
           <div class="form-field wizard-tehran-coverage-badge">
             <span class="field-label">${pick('محدوده تحت پوشش بهدون در پایتخت:', 'Behdoon Coverage in Tehran:')}</span>
             <div class="wizard-coverage-chip" style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #f5f3ff; border: 1.5px solid #ddd6fe; border-radius: 10px; color: #6d28d9; font-weight: 600; font-size: 0.92rem;">
@@ -253,22 +233,39 @@ export function renderRequestWizard(
             </div>
           </div>
 
-          <div class="form-field">
-            <span class="field-label">${pick('نوع ملک و کاربری فضا', 'Property type')}</span>
-            <div class="wizard-choice-row" id="wizard-location-property-row">
-              ${PROPERTY_TYPES.map((t) => `<button type="button" class="wizard-pill ${t.id === 'residential' ? 'is-selected' : ''}" data-property-choice="${t.id}">${pick(t.label, t.labelEn)}</button>`).join('')}
+          <!-- Quick Tehran Neighborhood Jump Chips -->
+          <div class="form-field" style="margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span class="field-label" style="font-size: 0.85rem; font-weight: 700; color: #334155; margin-bottom: 0;">
+                ${pick('انتخاب سریع محله در تهران (جهش نقشه):', 'Quick Tehran Area Jump:')}
+              </span>
+              <span style="font-size: 0.76rem; color: #7c3aed; font-weight: 600;">${pick('کلیک برای تنظیم نشانگر', 'Click to place pin')}</span>
+            </div>
+            <div class="wizard-area-chips" style="display: flex; flex-wrap: wrap; gap: 6px;">
+              ${TEHRAN_KEY_AREAS.map((a) => `
+                <button type="button" class="wizard-pill wizard-area-pill" data-area-lat="${a.lat}" data-area-lng="${a.lng}" data-area-name="${a.name}" style="font-size: 0.8rem; padding: 4px 10px;">
+                  ${pick(a.name, a.nameEn)}
+                </button>
+              `).join('')}
             </div>
           </div>
 
           <div class="form-field">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-              <span class="field-label" style="margin-bottom: 0; font-weight: 700; color: #1e1b2e;">${pick('موقعیت روی نقشه تهران (انتخاب الزامی)', 'Location on Tehran map (Mandatory)')}</span>
-              <span style="font-size: 0.78rem; color: #7c3aed; font-weight: 700;">${pick('★ کلیک یا جابه‌جایی نشانگر روی نقشه الزامی است', '★ Map interaction required')}</span>
+              <span class="field-label" style="margin-bottom: 0; font-weight: 700; color: #1e1b2e;">${pick('موقعیت روی نقشه تهران', 'Location on Tehran map')}</span>
+              <span style="font-size: 0.78rem; color: #7c3aed; font-weight: 700;">${pick('کلیک یا جابه‌جایی نشانگر برای تعیین دقیق محل', 'Tap or drag pin to adjust location')}</span>
             </div>
             ${renderLocationMap('wizard-location-map')}
             <p class="request-panel-error" id="wizard-location-map-error" hidden style="font-weight: 700; color: #dc2626; margin-top: 8px; padding: 6px 10px; background: #fef2f2; border-radius: 6px; border: 1px solid #fecaca;">
-              ${pick('انتخاب موقعیت دقیق محل خدمت از روی نقشه تهران الزامی است. لطفاً روی نقشه کلیک کنید یا نشانگر را به محل مورد نظر جابه‌جا نمایید.', 'Selecting exact service location on Tehran map is mandatory. Please tap the map or move the marker.')}
+              ${pick('لطفاً نشانی محل خدمت در تهران را وارد فرمایید.', 'Please specify your address in Tehran.')}
             </p>
+          </div>
+
+          <div class="form-field">
+            <span class="field-label">${pick('نوع ملک و کاربری فضا', 'Property type')}</span>
+            <div class="wizard-choice-row" id="wizard-location-property-row">
+              ${PROPERTY_TYPES.map((t) => `<button type="button" class="wizard-pill ${t.id === 'residential' ? 'is-selected' : ''}" data-property-choice="${t.id}">${pick(t.label, t.labelEn)}</button>`).join('')}
+            </div>
           </div>
 
           <div class="wizard-location-details-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px;">
@@ -288,11 +285,14 @@ export function renderRequestWizard(
           </div>
 
           <div class="form-field" style="margin-top: 10px;">
-            <label for="wizard-location-address" style="font-weight: 600;">${pick('نشانی متنی، خیابان و پلاک در تهران', 'Street address & Unit/Plaque')}</label>
+            <label for="wizard-location-address" style="font-weight: 600;">${pick('نشانی متنی، خیابان و پلاک در تهران (الزامی)', 'Street address & Unit/Plaque (Required)')}</label>
             <div class="input-wrapper">
               <span class="icon input-icon">${icons.pin}</span>
               <input type="text" id="wizard-location-address" placeholder="${pick('مثال: خیابان ولیعصر، نرسیده به میدان ونک، پلاک ۱۲، واحد ۴', 'e.g. Valiasr St, near Vanak Sq, Plaque 12, Unit 4')}" />
             </div>
+            <p class="request-panel-error" id="wizard-address-error" hidden style="font-weight: 700; color: #dc2626; margin-top: 6px; padding: 6px 10px; background: #fef2f2; border-radius: 6px; border: 1px solid #fecaca;">
+              ${pick('لطفاً نشانی خیابان و پلاک محل خدمت را وارد فرمایید.', 'Please enter street address and building number.')}
+            </p>
           </div>
 
           <div class="form-field">
@@ -307,8 +307,8 @@ export function renderRequestWizard(
           </div>
         </section>
 
-        <!-- گام ۳: تامین قطعات و مصالح مصرفی -->
-        <section class="request-panel" data-panel="3" hidden>
+        <!-- گام ۴: تامین قطعات و مصالح مصرفی -->
+        <section class="request-panel" data-panel="4" hidden>
           <p class="field-label" style="font-size: 1rem; margin-bottom: 12px; font-weight: 600;">
             ${pick('آیا برای انجام خدمت نیاز به تأمین قطعات یدکی، لوازم جانبی یا مصالح مصرفی دارید؟', 'Do you need spare parts or materials provided for the service?')}
           </p>
@@ -329,8 +329,8 @@ export function renderRequestWizard(
           </p>
         </section>
 
-        <!-- گام ۴: فوریت اعزام و تعداد تکنسین -->
-        <section class="request-panel" data-panel="4" hidden>
+        <!-- گام ۵: فوریت اعزام و تعداد تکنسین -->
+        <section class="request-panel" data-panel="5" hidden>
           <div style="margin-bottom: 16px;">
             <span class="field-label" style="display: block; font-weight: 700; color: #1e293b; margin-bottom: 8px; font-size: 0.95rem;">
               ${pick('میزان فوریت اعزام تکنسین به محل در تهران:', 'Technician dispatch urgency in Tehran:')}
@@ -369,8 +369,8 @@ export function renderRequestWizard(
           </div>
         </section>
 
-        <!-- گام ۵: زمان مراجعه تکنسین -->
-        <section class="request-panel" data-panel="5" hidden>
+        <!-- گام ۶: زمان مراجعه تکنسین، برآورد هزینه و پوشش بیمه -->
+        <section class="request-panel" data-panel="6" hidden>
           <div class="form-field">
             <span class="field-label">${pick('تاریخ مراجعه تکنسین در تهران', 'Visit Date')}</span>
             ${renderCalendarPicker('wizard-calendar')}
@@ -379,57 +379,56 @@ export function renderRequestWizard(
             <span class="field-label">${pick('ساعت مراجعه تکنسین', 'Visit Time')}</span>
             ${renderTimePicker('wizard-time')}
           </div>
-        </section>
 
-        <!-- گام ۶: برآورد هزینه و انتخاب بیمه و تضمین خسارت -->
-        <section class="request-panel" data-panel="6" hidden>
-          <div id="wizard-cost-chart"></div>
+          <div style="margin-top: 24px;">
+            <div id="wizard-cost-chart"></div>
 
-          <div class="wizard-insurance-section" style="margin-top: 20px;">
-            <div class="wizard-insurance-header">
-              <div class="wizard-insurance-header-title">
-                <span class="icon">${icons.shield || icons.checkCircle}</span>
-                <h4>${pick('انتخاب پوشش بیمه و سقف جبران خسارت بهدون', 'Select Insurance & Damage Compensation Limit')}</h4>
+            <div class="wizard-insurance-section" style="margin-top: 20px;">
+              <div class="wizard-insurance-header">
+                <div class="wizard-insurance-header-title">
+                  <span class="icon">${icons.shield || icons.checkCircle}</span>
+                  <h4>${pick('انتخاب پوشش بیمه و سقف جبران خسارت بهدون', 'Select Insurance & Damage Compensation Limit')}</h4>
+                </div>
+                <p class="wizard-insurance-subtitle">
+                  ${pick(
+                    'جهت تضمین کیفیت خدمات و جبران خسارات احتمالی هنگام انجام کار، سقف پوشش مورد نظر خود را انتخاب فرمایید:',
+                    'Select your desired coverage limit for job safety guarantee and damage compensation:',
+                  )}
+                </p>
               </div>
-              <p class="wizard-insurance-subtitle">
-                ${pick(
-                  'جهت تضمین کیفیت خدمات و جبران خسارات احتمالی هنگام انجام کار، سقف پوشش مورد نظر خود را انتخاب فرمایید:',
-                  'Select your desired coverage limit for job safety guarantee and damage compensation:',
-                )}
-              </p>
-            </div>
 
-            <div class="wizard-insurance-grid" id="wizard-insurance-grid">
-              ${INSURANCE_TIERS.map(
-                (tier) => `
-                <button
-                  type="button"
-                  class="wizard-insurance-card ${tier.id === 'gold_300m' ? 'is-selected' : ''} ${tier.isRecommended ? 'is-recommended' : ''}"
-                  data-insurance-choice="${tier.id}"
-                >
-                  ${tier.isRecommended ? `<span class="wizard-insurance-badge">${pick('پیشنهاد ویژه', 'Recommended')}</span>` : ''}
-                  <div class="wizard-insurance-card-top">
-                    <span class="wizard-insurance-card-title">${pick(tier.title, tier.titleEn)}</span>
-                    <span class="wizard-insurance-card-coverage">${pick(tier.coverageCeiling, tier.coverageCeilingEn)}</span>
-                  </div>
-                  <div class="wizard-insurance-card-cost">${pick(tier.costLabel, tier.costLabelEn)}</div>
-                  <p class="wizard-insurance-card-desc">${pick(tier.description, tier.descriptionEn)}</p>
-                </button>
-              `,
-              ).join('')}
-            </div>
+              <div class="wizard-insurance-grid" id="wizard-insurance-grid">
+                ${INSURANCE_TIERS.map(
+                  (tier) => `
+                  <button
+                    type="button"
+                    class="wizard-insurance-card ${tier.id === 'gold_300m' ? 'is-selected' : ''} ${tier.isRecommended ? 'is-recommended' : ''}"
+                    data-insurance-choice="${tier.id}"
+                  >
+                    ${tier.isRecommended ? `<span class="wizard-insurance-badge">${pick('پیشنهاد ویژه', 'Recommended')}</span>` : ''}
+                    <div class="wizard-insurance-card-top">
+                      <span class="wizard-insurance-card-title">${pick(tier.title, tier.titleEn)}</span>
+                      <span class="wizard-insurance-card-coverage">${pick(tier.coverageCeiling, tier.coverageCeilingEn)}</span>
+                    </div>
+                    <div class="wizard-insurance-card-cost">${pick(tier.costLabel, tier.costLabelEn)}</div>
+                    <p class="wizard-insurance-card-desc">${pick(tier.description, tier.descriptionEn)}</p>
+                  </button>
+                `,
+                ).join('')}
+              </div>
 
-            <div class="wizard-insurance-notice">
-              <span class="icon wizard-insurance-notice-icon">${icons.shield || icons.checkCircle}</span>
-              <div class="wizard-insurance-notice-content">
-                <strong>${pick(
-                  `نهایی شدن توسط ${brandName} پس از بررسی صورت خواهد گرفت.`,
-                  `Finalization by ${brandName} will take place after review.`,
-                )}</strong>
-                <p>${pick(
-                  `پس از ثبت درخواست، شرایط کار و سقف پوشش بیمه انتخابی توسط کارشناسان ${brandName} بررسی و در هماهنگی تلفنی قطعی خواهد شد.`,
-                  `After submission, job conditions and selected insurance coverage will be verified and finalized with you by ${brandName} experts.`,
-                )}</p>
+              <div class="wizard-insurance-notice">
+                <span class="icon wizard-insurance-notice-icon">${icons.shield || icons.checkCircle}</span>
+                <div class="wizard-insurance-notice-content">
+                  <strong>${pick(
+                    `نهایی شدن توسط ${brandName} پس از بررسی صورت خواهد گرفت.`,
+                    `Finalization by ${brandName} will take place after review.`,
+                  )}</strong>
+                  <p>${pick(
+                    `پس از ثبت درخواست، شرایط کار و سقف پوشش بیمه انتخابی توسط کارشناسان ${brandName} بررسی و در هماهنگی تلفنی قطعی خواهد شد.`,
+                    `After submission, job conditions and selected insurance coverage will be verified and finalized with you by ${brandName} experts.`,
+                  )}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -654,40 +653,116 @@ export function initRequestWizard(
     insuranceTier: 'gold_300m',
   };
 
-  // Accordion toggle in Step 1
-  card.querySelectorAll<HTMLButtonElement>('[data-wizard-cat-header]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const catId = btn.dataset.wizardCatHeader ?? '';
-      const item = card.querySelector(`[data-wizard-cat-item="${catId}"]`);
-      const panel = card.querySelector(`[data-wizard-subcat-panel="${catId}"]`) as HTMLElement | null;
-      const wasOpen = item?.classList.contains('is-open');
+  // Step 1: Category & Subcategory handlers
+  function renderSubcategoriesForSelectedCat(): void {
+    const cat = serviceCategories.find((c) => c.id === state.serviceId);
+    const activeCatNameEl = document.getElementById('wizard-active-cat-name');
+    if (activeCatNameEl && cat) {
+      activeCatNameEl.textContent = pick(cat.label, cat.labelEn);
+    }
 
-      card.querySelectorAll('[data-wizard-cat-item]').forEach((el) => el.classList.remove('is-open'));
-      card.querySelectorAll<HTMLElement>('[data-wizard-subcat-panel]').forEach((el) => {
-        el.hidden = true;
+    const container = document.getElementById('wizard-subcategories-container');
+    if (!container || !state.serviceId) return;
+
+    const vehicleIds = CATEGORY_VEHICLE_IDS[state.serviceId] || [];
+    const subcategories = vehicleIds
+      .map((vid) => {
+        const v = DEFAULT_VEHICLE_TYPES.find((item) => item.id === vid);
+        if (!v) return null;
+        const extra = SUBCATEGORY_DETAILS_MAP[vid] || {
+          desc: pick(cat?.subtitle || '', cat?.subtitleEn || ''),
+          descEn: cat?.subtitleEn || '',
+        };
+        return {
+          id: v.id,
+          label: pick(v.label, v.labelEn),
+          basePrice: v.basePrice,
+          desc: pick(extra.desc, extra.descEn),
+          icon: v.icon,
+        };
+      })
+      .filter(Boolean);
+
+    container.innerHTML = subcategories
+      .map(
+        (sub) => `
+        <div class="wizard-subcat-card ${state.vehicleId === sub!.id ? 'is-selected' : ''}" data-wizard-subcat="${sub!.id}">
+          <div class="wizard-subcat-top">
+            <div class="wizard-subcat-title-wrap">
+              <span class="wizard-subcat-indicator"></span>
+              <h4 class="wizard-subcat-title">${sub!.label}</h4>
+            </div>
+            <span class="wizard-subcat-price">${pick('شروع از:', 'From:')} ${formatToman(sub!.basePrice)}</span>
+          </div>
+          <p class="wizard-subcat-desc">${sub!.desc}</p>
+          <div class="wizard-subcat-radio">
+            <span class="wizard-subcat-select-btn">${pick('انتخاب این خدمت', 'Select this service')}</span>
+          </div>
+        </div>
+      `,
+      )
+      .join('');
+
+    // Wire subcategory card clicks
+    container.querySelectorAll<HTMLElement>('[data-wizard-subcat]').forEach((cardEl) => {
+      cardEl.addEventListener('click', () => {
+        const subId = cardEl.dataset.wizardSubcat ?? '';
+        state.vehicleId = subId;
+
+        container.querySelectorAll('[data-wizard-subcat]').forEach((el) => el.classList.remove('is-selected'));
+        cardEl.classList.add('is-selected');
+
+        const err = document.getElementById('wizard-subcategory-error');
+        if (err) err.hidden = true;
+        updateNextButtonLabel();
+        advanceStep(1); // Smooth progression to Step 3: Location & Map
       });
+    });
+  }
 
-      if (!wasOpen && item && panel) {
-        item.classList.add('is-open');
-        panel.hidden = false;
-      }
+  // Step 1 Category clicks
+  card.querySelectorAll<HTMLElement>('[data-wizard-select-cat]').forEach((catEl) => {
+    catEl.addEventListener('click', () => {
+      const catId = catEl.dataset.wizardSelectCat ?? '';
+      state.serviceId = catId;
+      card.querySelectorAll('[data-wizard-select-cat]').forEach((el) => el.classList.remove('is-selected'));
+      catEl.classList.add('is-selected');
+
+      const err = document.getElementById('wizard-category-error');
+      if (err) err.hidden = true;
+
+      renderSubcategoriesForSelectedCat();
+      advanceStep(1); // Smooth progression to Step 2: Subcategory
     });
   });
 
-  // Subcategory card clicks in Step 1
-  card.querySelectorAll<HTMLElement>('[data-wizard-subcat]').forEach((cardEl) => {
-    cardEl.addEventListener('click', () => {
-      const subId = cardEl.dataset.wizardSubcat ?? '';
-      const parentCat = cardEl.dataset.parentCat ?? '';
-      state.serviceId = parentCat;
-      state.vehicleId = subId;
+  // Step 2 "تغییر دسته‌بندی" button
+  document.getElementById('wizard-change-cat-btn')?.addEventListener('click', () => {
+    advanceStep(-1);
+  });
 
-      card.querySelectorAll('[data-wizard-subcat]').forEach((el) => el.classList.remove('is-selected'));
-      cardEl.classList.add('is-selected');
+  // Step 3 Quick Tehran Neighborhood Jump Chips
+  card.querySelectorAll<HTMLButtonElement>('.wizard-area-pill').forEach((pill) => {
+    pill.addEventListener('click', () => {
+      const lat = Number(pill.dataset.areaLat);
+      const lng = Number(pill.dataset.areaLng);
+      const name = pill.dataset.areaName || '';
+      card.querySelectorAll('.wizard-area-pill').forEach((p) => p.classList.remove('is-selected'));
+      pill.classList.add('is-selected');
 
-      const err = document.getElementById('wizard-service-error');
-      if (err) err.hidden = true;
-      updateNextButtonLabel();
+      const lm = ensureLocationMap();
+      lm?.panToArea(lat, lng);
+
+      const addrInput = document.getElementById('wizard-location-address') as HTMLInputElement | null;
+      if (addrInput) {
+        if (!addrInput.value.includes(name)) {
+          addrInput.value = addrInput.value.trim() ? `${name}، ${addrInput.value}` : `تهران، ${name}، `;
+        }
+        const err = document.getElementById('wizard-address-error');
+        if (err) err.hidden = true;
+        const mapErr = document.getElementById('wizard-location-map-error');
+        if (mapErr) mapErr.hidden = true;
+      }
     });
   });
 
@@ -715,8 +790,16 @@ export function initRequestWizard(
     });
   }
 
+  // Address input change clears error
+  document.getElementById('wizard-location-address')?.addEventListener('input', () => {
+    const err = document.getElementById('wizard-address-error');
+    if (err) err.hidden = true;
+    const mapErr = document.getElementById('wizard-location-map-error');
+    if (mapErr) mapErr.hidden = true;
+  });
+
   // Packing
-  const packingPanel = card.querySelector('[data-panel="3"]');
+  const packingPanel = card.querySelector('[data-panel="4"]');
   if (packingPanel) {
     wireChipGroup(packingPanel, 'data-packing-choice', (val) => {
       state.wantsPacking = val === 'yes';
@@ -724,7 +807,7 @@ export function initRequestWizard(
   }
 
   // Urgency & Technicians
-  const laborPanel = card.querySelector('[data-panel="4"]');
+  const laborPanel = card.querySelector('[data-panel="5"]');
   if (laborPanel) {
     wireChipGroup(laborPanel, 'data-urgency-choice', (val) => {
       state.urgency = val as 'urgent' | 'scheduled';
@@ -800,7 +883,7 @@ export function initRequestWizard(
       lm?.refresh();
     }
 
-    if (step.id === 'estimate') {
+    if (step.id === 'schedule') {
       const locPos = ensureLocationMap()?.getPosition();
       const pricing = resolveVehiclePricing(state.vehicleId);
       const estimateInput: CostEstimateInput = {
@@ -828,18 +911,24 @@ export function initRequestWizard(
 
   function validateCurrentStep(): boolean {
     const step = STEPS[currentStep - 1];
-    if (step.id === 'service') {
-      const valid = Boolean(state.serviceId && state.vehicleId);
-      const err = document.getElementById('wizard-service-error');
+    if (step.id === 'category') {
+      const valid = Boolean(state.serviceId);
+      const err = document.getElementById('wizard-category-error');
+      if (err) err.hidden = valid;
+      return valid;
+    }
+    if (step.id === 'subcategory') {
+      const valid = Boolean(state.vehicleId);
+      const err = document.getElementById('wizard-subcategory-error');
       if (err) err.hidden = valid;
       return valid;
     }
     if (step.id === 'location') {
-      const lm = ensureLocationMap();
-      const hasInteracted = lm?.hasInteracted() ?? false;
-      const mapError = document.getElementById('wizard-location-map-error');
-      if (mapError) mapError.hidden = hasInteracted;
-      return hasInteracted;
+      const addrInput = document.getElementById('wizard-location-address') as HTMLInputElement | null;
+      const valid = (addrInput?.value.trim().length ?? 0) >= 3;
+      const addrError = document.getElementById('wizard-address-error');
+      if (addrError) addrError.hidden = valid;
+      return valid;
     }
     if (step.id === 'packing') return true;
     if (step.id === 'labor') return true;
@@ -1051,11 +1140,9 @@ export function initRequestWizard(
     currentStep = 1;
     state.serviceId = null;
     state.vehicleId = null;
-    card.querySelectorAll('[data-wizard-subcat]').forEach((el) => el.classList.remove('is-selected'));
-    card.querySelectorAll('[data-wizard-cat-item]').forEach((el) => el.classList.remove('is-open'));
-    card.querySelectorAll<HTMLElement>('[data-wizard-subcat-panel]').forEach((el) => {
-      el.hidden = true;
-    });
+    card.querySelectorAll('[data-wizard-select-cat]').forEach((el) => el.classList.remove('is-selected'));
+    const subContainer = document.getElementById('wizard-subcategories-container');
+    if (subContainer) subContainer.innerHTML = '';
     card.querySelectorAll<HTMLElement>('.request-panel[data-panel="7"] > .form-field, .request-panel[data-panel="7"] > .wizard-phone-insurance-banner').forEach((el) => {
       el.hidden = false;
     });
@@ -1076,25 +1163,22 @@ export function initRequestWizard(
     if (serviceId && vehicleId) {
       state.serviceId = serviceId;
       state.vehicleId = vehicleId;
+      card.querySelectorAll('[data-wizard-select-cat]').forEach((el) => {
+        el.classList.toggle('is-selected', (el as HTMLElement).dataset.wizardSelectCat === serviceId);
+      });
+      renderSubcategoriesForSelectedCat();
       card.querySelectorAll('[data-wizard-subcat]').forEach((el) => {
         el.classList.toggle('is-selected', (el as HTMLElement).dataset.wizardSubcat === vehicleId);
       });
-      const item = card.querySelector(`[data-wizard-cat-item="${serviceId}"]`);
-      const panel = card.querySelector(`[data-wizard-subcat-panel="${serviceId}"]`) as HTMLElement | null;
-      if (item && panel) {
-        item.classList.add('is-open');
-        panel.hidden = false;
-      }
-      currentStep = 2; // Direct jump to Location in Tehran
+      currentStep = 3; // Direct jump to Location in Tehran
     } else if (serviceId) {
       state.serviceId = serviceId;
-      const item = card.querySelector(`[data-wizard-cat-item="${serviceId}"]`);
-      const panel = card.querySelector(`[data-wizard-subcat-panel="${serviceId}"]`) as HTMLElement | null;
-      if (item && panel) {
-        item.classList.add('is-open');
-        panel.hidden = false;
-      }
-      currentStep = 1;
+      state.vehicleId = null;
+      card.querySelectorAll('[data-wizard-select-cat]').forEach((el) => {
+        el.classList.toggle('is-selected', (el as HTMLElement).dataset.wizardSelectCat === serviceId);
+      });
+      renderSubcategoriesForSelectedCat();
+      currentStep = 2; // Direct jump to Subcategory
     } else {
       currentStep = 1;
     }
