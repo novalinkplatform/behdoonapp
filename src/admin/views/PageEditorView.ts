@@ -107,11 +107,11 @@ export function renderPageEditorView(): string {
       <div class="editor-main">
         <div class="form-field" data-i18n="fa">
           <label for="page-editor-title">عنوان برگه (فارسی) *</label>
-          <input type="text" id="page-editor-title" placeholder="مثلاً: خدمات ویژه اسباب‌کشی VIP یا قوانین استرداد" />
+          <input type="text" id="page-editor-title" placeholder="مثلاً: راهنمای خدمات تأسیسات و بازسازی یا قوانین ضمانت کیفیت" />
         </div>
         <div class="form-field" data-i18n="en">
           <label for="page-editor-title-en">عنوان برگه (انگلیسی)</label>
-          <input type="text" id="page-editor-title-en" dir="ltr" placeholder="e.g. VIP Moving Services" />
+          <input type="text" id="page-editor-title-en" dir="ltr" placeholder="e.g. Building Maintenance Guide & Warranty Policy" />
         </div>
         <div class="form-field" data-i18n="fa">
           <label for="page-editor-excerpt">توضیح کوتاه / خلاصه (فارسی)</label>

@@ -5,10 +5,11 @@ import { renderChatWidget, initChatWidget } from './ChatWidget.ts';
 import { pick } from '../i18n/lang.ts';
 import type { SiteSettings } from '../utils/dynamicContent.ts';
 
-const SIDE_STORAGE_KEY = 'behbar_quick_actions_side';
+const SIDE_STORAGE_KEY = 'behdoon_quick_actions_side';
+const LEGACY_SIDE_STORAGE_KEY = 'behbar_quick_actions_side';
 
 export function getQuickActionsSide(defaultSide: 'left' | 'right' = 'right'): 'left' | 'right' {
-  const saved = localStorage.getItem(SIDE_STORAGE_KEY);
+  const saved = localStorage.getItem(SIDE_STORAGE_KEY) || localStorage.getItem(LEGACY_SIDE_STORAGE_KEY);
   if (saved === 'left' || saved === 'right') return saved;
   return defaultSide;
 }

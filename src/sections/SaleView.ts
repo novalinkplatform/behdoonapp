@@ -6,9 +6,9 @@ export function renderSaleView(): string {
       <div class="nobex-nav-container">
         <div class="nobex-nav-right">
           <a href="/sale" class="nobex-logo-box">
-            <img src="/behbaricon.png" alt="بهبار" class="nobex-logo-img" />
+            <img src="/favicon.svg" alt="بهدون" class="nobex-logo-img" />
             <div class="nobex-logo-text">
-              <span class="nobex-logo-title">سامانه بهبار</span>
+              <span class="nobex-logo-title">سامانه بهدون</span>
               <span class="nobex-logo-sub">نسخه حرفه‌ای ژاکت</span>
             </div>
           </a>
@@ -154,9 +154,9 @@ export function renderSaleView(): string {
           <!-- Management Demo Card -->
           <div class="nobex-showcase-box">
             <div class="nobex-showcase-img-wrap">
-              <img src="/admin_showcase.png" alt="دموی پنل مدیریت بهبار" />
+              <img src="/admin_showcase.png" alt="دموی پنل مدیریت بهدون" />
               <div class="nobex-showcase-overlay">
-                <a href="https://behbarapp.ir/management" target="_blank" rel="noopener" class="nobex-btn-gold">
+                <a href="/management" target="_blank" rel="noopener" class="nobex-btn-gold">
                   ورود به پنل مدیریت
                 </a>
               </div>
@@ -167,14 +167,14 @@ export function renderSaleView(): string {
                 <span class="nobex-badge-soft">نسخه دمو</span>
               </div>
               <p class="nobex-showcase-desc">
-                داشبورد نظارت بر سفارش‌ها، مدیریت سرویس‌ها، تنظیم تعرفه‌ها، بررسی رانندگان و گزارش‌های آماری زنده.
+                داشبورد نظارت بر سفارش‌ها، مدیریت سرویس‌ها، تنظیم تعرفه‌ها، ارزیابی متخصصان و گزارش‌های آماری زنده.
               </p>
               <div class="nobex-demo-creds">
-                <span>آدرس مستقیم: <code>behbarapp.ir/management</code></span>
+                <span>آدرس مستقیم: <code>/management</code></span>
                 <span>شماره ورود آزمایشی: <code>09120000000</code></span>
                 <span>کد تایید پیامکی: <code>12345</code></span>
               </div>
-              <a href="https://behbarapp.ir/management" target="_blank" rel="noopener" class="nobex-btn-glass nobex-btn-block">
+              <a href="/management" target="_blank" rel="noopener" class="nobex-btn-glass nobex-btn-block">
                 مشاهده دموی زنده مدیریت
               </a>
             </div>
@@ -183,9 +183,9 @@ export function renderSaleView(): string {
           <!-- Client Demo Card -->
           <div class="nobex-showcase-box">
             <div class="nobex-showcase-img-wrap">
-              <img src="/client_showcase.png" alt="دموی اپلیکیشن مشتری بهبار" />
+              <img src="/client_showcase.png" alt="دموی اپلیکیشن مشتری بهدون" />
               <div class="nobex-showcase-overlay">
-                <a href="https://behbarapp.ir" target="_blank" rel="noopener" class="nobex-btn-gold">
+                <a href="/" target="_blank" rel="noopener" class="nobex-btn-gold">
                   ورود به اپ مشتری
                 </a>
               </div>
@@ -196,13 +196,13 @@ export function renderSaleView(): string {
                 <span class="nobex-badge-soft">PWA آماده نصب</span>
               </div>
               <p class="nobex-showcase-desc">
-                فرم رزرو هوشمند چندمرحله‌ای، نقشه تعاملی، انتخاب جزئیات اسباب‌کشی، محاسبه تعرفه و رهگیری زنده.
+                فرم رزرو هوشمند چندمرحله‌ای، انتخاب نوع ملک و خدمات تخصصی تأسیسات، محاسبه برآورد هزینه و رهگیری زنده تکنسین.
               </p>
               <div class="nobex-demo-creds">
-                <span>آدرس اصلی: <code>behbarapp.ir</code></span>
+                <span>آدرس اصلی: <code>صفحه اصلی سامانه</code></span>
                 <span>پشتیبانی کامل از موبایل و تبلت</span>
               </div>
-              <a href="https://behbarapp.ir" target="_blank" rel="noopener" class="nobex-btn-glass nobex-btn-block">
+              <a href="/" target="_blank" rel="noopener" class="nobex-btn-glass nobex-btn-block">
                 مشاهده دموی زنده مشتری
               </a>
             </div>
@@ -216,7 +216,7 @@ export function renderSaleView(): string {
       <div class="nobex-container">
         <div class="nobex-section-head">
           <span class="nobex-section-tag">برتری فنی</span>
-          <h2 class="nobex-section-title">مقایسه مشخصات بهبار با سیستم‌های سنتی</h2>
+          <h2 class="nobex-section-title">مقایسه مشخصات بهدون با سیستم‌های سنتی</h2>
           <p class="nobex-section-subtitle">تفاوت اساسی معماری مدرن با راهکارهای قدیمی</p>
         </div>
 
@@ -225,7 +225,7 @@ export function renderSaleView(): string {
             <thead>
               <tr>
                 <th>معیار و قابلیت</th>
-                <th class="highlight">سامانه هوشمند بهبار</th>
+                <th class="highlight">سامانه هوشمند بهدون</th>
                 <th>سیستم‌های سنتی و قالبی</th>
               </tr>
             </thead>
@@ -325,12 +325,12 @@ export function renderSaleView(): string {
         <div class="nobex-cta-box">
           <div class="nobex-cta-ambient"></div>
           <div class="nobex-cta-content">
-            <h2 class="nobex-cta-title">هم‌اکنون کسب‌وکار باربری و حمل‌ونقل خود را هوشمند کنید</h2>
+            <h2 class="nobex-cta-title">هم‌اکنون کسب‌وکار خدمات فنی و ساختمانی خود را هوشمند کنید</h2>
             <p class="nobex-cta-desc">
               با خرید نسخه اورجینال از مارکت بزرگ ژاکت، از ۶ ماه پشتیبانی رایگان، بروزرسانی‌های منظم و ضمانت کیفیت بهره‌مند شوید.
             </p>
             <div class="nobex-cta-actions">
-              <a href="https://www.zhaket.com/web/behbar-script" target="_blank" rel="noopener" class="nobex-btn-gold nobex-btn-xl">
+              <a href="https://www.zhaket.com" target="_blank" rel="noopener" class="nobex-btn-gold nobex-btn-xl">
                 <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                 <span>خرید از مارکت بزرگ ژاکت</span>
               </a>
@@ -359,8 +359,8 @@ export function renderSaleView(): string {
       <div class="nobex-container">
         <div class="nobex-footer-inner">
           <div class="nobex-footer-brand">
-            <img src="/behbaricon.png" alt="بهبار" class="nobex-footer-logo" />
-            <span>اسکریپت پیشرفته سامانه حمل‌بار و اسباب‌کشی آنلاین بهبار</span>
+            <img src="/favicon.svg" alt="بهدون" class="nobex-footer-logo" />
+            <span>اسکریپت پیشرفته سامانه خدمات فنی و تأسیسات آنلاین بهدون</span>
           </div>
           <div class="nobex-footer-meta">
             <span>عرضه‌شده به‌صورت انحصاری در مارکت بزرگ ژاکت</span>

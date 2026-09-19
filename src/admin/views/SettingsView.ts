@@ -388,21 +388,21 @@ export function renderSettingsView(): string {
         <div class="settings-form-grid">
           <div class="form-field" data-i18n="fa">
             <label for="settings-hero-slogan-headline-fa">عنوان اصلی / شعار (فارسی)</label>
-            <input type="text" id="settings-hero-slogan-headline-fa" placeholder="حمل و جابه‌جایی، ساده‌تر از همیشه" />
+            <input type="text" id="settings-hero-slogan-headline-fa" placeholder="خدمات تخصصی فنی و تأسیسات ساختمان در تهران" />
           </div>
           <div class="form-field" data-i18n="en">
             <label for="settings-hero-slogan-headline-en">عنوان اصلی / شعار (انگلیسی)</label>
-            <input type="text" id="settings-hero-slogan-headline-en" dir="ltr" placeholder="Moving and hauling, easier than ever" />
+            <input type="text" id="settings-hero-slogan-headline-en" dir="ltr" placeholder="Professional Building & Home Maintenance Services in Tehran" />
           </div>
         </div>
         <div class="settings-form-grid" style="margin-top: var(--space-3)">
           <div class="form-field" data-i18n="fa">
             <label for="settings-hero-slogan-subtitle-fa">توضیحات تکمیلی / زیرعنوان (فارسی)</label>
-            <textarea id="settings-hero-slogan-subtitle-fa" rows="2" placeholder="برای اثاث‌کشی یا حمل بار درخواست خود را ثبت کنید؛ در سریع‌ترین زمان با شما هماهنگ می‌کنیم."></textarea>
+            <textarea id="settings-hero-slogan-subtitle-fa" rows="2" placeholder="ثبت آنلاین درخواست اعزام فوری تکنسین و استادکار تأسیسات، لوله‌کشی، برقکاری و بازسازی ساختمان با ضمانت کتبی کیفیت."></textarea>
           </div>
           <div class="form-field" data-i18n="en">
             <label for="settings-hero-slogan-subtitle-en">توضیحات تکمیلی / زیرعنوان (انگلیسی)</label>
-            <textarea id="settings-hero-slogan-subtitle-en" rows="2" dir="ltr" placeholder="Submit your request for moving or freight; we'll get in touch with you as quickly as possible."></textarea>
+            <textarea id="settings-hero-slogan-subtitle-en" rows="2" dir="ltr" placeholder="Submit your request online for certified building repair, plumbing, HVAC, and electrical technicians."></textarea>
           </div>
         </div>
       </div>

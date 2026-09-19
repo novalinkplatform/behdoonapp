@@ -79,7 +79,7 @@ export function applyTheme(theme?: ThemeSettings, typography?: TypographySetting
   document.documentElement.classList.toggle('quick-actions-fixed', theme?.quickActionsStyle === 'fixed');
 
   // جهت قرارگیری دکمه‌های تماس و چت روی وب (دسکتاپ): راست (پیش‌فرض) یا چپ
-  const savedSide = localStorage.getItem('behbar_quick_actions_side');
+  const savedSide = localStorage.getItem('behdoon_quick_actions_side') || localStorage.getItem('behbar_quick_actions_side');
   const activeSide = savedSide === 'left' || savedSide === 'right'
     ? savedSide
     : (theme?.quickActionsPosition === 'left' ? 'left' : 'right');
@@ -139,7 +139,7 @@ export function applyTheme(theme?: ThemeSettings, typography?: TypographySetting
       if (isDark) {
         document.documentElement.setAttribute('data-theme', 'dark');
       } else {
-        const localTheme = localStorage.getItem('behbar_theme') || localStorage.getItem('behdoon_theme');
+        const localTheme = localStorage.getItem('behdoon_theme') || localStorage.getItem('behbar_theme');
         if (localTheme !== 'dark') {
           document.documentElement.removeAttribute('data-theme');
         }

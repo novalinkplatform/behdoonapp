@@ -185,6 +185,7 @@
 }
 
 /* Printable Official Sheet */
+.behdoon-invoice-sheet,
 .behbar-invoice-sheet {
   background: white;
   border: 1px solid #e5e7eb;
@@ -195,6 +196,7 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
+.behdoon-invoice-head,
 .behbar-invoice-head {
   display: flex;
   justify-content: space-between;
@@ -204,6 +206,7 @@
   margin-bottom: 20px;
 }
 
+.behdoon-invoice-meta,
 .behbar-invoice-meta {
   text-align: left;
   font-size: 0.82rem;
@@ -222,6 +225,7 @@
   font-size: 0.75rem;
 }
 
+.behdoon-invoice-parties,
 .behbar-invoice-parties {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -233,6 +237,7 @@
   font-size: 0.85rem;
 }
 
+.behdoon-invoice-route,
 .behbar-invoice-route {
   display: flex;
   justify-content: space-between;
@@ -246,12 +251,14 @@
   font-size: 0.84rem;
 }
 
+.behdoon-invoice-route > div,
 .behbar-invoice-route > div {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
+.behdoon-invoice-table,
 .behbar-invoice-table {
   width: 100%;
   border-collapse: collapse;
@@ -259,6 +266,7 @@
   font-size: 0.86rem;
 }
 
+.behdoon-invoice-table th,
 .behbar-invoice-table th {
   background: #f3f4f6;
   color: #374151;
@@ -268,6 +276,7 @@
   text-align: right;
 }
 
+.behdoon-invoice-table td,
 .behbar-invoice-table td {
   padding: 10px 12px;
   border: 1px solid #e5e7eb;
@@ -275,6 +284,7 @@
   vertical-align: middle;
 }
 
+.behdoon-invoice-total,
 .behbar-invoice-total {
   display: flex;
   justify-content: space-between;
@@ -287,6 +297,7 @@
   margin-bottom: 24px;
 }
 
+.behdoon-invoice-footer-sign,
 .behbar-invoice-footer-sign {
   display: flex;
   justify-content: space-between;
@@ -296,20 +307,25 @@
 }
 
 @media (max-width: 640px) {
+  .behdoon-invoice-parties,
   .behbar-invoice-parties {
     grid-template-columns: 1fr;
     gap: 12px;
   }
+  .behdoon-invoice-sheet,
   .behbar-invoice-sheet {
     padding: 16px;
   }
+  .behdoon-invoice-head,
   .behbar-invoice-head {
     flex-direction: column;
     gap: 12px;
   }
+  .behdoon-invoice-meta,
   .behbar-invoice-meta {
     text-align: right;
   }
+  .behdoon-invoice-footer-sign,
   .behbar-invoice-footer-sign {
     flex-direction: column;
     align-items: flex-start;
@@ -322,6 +338,8 @@
   body * {
     visibility: hidden;
   }
+  #behdoon-invoice-modal-overlay,
+  #behdoon-invoice-modal-overlay *,
   #behbar-invoice-modal-overlay,
   #behbar-invoice-modal-overlay * {
     visibility: visible;
@@ -340,6 +358,7 @@
   .invoice-modal-actions {
     display: none !important;
   }
+  .behdoon-invoice-sheet,
   .behbar-invoice-sheet {
     border: none !important;
     box-shadow: none !important;

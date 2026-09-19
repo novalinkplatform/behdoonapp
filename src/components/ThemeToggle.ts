@@ -28,9 +28,11 @@ export function initThemeToggle(): void {
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
       if (isDark) {
         document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('behdoon_theme', 'light');
         localStorage.setItem('behbar_theme', 'light');
       } else {
         document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('behdoon_theme', 'dark');
         localStorage.setItem('behbar_theme', 'dark');
       }
       syncThemeToggleUI();

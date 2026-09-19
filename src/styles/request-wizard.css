@@ -1509,7 +1509,7 @@
 
 /* Background blur on main page elements when modal is open */
 body.modal-open #app,
-body.modal-open > *:not(#request-wizard-modal):not(#behbar-invoice-modal-overlay):not(script):not(style) {
+body.modal-open > *:not(#request-wizard-modal):not(#behdoon-invoice-modal-overlay):not(#behbar-invoice-modal-overlay):not(script):not(style) {
   filter: blur(8px) brightness(0.85);
   -webkit-filter: blur(8px) brightness(0.85);
   pointer-events: none !important;

@@ -44,8 +44,8 @@ export function applyHeroSloganSeo(
   siteName?: { fa?: string; en?: string },
 ): void {
   const brandFa = siteName?.fa?.trim() || 'بهدون';
-  const headline = heroSlogan?.headline?.fa?.trim() || 'حمل و جابه‌جایی، ساده‌تر از همیشه';
-  const subtitle = heroSlogan?.subtitle?.fa?.trim() || 'برای اثاث‌کشی یا حمل بار درخواست خود را ثبت کنید؛ در سریع‌ترین زمان با شما هماهنگ می‌کنیم.';
+  const headline = heroSlogan?.headline?.fa?.trim() || 'خدمات حرفه‌ای و تخصصی ساختمان در تهران';
+  const subtitle = heroSlogan?.subtitle?.fa?.trim() || 'ثبت آنلاین درخواست اعزام فوری تکنسین و استادکار تأسیسات، لوله‌کشی، برقکاری و بازسازی ساختمان با ضمانت کتبی کیفیت.';
 
   const fullDescription = `${brandFa} | ${headline} - ${subtitle}`;
 

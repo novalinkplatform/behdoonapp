@@ -1,48 +1,47 @@
 {
-  "title": "راهنمای کامل بسته‌بندی وسایل شکستنی هنگام اسباب‌کشی",
-  "titleEn": "The Complete Guide to Packing Fragile Items When Moving",
-  "slug": "guide-packing-fragile-items-moving",
-  "excerpt": "ظروف چینی، آینه، تلویزیون و لوازم شیشه‌ای بیشترین آسیب را در اسباب‌کشی می‌بینند. با این راهنما یاد بگیرید چطور آن‌ها را اصولی بسته‌بندی کنید.",
-  "excerptEn": "China, mirrors, TVs, and glassware take the most damage during a move. Learn how to pack them properly with this guide.",
-  "category": "بسته‌بندی",
-  "categoryEn": "Packing",
+  "title": "راهنمای جامع سرویس و نگهداری پکیج و سیستم‌های گرمایشی در زمستان",
+  "titleEn": "Comprehensive Winter Guide to Boiler & Heating Maintenance",
+  "slug": "heating-system-package-winter-maintenance-guide",
+  "excerpt": "راهنمای عملی هواگیری، بررسی مبدل حرارتی، تنظیم فشار و اقدامات پیشگیرانه برای حفظ راندمان پکیج و رادیاتور در فصول سرد سال.",
+  "excerptEn": "A practical guide to radiator bleeding, heat exchanger checkups, pressure regulation, and preventive care for winter heating.",
+  "category": "سرمایش و گرمایش",
+  "categoryEn": "HVAC & Heating",
   "coverImageUrl": null,
-  "metaTitle": "بسته‌بندی اصولی وسایل شکستنی هنگام اسباب‌کشی | مجله بهبار",
-  "metaDescription": "آموزش گام‌به‌گام بسته‌بندی ظروف، آینه، لوازم برقی و شیشه‌ای برای جلوگیری از شکستن و آسیب در اسباب‌کشی.",
+  "metaTitle": "راهنمای جامع سرویس پکیج و رادیاتور در زمستان | مجله بهدون",
+  "metaDescription": "آموزش گام‌به‌گام هواگیری رادیاتور، تنظیم بار پکیج و اقدامات پیشگیرانه برای جلوگیری از افت فشار و خرابی سیستم گرمایشی از متخصصان بهدون.",
   "content": [
-    { "type": "paragraph", "text": "بخش قابل‌توجهی از خسارت‌های اسباب‌کشی مربوط به وسایل شکستنی است؛ ظروف آشپزخانه، آینه، قاب عکس، تلویزیون و لوازم تزئینی شیشه‌ای. خبر خوب این است که با چند اصل ساده بسته‌بندی، می‌توانید احتمال آسیب را تقریباً به صفر برسانید. در ادامه روش صحیح بسته‌بندی هر دسته از این وسایل را توضیح می‌دهیم.", "textEn": "A significant portion of moving damage involves fragile items: kitchenware, mirrors, picture frames, TVs, and glass décor. The good news is that a few simple packing principles can bring the risk of damage down to almost zero. Below, we explain the right way to pack each category of these items." },
-    { "type": "heading", "text": "وسایل و ابزار مورد نیاز", "textEn": "Materials and tools you'll need" },
+    { "type": "paragraph", "text": "با فرارسیدن فصل سرما، عملکرد بهینه پکیج دیواری و رادیاتورها اهمیت دوچندانی پیدا می‌کند. افت ناگهانی دمای آب مصرفی، گرم نشدن رادیاتورها یا صداهای تق‌تق از درون دستگاه، از نشانه‌های رایج نیاز به سرویس دوره‌ای هستند. با انجام چند اقدام ساده می‌توانید زمستانی گرم و بی‌دغدغه را سپری کنید.", "textEn": "With cold weather arriving, peak performance of boilers and radiators is vital. Unstable water temperature, cold radiators, or knocking noises signal a need for routine servicing. Following a few simple steps ensures a cozy and worry-free winter." },
+    { "type": "heading", "text": "علائم نیاز فوری پکیج به رسوب‌زدایی و اسیدشویی", "textEn": "Signs your boiler requires descaling" },
     { "type": "list", "items": [
-      "کاغذ کرافت یا روزنامه برای دورپیچ کردن",
-      "کاغذ حبابدار (پلاستیک پلمپ) برای وسایل حساس‌تر",
-      "کارتن‌های محکم و دو یا سه‌لایه، ترجیحاً با اندازه کوچک تا متوسط برای وسایل شکستنی",
-      "چسب پهن بسته‌بندی و نوارچسب هشدار «شکستنی»",
-      "پتوی متحرک یا لحاف کهنه برای مبلمان و لوازم بزرگ شیشه‌ای"
+      "طولانی شدن زمان گرم شدن آب مصرفی حمام و آشپزخانه",
+      "نوسان شدید دمای آب در هنگام استحمام (سرد و گرم شدن متوالی)",
+      "افت محسوس فشار آب گرم نسبت به آب سرد",
+      "صدای جوشیدن یا زوزه کشیدن پکیج هنگام استارت مشعل",
+      "افزایش سریع و غیرعادی عقربه فشار مانومتر دستگاه"
     ], "itemsEn": [
-      "Kraft paper or newspaper for wrapping",
-      "Bubble wrap for more delicate items",
-      "Sturdy double- or triple-walled boxes, preferably small to medium sized for fragile items",
-      "Wide packing tape and \"fragile\" warning tape",
-      "Moving blankets or an old quilt for furniture and large glass items"
+      "Prolonged wait times for domestic hot water",
+      "Frequent hot-cold water fluctuations while showering",
+      "Noticeable drop in hot water flow compared to cold water",
+      "Boiling or rumbling sounds when the burner ignites",
+      "Rapid and abnormal spikes on the pressure gauge"
     ] },
-    { "type": "heading", "text": "ظروف آشپزخانه و چینی‌آلات", "textEn": "Kitchenware and china" },
-    { "type": "paragraph", "text": "کف کارتن را با یک لایه ضخیم کاغذ مچاله‌شده بپوشانید. بشقاب‌ها را به‌صورت عمودی (نه افقی روی هم) بچینید؛ این حالت مقاومت بیشتری در برابر ضربه دارد. هر لیوان و فنجان را جداگانه در کاغذ بپیچید و فضای خالی داخل کارتن را با کاغذ مچاله‌شده پر کنید تا وسایل در حین حمل جابه‌جا نشوند.", "textEn": "Line the bottom of the box with a thick layer of crumpled paper. Stack plates vertically (not flat on top of each other) — this position is far more impact-resistant. Wrap every glass and cup individually in paper, and fill any empty space in the box with crumpled paper so items don't shift during transport." },
-    { "type": "heading", "text": "آینه، قاب عکس و لوازم شیشه‌ای تخت", "textEn": "Mirrors, picture frames, and flat glass items" },
-    { "type": "paragraph", "text": "روی سطح شیشه‌ای، به‌صورت ضربدری نوار چسب بزنید تا در صورت ضربه، شیشه یکجا خرد نشود. سپس آن را در چند لایه کاغذ حبابدار بپیچید و در یک کارتن مخصوص «آینه» (پهن و کم‌عمق) به‌صورت عمودی، نه خوابیده، قرار دهید. عمودی گذاشتن، فشار وارد بر سطح شیشه را به‌شدت کاهش می‌دهد.", "textEn": "Apply tape in an X pattern across the glass surface so it won't shatter into scattered pieces on impact. Then wrap it in several layers of bubble wrap and place it upright — not flat — inside a dedicated \"mirror\" box (wide and shallow). Standing it upright greatly reduces the pressure on the glass surface." },
-    { "type": "heading", "text": "تلویزیون و لوازم الکترونیکی", "textEn": "TVs and electronics" },
-    { "type": "paragraph", "text": "در صورت امکان از کارتن اصلی خود دستگاه استفاده کنید. اگر کارتن اصلی را ندارید، تلویزیون را در پتوی متحرک بپیچید و آن را به‌صورت عمودی (مثل حالت استفاده روی دیوار) جابه‌جا کنید، نه خوابیده. کابل‌ها را جدا کرده و در یک کیسه برچسب‌دار نگه دارید تا هنگام نصب مجدد گم نشوند.", "textEn": "Use the device's original box if you still have it. If not, wrap the TV in a moving blanket and transport it upright (the same orientation it's mounted in), never lying flat. Disconnect the cables and keep them in a labeled bag so they don't get lost when reinstalling." },
-    { "type": "heading", "text": "چند اشتباه رایج که باید از آن‌ها دوری کنید", "textEn": "Common mistakes to avoid" },
+    { "type": "heading", "text": "چگونه رادیاتورها را اصولی هواگیری کنیم؟", "textEn": "How to properly bleed radiators" },
+    { "type": "paragraph", "text": "ابتدا پکیج را خاموش کنید تا پمپ سیرکولاتور از کار بایستد. با آچار مخصوص هواگیری، شیر بالای رادیاتور را آرام باز کنید تا هوا و سپس جریان ممتد آب خارج شود. ظرف یا پارچه‌ای زیر شیر نگه دارید. پس از اتمام هواگیری تمام پره‌ها، مجدداً با باز کردن شیر پرکن زیر پکیج، عقربه فشار را روی ۱.۵ بار تنظیم کنید.", "textEn": "Turn off the heating unit first to stop the pump. Using a radiator key, gently open the top valve until trapped air hisses out and a steady stream of water follows. Catch drips in a cloth or tray. Once all radiators are bled, open the fill valve under the boiler to restore pressure to 1.5 bar." },
+    { "type": "heading", "text": "تنظیم صحیح ترموستات و بهینه‌سازی مصرف انرژی", "textEn": "Thermostat tuning & energy efficiency" },
+    { "type": "paragraph", "text": "تنظیم دمای آب گرمایش روی ۶۰ تا ۶۵ درجه سانتی‌گراد تعادل بهینه‌ای بین آسایش حرارتی و عمر مفید مبدل حرارتی ایجاد می‌کند. دمای آب مصرفی نیز بهتر است بین ۴۵ تا ۵۰ درجه تنظیم شود تا تشکیل رسوب کلسیمی به حداقل برسد.", "textEn": "Setting heating water between 60°C and 65°C balances comfort and heat exchanger lifespan. Domestic hot water is best set at 45°C to 50°C to minimize limescale build-up." },
+    { "type": "heading", "text": "اشتباهات خطرناک در استفاده از پکیج", "textEn": "Hazardous mistakes to avoid" },
     { "type": "list", "items": [
-      "پر کردن بیش از حد یک کارتن با وسایل سنگین که باعث پارگی کف کارتن می‌شود",
-      "استفاده از کارتن‌های نازک و یک‌بارمصرف برای وسایل شکستنی",
-      "نگذاشتن فاصله و مواد ضربه‌گیر بین وسایل شکستنی",
-      "روی هم چیدن کارتن‌های شکستنی زیر کارتن‌های سنگین در کامیون"
+      "مسدود کردن دریچه‌های تأمین هوای تازه اتاق محل نصب پکیج",
+      "استفاده از لوله‌های آلومینیومی آکاردئونی غیرمجاز به‌جای لوله دودکش استاندارد دوجداره",
+      "اسیدشویی غیراصولی مبدل با مواد خورنده نامناسب توسط افراد غیرمتخصص",
+      "روشن گذاشتن پکیج در حالت بدون آب (فشار زیر ۰.۵ بار)"
     ], "itemsEn": [
-      "Overfilling a single box with heavy items, which tears the bottom",
-      "Using thin, single-use boxes for fragile items",
-      "Not leaving spacing and cushioning material between fragile items",
-      "Stacking fragile boxes underneath heavy boxes in the truck"
+      "Blocking fresh air intake vents near the boiler",
+      "Using illegal flexible aluminum hoses instead of rigid dual-wall chimneys",
+      "Attempting DIY acid descaling with improper corrosive chemicals",
+      "Operating the unit dry with pressure below 0.5 bar"
     ] },
-    { "type": "paragraph", "text": "اگر بسته‌بندی اصولی وسایل شکستنی زمان‌بر یا نگران‌کننده به‌نظر می‌رسد، می‌توانید هنگام ثبت درخواست در بهبار، نیاز به خدمات بسته‌بندی را هم مشخص کنید تا تیم ما این بخش را با تجربه و مواد استاندارد برایتان انجام دهد.", "textEn": "If packing fragile items properly seems time-consuming or worrying, you can indicate that you need packing services when submitting your request on Behbar, and our experienced team will take care of it for you using standard materials." }
+    { "type": "heading", "text": "سرویس تخصصی و تضمینی با تکنسین‌های بهدون", "textEn": "Guaranteed Service with Behdoon Technicians" },
+    { "type": "paragraph", "text": "اگر پکیج شما دچار خطای کد ارور، نشت آب یا خاموشی ناگهانی شده است، شخصاً اقدام به باز کردن قطعات گازی و برقی نکنید. با ثبت سریع درخواست در بهدون، تکنسین مجاز و مجهز به قطعات اورجینال در کمتر از یک ساعت در محل شما حاضر خواهد بود.", "textEn": "If your boiler flashes an error code, leaks water, or shuts down, avoid tampering with gas or electrical components yourself. Book a verified technician on Behdoon for quick dispatch with genuine replacement parts." }
   ]
 }

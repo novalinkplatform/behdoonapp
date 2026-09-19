@@ -1,12 +1,13 @@
 export type Lang = 'fa' | 'en';
 
-const STORAGE_KEY = 'behbar_lang';
+const STORAGE_KEY = 'behdoon_lang';
+const LEGACY_STORAGE_KEY = 'behbar_lang';
 
 // در بیلد خوداستقرار (Docker)، VITE_DEFAULT_LANG روی 'en' ست می‌شود — چون خریدارهای این نسخه لزوماً مخاطب
 // فارسی‌زبان ندارند. نسخه‌ی خود فروشنده روی کلادفلر بدون این متغیر ساخته می‌شود و مثل همیشه فارسی می‌ماند.
 function detectInitialLang(): Lang {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
     if (stored === 'fa' || stored === 'en') return stored;
   } catch {
     /* localStorage unavailable — از env fallback بگیر */

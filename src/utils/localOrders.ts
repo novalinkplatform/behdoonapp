@@ -1,5 +1,7 @@
-const PHONE_STORAGE_KEY = 'behbar_last_phone';
-const NAME_STORAGE_KEY = 'behbar_last_name';
+const PHONE_STORAGE_KEY = 'behdoon_last_phone';
+const LEGACY_PHONE_STORAGE_KEY = 'behbar_last_phone';
+const NAME_STORAGE_KEY = 'behdoon_last_name';
+const LEGACY_NAME_STORAGE_KEY = 'behbar_last_name';
 
 export function saveLastPhone(phone: string): void {
   try {
@@ -11,7 +13,7 @@ export function saveLastPhone(phone: string): void {
 
 export function getLastPhone(): string | null {
   try {
-    return localStorage.getItem(PHONE_STORAGE_KEY);
+    return localStorage.getItem(PHONE_STORAGE_KEY) || localStorage.getItem(LEGACY_PHONE_STORAGE_KEY);
   } catch {
     return null;
   }
@@ -27,7 +29,7 @@ export function saveLastName(name: string): void {
 
 export function getLastName(): string | null {
   try {
-    return localStorage.getItem(NAME_STORAGE_KEY);
+    return localStorage.getItem(NAME_STORAGE_KEY) || localStorage.getItem(LEGACY_NAME_STORAGE_KEY);
   } catch {
     return null;
   }

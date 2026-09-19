@@ -3,8 +3,10 @@ import { pick } from '../i18n/lang.ts';
 import { API_BASE_URL } from '../data/config.ts';
 import { toPersianDigits } from '../utils/jalali.ts';
 
-const TOKEN_KEY = 'behbar_chat_token';
-const NAME_KEY = 'behbar_chat_name';
+const TOKEN_KEY = 'behdoon_chat_token';
+const LEGACY_TOKEN_KEY = 'behbar_chat_token';
+const NAME_KEY = 'behdoon_chat_name';
+const LEGACY_NAME_KEY = 'behbar_chat_name';
 const POLL_MS = 4000;
 
 interface ChatMessage {
@@ -55,7 +57,7 @@ function renderMessageBody(m: ChatMessage): string {
 }
 
 function getChatToken(): string {
-  let token = localStorage.getItem(TOKEN_KEY);
+  let token = localStorage.getItem(TOKEN_KEY) || localStorage.getItem(LEGACY_TOKEN_KEY);
   if (!token) {
     token = crypto.randomUUID();
     localStorage.setItem(TOKEN_KEY, token);
@@ -222,7 +224,7 @@ export function initChatWidget(): void {
       const res = await fetch(`${API_BASE_URL}/api/chat/${token}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customerName: localStorage.getItem(NAME_KEY) ?? undefined, ...payload }),
+        body: JSON.stringify({ customerName: localStorage.getItem(NAME_KEY) || localStorage.getItem(LEGACY_NAME_KEY) || undefined, ...payload }),
       });
       if (!res.ok) return false;
       await load();

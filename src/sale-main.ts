@@ -11,7 +11,7 @@ import { initContentBlocks } from './sections/ContentBlock.ts';
 import { initBehaviorTracking } from './utils/analytics.ts';
 import { markAppReady } from './utils/appReady.ts';
 
-// صفحه پرزنت و فروش ژاکت اسکریپت بهبار
+// صفحه پرزنت و فروش ژاکت اسکریپت بهدون
 
 function init(): void {
   initBehaviorTracking();

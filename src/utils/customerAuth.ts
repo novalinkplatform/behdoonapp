@@ -233,7 +233,7 @@ export async function fetchCurrentCustomer(): Promise<CustomerInfo | null> {
       const body = await res.json();
       if (body?.customer) {
         try {
-          localStorage.setItem('behbar_customer_info', JSON.stringify(body.customer));
+          localStorage.setItem(INFO_KEY, JSON.stringify(body.customer));
         } catch {}
         return body.customer as CustomerInfo;
       }

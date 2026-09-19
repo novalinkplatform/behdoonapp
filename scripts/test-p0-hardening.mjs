@@ -297,7 +297,7 @@ async function runP0HardeningTests() {
   // Test 3.3: Payment while in_progress decouples payment from service completion
   res = await worker.fetch(new Request('https://behdoon.ir/api/payments/checkout', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${customerBToken}` },
     body: JSON.stringify({
       requestId: orderBId,
       customerId: customerBId,
@@ -395,7 +395,7 @@ async function runP0HardeningTests() {
   // Net Payable to provider = 700,000 - 80,000 = 620,000
   res = await worker.fetch(new Request('https://behdoon.ir/api/payments/checkout', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${customerAToken}` },
     body: JSON.stringify({
       requestId: orderCId,
       customerId: customerAId,
@@ -494,7 +494,7 @@ async function runP0HardeningTests() {
   // First call with Idempotency-Key
   const firstPayRes = await worker.fetch(new Request('https://behdoon.ir/api/payments/checkout', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Idempotency-Key': idempKey },
+    headers: { 'Content-Type': 'application/json', 'Idempotency-Key': idempKey, Authorization: `Bearer ${customerAToken}` },
     body: JSON.stringify(payPayload),
   }), env);
   const firstBody = await firstPayRes.json();
@@ -505,7 +505,7 @@ async function runP0HardeningTests() {
   for (let i = 1; i <= 5; i++) {
     const retryRes = await worker.fetch(new Request('https://behdoon.ir/api/payments/checkout', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Idempotency-Key': idempKey },
+      headers: { 'Content-Type': 'application/json', 'Idempotency-Key': idempKey, Authorization: `Bearer ${customerAToken}` },
       body: JSON.stringify(payPayload),
     }), env);
     const retryBody = await retryRes.json();

@@ -205,15 +205,15 @@ export function renderFooter(settings?: SiteSettings): string {
   let copyrightFa = footerData?.copyright?.fa;
   if (!copyrightFa) {
     copyrightFa = `تمامی حقوق مادی و معنوی برای ${brandFa} محفوظ است. مرکز خدمات هوشمند ساختمان در تهران.`;
-  } else if (brandFa && brandFa !== 'بهدون' && copyrightFa.includes('بهدون')) {
-    copyrightFa = copyrightFa.replace(/به‌بار|به بار|بهبار/g, brandFa);
+  } else if (brandFa && brandFa !== 'بهدون' && (copyrightFa.includes('بهدون') || copyrightFa.includes('بهبار'))) {
+    copyrightFa = copyrightFa.replace(/به[بد]ون?|به‌بار|به بار|بهبار/g, brandFa);
   }
 
   let copyrightEn = footerData?.copyright?.en;
   if (!copyrightEn) {
     copyrightEn = `All rights reserved for ${brandEn}. Smart Building & Technical Services Platform.`;
-  } else if (brandEn && brandEn.toLowerCase() !== 'behbar' && /behbar/i.test(copyrightEn)) {
-    copyrightEn = copyrightEn.replace(/behbar/gi, brandEn);
+  } else if (brandEn && brandEn.toLowerCase() !== 'behdoon' && /behdoon|behbar/i.test(copyrightEn)) {
+    copyrightEn = copyrightEn.replace(/behdoon|behbar/gi, brandEn);
   }
 
   const copyright = {

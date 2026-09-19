@@ -1,10 +1,12 @@
 import { API_BASE_URL } from '../data/config.ts';
 
-const VISITOR_KEY = 'behbar_visitor_id';
-const SESSION_KEY = 'behbar_session_id';
+const VISITOR_KEY = 'behdoon_visitor_id';
+const LEGACY_VISITOR_KEY = 'behbar_visitor_id';
+const SESSION_KEY = 'behdoon_session_id';
+const LEGACY_SESSION_KEY = 'behbar_session_id';
 
 export function getVisitorId(): string {
-  let id = localStorage.getItem(VISITOR_KEY);
+  let id = localStorage.getItem(VISITOR_KEY) || localStorage.getItem(LEGACY_VISITOR_KEY);
   if (!id) {
     id = crypto.randomUUID();
     localStorage.setItem(VISITOR_KEY, id);
@@ -13,7 +15,7 @@ export function getVisitorId(): string {
 }
 
 export function getSessionId(): string {
-  let sid = sessionStorage.getItem(SESSION_KEY);
+  let sid = sessionStorage.getItem(SESSION_KEY) || sessionStorage.getItem(LEGACY_SESSION_KEY);
   if (!sid) {
     sid = crypto.randomUUID();
     sessionStorage.setItem(SESSION_KEY, sid);
