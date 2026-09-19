@@ -31,20 +31,228 @@ export interface Env {
 }
 
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+const ALLOWED_ORIGIN_PATTERNS = [
+  /^https:\/\/(www\.)?behdoon\.ir$/,
+  /^http:\/\/localhost(:\d+)?$/,
+  /^http:\/\/127\.0\.0\.1(:\d+)?$/,
+];
+
+function getCorsHeaders(request?: Request): Record<string, string> {
+  const origin = request?.headers?.get('Origin') || '';
+  let allowedOrigin = 'https://behdoon.ir';
+  if (origin && ALLOWED_ORIGIN_PATTERNS.some((pattern) => pattern.test(origin))) {
+    allowedOrigin = origin;
+  }
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, Idempotency-Key, X-Requested-With',
+    'Access-Control-Allow-Credentials': 'true',
+    'Vary': 'Origin',
+  };
+}
+
+const SECURITY_HEADERS = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'X-XSS-Protection': '1; mode=block',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
 };
 
-function jsonResponse(data: unknown, status = 200): Response {
+const CORS_HEADERS = getCorsHeaders();
+
+let globalCurrentRequest: Request | null = null;
+
+function jsonResponse(data: unknown, status = 200, request?: Request): Response {
+  const req = request || globalCurrentRequest || undefined;
   return new Response(JSON.stringify(data), {
     status,
     headers: {
-      ...CORS_HEADERS,
+      ...getCorsHeaders(req),
+      ...SECURITY_HEADERS,
       'Content-Type': 'application/json; charset=utf-8',
     },
   });
+}
+
+export interface StructuredLogEvent {
+  timestamp?: string;
+  level: 'info' | 'warn' | 'error' | 'security';
+  event: string;
+  entity_type?: string;
+  entity_id?: string | number;
+  actor?: string;
+  actor_role?: string;
+  ip?: string;
+  duration_ms?: number;
+  error?: string;
+  metadata?: Record<string, any>;
+}
+
+function sanitizeLogValue(key: string, val: any): any {
+  if (val === null || val === undefined) return val;
+  const lowerKey = key.toLowerCase();
+  if (lowerKey.includes('password') || lowerKey.includes('token') || lowerKey.includes('secret') || lowerKey.includes('auth')) {
+    return '[REDACTED_SECRET]';
+  }
+  if ((lowerKey.includes('otp') || lowerKey.includes('code')) && String(val).length <= 6 && /^\d+$/.test(String(val))) {
+    return '[REDACTED_OTP]';
+  }
+  if (typeof val === 'string') {
+    if (/^09\d{9}$/.test(val)) {
+      return val.slice(0, 4) + '***' + val.slice(-4);
+    }
+    if (/^\d{10}$/.test(val)) {
+      return val.slice(0, 3) + '****' + val.slice(-3);
+    }
+  }
+  if (typeof val === 'object' && !Array.isArray(val)) {
+    const res: Record<string, any> = {};
+    for (const k of Object.keys(val)) {
+      res[k] = sanitizeLogValue(k, val[k]);
+    }
+    return res;
+  }
+  return val;
+}
+
+export function logStructuredEvent(eventData: StructuredLogEvent): void {
+  const sanitizedMeta = eventData.metadata ? sanitizeLogValue('metadata', eventData.metadata) : undefined;
+  const sanitizedActor = eventData.actor && /^09\d{9}$/.test(eventData.actor)
+    ? eventData.actor.slice(0, 4) + '***' + eventData.actor.slice(-4)
+    : eventData.actor;
+
+  const logEntry = {
+    timestamp: eventData.timestamp || new Date().toISOString(),
+    level: eventData.level,
+    event: eventData.event,
+    entity_type: eventData.entity_type,
+    entity_id: eventData.entity_id,
+    actor: sanitizedActor,
+    actor_role: eventData.actor_role,
+    ip: eventData.ip,
+    duration_ms: eventData.duration_ms,
+    error: eventData.error,
+    ...(sanitizedMeta ? { metadata: sanitizedMeta } : {}),
+  };
+
+  const jsonStr = JSON.stringify(logEntry);
+  if (eventData.level === 'error' || eventData.level === 'security') {
+    console.error(jsonStr);
+  } else if (eventData.level === 'warn') {
+    console.warn(jsonStr);
+  } else {
+    console.log(jsonStr);
+  }
+}
+
+async function checkRateLimit(
+  env: Env,
+  key: string,
+  maxAttempts: number,
+  windowSeconds: number,
+  lockoutSeconds = 0
+): Promise<{ allowed: boolean; retryAfterSeconds?: number; attemptsRemaining?: number }> {
+  if (!env.DB) return { allowed: true };
+  const now = Math.floor(Date.now() / 1000);
+  try {
+    const row = await env.DB.prepare('SELECT attempts, window_start, locked_until FROM rate_limits WHERE key = ?').bind(key).first();
+    if (!row) {
+      await env.DB.prepare('INSERT INTO rate_limits (key, attempts, window_start, locked_until) VALUES (?, 1, ?, 0)').bind(key, now).run();
+      return { allowed: true, attemptsRemaining: maxAttempts - 1 };
+    }
+
+    const lockedUntil = Number(row.locked_until || 0);
+    if (lockedUntil > now) {
+      return { allowed: false, retryAfterSeconds: lockedUntil - now };
+    }
+
+    const windowStart = Number(row.window_start || 0);
+    const windowElapsed = now - windowStart;
+
+    if (windowElapsed > windowSeconds) {
+      await env.DB.prepare('UPDATE rate_limits SET attempts = 1, window_start = ?, locked_until = 0 WHERE key = ?').bind(now, key).run();
+      return { allowed: true, attemptsRemaining: maxAttempts - 1 };
+    }
+
+    const currentAttempts = Number(row.attempts || 0) + 1;
+    if (currentAttempts > maxAttempts) {
+      const lockUntil = lockoutSeconds > 0 ? now + lockoutSeconds : windowStart + windowSeconds;
+      await env.DB.prepare('UPDATE rate_limits SET attempts = ?, locked_until = ? WHERE key = ?').bind(currentAttempts, lockUntil, key).run();
+      return { allowed: false, retryAfterSeconds: Math.max(1, lockUntil - now) };
+    }
+
+    await env.DB.prepare('UPDATE rate_limits SET attempts = ? WHERE key = ?').bind(currentAttempts, key).run();
+    return { allowed: true, attemptsRemaining: Math.max(0, maxAttempts - currentAttempts) };
+  } catch (err) {
+    console.error('Rate limit check error:', err);
+    return { allowed: true };
+  }
+}
+
+async function isRateLocked(env: Env, key: string): Promise<{ locked: boolean; retryAfterSeconds?: number }> {
+  if (!env.DB) return { locked: false };
+  const now = Math.floor(Date.now() / 1000);
+  try {
+    const row = await env.DB.prepare('SELECT locked_until FROM rate_limits WHERE key = ?').bind(key).first();
+    const lockedUntil = Number(row?.locked_until || 0);
+    if (lockedUntil > now) {
+      return { locked: true, retryAfterSeconds: lockedUntil - now };
+    }
+  } catch (err) {
+    console.error('Rate lock check error:', err);
+  }
+  return { locked: false };
+}
+
+async function recordRateLimitFailure(
+  env: Env,
+  key: string,
+  maxFailures: number,
+  windowSeconds: number,
+  lockoutSeconds: number
+): Promise<{ allowed: boolean; remainingAttempts: number; retryAfterSeconds?: number }> {
+  if (!env.DB) return { allowed: true, remainingAttempts: maxFailures - 1 };
+  const now = Math.floor(Date.now() / 1000);
+  try {
+    const row = await env.DB.prepare('SELECT attempts, window_start, locked_until FROM rate_limits WHERE key = ?').bind(key).first();
+    if (!row) {
+      await env.DB.prepare('INSERT INTO rate_limits (key, attempts, window_start, locked_until) VALUES (?, 1, ?, 0)').bind(key, now).run();
+      return { allowed: true, remainingAttempts: maxFailures - 1 };
+    }
+
+    const windowStart = Number(row.window_start || 0);
+    const windowElapsed = now - windowStart;
+
+    let attempts = Number(row.attempts || 0);
+    if (windowElapsed > windowSeconds) {
+      attempts = 1;
+      await env.DB.prepare('UPDATE rate_limits SET attempts = 1, window_start = ?, locked_until = 0 WHERE key = ?').bind(now, key).run();
+      return { allowed: true, remainingAttempts: maxFailures - 1 };
+    }
+
+    attempts += 1;
+    if (attempts >= maxFailures) {
+      const lockUntil = now + lockoutSeconds;
+      await env.DB.prepare('UPDATE rate_limits SET attempts = ?, locked_until = ? WHERE key = ?').bind(attempts, lockUntil, key).run();
+      return { allowed: false, remainingAttempts: 0, retryAfterSeconds: lockoutSeconds };
+    }
+
+    await env.DB.prepare('UPDATE rate_limits SET attempts = ? WHERE key = ?').bind(attempts, key).run();
+    return { allowed: true, remainingAttempts: Math.max(0, maxFailures - attempts) };
+  } catch (err) {
+    console.error('Record rate limit failure error:', err);
+    return { allowed: true, remainingAttempts: 1 };
+  }
+}
+
+async function clearRateLimit(env: Env, key: string): Promise<void> {
+  if (!env.DB) return;
+  try {
+    await env.DB.prepare('DELETE FROM rate_limits WHERE key = ?').bind(key).run();
+  } catch {}
 }
 
 function isStaffAuthed(request: Request): boolean {
@@ -1212,6 +1420,20 @@ async function ensureDbInitialized(env: Env): Promise<void> {
       console.error('Admin seed error:', adminSeedErr);
     }
 
+    // Phase 4A: Rate Limiting & Anti-Brute-Force Protection
+    try {
+      await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS rate_limits (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          key TEXT UNIQUE NOT NULL,
+          attempts INTEGER DEFAULT 0,
+          window_start INTEGER NOT NULL,
+          locked_until INTEGER DEFAULT 0
+        )
+      `).run();
+      await env.DB.prepare('CREATE UNIQUE INDEX IF NOT EXISTS idx_rate_limits_key ON rate_limits(key)').run();
+    } catch {}
+
     isDbInitialized = true;
   } catch (err) {
     console.error('DB initialization error:', err);
@@ -1253,14 +1475,22 @@ function getShahanshahiDatePrefix(date = new Date()): string {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
+    globalCurrentRequest = request;
     const url = new URL(request.url);
     const pathname = url.pathname;
 
     if (request.method === 'OPTIONS') {
-      return new Response(null, { headers: CORS_HEADERS });
+      return new Response(null, {
+        status: 204,
+        headers: {
+          ...getCorsHeaders(request),
+          ...SECURITY_HEADERS,
+        },
+      });
     }
 
-    await ensureDbInitialized(env);
+    try {
+      await ensureDbInitialized(env);
 
     // --- API Handlers ---
     if (pathname.startsWith('/api/')) {
@@ -1644,7 +1874,7 @@ export default {
             }
           }
 
-          return jsonResponse({ trackingCode, orderId: newOrderId, success: true });
+          return jsonResponse({ trackingCode, orderId: newOrderId, id: newOrderId, success: true }, 200, request);
         } catch (err: any) {
           return jsonResponse({ error: err.message }, 500);
         }
@@ -2242,7 +2472,24 @@ export default {
           const body = (await request.json().catch(() => ({}))) as Record<string, any>;
           const phone = String(body.phone || '').trim();
           if (!/^09\d{9}$/.test(phone)) {
-            return jsonResponse({ error: 'شماره موبایل وارد شده نامعتبر است. (فرمت صحیح: ۰۹xxxxxxxxx)' }, 400);
+            return jsonResponse({ error: 'شماره موبایل وارد شده نامعتبر است. (فرمت صحیح: ۰۹xxxxxxxxx)' }, 400, request);
+          }
+
+          // Rate limiting: Max 3 requests per 5 minutes (300s)
+          const limitRes = await checkRateLimit(env, `otp_send:${phone}`, 3, 300, 300);
+          if (!limitRes.allowed) {
+            logStructuredEvent({
+              level: 'security',
+              event: 'rate_limit_exceeded',
+              entity_type: 'otp_send',
+              actor: phone,
+              error: 'OTP send limit exceeded (max 3 in 5m)',
+            });
+            return jsonResponse({
+              error: 'تعداد درخواست‌های ارسال کد بیش از حد مجاز است. لطفاً پس از چند دقیقه مجدداً تلاش نمایید.',
+              code: 'RATE_LIMIT_EXCEEDED',
+              retryAfter: limitRes.retryAfterSeconds,
+            }, 429, request);
           }
 
           // تولید کد تصادفی ۵ رقمی منطبق بر فرانت‌اند
@@ -2269,16 +2516,32 @@ export default {
             smsError = err.message;
           }
 
-          return jsonResponse({
+          const isProduction = (env as any)?.ENVIRONMENT === 'production' || (typeof process !== 'undefined' && process.env?.NODE_ENV === 'production');
+          const isTest = !isProduction && ((typeof process !== 'undefined' && (process.env?.NODE_ENV === 'test' || !process.env?.NODE_ENV)) || (env as any)?.ENVIRONMENT === 'test');
+
+          const responsePayload: Record<string, any> = {
             success: true,
             message: smsSent
               ? 'کد تأیید ۵ رقمی به شماره همراه شما پیامک شد.'
               : (smsError ? `کد ورود ایجاد شد (${smsError})` : 'کد تأیید با موفقیت ارسال شد.'),
-            devCode: code,
             expiresInSeconds: 300,
+          };
+
+          if (isTest && !isProduction) {
+            responsePayload.devCode = code;
+          }
+
+          logStructuredEvent({
+            level: 'info',
+            event: 'otp_sent',
+            entity_type: 'customer_otp',
+            actor: phone,
+            metadata: { smsSent },
           });
+
+          return jsonResponse(responsePayload, 200, request);
         } catch (err: any) {
-          return jsonResponse({ error: err.message }, 500);
+          return jsonResponse({ error: err.message }, 500, request);
         }
       }
 
@@ -2289,11 +2552,36 @@ export default {
           const code = String(body.code || '').trim();
 
           if (!phone || !code) {
-            return jsonResponse({ error: 'شماره موبایل و کد تأیید الزامی هستند.' }, 400);
+            return jsonResponse({ error: 'شماره موبایل و کد تأیید الزامی هستند.' }, 400, request);
           }
 
-          // پشتیبانی از کدهای تستی در پایپ‌لاین و تطبیق با دیتابیس D1
-          let isValid = (code === '1234' || code === '12345');
+          const verifyLimitKey = `otp_verify:${phone}`;
+          // Check if account is locked out from brute-force attempts
+          const lockCheck = await isRateLocked(env, verifyLimitKey);
+          if (lockCheck.locked) {
+            logStructuredEvent({
+              level: 'security',
+              event: 'account_locked',
+              entity_type: 'otp_verify',
+              actor: phone,
+              error: 'OTP verify attempts locked out',
+            });
+            return jsonResponse({
+              error: 'به دلیل تلاش‌های ناموفق مکرر، ورود موقتاً مسدود شده است. لطفاً ۱۵ دقیقه دیگر تلاش کنید.',
+              code: 'ACCOUNT_LOCKED',
+              retryAfter: lockCheck.retryAfterSeconds,
+            }, 429, request);
+          }
+
+          const isProduction = (env as any)?.ENVIRONMENT === 'production' || (typeof process !== 'undefined' && process.env?.NODE_ENV === 'production');
+          const isTest = !isProduction && ((typeof process !== 'undefined' && (process.env?.NODE_ENV === 'test' || !process.env?.NODE_ENV)) || (env as any)?.ENVIRONMENT === 'test');
+
+          // پشتیبانی از کدهای تستی در محیط تست فقط (در پروداکشن کاملاً غیرفعال)
+          let isValid = false;
+          if (isTest && !isProduction && (code === '1234' || code === '12345')) {
+            isValid = true;
+          }
+
           if (!isValid && env.DB) {
             try {
               const row = await env.DB.prepare(`
@@ -2309,8 +2597,29 @@ export default {
           }
 
           if (!isValid) {
-            return jsonResponse({ error: 'کد تأیید وارد شده نامعتبر است یا منقضی شده است.' }, 400);
+            const failRes = await recordRateLimitFailure(env, verifyLimitKey, 5, 900, 900);
+            logStructuredEvent({
+              level: 'security',
+              event: 'otp_verification_failed',
+              entity_type: 'customer_otp',
+              actor: phone,
+              metadata: { remainingAttempts: failRes.remainingAttempts },
+            });
+            if (!failRes.allowed) {
+              return jsonResponse({
+                error: 'به دلیل ۵ بار تلاش ناموفق، حساب شما به مدت ۱۵ دقیقه مسدود شد.',
+                code: 'ACCOUNT_LOCKED',
+                retryAfter: failRes.retryAfterSeconds,
+              }, 429, request);
+            }
+            return jsonResponse({
+              error: 'کد تأیید وارد شده نامعتبر است یا منقضی شده است.',
+              remainingAttempts: failRes.remainingAttempts,
+            }, 400, request);
           }
+
+          // OTP verified successfully - clear failed attempts counter
+          await clearRateLimit(env, verifyLimitKey);
 
           let customerId = 1;
           let fullName = 'مشتری گرامی بهدون';
@@ -4616,12 +4925,37 @@ export default {
 
           if (env.DB) {
             try {
-              const currentReq = await env.DB.prepare('SELECT status, provider_id, phone, tracking_code FROM requests WHERE id = ?').bind(id).first();
+              const currentReq = await env.DB.prepare('SELECT status, provider_id, phone, tracking_code, scheduled_date, scheduled_time FROM requests WHERE id = ?').bind(id).first();
               if (currentReq?.status) oldStatus = currentReq.status;
 
               if (providerId) {
                 const provRow = await env.DB.prepare('SELECT full_name FROM providers WHERE id = ?').bind(providerId).first();
                 if (provRow?.full_name) providerName = provRow.full_name;
+
+                // Concurrency collision protection via UNIQUE slot constraint
+                if (currentReq?.scheduled_date && currentReq?.scheduled_time) {
+                  try {
+                    await env.DB.prepare(`
+                      INSERT INTO provider_schedules (provider_id, date, time_slot, request_id, status, created_at)
+                      VALUES (?, ?, ?, ?, 'booked', ?)
+                    `).bind(providerId, currentReq.scheduled_date, currentReq.scheduled_time, id, now).run();
+                  } catch (slotErr: any) {
+                    const errStr = String(slotErr?.message || '');
+                    if (errStr.includes('UNIQUE') || errStr.includes('constraint') || errStr.includes('uq_provider_schedules')) {
+                      return jsonResponse({
+                        error: 'این بازه زمانی برای متخصص انتخاب‌شده پیش‌تر رزرو شده است (تداخل همزمانی).',
+                        collision: true,
+                        code: 'SCHEDULE_COLLISION',
+                      }, 409, request);
+                    }
+                    throw slotErr;
+                  }
+                }
+              } else {
+                // Provider unassigned: release booked schedule slots
+                try {
+                  await env.DB.prepare("UPDATE provider_schedules SET status = 'cancelled' WHERE request_id = ?").bind(id).run();
+                } catch {}
               }
 
               const newStatus = providerId ? 'provider_assigned' : 'under_review';
@@ -4633,6 +4967,13 @@ export default {
                   updated_at = ?
                 WHERE id = ?
               `).bind(providerId, newStatus, now, id).run();
+
+              if (providerId) {
+                try {
+                  await env.DB.prepare("UPDATE request_candidates SET status = 'assigned' WHERE request_id = ? AND provider_id = ?")
+                    .bind(id, providerId).run();
+                } catch {}
+              }
 
               await env.DB.prepare(`
                 INSERT INTO order_status_logs (request_id, from_status, to_status, changed_by_role, changed_by_id, note, created_at)
@@ -4650,6 +4991,15 @@ export default {
                 await env.DB.prepare('UPDATE providers SET total_jobs = total_jobs + 1, updated_at = ? WHERE id = ?')
                   .bind(now, providerId).run();
               }
+
+              logStructuredEvent({
+                level: 'info',
+                event: 'admin_provider_assignment',
+                entity_type: 'request',
+                entity_id: id,
+                actor: 'staff',
+                metadata: { providerId, oldStatus, newStatus },
+              });
 
               // ارسال پیامک تخصیص متخصص به مشتری در صورت فعال بودن
               if (providerId && currentReq?.phone) {
@@ -5048,7 +5398,7 @@ export default {
           const provAuth = getProviderAuth(request);
           const body = (await request.json().catch(() => ({}))) as Record<string, any>;
           const requestId = Number(body.requestId);
-          const providerId = Number(body.providerId);
+          const providerId = Number(body.providerId || (provAuth && !provAuth.isAdmin ? provAuth.id : 0));
           const finalAmount = Number(body.finalAmount || 0);
 
           if (!requestId || !providerId || finalAmount <= 0) {
@@ -5561,12 +5911,8 @@ export default {
               if (body.markServiceCompleted === true || reqRow.status === 'service_completed') {
                 finalOrderStatus = 'completed';
                 shouldCompleteOrder = true;
-              } else if (reqRow.status === 'confirmed' && body.markServiceCompleted === undefined) {
-                // Legacy backward-compatibility for Phase 2 test suite
-                finalOrderStatus = 'completed';
-                shouldCompleteOrder = true;
               } else {
-                // Payment decoupled: remains in current order status (e.g. in_progress, scheduled)
+                // Payment decoupled: remains in current order status (e.g. in_progress, scheduled, confirmed)
                 finalOrderStatus = reqRow.status;
                 shouldCompleteOrder = false;
               }
@@ -5692,9 +6038,23 @@ export default {
               const newTotalRefunded = prevRefunded + requestedRefund;
               const newPaymentStatus = newTotalRefunded >= totalPaid ? 'refunded' : 'partially_refunded';
 
+              // Atomic anti-double refund check
+              const updatePaymentRes = await env.DB.prepare(`
+                UPDATE payments
+                SET refunded_amount = refunded_amount + ?, updated_at = ?
+                WHERE id = ? AND refunded_amount + ? <= amount
+              `).bind(requestedRefund, now, paymentRow.id, requestedRefund).run();
+
+              if (!updatePaymentRes?.meta?.changes || updatePaymentRes.meta.changes === 0) {
+                return jsonResponse({
+                  error: 'عملیات استرداد وجه همزمان مسدود گردید (Double Refund Prevention).',
+                  code: 'CONCURRENT_REFUND_BLOCKED',
+                }, 400, request);
+              }
+
               // Update payment status
-              await env.DB.prepare('UPDATE payments SET status = ?, refunded_amount = ? WHERE id = ?')
-                .bind(newPaymentStatus, newTotalRefunded, paymentRow.id).run();
+              await env.DB.prepare('UPDATE payments SET status = ? WHERE id = ?')
+                .bind(newPaymentStatus, paymentRow.id).run();
 
               // Update request payment_status
               await env.DB.prepare('UPDATE requests SET payment_status = ?, updated_at = ? WHERE id = ?')
@@ -6227,6 +6587,7 @@ export default {
         let platformRevenue = 0;
         let providerPayable = 0;
         let refunds = 0;
+        let openDisputes = 0;
         let openSupportTickets = 0;
 
         if (env.DB) {
@@ -6267,7 +6628,10 @@ export default {
             const tRef = await env.DB.prepare("SELECT COALESCE(SUM(amount), 0) as sm FROM financial_ledger WHERE entry_type = 'refund'").first();
             refunds = Number(tRef?.sm || 0);
 
-            const tTick = await env.DB.prepare("SELECT COUNT(*) as cnt FROM disputes WHERE status IN ('open', 'under_review', 'waiting_customer', 'waiting_provider')").first();
+            const tDispRow = await env.DB.prepare("SELECT COUNT(*) as cnt FROM disputes WHERE status IN ('open', 'under_review', 'waiting_customer', 'waiting_provider', 'in_investigation')").first();
+            openDisputes = Number(tDispRow?.cnt || 0);
+
+            const tTick = await env.DB.prepare("SELECT COUNT(*) as cnt FROM support_tickets WHERE status IN ('open', 'in_progress', 'pending')").first();
             openSupportTickets = Number(tTick?.cnt || 0);
           } catch (kpiErr) {
             console.error('KPI query error:', kpiErr);
@@ -6283,6 +6647,7 @@ export default {
             completedOrders,
             cancelledOrders,
             disputedOrders,
+            openDisputes,
             pendingQuotes,
             pendingPayments,
             grossOrderValue,
@@ -6292,7 +6657,7 @@ export default {
             openSupportTickets,
           },
           generatedAt: new Date().toISOString(),
-        });
+        }, 200, request);
       }
 
       // --- Phase 3C: Live Order Monitoring (GET /api/admin/orders) ---
@@ -7081,6 +7446,23 @@ export default {
       return env.ASSETS.fetch(new Request(assetUrl, request));
     }
 
-    return env.ASSETS.fetch(request);
+      return env.ASSETS.fetch(request);
+    } catch (unhandledErr: any) {
+      logStructuredEvent({
+        level: 'error',
+        event: 'unhandled_worker_error',
+        error: unhandledErr?.message || String(unhandledErr),
+        metadata: {
+          pathname,
+          method: request.method,
+        },
+      });
+
+      const isProduction = (env as any)?.ENVIRONMENT === 'production' || (typeof process !== 'undefined' && process.env?.NODE_ENV === 'production');
+      return jsonResponse({
+        error: isProduction ? 'خطای غیرمنتظره در سامانه بهدون رخ داد. لطفاً مجدداً تلاش فرمایید یا با پشتیبانی تماس بگیرید.' : (unhandledErr?.message || 'خطای سرور'),
+        code: 'INTERNAL_SERVER_ERROR',
+      }, 500, request);
+    }
   },
 };

@@ -263,6 +263,11 @@ export async function sendDirectSms(
   }
 }
 
+export function maskPhone(phone: string): string {
+  if (!phone || phone.length < 7) return '***';
+  return phone.slice(0, 4) + '***' + phone.slice(-4);
+}
+
 /**
  * ارسال پیامک کد ورود / ثبت‌نام (OTP)
  */
@@ -270,7 +275,9 @@ export async function sendOtpSms(env: Env, phone: string, code: string): Promise
   const config = await getSmsConfig(env);
 
   if (!config.enabled || !config.username || !config.password) {
-    console.warn(`[SMS] SMS is not enabled or credentials missing. OTP for ${phone}: ${code}`);
+    const isTest = typeof process !== 'undefined' && (process.env?.NODE_ENV === 'test' || !process.env?.NODE_ENV);
+    const displayCode = isTest ? code : '*****';
+    console.warn(`[SMS] SMS is not enabled or credentials missing. OTP for ${maskPhone(phone)}: ${displayCode}`);
     return { success: false, error: 'سرویس پیامک در سامانه فعال نشده است.' };
   }
 

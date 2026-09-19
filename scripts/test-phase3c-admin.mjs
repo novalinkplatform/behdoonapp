@@ -186,6 +186,12 @@ async function runTests() {
     VALUES (901, 1003, 'customer', 10, 'کار به درستی انجام نشد و نشتی ادامه دارد', 500000, 'توضیحات تکمیلی مشتری', 'open', '${now}');
   `);
 
+  // Seed Support Ticket for 1003
+  sqlite.exec(`
+    INSERT INTO support_tickets (id, customer_id, request_id, subject, category, priority, status, created_at, updated_at)
+    VALUES (701, 10, 1003, 'پیگیری درخواست حل اختلاف و بازرسی', 'dispute', 'normal', 'open', '${now}', '${now}');
+  `);
+
   // Seed Ledger Entry
   sqlite.exec(`
     INSERT INTO financial_ledger (entry_type, order_id, payment_id, invoice_id, customer_id, amount, direction, balance_after, description, created_at)
@@ -210,6 +216,7 @@ async function runTests() {
   assert(kpis.totalOrders >= 3, `totalOrders is live and accurate (${kpis.totalOrders})`);
   assert(kpis.activeOrders >= 1, `activeOrders is live (${kpis.activeOrders})`);
   assert(kpis.disputedOrders >= 1, `disputedOrders is live (${kpis.disputedOrders})`);
+  assert(kpis.openDisputes >= 1, `openDisputes is live (${kpis.openDisputes})`);
   assert(kpis.grossOrderValue >= 1200000, `grossOrderValue computed from ledger (${kpis.grossOrderValue})`);
   assert(kpis.platformRevenue >= 150000, `platformRevenue computed from ledger (${kpis.platformRevenue})`);
   assert(kpis.providerPayable >= 1050000, `providerPayable computed from pending settlements (${kpis.providerPayable})`);

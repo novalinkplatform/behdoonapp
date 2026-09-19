@@ -320,6 +320,7 @@ async function runPhase2Tests() {
         customerId,
         amount: 800000,
         paymentMethod: 'online_gateway',
+        markServiceCompleted: true,
       }),
     }),
     env
