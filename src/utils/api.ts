@@ -98,17 +98,165 @@ export async function rescheduleOrder(id: number, phone: string, scheduledDate: 
   return body.request as OrderRecord;
 }
 
-export async function cancelOrder(id: number, phone: string): Promise<OrderRecord> {
-  const res = await fetch(`${API_BASE_URL}/api/requests/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ phone, cancel: true }),
+export async function cancelOrder(id: number, phone: string, reason?: string): Promise<any> {
+  const token = getCustomerToken();
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${API_BASE_URL}/api/customer/orders/${id}/cancel`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ phone, reason: reason || 'انصراف توسط مشتری' }),
   });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new Error(typeof body?.error === 'string' ? body.error : pick('لغو درخواست ناموفق بود.', 'Failed to cancel the request.'));
+    const resFallback = await fetch(`${API_BASE_URL}/api/requests/${id}`, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify({ phone, status: 'cancelled', reason: reason || 'انصراف توسط مشتری' }),
+    });
+    const bodyFallback = await resFallback.json().catch(() => ({}));
+    if (!resFallback.ok) {
+      throw new Error(typeof body?.error === 'string' ? body.error : pick('لغو درخواست ناموفق بود.', 'Failed to cancel the request.'));
+    }
+    return bodyFallback;
   }
-  return body.request as OrderRecord;
+  return body;
+}
+
+export interface CustomerTimelineItem {
+  status: string;
+  title: string;
+  description: string;
+  timestamp: string;
+  actor: 'customer' | 'provider' | 'system' | 'admin';
+  isCurrent: boolean;
+  isCompleted: boolean;
+}
+
+export interface CustomerProviderDossier {
+  id: number;
+  name: string;
+  phone: string | null;
+  avatarUrl: string | null;
+  performanceScore: number;
+  completedJobs: number;
+  totalJobs: number;
+  canCall: boolean;
+}
+
+export interface CustomerOrderDetail {
+  order: any;
+  provider: CustomerProviderDossier | null;
+  timeline: CustomerTimelineItem[];
+  quotes: any[];
+  invoice: any | null;
+  payments: any[];
+  rating: any | null;
+  disputes: any[];
+  permissions: {
+    canAcceptQuote: boolean;
+    canCancel: boolean;
+    canPay: boolean;
+    canRate: boolean;
+    canDispute: boolean;
+  };
+}
+
+export async function fetchCustomerOrderDetail(id: number | string): Promise<CustomerOrderDetail> {
+  const token = getCustomerToken();
+  const headers: Record<string, string> = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${API_BASE_URL}/api/customer/orders/${id}`, { headers });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(typeof body?.error === 'string' ? body.error : pick('دریافت اطلاعات سفارش ناموفق بود.', 'Failed to fetch order detail.'));
+  }
+  return body as CustomerOrderDetail;
+}
+
+export async function acceptCustomerQuote(quoteId: number): Promise<{ success: boolean; status: string; invoiceNumber: string }> {
+  const token = getCustomerToken();
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${API_BASE_URL}/api/quotes/${quoteId}/accept`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({}),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(typeof body?.error === 'string' ? body.error : pick('تأیید پیش‌فاکتور ناموفق بود.', 'Failed to accept quote.'));
+  }
+  return body;
+}
+
+export async function rejectCustomerQuote(quoteId: number): Promise<{ success: boolean }> {
+  const token = getCustomerToken();
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${API_BASE_URL}/api/quotes/${quoteId}/reject`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({}),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(typeof body?.error === 'string' ? body.error : pick('رد پیش‌فاکتور ناموفق بود.', 'Failed to reject quote.'));
+  }
+  return body;
+}
+
+export async function processCustomerPayment(requestId: number, amount: number, invoiceId?: number): Promise<{ success: boolean; transactionRef: string; paymentStatus: string }> {
+  const token = getCustomerToken();
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${API_BASE_URL}/api/payments/checkout`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ requestId, amount, invoiceId, paymentMethod: 'online' }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(typeof body?.error === 'string' ? body.error : pick('پرداخت فاکتور ناموفق بود.', 'Payment failed.'));
+  }
+  return body;
+}
+
+export async function fetchCustomerNotifications(): Promise<any[]> {
+  const token = getCustomerToken();
+  const headers: Record<string, string> = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${API_BASE_URL}/api/customer/notifications`, { headers });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت اعلانات ناموفق بود.');
+  }
+  return body.notifications || [];
+}
+
+export async function markCustomerNotificationRead(id: number): Promise<boolean> {
+  const token = getCustomerToken();
+  const headers: Record<string, string> = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${API_BASE_URL}/api/customer/notifications/${id}/read`, {
+    method: 'PATCH',
+    headers,
+  });
+  return res.ok;
 }
 
 export async function fetchCustomerOrders(): Promise<OrderRecord[]> {

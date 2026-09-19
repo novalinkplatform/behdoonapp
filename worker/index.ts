@@ -184,7 +184,100 @@ async function createProviderNotification(
   }
 }
 
+async function createCustomerNotification(
+  env: Env,
+  customerId: number | null,
+  eventType: string,
+  title: string,
+  message: string,
+  channel: string = 'in_app'
+): Promise<void> {
+  if (!env.DB || !customerId) return;
+  try {
+    const now = new Date().toISOString();
+    await env.DB.prepare(`
+      INSERT INTO notifications (recipient_type, recipient_id, event_type, title, message, channel, is_read, created_at)
+      VALUES ('customer', ?, ?, ?, ?, ?, 0, ?)
+    `).bind(customerId, eventType, title, message, channel, now).run();
+  } catch (err) {
+    console.error('Failed to create customer notification:', err);
+  }
+}
 
+function buildCustomerTimeline(order: any, logs: any[] = []): Array<{
+  status: string;
+  title: string;
+  description: string;
+  timestamp: string;
+  actor: 'customer' | 'provider' | 'system' | 'admin';
+  isCurrent: boolean;
+  isCompleted: boolean;
+}> {
+  const STATUS_META: Record<string, { title: string; defaultDesc: string }> = {
+    requested: { title: 'ثبت اولیه درخواست', defaultDesc: 'درخواست شما در سیستم بهدون ثبت شد و در صف بررسی است.' },
+    submitted: { title: 'ثبت اولیه درخواست', defaultDesc: 'درخواست شما در سیستم بهدون ثبت شد و در صف بررسی است.' },
+    matching: { title: 'یافتن متخصص مناسب', defaultDesc: 'سیستم هوشمند بهدون در حال انتخاب نزدیک‌ترین و مجرب‌ترین متخصص است.' },
+    under_review: { title: 'بررسی مجدد توسط کارشناسان', defaultDesc: 'سفارش در حال هماهنگی با تیم پشتیبانی و اعزام بهدون است.' },
+    provider_assigned: { title: 'تخصیص متخصص', defaultDesc: 'متخصص مجرب برای انجام خدمت تعیین و سفارش محول گردید.' },
+    quote_pending: { title: 'صدور پیش‌فاکتور', defaultDesc: 'پیش‌فاکتور شفاف خدمت توسط متخصص صادر و آماده بررسی شماست.' },
+    quoted: { title: 'صدور پیش‌فاکتور', defaultDesc: 'پیش‌فاکتور شفاف خدمت توسط متخصص صادر و آماده بررسی شماست.' },
+    confirmed: { title: 'تأیید سفارش', defaultDesc: 'سفارش تأیید شد و متخصص برای زمان مقرر برنامه‌ریزی کرد.' },
+    scheduled: { title: 'زمان‌بندی قطعی', defaultDesc: 'ساعت و تاریخ مراجعه متخصص در تقویم کاری تثبیت شد.' },
+    en_route: { title: 'متخصص در مسیر', defaultDesc: 'متخصص در حال حرکت به سمت آدرس شماست.' },
+    on_the_way: { title: 'متخصص در مسیر', defaultDesc: 'متخصص در حال حرکت به سمت آدرس شماست.' },
+    arrived: { title: 'حضور متخصص در محل', defaultDesc: 'متخصص در محل پروژه حضور یافت.' },
+    inspection: { title: 'بررسی و کارشناسی فنی', defaultDesc: 'بررسی اولیه و کارشناسی در محل در حال انجام است.' },
+    in_progress: { title: 'شروع و اجرای خدمت', defaultDesc: 'خدمت با رعایت استانداردهای کیفیت بهدون در حال انجام است.' },
+    waiting_for_parts: { title: 'تعلیق موقت جهت تهیه قطعه', defaultDesc: 'ادامه خدمت به دلیل نیاز به قطعه متوقف شده است.' },
+    service_completed: { title: 'تکمیل عملیات فنی', defaultDesc: 'خدمت تکمیل شده است و آماده بررسی و تحویل است.' },
+    completed: { title: 'تکمیل نهایی و بسته‌شدن پرونده', defaultDesc: 'سفارش با موفقیت به پایان رسید و تسویه شد.' },
+    closed: { title: 'پایان پرونده', defaultDesc: 'سفارش مختومه شد.' },
+    cancelled: { title: 'لغو سفارش', defaultDesc: 'سفارش لغو گردید.' },
+    disputed: { title: 'ثبت اختلاف و پیگیری پشتیبانی', defaultDesc: 'شکایت یا اختلاف در مورد سفارش ثبت شد و توسط واحد پشتیبانی در حال پیگیری است.' },
+  };
+
+  const currentStatus = order.status || 'submitted';
+  const timeline: Array<{
+    status: string;
+    title: string;
+    description: string;
+    timestamp: string;
+    actor: 'customer' | 'provider' | 'system' | 'admin';
+    isCurrent: boolean;
+    isCompleted: boolean;
+  }> = [];
+
+  if (logs && logs.length > 0) {
+    for (let i = 0; i < logs.length; i++) {
+      const l = logs[i];
+      const st = l.to_status || l.status;
+      const meta = STATUS_META[st] || { title: `وضعیت ${st}`, defaultDesc: l.note || 'وضعیت سفارش به‌روزرسانی شد.' };
+      const isCurrent = i === logs.length - 1;
+      timeline.push({
+        status: st,
+        title: meta.title,
+        description: l.note || meta.defaultDesc,
+        timestamp: l.created_at || order.created_at,
+        actor: (l.changed_by_role as any) || 'system',
+        isCurrent,
+        isCompleted: true,
+      });
+    }
+  } else {
+    const meta = STATUS_META[currentStatus] || { title: 'ثبت درخواست', defaultDesc: 'درخواست در سیستم بهدون ثبت شد.' };
+    timeline.push({
+      status: currentStatus,
+      title: meta.title,
+      description: meta.defaultDesc,
+      timestamp: order.created_at || new Date().toISOString(),
+      actor: 'customer',
+      isCurrent: true,
+      isCompleted: true,
+    });
+  }
+
+  return timeline;
+}
 
 function generateStandardOrderId(seq: number): string {
   const currentYear = new Date().getFullYear();
@@ -2159,6 +2252,9 @@ export default {
                 originPropertyType: r.origin_property_type || 'residential',
                 phone: r.phone,
                 status: r.status || 'submitted',
+                paymentStatus: r.payment_status || 'unpaid',
+                cancellationType: r.cancellation_type || null,
+                cancellationReason: r.cancellation_reason || null,
                 scheduledDate: r.scheduled_date || 'امروز',
                 scheduledTime: r.scheduled_time || 'فوری',
                 estimateAvg: r.estimate_avg || 1800000,
@@ -2170,6 +2266,429 @@ export default {
           } catch {}
         }
         return jsonResponse({ orders: ordersList });
+      }
+
+      // --- Single Customer Order Detail with Timeline, Quotes, Invoice & Anti-IDOR ---
+      if (pathname.startsWith('/api/customer/orders/') && !pathname.endsWith('/cancel') && request.method === 'GET') {
+        const auth = getCustomerAuth(request);
+        const staff = isStaffAuthed(request);
+        if (!auth && !staff) return jsonResponse({ error: 'احراز هویت مشتری الزامی است.' }, 401);
+
+        const idParam = pathname.split('/').pop();
+        const orderId = Number(idParam);
+        if (!orderId && !idParam) return jsonResponse({ error: 'شناسه سفارش نامعتبر است.' }, 400);
+
+        if (!env.DB) return jsonResponse({ error: 'Database unavailable' }, 500);
+
+        let order: any = null;
+        if (orderId) {
+          order = await env.DB.prepare(`
+            SELECT r.*, p.full_name AS provider_name, p.phone AS provider_phone,
+                   p.avatar_url AS provider_avatar, p.performance_score AS provider_score,
+                   p.completed_jobs AS provider_completed_jobs, p.total_jobs AS provider_total_jobs
+            FROM requests r
+            LEFT JOIN providers p ON r.provider_id = p.id
+            WHERE r.id = ?
+          `).bind(orderId).first();
+        }
+        if (!order && idParam) {
+          order = await env.DB.prepare(`
+            SELECT r.*, p.full_name AS provider_name, p.phone AS provider_phone,
+                   p.avatar_url AS provider_avatar, p.performance_score AS provider_score,
+                   p.completed_jobs AS provider_completed_jobs, p.total_jobs AS provider_total_jobs
+            FROM requests r
+            LEFT JOIN providers p ON r.provider_id = p.id
+            WHERE r.tracking_code = ?
+          `).bind(idParam).first();
+        }
+
+        if (!order) return jsonResponse({ error: 'سفارش یافت نشد.' }, 404);
+
+        // Strict Anti-IDOR Check: customer must own the order unless staff
+        if (!staff) {
+          const isOwner = auth && (order.customer_id === auth.id || order.phone === auth.phone);
+          if (!isOwner) {
+            return jsonResponse({ error: 'دسترسی غیرمجاز به این سفارش.', code: 'FORBIDDEN_ACCESS' }, 403);
+          }
+        }
+
+        // Provider phone privacy: mask phone if order is terminated
+        const activeStatuses = ['confirmed', 'scheduled', 'en_route', 'on_the_way', 'arrived', 'inspection', 'in_progress', 'waiting_for_parts'];
+        const isActive = activeStatuses.includes(order.status);
+        let providerPhone = order.provider_phone || null;
+        const canCallProvider = Boolean(providerPhone && isActive);
+        if (providerPhone && !isActive && !staff) {
+          providerPhone = providerPhone.length >= 11
+            ? providerPhone.slice(0, 4) + '***' + providerPhone.slice(-4)
+            : '0912***0000';
+        }
+
+        // Fetch quotes
+        const quotesRes = await env.DB.prepare('SELECT * FROM quotes WHERE request_id = ? ORDER BY id DESC').bind(order.id).all();
+        const quotes = (quotesRes?.results || []).map((q: any) => ({
+          id: q.id,
+          requestId: q.request_id,
+          providerId: q.provider_id,
+          pricingModel: q.pricing_model || 'fixed',
+          baseAmount: q.base_amount || 0,
+          materialsAmount: q.materials_amount || 0,
+          laborAmount: q.labor_amount || 0,
+          discountAmount: q.discount_amount || 0,
+          finalAmount: q.final_amount,
+          description: q.description || '',
+          validUntil: q.valid_until,
+          status: q.status,
+          createdAt: q.created_at,
+        }));
+
+        // Fetch invoice
+        const invoiceRow = await env.DB.prepare('SELECT * FROM invoices WHERE request_id = ? ORDER BY id DESC LIMIT 1').bind(order.id).first();
+        let invoice: any = null;
+        if (invoiceRow) {
+          invoice = {
+            id: invoiceRow.id,
+            invoiceNumber: invoiceRow.invoice_number,
+            requestId: invoiceRow.request_id,
+            quoteId: invoiceRow.quote_id,
+            customerId: invoiceRow.customer_id,
+            providerId: invoiceRow.provider_id,
+            subtotal: invoiceRow.subtotal,
+            materialsTotal: invoiceRow.materials_total,
+            laborTotal: invoiceRow.labor_total,
+            discount: invoiceRow.discount,
+            tax: invoiceRow.tax,
+            totalAmount: invoiceRow.total_amount,
+            status: invoiceRow.status,
+            createdAt: invoiceRow.created_at,
+          };
+        }
+
+        // Fetch payments
+        const paymentsRes = await env.DB.prepare('SELECT * FROM payments WHERE request_id = ? ORDER BY id DESC').bind(order.id).all();
+        const payments = (paymentsRes?.results || []).map((p: any) => ({
+          id: p.id,
+          invoiceId: p.invoice_id,
+          requestId: p.request_id,
+          amount: p.amount,
+          paymentMethod: p.payment_method,
+          transactionRef: p.transaction_ref,
+          status: p.status,
+          paidAt: p.paid_at,
+          createdAt: p.created_at,
+        }));
+
+        // Fetch rating
+        const ratingRow = await env.DB.prepare('SELECT * FROM ratings WHERE request_id = ? LIMIT 1').bind(order.id).first();
+        let rating: any = null;
+        if (ratingRow) {
+          rating = {
+            id: ratingRow.id,
+            requestId: ratingRow.request_id,
+            customerId: ratingRow.customer_id,
+            providerId: ratingRow.provider_id,
+            overallScore: ratingRow.overall_score,
+            punctualityScore: ratingRow.punctuality_score,
+            cleanlinessScore: ratingRow.cleanliness_score,
+            skillScore: ratingRow.skill_score,
+            comment: ratingRow.comment,
+            status: ratingRow.status,
+            createdAt: ratingRow.created_at,
+          };
+        }
+
+        // Fetch disputes
+        const disputesRes = await env.DB.prepare('SELECT * FROM disputes WHERE request_id = ? ORDER BY id DESC').bind(order.id).all();
+        const disputes = (disputesRes?.results || []).map((d: any) => ({
+          id: d.id,
+          requestId: d.request_id,
+          reason: d.reason,
+          claimAmount: d.claim_amount,
+          description: d.description,
+          status: d.status,
+          adminNotes: d.admin_notes,
+          refundAmount: d.refund_amount,
+          resolvedAt: d.resolved_at,
+          createdAt: d.created_at,
+        }));
+
+        // Fetch status logs and build customer timeline
+        const logsRes = await env.DB.prepare('SELECT * FROM order_status_logs WHERE request_id = ? ORDER BY id ASC').bind(order.id).all();
+        const timeline = buildCustomerTimeline(order, logsRes?.results || []);
+
+        const currentStatus = order.status || 'submitted';
+        const paymentStatus = order.payment_status || 'unpaid';
+
+        const hasPendingQuote = quotes.some(q => q.status === 'sent' || q.status === 'pending');
+        const canAcceptQuote = hasPendingQuote && ['quote_pending', 'quoted', 'matching', 'under_review'].includes(currentStatus);
+        const canCancel = ['requested', 'submitted', 'matching', 'under_review', 'provider_assigned', 'quote_pending', 'quoted', 'confirmed', 'scheduled'].includes(currentStatus);
+        const canPay = Boolean(invoice && (invoice.status === 'issued' || paymentStatus === 'unpaid') && currentStatus !== 'cancelled');
+        const canRate = ['completed', 'service_completed', 'closed'].includes(currentStatus) && !rating;
+        const canDispute = ['in_progress', 'waiting_for_parts', 'service_completed', 'completed', 'closed'].includes(currentStatus) && disputes.length === 0;
+
+        return jsonResponse({
+          order: {
+            id: order.id,
+            trackingCode: order.tracking_code || `${getShahanshahiDatePrefix()}${String(order.id).padStart(2, '0')}`,
+            serviceId: order.service_id,
+            serviceLabel: order.service_label || order.service_id,
+            customerName: order.name,
+            phone: order.phone,
+            address: {
+              province: order.origin_province || 'تهران',
+              city: order.origin_city || 'تهران',
+              district: order.origin_district || 'تهران',
+              notes: order.origin_notes || '',
+              propertyType: order.origin_property_type || 'residential',
+              lat: order.origin_lat,
+              lng: order.origin_lng,
+            },
+            scheduledDate: order.scheduled_date || 'امروز',
+            scheduledTime: order.scheduled_time || 'عادی',
+            status: currentStatus,
+            paymentStatus: paymentStatus,
+            estimateAvg: order.estimate_avg || null,
+            finalPrice: order.final_price || (invoice ? invoice.totalAmount : null),
+            cancellationType: order.cancellation_type || null,
+            cancellationReason: order.cancellation_reason || null,
+            createdAt: order.created_at,
+            updatedAt: order.updated_at,
+          },
+          provider: order.provider_id ? {
+            id: order.provider_id,
+            name: order.provider_name || 'متخصص بهدون',
+            phone: providerPhone,
+            avatarUrl: order.provider_avatar || null,
+            performanceScore: order.provider_score || 5.0,
+            completedJobs: order.provider_completed_jobs || 0,
+            totalJobs: order.provider_total_jobs || 0,
+            canCall: canCallProvider,
+          } : null,
+          timeline,
+          quotes,
+          invoice,
+          payments,
+          rating,
+          disputes,
+          permissions: {
+            canAcceptQuote,
+            canCancel,
+            canPay,
+            canRate,
+            canDispute,
+          },
+        });
+      }
+
+      // --- Customer Order Cancellation (Non-punitive, slot release) ---
+      if (pathname.startsWith('/api/customer/orders/') && pathname.endsWith('/cancel') && request.method === 'POST') {
+        const auth = getCustomerAuth(request);
+        const staff = isStaffAuthed(request);
+        if (!auth && !staff) return jsonResponse({ error: 'احراز هویت مشتری الزامی است.' }, 401);
+
+        const idParam = pathname.replace('/api/customer/orders/', '').replace('/cancel', '');
+        const orderId = Number(idParam);
+        if (!orderId && !idParam) return jsonResponse({ error: 'شناسه سفارش نامعتبر است.' }, 400);
+
+        if (!env.DB) return jsonResponse({ error: 'Database unavailable' }, 500);
+
+        let order: any = null;
+        if (orderId) {
+          order = await env.DB.prepare('SELECT * FROM requests WHERE id = ?').bind(orderId).first();
+        }
+        if (!order && idParam) {
+          order = await env.DB.prepare('SELECT * FROM requests WHERE tracking_code = ?').bind(idParam).first();
+        }
+        if (!order) return jsonResponse({ error: 'سفارش یافت نشد.' }, 404);
+
+        if (!staff) {
+          const isOwner = auth && (order.customer_id === auth.id || order.phone === auth.phone);
+          if (!isOwner) {
+            return jsonResponse({ error: 'دسترسی غیرمجاز به این سفارش.', code: 'FORBIDDEN_ACCESS' }, 403);
+          }
+        }
+
+        const nonCancellable = ['en_route', 'on_the_way', 'arrived', 'inspection', 'in_progress', 'waiting_for_parts', 'service_completed', 'completed', 'closed'];
+        if (nonCancellable.includes(order.status)) {
+          return jsonResponse({
+            error: 'سفارش در مرحله اجرایی قرار دارد و لغو آن به صورت خودکار مقدور نیست. لطفاً با پشتیبانی تماس بگیرید.',
+            code: 'ORDER_LOCKED_FOR_CANCELLATION'
+          }, 400);
+        }
+
+        if (order.status === 'cancelled') {
+          return jsonResponse({ error: 'این سفارش قبلاً لغو شده است.', code: 'ALREADY_CANCELLED' }, 400);
+        }
+
+        const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+        const reason = String(body.reason || 'انصراف توسط مشتری').trim();
+        const now = new Date().toISOString();
+
+        // Update request: non-punitive to provider
+        await env.DB.prepare(`
+          UPDATE requests
+          SET status = 'cancelled', cancellation_type = 'customer_cancelled', cancellation_reason = ?, updated_at = ?
+          WHERE id = ?
+        `).bind(reason, now, order.id).run();
+
+        // Release booked schedule slot if any
+        try {
+          await env.DB.prepare("UPDATE provider_schedules SET status = 'cancelled', is_booked = 0 WHERE request_id = ?")
+            .bind(order.id).run();
+        } catch {}
+
+        // Log transition
+        await env.DB.prepare(`
+          INSERT INTO order_status_logs (request_id, from_status, to_status, changed_by_role, changed_by_id, note, created_at)
+          VALUES (?, ?, 'cancelled', 'customer', ?, ?, ?)
+        `).bind(order.id, order.status, auth ? auth.id : 0, `لغو سفارش توسط مشتری: ${reason}`, now).run();
+
+        // Notify customer
+        if (order.customer_id) {
+          await createCustomerNotification(
+            env,
+            order.customer_id,
+            'order_cancelled',
+            'لغو سفارش',
+            `سفارش #${order.tracking_code || order.id} با موفقیت لغو شد.`
+          );
+        }
+
+        // Notify provider if assigned
+        if (order.provider_id) {
+          await createProviderNotification(
+            env,
+            order.provider_id,
+            'order_cancelled',
+            `سفارش #${order.tracking_code || order.id} لغو شد`,
+            `سفارش مشتری به دلیل «${reason}» لغو شد و بازه زمانی شما آزاد گردید.`
+          );
+        }
+
+        return jsonResponse({
+          success: true,
+          message: 'سفارش با موفقیت لغو گردید.',
+          status: 'cancelled',
+          cancellationType: 'customer_cancelled',
+        });
+      }
+
+      // --- Customer Update or Cancel Request via PATCH /api/requests/:id ---
+      if (pathname.startsWith('/api/requests/') && !pathname.includes('/quotes') && !pathname.includes('/invoice') && !pathname.includes('/rate') && !pathname.includes('/disputes') && request.method === 'PATCH') {
+        const idParam = pathname.split('/').pop();
+        const requestId = Number(idParam);
+        if (!requestId) return jsonResponse({ error: 'شناسه سفارش نامعتبر است.' }, 400);
+
+        const custAuth = getCustomerAuth(request);
+        const isStaff = isStaffAuthed(request);
+        if (!custAuth && !isStaff) return jsonResponse({ error: 'احراز هویت الزامی است.' }, 401);
+
+        if (!env.DB) return jsonResponse({ error: 'Database unavailable' }, 500);
+
+        const order = await env.DB.prepare('SELECT * FROM requests WHERE id = ?').bind(requestId).first();
+        if (!order) return jsonResponse({ error: 'سفارش یافت نشد.' }, 404);
+
+        if (!isStaff) {
+          const isOwner = custAuth && (order.customer_id === custAuth.id || order.phone === custAuth.phone);
+          if (!isOwner) {
+            return jsonResponse({ error: 'دسترسی غیرمجاز به این سفارش.', code: 'FORBIDDEN_ACCESS' }, 403);
+          }
+        }
+
+        const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+        const now = new Date().toISOString();
+
+        if (body.status === 'cancelled' || body.action === 'cancel') {
+          const nonCancellable = ['en_route', 'on_the_way', 'arrived', 'inspection', 'in_progress', 'waiting_for_parts', 'service_completed', 'completed', 'closed'];
+          if (nonCancellable.includes(order.status)) {
+            return jsonResponse({
+              error: 'سفارش در مرحله اجرایی قرار دارد و لغو آن به صورت خودکار مقدور نیست. لطفاً با پشتیبانی تماس بگیرید.',
+              code: 'ORDER_LOCKED_FOR_CANCELLATION'
+            }, 400);
+          }
+          if (order.status === 'cancelled') {
+            return jsonResponse({ error: 'این سفارش قبلاً لغو شده است.', code: 'ALREADY_CANCELLED' }, 400);
+          }
+
+          const reason = String(body.reason || 'انصراف توسط مشتری').trim();
+          await env.DB.prepare(`
+            UPDATE requests
+            SET status = 'cancelled', cancellation_type = 'customer_cancelled', cancellation_reason = ?, updated_at = ?
+            WHERE id = ?
+          `).bind(reason, now, requestId).run();
+
+          try {
+            await env.DB.prepare("UPDATE provider_schedules SET status = 'cancelled', is_booked = 0 WHERE request_id = ?").bind(requestId).run();
+          } catch {}
+
+          await env.DB.prepare(`
+            INSERT INTO order_status_logs (request_id, from_status, to_status, changed_by_role, changed_by_id, note, created_at)
+            VALUES (?, ?, 'cancelled', 'customer', ?, ?, ?)
+          `).bind(requestId, order.status, custAuth ? custAuth.id : 0, `لغو سفارش توسط مشتری: ${reason}`, now).run();
+
+          if (order.customer_id) {
+            await createCustomerNotification(env, order.customer_id, 'order_cancelled', 'لغو سفارش', `سفارش #${order.tracking_code || requestId} لغو شد.`);
+          }
+          if (order.provider_id) {
+            await createProviderNotification(env, order.provider_id, 'order_cancelled', `سفارش #${order.tracking_code || requestId} لغو شد`, `سفارش توسط مشتری لغو گردید.`);
+          }
+
+          return jsonResponse({ success: true, message: 'سفارش لغو شد.', status: 'cancelled' });
+        }
+
+        if (body.originNotes !== undefined || body.scheduledDate !== undefined || body.scheduledTime !== undefined) {
+          const notes = body.originNotes !== undefined ? body.originNotes : order.origin_notes;
+          const sDate = body.scheduledDate !== undefined ? body.scheduledDate : order.scheduled_date;
+          const sTime = body.scheduledTime !== undefined ? body.scheduledTime : order.scheduled_time;
+          await env.DB.prepare(`
+            UPDATE requests SET origin_notes = ?, scheduled_date = ?, scheduled_time = ?, updated_at = ? WHERE id = ?
+          `).bind(notes, sDate, sTime, now, requestId).run();
+          return jsonResponse({ success: true, message: 'اطلاعات سفارش به‌روزرسانی شد.' });
+        }
+
+        return jsonResponse({ success: true });
+      }
+
+      // --- Customer Notifications Center ---
+      if (pathname === '/api/customer/notifications' && request.method === 'GET') {
+        const auth = getCustomerAuth(request);
+        if (!auth) return jsonResponse({ error: 'احراز هویت مشتری الزامی است.' }, 401);
+        let notifications: any[] = [];
+        if (env.DB) {
+          try {
+            const { results } = await env.DB.prepare(`
+              SELECT * FROM notifications
+              WHERE recipient_type = 'customer' AND (recipient_id = ? OR recipient_id = 0)
+              ORDER BY id DESC LIMIT 50
+            `).bind(auth.id).all();
+            if (results) {
+              notifications = results.map((n: any) => ({
+                id: n.id,
+                eventType: n.event_type,
+                title: n.title,
+                message: n.message,
+                channel: n.channel,
+                isRead: Boolean(n.is_read),
+                createdAt: n.created_at,
+              }));
+            }
+          } catch {}
+        }
+        return jsonResponse({ notifications });
+      }
+
+      if (pathname.startsWith('/api/customer/notifications/') && pathname.endsWith('/read') && request.method === 'PATCH') {
+        const auth = getCustomerAuth(request);
+        if (!auth) return jsonResponse({ error: 'احراز هویت مشتری الزامی است.' }, 401);
+        const parts = pathname.split('/');
+        const notifId = Number(parts[parts.length - 2]);
+        if (!notifId) return jsonResponse({ error: 'شناسه اعلان نامعتبر است.' }, 400);
+        if (env.DB) {
+          try {
+            await env.DB.prepare('UPDATE notifications SET is_read = 1 WHERE id = ? AND recipient_type = \'customer\' AND (recipient_id = ? OR recipient_id = 0)')
+              .bind(notifId, auth.id).run();
+          } catch {}
+        }
+        return jsonResponse({ success: true });
       }
 
       // --- Provider Management Endpoints (Marketplace Technicians) ---
@@ -3006,6 +3525,28 @@ export default {
           `سفارش #${order.tracking_code}`,
           `وضعیت سفارش به «${targetStatus}» تغییر یافت.`
         );
+
+        // Create customer notification
+        const custActionNotifications: Record<string, { title: string; message: string }> = {
+          confirmed: { title: 'سفارش تأیید شد', message: 'متخصص سفارش شما را تأیید کرد و در زمان مقرر مراجعه خواهد کرد.' },
+          en_route: { title: 'متخصص در راه است', message: 'متخصص اعزام شده و به سمت آدرس شما در حرکت است.' },
+          arrived: { title: 'متخصص در محل حاضر شد', message: 'متخصص به آدرس شما رسید.' },
+          inspection: { title: 'بررسی فنی آغاز شد', message: 'کارشناسی و بررسی اولیه در محل آغاز گردید.' },
+          in_progress: { title: 'آغاز انجام خدمت', message: 'عملیات اجرای خدمت توسط متخصص آغاز گردید.' },
+          waiting_for_parts: { title: 'نیاز به قطعه یدکی', message: 'خدمت جهت تهیه و تأمین قطعه مورد نیاز موقتاً در انتظار است.' },
+          completed: { title: 'خدمت تکمیل شد', message: 'خدمت توسط متخصص با موفقیت به پایان رسید. لطفاً نظر و امتیاز خود را ثبت کنید.' },
+          service_completed: { title: 'خدمت تکمیل شد', message: 'خدمت توسط متخصص با موفقیت به پایان رسید. لطفاً نظر و امتیاز خود را ثبت کنید.' },
+        };
+        const custNotif = custActionNotifications[targetStatus];
+        if (custNotif && (order.customer_id || order.id)) {
+          await createCustomerNotification(
+            env,
+            order.customer_id || 1,
+            `order_${targetStatus}`,
+            custNotif.title,
+            custNotif.message
+          );
+        }
 
         return jsonResponse({
           success: true,
@@ -4274,6 +4815,9 @@ export default {
 
         const custAuth = getCustomerAuth(request);
         const isStaff = isStaffAuthed(request);
+        if (!custAuth && !isStaff) {
+          return jsonResponse({ error: 'احراز هویت مشتری الزامی است.', code: 'UNAUTHORIZED' }, 401);
+        }
         const now = new Date().toISOString();
 
         if (env.DB) {
@@ -4284,9 +4828,11 @@ export default {
             const reqRow = await env.DB.prepare('SELECT * FROM requests WHERE id = ?').bind(quoteRow.request_id).first();
             if (!reqRow) return jsonResponse({ error: 'سفارش مربوطه یافت نشد.', code: 'NOT_FOUND' }, 404);
 
-            // P0-3 IDOR & Ownership Protection (Customer must own request)
+            // Strict IDOR & Ownership Protection (Customer must own request)
             if (!isStaff && custAuth) {
-              if (reqRow.customer_id && reqRow.customer_id !== custAuth.id && reqRow.phone !== custAuth.phone) {
+              const isOwner = (reqRow.customer_id && reqRow.customer_id === custAuth.id) ||
+                              (reqRow.phone && reqRow.phone === custAuth.phone);
+              if (!isOwner) {
                 return jsonResponse({ error: 'شما مجاز به پذیرش پیش‌فاکتور سفارش مشتری دیگری نیستید.', code: 'FORBIDDEN' }, 403);
               }
             }
@@ -4344,6 +4890,28 @@ export default {
               VALUES (?, 'quoted', 'confirmed', 'customer', ?, ?, ?)
             `).bind(quoteRow.request_id, custAuth?.id || null, `تأیید پیش‌فاکتور توسط مشتری (مبلغ: ${quoteRow.final_amount} تومان)`, now).run();
 
+            // Notify Provider
+            if (quoteRow.provider_id) {
+              await createProviderNotification(
+                env,
+                quoteRow.provider_id,
+                'quote_accepted',
+                'تأیید پیش‌فاکتور توسط مشتری',
+                `پیش‌فاکتور سفارش #${reqRow.tracking_code || quoteRow.request_id} به مبلغ ${quoteRow.final_amount.toLocaleString('fa-IR')} تومان تأیید شد.`
+              );
+            }
+
+            // Notify Customer
+            if (reqRow.customer_id) {
+              await createCustomerNotification(
+                env,
+                reqRow.customer_id,
+                'quote_accepted',
+                'تأیید پیش‌فاکتور',
+                `پیش‌فاکتور خدمت تأیید شد و فاکتور به شماره ${invNumber} صادر گردید.`
+              );
+            }
+
             const resp = { success: true, quoteId, status: 'confirmed', invoiceNumber: invNumber };
             await saveIdempotency(env, idempKey, 'quote_accept', quoteId, 200, resp);
             return jsonResponse(resp);
@@ -4363,6 +4931,9 @@ export default {
         const body = (await request.json().catch(() => ({}))) as Record<string, any>;
         const custAuth = getCustomerAuth(request);
         const isStaff = isStaffAuthed(request);
+        if (!custAuth && !isStaff) {
+          return jsonResponse({ error: 'احراز هویت مشتری الزامی است.', code: 'UNAUTHORIZED' }, 401);
+        }
         const now = new Date().toISOString();
 
         if (env.DB && quoteId) {
@@ -4373,9 +4944,11 @@ export default {
             const reqRow = await env.DB.prepare('SELECT * FROM requests WHERE id = ?').bind(quoteRow.request_id).first();
             if (!reqRow) return jsonResponse({ error: 'سفارش یافت نشد.', code: 'NOT_FOUND' }, 404);
 
-            // P0-3 IDOR Protection
+            // Strict IDOR Protection
             if (!isStaff && custAuth) {
-              if (reqRow.customer_id && reqRow.customer_id !== custAuth.id && reqRow.phone !== custAuth.phone) {
+              const isOwner = (reqRow.customer_id && reqRow.customer_id === custAuth.id) ||
+                              (reqRow.phone && reqRow.phone === custAuth.phone);
+              if (!isOwner) {
                 return jsonResponse({ error: 'شما مجاز به رد پیش‌فاکتور سفارش مشتری دیگری نیستید.', code: 'FORBIDDEN' }, 403);
               }
             }
@@ -4388,6 +4961,17 @@ export default {
               INSERT INTO order_status_logs (request_id, from_status, to_status, changed_by_role, note, created_at)
               VALUES (?, 'quoted', 'under_review', 'customer', 'رد پیش‌فاکتور توسط مشتری', ?)
             `).bind(quoteRow.request_id, now).run();
+
+            // Notify Provider
+            if (quoteRow.provider_id) {
+              await createProviderNotification(
+                env,
+                quoteRow.provider_id,
+                'quote_rejected',
+                'عدم تأیید پیش‌فاکتور',
+                `پیش‌فاکتور ارسالی برای سفارش #${reqRow.tracking_code || quoteRow.request_id} توسط مشتری رد شد.`
+              );
+            }
           } catch (dbErr: any) {
             return jsonResponse({ error: dbErr.message }, 500);
           }
@@ -4401,12 +4985,36 @@ export default {
         const requestId = Number(parts[parts.length - 2]);
         if (!requestId) return jsonResponse({ error: 'شناسه سفارش نامعتبر است.' }, 400);
 
+        const custAuth = getCustomerAuth(request);
+        const provAuth = getProviderAuth(request);
+        const isStaff = isStaffAuthed(request);
+        if (!custAuth && !provAuth && !isStaff) {
+          return jsonResponse({ error: 'احراز هویت الزامی است.', code: 'UNAUTHORIZED' }, 401);
+        }
+
         let invoice = null;
         let payments: any[] = [];
         let settlement = null;
 
         if (env.DB) {
           try {
+            const reqRow = await env.DB.prepare('SELECT customer_id, provider_id, phone FROM requests WHERE id = ?').bind(requestId).first();
+            if (!reqRow) return jsonResponse({ error: 'سفارش یافت نشد.', code: 'NOT_FOUND' }, 404);
+
+            // Anti-IDOR check
+            if (!isStaff) {
+              if (custAuth) {
+                const isCustOwner = (reqRow.customer_id && reqRow.customer_id === custAuth.id) || (reqRow.phone === custAuth.phone);
+                if (!isCustOwner) {
+                  return jsonResponse({ error: 'دسترسی غیرمجاز به فاکتور سفارش مشتری دیگر.', code: 'FORBIDDEN' }, 403);
+                }
+              } else if (provAuth && !provAuth.isAdmin) {
+                if (reqRow.provider_id !== provAuth.id) {
+                  return jsonResponse({ error: 'دسترسی غیرمجاز به فاکتور متخصص دیگر.', code: 'FORBIDDEN' }, 403);
+                }
+              }
+            }
+
             const invRow = await env.DB.prepare(`
               SELECT i.*, p.full_name as provider_name, p.phone as provider_phone, r.service_label, r.tracking_code
               FROM invoices i
@@ -4423,7 +5031,9 @@ export default {
 
             const setRow = await env.DB.prepare('SELECT * FROM provider_settlements WHERE request_id = ?').bind(requestId).first();
             if (setRow) settlement = setRow;
-          } catch {}
+          } catch (err: any) {
+            return jsonResponse({ error: err.message }, 500);
+          }
         }
 
         return jsonResponse({ invoice, payments, settlement });
@@ -4444,6 +5054,12 @@ export default {
           const cached = await checkIdempotency(env, idempKey);
           if (cached) return jsonResponse(cached.body, cached.status || 200);
 
+          const custAuth = getCustomerAuth(request);
+          const isStaff = isStaffAuthed(request);
+          if (!custAuth && !isStaff) {
+            return jsonResponse({ error: 'احراز هویت مشتری الزامی است.', code: 'UNAUTHORIZED' }, 401);
+          }
+
           const now = new Date().toISOString();
           let paymentId = Date.now();
           const txRef = body.transactionRef || `TX-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
@@ -4452,6 +5068,15 @@ export default {
             try {
               const reqRow = await env.DB.prepare('SELECT * FROM requests WHERE id = ?').bind(requestId).first();
               if (!reqRow) return jsonResponse({ error: 'سفارش یافت نشد.', code: 'NOT_FOUND' }, 404);
+
+              // Strict IDOR Check
+              if (!isStaff && custAuth) {
+                const isOwner = (reqRow.customer_id && reqRow.customer_id === custAuth.id) ||
+                                (reqRow.phone && reqRow.phone === custAuth.phone);
+                if (!isOwner) {
+                  return jsonResponse({ error: 'شما مجاز به پرداخت سفارش مشتری دیگری نیستید.', code: 'FORBIDDEN' }, 403);
+                }
+              }
               const providerId = reqRow.provider_id || null;
 
               // Domain idempotency: duplicate payment detection
@@ -4629,6 +5254,26 @@ export default {
                 `تسویه آنلاین فاکتور به مبلغ ${amount} تومان (کد رهگیری: ${txRef})`,
                 now
               ).run();
+
+              // Send notifications
+              if (reqRow.customer_id) {
+                await createCustomerNotification(
+                  env,
+                  reqRow.customer_id,
+                  'payment_success',
+                  'پرداخت موفق',
+                  `پرداخت فاکتور به مبلغ ${amount.toLocaleString('fa-IR')} تومان با موفقیت ثبت شد.`
+                );
+              }
+              if (providerId) {
+                await createProviderNotification(
+                  env,
+                  providerId,
+                  'payment_received',
+                  'ثبت پرداخت مشتری',
+                  `مشتری مبلغ ${amount.toLocaleString('fa-IR')} تومان بابت سفارش #${reqRow.tracking_code || requestId} پرداخت کرد.`
+                );
+              }
 
               const resp = {
                 success: true,
@@ -4820,6 +5465,11 @@ export default {
         try {
           const body = (await request.json().catch(() => ({}))) as Record<string, any>;
           const custAuth = getCustomerAuth(request);
+          const isStaff = isStaffAuthed(request);
+          if (!custAuth && !isStaff) {
+            return jsonResponse({ error: 'احراز هویت مشتری الزامی است.', code: 'UNAUTHORIZED' }, 401);
+          }
+
           const score = Number(body.overallScore || body.score || 5);
           if (score < 1 || score > 5) {
             return jsonResponse({ error: 'امتیاز باید عددی بین ۱ تا ۵ باشد.', code: 'INVALID_SCORE' }, 400);
@@ -4829,12 +5479,16 @@ export default {
 
           if (env.DB) {
             try {
-              const reqRow = await env.DB.prepare('SELECT customer_id, provider_id, status, phone FROM requests WHERE id = ?').bind(requestId).first();
+              const reqRow = await env.DB.prepare('SELECT customer_id, provider_id, status, phone, tracking_code FROM requests WHERE id = ?').bind(requestId).first();
               if (!reqRow) return jsonResponse({ error: 'سفارش یافت نشد.', code: 'NOT_FOUND' }, 404);
 
-              // P0-3 IDOR Protection
-              if (custAuth && reqRow.customer_id && reqRow.customer_id !== custAuth.id && reqRow.phone !== custAuth.phone) {
-                return jsonResponse({ error: 'شما مجاز به ثبت نظر برای سفارش مشتری دیگری نیستید.', code: 'FORBIDDEN' }, 403);
+              // Strict IDOR Protection
+              if (!isStaff && custAuth) {
+                const isOwner = (reqRow.customer_id && reqRow.customer_id === custAuth.id) ||
+                                (reqRow.phone && reqRow.phone === custAuth.phone);
+                if (!isOwner) {
+                  return jsonResponse({ error: 'شما مجاز به ثبت نظر برای سفارش مشتری دیگری نیستید.', code: 'FORBIDDEN' }, 403);
+                }
               }
               if (body.customerId && reqRow.customer_id && Number(body.customerId) !== Number(reqRow.customer_id)) {
                 return jsonResponse({ error: 'شما مجاز به ثبت نظر برای سفارش مشتری دیگری نیستید.', code: 'FORBIDDEN' }, 403);
@@ -4880,6 +5534,26 @@ export default {
                 newPps = Math.round(Number(avgRow.avg_score) * 10) / 10;
                 await env.DB.prepare('UPDATE providers SET performance_score = ?, updated_at = ? WHERE id = ?')
                   .bind(newPps, now, reqRow.provider_id).run();
+              }
+
+              // Send notifications
+              if (reqRow.customer_id) {
+                await createCustomerNotification(
+                  env,
+                  reqRow.customer_id,
+                  'rating_submitted',
+                  'ثبت نظر و امتیاز',
+                  'امتیاز و نظر ارزشمند شما با موفقیت در سیستم بهدون ثبت شد.'
+                );
+              }
+              if (reqRow.provider_id) {
+                await createProviderNotification(
+                  env,
+                  reqRow.provider_id,
+                  'rating_received',
+                  'ثبت نظر جدید مشتری',
+                  `مشتری برای سفارش #${reqRow.tracking_code || requestId} امتیاز ${score} ستاره ثبت کرد.`
+                );
               }
 
               return jsonResponse({
@@ -4929,6 +5603,11 @@ export default {
         try {
           const body = (await request.json().catch(() => ({}))) as Record<string, any>;
           const custAuth = getCustomerAuth(request);
+          const isStaff = isStaffAuthed(request);
+          if (!custAuth && !isStaff) {
+            return jsonResponse({ error: 'احراز هویت مشتری الزامی است.', code: 'UNAUTHORIZED' }, 401);
+          }
+
           const reason = String(body.reason || 'poor_quality').trim();
           const description = String(body.description || '').trim();
 
@@ -4939,12 +5618,16 @@ export default {
 
           if (env.DB) {
             try {
-              const reqRow = await env.DB.prepare('SELECT status, customer_id, phone FROM requests WHERE id = ?').bind(requestId).first();
+              const reqRow = await env.DB.prepare('SELECT status, customer_id, phone, provider_id, tracking_code FROM requests WHERE id = ?').bind(requestId).first();
               if (!reqRow) return jsonResponse({ error: 'سفارش یافت نشد.', code: 'NOT_FOUND' }, 404);
 
-              // P0-3 IDOR Protection
-              if (custAuth && reqRow.customer_id && reqRow.customer_id !== custAuth.id && reqRow.phone !== custAuth.phone) {
-                return jsonResponse({ error: 'شما مجاز به ثبت اختلاف برای سفارش مشتری دیگری نیستید.', code: 'FORBIDDEN' }, 403);
+              // Strict IDOR Protection
+              if (!isStaff && custAuth) {
+                const isOwner = (reqRow.customer_id && reqRow.customer_id === custAuth.id) ||
+                                (reqRow.phone && reqRow.phone === custAuth.phone);
+                if (!isOwner) {
+                  return jsonResponse({ error: 'شما مجاز به ثبت اختلاف برای سفارش مشتری دیگری نیستید.', code: 'FORBIDDEN' }, 403);
+                }
               }
               if (body.customerId && reqRow.customer_id && Number(body.customerId) !== Number(reqRow.customer_id)) {
                 return jsonResponse({ error: 'شما مجاز به ثبت اختلاف برای سفارش مشتری دیگری نیستید.', code: 'FORBIDDEN' }, 403);
@@ -4974,6 +5657,26 @@ export default {
                 INSERT INTO order_status_logs (request_id, from_status, to_status, changed_by_role, note, created_at)
                 VALUES (?, ?, 'disputed', 'customer', ?, ?)
               `).bind(requestId, reqRow.status || 'in_progress', `ثبت رسمی شکایت: ${description}`, now).run();
+
+              // Send notifications
+              if (reqRow.customer_id) {
+                await createCustomerNotification(
+                  env,
+                  reqRow.customer_id,
+                  'dispute_opened',
+                  'ثبت شکایت و اختلاف',
+                  'شکایت شما با موفقیت ثبت شد و واحد پشتیبانی بهدون در حال رسیدگی است.'
+                );
+              }
+              if (reqRow.provider_id) {
+                await createProviderNotification(
+                  env,
+                  reqRow.provider_id,
+                  'dispute_opened',
+                  'ثبت اختلاف برای سفارش',
+                  `مشتری برای سفارش #${reqRow.tracking_code || requestId} اختلافی با عنوان «${reason}» ثبت کرده است.`
+                );
+              }
             } catch (dbErr: any) {
               return jsonResponse({ error: dbErr.message }, 500);
             }

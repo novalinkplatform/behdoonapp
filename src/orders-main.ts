@@ -23,6 +23,7 @@ import { initLangToggle } from './components/LangToggle.ts';
 import { bootstrapI18n } from './i18n/bootstrap.ts';
 import { initBehaviorTracking } from './utils/analytics.ts';
 import { pick } from './i18n/lang.ts';
+import { openCustomerTrackingModal } from './components/OrderTrackingModal.ts';
 import { loadSettings } from './utils/dynamicContent.ts';
 import { applyTheme } from './utils/theme.ts';
 import { applySiteSeoSettings } from './utils/seo.ts';
@@ -76,6 +77,10 @@ function renderOrderCard(order: OrderRecord): string {
       <div class="order-meta">${order.serviceLabel} · <span id="order-schedule-${order.id}">${formatIranianDate(order.scheduledDate)} — ${pick('ساعت', 'at')} ${toPersianDigits(order.scheduledTime)}</span></div>
       <div class="order-estimate">${formatToman(order.estimateAvg)}</div>
       <div class="order-actions" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+        <button type="button" class="btn btn-primary btn-sm" data-track-order="${order.id}">
+          <span class="icon" style="width: 14px; height: 14px;">${icons.clock}</span>
+          <span>${pick('رهگیری و جزئیات خدمت', 'Track & details')}</span>
+        </button>
         <button type="button" class="btn btn-secondary btn-sm" data-order-invoice="${order.id}">
           <span class="icon" style="width: 14px; height: 14px;">${icons.fileText}</span>
           <span>${pick('مشاهده و دریافت فاکتور', 'View & download invoice')}</span>
@@ -246,6 +251,19 @@ async function init(): Promise<void> {
             window.alert(err instanceof Error ? err.message : pick('لغو درخواست ناموفق بود.', 'Cancellation failed.'));
             btn.disabled = false;
           });
+      });
+    });
+
+    document.querySelectorAll<HTMLButtonElement>('[data-track-order]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = Number(btn.dataset.trackOrder);
+        if (id) {
+          openCustomerTrackingModal(id, {
+            onUpdate: () => {
+              if (currentPhone) search(currentPhone);
+            },
+          });
+        }
       });
     });
   }

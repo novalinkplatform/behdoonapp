@@ -853,3 +853,295 @@
   display: flex;
   gap: var(--space-2);
 }
+
+/* ==========================================================================
+   Phase 3B: Customer Experience & Tracking Styles
+   ========================================================================== */
+
+.customer-tracking-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.customer-tracking-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  direction: rtl;
+}
+
+.customer-tracking-header {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface-secondary, rgba(248, 250, 252, 0.6));
+}
+
+.customer-tracking-header h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.customer-tracking-body {
+  padding: var(--space-4);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Provider Dossier Card */
+.provider-dossier-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-secondary, rgba(248, 250, 252, 0.8));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  gap: var(--space-3);
+}
+
+.provider-dossier-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.provider-dossier-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+
+.provider-dossier-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.provider-dossier-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.provider-dossier-sub {
+  font-size: 0.8rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.provider-score-badge {
+  color: #eab308;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* Tracking Stepper */
+.tracking-stepper {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin: var(--space-2) 0;
+  padding: 0 var(--space-2);
+}
+
+.tracking-stepper::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  right: 20px;
+  left: 20px;
+  height: 2px;
+  background: var(--border);
+  z-index: 1;
+}
+
+.tracking-step-item {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  text-align: center;
+}
+
+.tracking-step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.tracking-step-item.is-completed .tracking-step-dot {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.tracking-step-item.is-current .tracking-step-dot {
+  background: #fff;
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+}
+
+.tracking-step-label {
+  font-size: 0.72rem;
+  color: var(--muted);
+  max-width: 75px;
+  line-height: 1.2;
+}
+
+.tracking-step-item.is-completed .tracking-step-label,
+.tracking-step-item.is-current .tracking-step-label {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Timeline */
+.customer-timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  position: relative;
+  padding-right: var(--space-4);
+  border-right: 2px solid var(--border);
+  margin-right: 8px;
+}
+
+.customer-timeline-entry {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.customer-timeline-entry::before {
+  content: '';
+  position: absolute;
+  right: -21px;
+  top: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 2px solid var(--surface);
+}
+
+.customer-timeline-entry.is-current::before {
+  background: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+.customer-timeline-title {
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.customer-timeline-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.customer-timeline-time {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+/* Quote & Invoice Cards */
+.quote-review-card,
+.invoice-summary-card {
+  background: var(--surface-secondary, rgba(248, 250, 252, 0.8));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.quote-amount-row,
+.invoice-amount-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.quote-amount-row.is-total,
+.invoice-amount-row.is-total {
+  font-size: 1rem;
+  font-weight: 700;
+  border-top: 1px dashed var(--border);
+  padding-top: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.badge-paid {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-unpaid {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+

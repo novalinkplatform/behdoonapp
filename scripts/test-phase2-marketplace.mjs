@@ -285,7 +285,7 @@ async function runPhase2Tests() {
   res = await worker.fetch(
     new Request(`https://behdoon.ir/api/quotes/${quoteId1}/accept`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { Authorization: `Bearer ${customerToken}`, 'Content-Type': 'application/json' },
     }),
     env
   );
@@ -299,7 +299,12 @@ async function runPhase2Tests() {
 
   // Test 8: View Invoice & Payments
   console.log('\n[Test 8] View Invoice (GET /api/requests/:id/invoice)');
-  res = await worker.fetch(new Request(`https://behdoon.ir/api/requests/${requestId}/invoice`), env);
+  res = await worker.fetch(
+    new Request(`https://behdoon.ir/api/requests/${requestId}/invoice`, {
+      headers: { Authorization: `Bearer ${customerToken}` },
+    }),
+    env
+  );
   body = await res.json();
   assert(res.status === 200 && body.invoice && body.invoice.total_amount === 800000, 'Invoice retrieved with correct total amount (800,000 Toman)');
 
@@ -308,7 +313,7 @@ async function runPhase2Tests() {
   res = await worker.fetch(
     new Request('https://behdoon.ir/api/payments/checkout', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { Authorization: `Bearer ${customerToken}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         requestId,
         invoiceId: body.invoice.id,
@@ -338,7 +343,7 @@ async function runPhase2Tests() {
   res = await worker.fetch(
     new Request(`https://behdoon.ir/api/requests/${requestId}/rate`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { Authorization: `Bearer ${customerToken}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         customerId,
         overallScore: 5,
@@ -358,7 +363,7 @@ async function runPhase2Tests() {
   let dupRateRes = await worker.fetch(
     new Request(`https://behdoon.ir/api/requests/${requestId}/rate`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { Authorization: `Bearer ${customerToken}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ customerId, overallScore: 4 }),
     }),
     env
@@ -376,7 +381,7 @@ async function runPhase2Tests() {
   res = await worker.fetch(
     new Request(`https://behdoon.ir/api/requests/${requestId}/disputes`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { Authorization: `Bearer ${customerToken}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         reason: 'warranty_claim',
         claimAmount: 100000,
