@@ -41,7 +41,7 @@
 
 .calendar-panel {
   position: fixed;
-  z-index: 220;
+  z-index: 100005;
   width: 288px;
   max-width: calc(100vw - 2 * var(--container-padding));
   background-color: var(--background);

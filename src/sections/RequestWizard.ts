@@ -109,13 +109,76 @@ export function getSiteBrandName(siteName?: { fa?: string; en?: string } | strin
 }
 
 const STEPS = [
-  { id: 'category', question: 'به چه خدمتی در ساختمان نیاز دارید؟ (انتخاب دسته‌بندی)', questionEn: 'What building service do you need? (Category)' },
-  { id: 'subcategory', question: 'انتخاب خدمت و تخصص دقیق زیرمجموعه', questionEn: 'Select specific sub-service' },
-  { id: 'location', question: 'نشانی و موقعیت مکانی انجام خدمت در تهران', questionEn: 'Where is your location in Tehran?' },
-  { id: 'packing', question: 'آیا نیاز به تأمین قطعات و مصالح مصرفی دارید؟', questionEn: 'Do you need spare parts or materials provided?' },
-  { id: 'labor', question: 'میزان فوریت و تعداد تکنسین مورد نیاز', questionEn: 'Select urgency and technician team size' },
-  { id: 'schedule', question: 'زمان مراجعه تکنسین، برآورد هزینه و پوشش بیمه', questionEn: 'When should technician visit, cost estimate & insurance' },
-  { id: 'phone', question: 'مشخصات متقاضی و ثبت نهایی درخواست', questionEn: 'Enter your details to finalize and dispatch' },
+  {
+    id: 'category',
+    stepNumber: 1,
+    shortTitle: 'دسته‌بندی',
+    shortTitleEn: 'Category',
+    question: 'به چه خدمتی در ساختمان نیاز دارید؟ (انتخاب دسته‌بندی)',
+    questionEn: 'What building service do you need? (Category)',
+    hint: 'دسته‌بندی اصلی خدمت ساختمانی مورد نیاز خود را در تهران مشخص فرمایید',
+    hintEn: 'Select the primary building service category in Tehran',
+  },
+  {
+    id: 'subcategory',
+    stepNumber: 2,
+    shortTitle: 'تخصص خدمت',
+    shortTitleEn: 'Service',
+    question: 'انتخاب خدمت و تخصص دقیق زیرمجموعه',
+    questionEn: 'Select specific sub-service',
+    hint: 'تخصص، اجرت و محدوده کار مورد نظر در این دسته‌بندی را برگزینید',
+    hintEn: 'Choose the exact specialty, scope and base rate',
+  },
+  {
+    id: 'location',
+    stepNumber: 3,
+    shortTitle: 'نشانی و مکان',
+    shortTitleEn: 'Location',
+    question: 'نشانی و موقعیت مکانی انجام خدمت در تهران',
+    questionEn: 'Where is your location in Tehran?',
+    hint: 'تعیین محدوده روی نقشه تهران و وارد کردن پلاک، طبقه و مشخصات ملک',
+    hintEn: 'Pin location on Tehran map and enter street address details',
+  },
+  {
+    id: 'packing',
+    stepNumber: 4,
+    shortTitle: 'قطعات و مصالح',
+    shortTitleEn: 'Materials',
+    question: 'آیا نیاز به تأمین قطعات و مصالح مصرفی دارید؟',
+    questionEn: 'Do you need spare parts or materials provided?',
+    hint: 'تعیین نحوه تأمین لوازم یدکی، قطعات استاندارد و مصالح مصرفی کار',
+    hintEn: 'Choose whether parts are provided by technician or client',
+  },
+  {
+    id: 'labor',
+    stepNumber: 5,
+    shortTitle: 'فوریت و تکنسین',
+    shortTitleEn: 'Urgency & Team',
+    question: 'میزان فوریت و تعداد تکنسین مورد نیاز',
+    questionEn: 'Select urgency and technician team size',
+    hint: 'اعزام فوری زیر ۴۵ دقیقه یا زمان‌بندی‌شده به همراه تعداد استادکار',
+    hintEn: 'Choose immediate dispatch under 45 mins or scheduled visit',
+  },
+  {
+    id: 'schedule',
+    stepNumber: 6,
+    shortTitle: 'زمان و بیمه',
+    shortTitleEn: 'Schedule & Insurance',
+    question: 'زمان مراجعه تکنسین، برآورد هزینه و پوشش بیمه',
+    questionEn: 'When should technician visit, cost estimate & insurance',
+    hint: 'تعیین زمان، مشاهده پیش‌فاکتور تفکیکی و انتخاب سقف تضمین خسارت بهدون',
+    hintEn: 'Set visit time, review cost estimate and select insurance coverage',
+  },
+  {
+    id: 'phone',
+    stepNumber: 7,
+    shortTitle: 'ثبت و اعزام',
+    shortTitleEn: 'Finalize',
+    question: 'مشخصات متقاضی و ثبت نهایی درخواست',
+    questionEn: 'Enter your details to finalize and dispatch',
+    hint: 'شماره همراه و مشخصات خود را جهت صدور کد پیگیری و اعزام وارد فرمایید',
+    hintEn: 'Enter your details to generate tracking code and dispatch technician',
+  },
 ];
 const TOTAL_STEPS = STEPS.length;
 
@@ -158,12 +221,59 @@ export function renderRequestWizard(
 
   return `
     <div class="request-card" id="request">
-      <div class="wizard-progress">
+      <!-- Desktop & Tablet Stepper Bar (>=640px) -->
+      <nav class="wizard-stepper-desktop" id="wizard-stepper-desktop" aria-label="${pick('مراحل ثبت سفارش', 'Order Steps')}">
+        <div class="wizard-stepper-track">
+          <div class="wizard-stepper-track-fill" id="wizard-stepper-track-fill" style="width: 0%;"></div>
+          ${STEPS.map((s, idx) => `
+            <button
+              type="button"
+              class="wizard-step-node ${idx === 0 ? 'is-active' : ''}"
+              data-step-target="${idx + 1}"
+              id="wizard-step-node-${idx + 1}"
+              title="${pick(s.shortTitle, s.shortTitleEn)}"
+            >
+              <span class="wizard-step-badge">
+                <span class="wizard-step-num">${toPersianDigits(idx + 1)}</span>
+                <span class="wizard-step-check icon">${icons.checkCircle || '✓'}</span>
+              </span>
+              <span class="wizard-step-label">${pick(s.shortTitle, s.shortTitleEn)}</span>
+            </button>
+          `).join('')}
+        </div>
+      </nav>
+
+      <!-- Mobile Compact Stepper (<640px) -->
+      <div class="wizard-stepper-mobile" id="wizard-stepper-mobile">
+        <div class="wizard-mobile-header">
+          <div class="wizard-mobile-step-pill">
+            <span class="wizard-mobile-pulse"></span>
+            <span id="wizard-mobile-step-name">${pick('گام ۱ از ۷: دسته‌بندی', 'Step 1 of 7: Category')}</span>
+          </div>
+          <span class="wizard-mobile-percent" id="wizard-mobile-percent">${toPersianDigits('۱۴٪')}</span>
+        </div>
+        <div class="wizard-mobile-segments">
+          ${STEPS.map((_, idx) => `
+            <div class="wizard-mobile-segment ${idx === 0 ? 'is-active is-filled' : ''}" data-mobile-segment="${idx + 1}"></div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Hidden legacy progress bar for 100% backward-compatibility -->
+      <div class="wizard-progress" style="display: none !important;">
         <div class="wizard-progress-bar"><div class="wizard-progress-fill" id="wizard-progress-fill"></div></div>
         <span class="wizard-progress-text" id="wizard-progress-text"></span>
       </div>
 
-      <h2 class="wizard-question" id="wizard-question"></h2>
+      <!-- Step Heading Card -->
+      <div class="wizard-header-card">
+        <div class="wizard-header-top">
+          <span class="wizard-step-tag" id="wizard-step-tag">${pick('مرحله ۱ از ۷', 'Step 1 of 7')}</span>
+          <span class="wizard-step-hint-badge" id="wizard-step-hint-badge">${pick('انتخاب اولیه خدمت', 'Select Service')}</span>
+        </div>
+        <h2 class="wizard-question" id="wizard-question"></h2>
+        <p class="wizard-step-subdesc" id="wizard-step-subdesc"></p>
+      </div>
 
       <div class="wizard-body">
         <!-- گام ۱: انتخاب دسته‌بندی خدمات (دسته) -->
@@ -311,45 +421,71 @@ export function renderRequestWizard(
 
         <!-- گام ۴: تامین قطعات و مصالح مصرفی -->
         <section class="request-panel" data-panel="4" hidden>
-          <p class="field-label" style="font-size: 1rem; margin-bottom: 12px; font-weight: 600;">
-            ${pick('آیا برای انجام خدمت نیاز به تأمین قطعات یدکی، لوازم جانبی یا مصالح مصرفی دارید؟', 'Do you need spare parts or materials provided for the service?')}
-          </p>
-          <div class="wizard-choice-row wizard-choice-row-lg">
-            <button type="button" class="wizard-pill wizard-pill-lg is-selected" data-packing-choice="yes">
-              <span class="icon">${icons.checkCircle || icons.shield}</span>
-              <span>${pick('می‌خواهم (تکنسین با قطعات استاندارد و فاکتور رسمی تهیه کند)', 'Yes (Technician provides with official invoice)')}</span>
+          <div class="wizard-feature-cards-grid">
+            <button type="button" class="wizard-feature-card is-selected" data-packing-choice="yes">
+              <div class="wizard-feature-card-header">
+                <span class="wizard-feature-card-icon icon-emerald">${icons.box}</span>
+                <span class="wizard-feature-card-badge">${pick('پیشنهادی بهدون', 'Recommended')}</span>
+              </div>
+              <h3 class="wizard-feature-card-title">${pick('تأمین توسط تکنسین بهدون', 'Provided by Technician')}</h3>
+              <p class="wizard-feature-card-desc">${pick('تکنسین قطعات استاندارد شرکتی را با فاکتور رسمی معتبر و نرخ مصوب صنف همراه می‌آورد.', 'Certified standard parts provided with official itemized invoice & warranty.')}</p>
+              <div class="wizard-feature-card-check">
+                <span class="icon">${icons.checkCircle}</span>
+                <span>${pick('انتخاب شده', 'Selected')}</span>
+              </div>
             </button>
-            <button type="button" class="wizard-pill wizard-pill-lg" data-packing-choice="no">
-              <span>${pick('نمی‌خواهم (قطعات و مصالح را شخصاً آماده کرده‌ام)', 'No (I will provide parts/materials myself)')}</span>
+
+            <button type="button" class="wizard-feature-card" data-packing-choice="no">
+              <div class="wizard-feature-card-header">
+                <span class="wizard-feature-card-icon icon-slate">${icons.user}</span>
+                <span class="wizard-feature-card-badge badge-neutral">${pick('بدون قطعه', 'No Parts')}</span>
+              </div>
+              <h3 class="wizard-feature-card-title">${pick('قطعات و مصالح را شخصاً آماده کرده‌ام', 'I Provide Parts Myself')}</h3>
+              <p class="wizard-feature-card-desc">${pick('کلیه لوازم و قطعات از قبل در محل آماده است و فقط به مهارت، ابزار تخصصی و اجرت تکنسین نیاز دارم.', 'Materials are already available on-site; only professional repair labor required.')}</p>
+              <div class="wizard-feature-card-check">
+                <span class="icon">${icons.checkCircle}</span>
+                <span>${pick('انتخاب این گزینه', 'Select this')}</span>
+              </div>
             </button>
           </div>
-          <p style="font-size: 0.82rem; color: #64748b; margin-top: 14px; line-height: 1.8;">
-            ${pick(
-              'کلیه قطعات و مصالح مصرفی تهیه شده توسط تکنسین‌های بهدون دارای برچسب اصالت کالا و فاکتور تفکیکی به نرخ مصوب صنف می‌باشند.',
-              'All parts and materials provided by Behdoon technicians come with genuine quality labels and official itemized invoices.',
-            )}
-          </p>
+
+          <div class="wizard-trust-notice-banner">
+            <span class="icon">${icons.shield}</span>
+            <p>${pick('کلیه قطعات و مصالح تهیه شده توسط تکنسین‌های بهدون دارای برچسب اصالت کالا و فاکتور تفکیکی به نرخ مصوب صنف می‌باشند.', 'All parts provided by Behdoon technicians include genuine quality seals and official union-approved invoices.')}</p>
+          </div>
         </section>
 
         <!-- گام ۵: فوریت اعزام و تعداد تکنسین -->
         <section class="request-panel" data-panel="5" hidden>
-          <div style="margin-bottom: 16px;">
-            <span class="field-label" style="display: block; font-weight: 700; color: #1e293b; margin-bottom: 8px; font-size: 0.95rem;">
-              ${pick('میزان فوریت اعزام تکنسین به محل در تهران:', 'Technician dispatch urgency in Tehran:')}
-            </span>
-            <div class="wizard-choice-row wizard-choice-row-lg">
-              <button type="button" class="wizard-pill wizard-pill-lg is-selected" data-urgency-choice="urgent">
-                <span class="icon">${icons.bolt}</span>
-                <span>${pick('اعزام فوری (زیر ۴۵ دقیقه)', 'Urgent dispatch (Under 45 mins)')}</span>
-              </button>
-              <button type="button" class="wizard-pill wizard-pill-lg" data-urgency-choice="scheduled">
-                <span class="icon">${icons.calendar}</span>
-                <span>${pick('عادی و برنامه‌ریزی‌شده', 'Standard scheduled')}</span>
-              </button>
-            </div>
+          <div class="wizard-feature-cards-grid wizard-urgency-cards-grid">
+            <button type="button" class="wizard-feature-card is-selected" data-urgency-choice="urgent">
+              <div class="wizard-feature-card-header">
+                <span class="wizard-feature-card-icon icon-amber">${icons.bolt}</span>
+                <span class="wizard-feature-card-badge badge-amber">${pick('اعزام فوری', 'Urgent')}</span>
+              </div>
+              <h3 class="wizard-feature-card-title">${pick('اعزام فوری (زیر ۴۵ دقیقه)', 'Urgent Dispatch (<45 mins)')}</h3>
+              <p class="wizard-feature-card-desc">${pick('مناسب شرایط اضطراری در تهران؛ اعزام مستقیم نزدیک‌ترین تکنسین فعال مجهز به محل شما.', 'Immediate dispatch of the closest certified technician in Tehran.')}</p>
+              <div class="wizard-feature-card-check">
+                <span class="icon">${icons.checkCircle}</span>
+                <span>${pick('انتخاب شده', 'Selected')}</span>
+              </div>
+            </button>
+
+            <button type="button" class="wizard-feature-card" data-urgency-choice="scheduled">
+              <div class="wizard-feature-card-header">
+                <span class="wizard-feature-card-icon icon-purple">${icons.calendar}</span>
+                <span class="wizard-feature-card-badge badge-neutral">${pick('برنامه‌ریزی‌شده', 'Scheduled')}</span>
+              </div>
+              <h3 class="wizard-feature-card-title">${pick('عادی و زمان‌بندی‌شده', 'Standard Scheduled')}</h3>
+              <p class="wizard-feature-card-desc">${pick('تعیین تاریخ و ساعت دقیق مراجعه در گام بعدی متناسب با اوقات فراغت و حضور شما در ساختمان.', 'Choose exact visit date and preferred time window on the next step.')}</p>
+              <div class="wizard-feature-card-check">
+                <span class="icon">${icons.checkCircle}</span>
+                <span>${pick('انتخاب این گزینه', 'Select this')}</span>
+              </div>
+            </button>
           </div>
 
-          <div class="wizard-labor-details" style="padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; text-align: right;">
+          <div class="wizard-labor-details">
             <div style="margin-bottom: 14px;">
               <span class="field-label" style="display: block; font-weight: 700; color: #1e293b; margin-bottom: 8px; font-size: 0.95rem;">${pick('تعداد تکنسین یا استادکار مورد نیاز:', 'Number of technicians needed:')}</span>
               <div class="wizard-choice-row" style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -525,8 +661,17 @@ export function renderRequestWizard(
       </div>
 
       <div class="wizard-footer" id="wizard-footer">
-        <button type="button" class="btn btn-secondary" id="wizard-back" hidden>${pick('قبلی', 'Back')}</button>
-        <button type="button" class="btn btn-primary" id="wizard-next">${pick('بعدی', 'Next')}</button>
+        <button type="button" class="btn btn-secondary wizard-back-btn" id="wizard-back" hidden>
+          <span class="icon" style="width: 16px; height: 16px; margin-inline-end: 4px;">${icons.chevronRight || ''}</span>
+          <span>${pick('قبلی', 'Back')}</span>
+        </button>
+        <div class="wizard-footer-summary" id="wizard-footer-summary">
+          <span class="wizard-footer-hint" id="wizard-footer-hint">${pick('اعزام فوری با گارانتی ۳۰ روزه بهدون', 'Fast dispatch with 30-day warranty')}</span>
+        </div>
+        <button type="button" class="btn btn-primary wizard-next-btn" id="wizard-next">
+          <span id="wizard-next-text">${pick('مرحله بعد', 'Next step')}</span>
+          <span class="icon" style="width: 16px; height: 16px; margin-inline-start: 4px;">${icons.chevronLeft || ''}</span>
+        </button>
       </div>
     </div>
   `;
@@ -882,7 +1027,13 @@ export function initRequestWizard(
 
   function updateNextButtonLabel(): void {
     const isLastStep = currentStep === TOTAL_STEPS;
-    nextBtn!.textContent = isLastStep ? pick('ثبت نهایی و اعزام تکنسین', 'Finalize & Dispatch') : pick('مرحله بعد', 'Next step');
+    const textEl = document.getElementById('wizard-next-text');
+    const label = isLastStep ? pick('ثبت نهایی و اعزام تکنسین', 'Finalize & Dispatch') : pick('مرحله بعد', 'Next step');
+    if (textEl) {
+      textEl.textContent = label;
+    } else {
+      nextBtn!.textContent = label;
+    }
     nextBtn!.classList.toggle('btn-cta-wave', isLastStep);
   }
 
@@ -894,6 +1045,65 @@ export function initRequestWizard(
       `Step ${toPersianDigits(currentStep)} of ${toPersianDigits(TOTAL_STEPS)}`,
     );
     progressFill!.style.width = `${(currentStep / TOTAL_STEPS) * 100}%`;
+
+    // 1. Sync Desktop Stepper
+    const trackFill = document.getElementById('wizard-stepper-track-fill');
+    if (trackFill) {
+      trackFill.style.width = `${((currentStep - 1) / (TOTAL_STEPS - 1)) * 100}%`;
+    }
+    card.querySelectorAll<HTMLElement>('.wizard-step-node').forEach((node) => {
+      const stepTarget = Number(node.dataset.stepTarget);
+      node.classList.toggle('is-completed', stepTarget < currentStep);
+      node.classList.toggle('is-active', stepTarget === currentStep);
+      node.setAttribute('aria-selected', stepTarget === currentStep ? 'true' : 'false');
+    });
+
+    // 2. Sync Mobile Stepper
+    const mobileName = document.getElementById('wizard-mobile-step-name');
+    if (mobileName) {
+      mobileName.textContent = pick(
+        `گام ${toPersianDigits(currentStep)} از ${toPersianDigits(TOTAL_STEPS)}: ${step.shortTitle}`,
+        `Step ${toPersianDigits(currentStep)} of ${toPersianDigits(TOTAL_STEPS)}: ${step.shortTitleEn}`,
+      );
+    }
+    const mobilePercent = document.getElementById('wizard-mobile-percent');
+    if (mobilePercent) {
+      mobilePercent.textContent = `${toPersianDigits(Math.round((currentStep / TOTAL_STEPS) * 100))}٪`;
+    }
+    card.querySelectorAll<HTMLElement>('.wizard-mobile-segment').forEach((seg) => {
+      const segNum = Number(seg.dataset.mobileSegment);
+      seg.classList.toggle('is-filled', segNum <= currentStep);
+      seg.classList.toggle('is-active', segNum === currentStep);
+    });
+
+    // 3. Sync Step Header Tag & Subdesc
+    const stepTag = document.getElementById('wizard-step-tag');
+    if (stepTag) {
+      stepTag.textContent = pick(
+        `گام ${toPersianDigits(currentStep)} از ${toPersianDigits(TOTAL_STEPS)}`,
+        `Step ${toPersianDigits(currentStep)} of ${toPersianDigits(TOTAL_STEPS)}`,
+      );
+    }
+    const hintBadge = document.getElementById('wizard-step-hint-badge');
+    if (hintBadge) {
+      hintBadge.textContent = pick(step.shortTitle, step.shortTitleEn);
+    }
+    const stepSubdesc = document.getElementById('wizard-step-subdesc');
+    if (stepSubdesc) {
+      stepSubdesc.textContent = pick(step.hint, step.hintEn);
+    }
+
+    // 4. Sync Footer Hint
+    const footerHint = document.getElementById('wizard-footer-hint');
+    if (footerHint) {
+      if (state.vehicleId) {
+        footerHint.textContent = `${pick('خدمت انتخابی:', 'Selected:')} ${serviceLabel()}`;
+      } else if (currentStep === 6) {
+        footerHint.textContent = pick('محاسبه دقیق سیستمی با ضمانت کتبی بهدون', 'Exact transparent estimate with warranty');
+      } else {
+        footerHint.textContent = pick('اعزام نزدیک‌ترین تکنسین مجرب در کمتر از ۴۵ دقیقه', 'Fast dispatch in under 45 minutes');
+      }
+    }
 
     card!.querySelectorAll<HTMLElement>('.request-panel[data-panel]').forEach((el) => {
       el.hidden = el.dataset.panel !== String(currentStep);
@@ -1154,6 +1364,19 @@ export function initRequestWizard(
 
   backBtn.addEventListener('click', () => {
     advanceStep(-1);
+  });
+
+  // Wire desktop stepper click navigation (allow jumping to completed steps)
+  card.querySelectorAll<HTMLButtonElement>('.wizard-step-node').forEach((node) => {
+    node.addEventListener('click', () => {
+      const targetStep = Number(node.dataset.stepTarget);
+      if (targetStep > 0 && targetStep < currentStep) {
+        currentStep = targetStep;
+        updateStepUI();
+        const modalBody = card.closest('.request-wizard-modal-body');
+        if (modalBody) modalBody.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
   });
 
   document.getElementById('wizard-new-request-btn')?.addEventListener('click', () => {
