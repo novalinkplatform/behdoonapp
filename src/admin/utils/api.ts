@@ -2496,3 +2496,254 @@ export async function updateDisputeStatus(
   if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'به‌روزرسانی وضعیت اختلاف ناموفق بود.');
 }
 
+// ===== Phase 3A: Provider Operations API =====
+
+export interface ProviderDashboardData {
+  provider: {
+    id: number;
+    name: string;
+    phone: string;
+    avatarUrl: string | null;
+    city: string | null;
+    services: string[];
+    isOnline: boolean;
+    status: string;
+    ratingAvg: number;
+    ratingCount: number;
+    completedJobs: number;
+    totalEarnings: number;
+    unsettledBalance: number;
+    performanceScore: number;
+    acceptanceRate: number;
+    cancellationRate: number;
+    reliabilityScore: number;
+  };
+  metrics: {
+    todayOrders: number;
+    pendingOrders: number;
+    upcomingOrders: number;
+    inProgressOrders: number;
+    completedOrders: number;
+    cancelledOrders: number;
+    totalOrders: number;
+    unsettledBalance: number;
+    totalEarnings: number;
+    pendingSettlementsTotal: number;
+    paidSettlementsTotal: number;
+    rating: number;
+    reliability: number;
+  };
+  todayOrdersList: OrderRecord[];
+  inProgressOrdersList: OrderRecord[];
+  pendingActionOrdersList: OrderRecord[];
+  schedule: Array<{
+    id: number;
+    date: string;
+    startTime: string;
+    endTime: string;
+    isBooked: boolean;
+    requestId: number | null;
+    orderTrackingCode?: string;
+    orderService?: string;
+  }>;
+  unreadNotifications: number;
+}
+
+export interface ProviderOrderDetail {
+  order: OrderRecord & {
+    customerPhoneMasked: string;
+    canCallCustomer: boolean;
+    timeline: Array<{
+      id: number;
+      status: string;
+      note: string | null;
+      changedByName: string | null;
+      createdAt: string;
+    }>;
+  };
+  quotes: QuoteRecord[];
+  invoice: InvoiceRecord | null;
+  payments: PaymentRecord[];
+  settlement: SettlementRecord | null;
+  rating: RatingRecord | null;
+  disputes: DisputeRecord[];
+}
+
+export interface ProviderScheduleItem {
+  id: number;
+  providerId: number;
+  date: string;
+  startTime: string;
+  endTime: string;
+  isBooked: boolean;
+  requestId: number | null;
+  orderTrackingCode?: string;
+  orderService?: string;
+  orderAddress?: string;
+  orderStatus?: string;
+}
+
+export interface ProviderEarningsData {
+  summary: {
+    totalEarnings: number;
+    unsettledBalance: number;
+    pendingSettlementTotal: number;
+    paidSettlementTotal: number;
+    completedJobs: number;
+  };
+  settlements: Array<{
+    id: number;
+    requestId: number;
+    trackingCode: string;
+    serviceLabel: string;
+    grossAmount: number;
+    platformFee: number;
+    netPayable: number;
+    status: string;
+    paymentReference: string | null;
+    paidAt: string | null;
+    createdAt: string;
+  }>;
+  ledger: Array<{
+    id: number;
+    entryType: string;
+    amount: number;
+    balanceAfter: number;
+    description: string | null;
+    referenceType: string | null;
+    referenceId: number | null;
+    createdAt: string;
+  }>;
+}
+
+export interface ProviderPerformanceData {
+  performanceScore: number;
+  ratingAvg: number;
+  ratingCount: number;
+  acceptanceRate: number;
+  cancellationRate: number;
+  reliabilityScore: number;
+  completedJobs: number;
+  totalJobs: number;
+  ratings: RatingRecord[];
+  breakdown: {
+    punctuality: number;
+    cleanliness: number;
+    skill: number;
+  };
+}
+
+export interface ProviderNotificationItem {
+  id: number;
+  providerId: number;
+  type: string;
+  title: string;
+  message: string;
+  data: any;
+  isRead: boolean;
+  createdAt: string;
+}
+
+export async function fetchProviderDashboard(): Promise<ProviderDashboardData> {
+  const res = await authedFetch('/api/provider/dashboard');
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت داشبورد متخصص ناموفق بود.');
+  return body as ProviderDashboardData;
+}
+
+export async function fetchProviderOrders(status: string = 'all'): Promise<{ orders: OrderRecord[]; total: number }> {
+  const res = await authedFetch(`/api/provider/orders?status=${encodeURIComponent(status)}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت سفارشات متخصص ناموفق بود.');
+  return {
+    orders: (body.orders ?? []) as OrderRecord[],
+    total: body.total ?? (body.orders?.length || 0),
+  };
+}
+
+export async function fetchProviderOrderDetail(id: number): Promise<ProviderOrderDetail> {
+  const res = await authedFetch(`/api/provider/orders/${id}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت جزئیات سفارش ناموفق بود.');
+  return body as ProviderOrderDetail;
+}
+
+export async function performProviderOrderAction(
+  id: number,
+  action: string,
+  note?: string
+): Promise<{ success: boolean; status: string; action: string; message: string }> {
+  const res = await authedFetch(`/api/provider/orders/${id}/action`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, note }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'انجام عملیات سفارش ناموفق بود.');
+  return body;
+}
+
+export async function fetchProviderSchedule(date?: string): Promise<{ schedule: ProviderScheduleItem[] }> {
+  const query = date ? `?date=${encodeURIComponent(date)}` : '';
+  const res = await authedFetch(`/api/provider/schedule${query}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت تقویم کاری ناموفق بود.');
+  return { schedule: (body.schedule ?? []) as ProviderScheduleItem[] };
+}
+
+export async function fetchProviderEarnings(): Promise<ProviderEarningsData> {
+  const res = await authedFetch('/api/provider/earnings');
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت گزارش درآمد و تسویه ناموفق بود.');
+  return body as ProviderEarningsData;
+}
+
+export async function fetchProviderPerformance(): Promise<ProviderPerformanceData> {
+  const res = await authedFetch('/api/provider/performance');
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت کارنامه عملکرد ناموفق بود.');
+  return body as ProviderPerformanceData;
+}
+
+export async function fetchProviderNotifications(): Promise<{ notifications: ProviderNotificationItem[]; unreadCount: number }> {
+  const res = await authedFetch('/api/provider/notifications');
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت اعلانات ناموفق بود.');
+  return {
+    notifications: (body.notifications ?? []) as ProviderNotificationItem[],
+    unreadCount: body.unreadCount ?? 0,
+  };
+}
+
+export async function markProviderNotificationRead(id: number): Promise<void> {
+  const res = await authedFetch(`/api/provider/notifications/${id}/read`, { method: 'PATCH' });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'علامت‌گذاری اعلان ناموفق بود.');
+}
+
+export async function toggleProviderOnlineStatus(isOnline: boolean): Promise<{ success: boolean; isOnline: boolean }> {
+  const res = await authedFetch('/api/provider/status', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ isOnline }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'تغییر وضعیت آنلاین/آفلاین ناموفق بود.');
+  return body;
+}
+
+export async function updateProviderProfile(payload: {
+  bio?: string;
+  avatarUrl?: string;
+  city?: string;
+  serviceDistricts?: string[];
+}): Promise<void> {
+  const res = await authedFetch('/api/provider/profile', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'به‌روزرسانی پروفایل متخصص ناموفق بود.');
+}
+
