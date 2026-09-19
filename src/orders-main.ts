@@ -9,7 +9,7 @@ import { renderHeader, initHeader } from './components/Header.ts';
 import { renderFooter, initFooter } from './components/Footer.ts';
 import { renderBottomNav, initBottomNav } from './components/BottomNav.ts';
 import { renderOrdersView, renderOrderEditForm } from './sections/OrdersView.ts';
-import { fetchOrdersByPhone, rescheduleOrder, cancelOrder, EDITABLE_ORDER_STATUSES } from './utils/api.ts';
+import { fetchOrdersByPhone, fetchCustomerOrders, rescheduleOrder, cancelOrder, EDITABLE_ORDER_STATUSES } from './utils/api.ts';
 import type { OrderRecord } from './utils/api.ts';
 import { statusLabel } from './data/status.ts';
 import { formatToman } from './utils/format.ts';
@@ -29,7 +29,7 @@ import { applySiteSeoSettings } from './utils/seo.ts';
 import { applyBranding, applySiteNameEverywhere } from './utils/branding.ts';
 import { forceSiteLanguageIfSingleMode, hideLanguageToggleIfSingleMode } from './i18n/languageMode.ts';
 import { markAppReady } from './utils/appReady.ts';
-import { fetchCurrentCustomer } from './utils/customerAuth.ts';
+import { fetchCurrentCustomer, getCustomerToken } from './utils/customerAuth.ts';
 
 const ACTIVE_STATUSES = ['pending', 'contacted', 'scheduled', 'in_progress'];
 const HISTORY_STATUSES = ['completed', 'cancelled'];
@@ -273,9 +273,15 @@ async function init(): Promise<void> {
 
   function search(phone: string): void {
     currentPhone = phone;
-    fetchOrdersByPhone(phone)
+    const token = getCustomerToken();
+    const fetcher = token ? fetchCustomerOrders() : fetchOrdersByPhone(phone);
+    fetcher
       .then((orders) => renderResults(orders))
-      .catch(() => renderResults([]));
+      .catch(() => {
+        fetchOrdersByPhone(phone)
+          .then((orders) => renderResults(orders))
+          .catch(() => renderResults([]));
+      });
   }
 
   fetchCurrentCustomer()

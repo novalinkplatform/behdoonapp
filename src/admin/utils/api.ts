@@ -2232,3 +2232,267 @@ export async function fetchOrderHistory(orderId: number): Promise<OrderStatusHis
   if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت تاریخچه وضعیت سفارش ناموفق بود.');
   return (body.history ?? []) as OrderStatusHistoryEntry[];
 }
+
+// --- Phase 2: Marketplace Engine (Matching, Quotes, Invoices, Ratings, Disputes) ---
+
+export interface MatchingCandidate {
+  providerId: number;
+  fullName: string;
+  phone: string;
+  avatarUrl: string | null;
+  bio: string | null;
+  performanceScore: number;
+  totalJobs: number;
+  completedJobs: number;
+  score: number;
+  breakdown: {
+    location: number;
+    skill: number;
+    availability: number;
+    performance: number;
+    reliability: number;
+    workload: number;
+  };
+  hasCollision: boolean;
+}
+
+export interface QuoteRecord {
+  id: number;
+  requestId: number;
+  providerId: number;
+  providerName?: string;
+  providerPhone?: string;
+  pricingModel: 'fixed' | 'quote' | 'hourly';
+  baseAmount: number;
+  materialsAmount: number;
+  laborAmount: number;
+  discountAmount: number;
+  finalAmount: number;
+  description: string;
+  validUntil?: string | null;
+  status: 'draft' | 'sent' | 'accepted' | 'rejected' | 'cancelled' | 'expired';
+  createdAt: string;
+}
+
+export interface InvoiceRecord {
+  id: number;
+  invoiceNumber: string;
+  requestId: number;
+  quoteId?: number | null;
+  providerId?: number | null;
+  providerName?: string;
+  providerPhone?: string;
+  serviceLabel?: string;
+  trackingCode?: string;
+  subtotal: number;
+  materialsTotal: number;
+  laborTotal: number;
+  discount: number;
+  tax: number;
+  totalAmount: number;
+  status: 'issued' | 'paid' | 'cancelled' | 'refunded';
+  createdAt: string;
+}
+
+export interface PaymentRecord {
+  id: number;
+  invoiceId?: number | null;
+  requestId: number;
+  customerId?: number | null;
+  amount: number;
+  paymentMethod: string;
+  transactionRef: string;
+  status: 'pending' | 'completed' | 'failed' | 'refunded';
+  paidAt?: string | null;
+  createdAt: string;
+}
+
+export interface SettlementRecord {
+  id: number;
+  requestId: number;
+  providerId: number;
+  grossAmount: number;
+  commissionRate: number;
+  commissionAmount: number;
+  netPayable: number;
+  status: 'pending' | 'settled' | 'disputed';
+  settledAt?: string | null;
+  createdAt: string;
+}
+
+export interface RatingRecord {
+  id: number;
+  requestId: number;
+  customerId: number;
+  customerName?: string;
+  providerId: number;
+  overallScore: number;
+  punctualityScore: number;
+  cleanlinessScore: number;
+  skillScore: number;
+  comment?: string | null;
+  status: 'approved' | 'hidden' | 'flagged';
+  createdAt: string;
+}
+
+export interface DisputeRecord {
+  id: number;
+  requestId: number;
+  trackingCode?: string;
+  customerName?: string;
+  providerName?: string;
+  openedBy: 'customer' | 'provider' | 'admin';
+  openedById?: number | null;
+  reason: string;
+  claimAmount: number;
+  description: string;
+  evidenceUrlsJson?: string;
+  status: 'open' | 'under_review' | 'resolved' | 'rejected';
+  adminNotes?: string | null;
+  resolutionNotes?: string | null;
+  refundAmount?: number;
+  resolvedAt?: string | null;
+  createdAt: string;
+}
+
+export async function fetchMatchingCandidates(requestId: number, maxCandidates = 5): Promise<{ candidates: MatchingCandidate[]; request?: any }> {
+  const res = await authedFetch('/api/matching/candidates', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ requestId, maxCandidates }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت کاندیداهای مچینگ ناموفق بود.');
+  return { candidates: (body.candidates ?? []) as MatchingCandidate[], request: body.request };
+}
+
+export async function autoAssignProvider(
+  requestId: number,
+  providerId?: number,
+  selectionMode: 'auto' | 'customer_choice' = 'auto'
+): Promise<{ success: boolean; providerId: number; providerName?: string; status: string }> {
+  const res = await authedFetch('/api/matching/auto-assign', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ requestId, providerId, selectionMode }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'تخصیص متخصص ناموفق بود.');
+  return body;
+}
+
+export async function createQuote(payload: Partial<QuoteRecord> & { requestId: number; providerId: number; finalAmount: number }): Promise<QuoteRecord> {
+  const res = await authedFetch('/api/quotes', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'صدور پیش‌فاکتور ناموفق بود.');
+  return body.quote as QuoteRecord;
+}
+
+export async function fetchRequestQuotes(requestId: number): Promise<QuoteRecord[]> {
+  const res = await authedFetch(`/api/requests/${requestId}/quotes`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت پیش‌فاکتورهای سفارش ناموفق بود.');
+  return (body.quotes ?? []) as QuoteRecord[];
+}
+
+export async function acceptQuote(quoteId: number): Promise<{ success: boolean; quoteId: number; status: string; invoiceNumber: string }> {
+  const res = await authedFetch(`/api/quotes/${quoteId}/accept`, { method: 'POST' });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'تأیید پیش‌فاکتور ناموفق بود.');
+  return body;
+}
+
+export async function rejectQuote(quoteId: number): Promise<{ success: boolean; quoteId: number; status: string }> {
+  const res = await authedFetch(`/api/quotes/${quoteId}/reject`, { method: 'POST' });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'رد پیش‌فاکتور ناموفق بود.');
+  return body;
+}
+
+export async function fetchOrderInvoice(requestId: number): Promise<{ invoice: InvoiceRecord | null; payments: PaymentRecord[]; settlement: SettlementRecord | null }> {
+  const res = await authedFetch(`/api/requests/${requestId}/invoice`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت صورت‌حساب ناموفق بود.');
+  return {
+    invoice: body.invoice ?? null,
+    payments: (body.payments ?? []) as PaymentRecord[],
+    settlement: body.settlement ?? null,
+  };
+}
+
+export async function checkoutPayment(payload: {
+  requestId: number;
+  invoiceId?: number;
+  amount: number;
+  paymentMethod?: string;
+  transactionRef?: string;
+}): Promise<{ success: boolean; paymentId: number; transactionRef: string; status: string }> {
+  const res = await authedFetch('/api/payments/checkout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'پرداخت صورت‌حساب ناموفق بود.');
+  return body;
+}
+
+export async function rateOrder(
+  requestId: number,
+  payload: { overallScore: number; punctualityScore?: number; cleanlinessScore?: number; skillScore?: number; comment?: string }
+): Promise<{ success: boolean; newPerformanceScore: number }> {
+  const res = await authedFetch(`/api/requests/${requestId}/rate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'ثبت امتیاز ناموفق بود.');
+  return body;
+}
+
+export async function fetchProviderRatings(providerId: number): Promise<RatingRecord[]> {
+  const res = await authedFetch(`/api/providers/${providerId}/ratings`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت نظرات متخصص ناموفق بود.');
+  return (body.ratings ?? []) as RatingRecord[];
+}
+
+export async function fileDispute(
+  requestId: number,
+  payload: { reason: string; description: string; claimAmount?: number; evidenceUrls?: string[] }
+): Promise<{ success: boolean; disputeId: number }> {
+  const res = await authedFetch(`/api/requests/${requestId}/disputes`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'ثبت شکایت ناموفق بود.');
+  return body;
+}
+
+export async function fetchAdminDisputes(): Promise<DisputeRecord[]> {
+  const res = await authedFetch('/api/admin/disputes');
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت لیست اختلافات ناموفق بود.');
+  return (body.disputes ?? []) as DisputeRecord[];
+}
+
+export async function updateDisputeStatus(
+  disputeId: number,
+  payload: { status: string; adminNotes?: string; resolutionNotes?: string; refundAmount?: number }
+): Promise<void> {
+  const res = await authedFetch(`/api/admin/disputes/${disputeId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'به‌روزرسانی وضعیت اختلاف ناموفق بود.');
+}
+

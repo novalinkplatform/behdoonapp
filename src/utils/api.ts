@@ -1,5 +1,6 @@
 import { API_BASE_URL } from '../data/config.ts';
 import { pick } from '../i18n/lang.ts';
+import { getCustomerToken } from './customerAuth.ts';
 
 export interface CreateRequestPayload {
   customerName: string;
@@ -54,6 +55,9 @@ export interface OrderRecord {
   laborChoice?: string;
   laborCount?: number;
   invoiceItems?: any[] | null;
+  providerId?: number | null;
+  providerName?: string | null;
+  finalPrice?: number | null;
   createdAt: string;
 }
 
@@ -106,3 +110,74 @@ export async function cancelOrder(id: number, phone: string): Promise<OrderRecor
   }
   return body.request as OrderRecord;
 }
+
+export async function fetchCustomerOrders(): Promise<OrderRecord[]> {
+  const token = getCustomerToken();
+  const headers: Record<string, string> = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${API_BASE_URL}/api/customer/orders`, { headers });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(typeof body?.error === 'string' ? body.error : pick('دریافت سفارش‌های مشتری ناموفق بود.', 'Failed to fetch customer orders.'));
+  }
+  return (body.orders ?? []) as OrderRecord[];
+}
+
+export async function fetchCustomerInvoice(requestId: number): Promise<{ invoice: any | null; payments: any[]; settlement: any | null }> {
+  const token = getCustomerToken();
+  const headers: Record<string, string> = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${API_BASE_URL}/api/requests/${requestId}/invoice`, { headers });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(typeof body?.error === 'string' ? body.error : pick('دریافت صورت‌حساب ناموفق بود.', 'Failed to fetch invoice.'));
+  }
+  return body;
+}
+
+export async function submitCustomerRating(
+  requestId: number,
+  payload: { overallScore: number; punctualityScore?: number; cleanlinessScore?: number; skillScore?: number; comment?: string }
+): Promise<{ success: boolean; newPerformanceScore: number }> {
+  const token = getCustomerToken();
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${API_BASE_URL}/api/requests/${requestId}/rate`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(payload),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(typeof body?.error === 'string' ? body.error : pick('ثبت نظر و امتیاز ناموفق بود.', 'Failed to submit rating.'));
+  }
+  return body;
+}
+
+export async function submitCustomerDispute(
+  requestId: number,
+  payload: { reason: string; description: string; claimAmount?: number; evidenceUrls?: string[] }
+): Promise<{ success: boolean; disputeId: number }> {
+  const token = getCustomerToken();
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  const res = await fetch(`${API_BASE_URL}/api/requests/${requestId}/disputes`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ ...payload, openedBy: 'customer' }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(typeof body?.error === 'string' ? body.error : pick('ثبت شکایت ناموفق بود.', 'Failed to submit dispute.'));
+  }
+  return body;
+}
+
