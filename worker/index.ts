@@ -35,7 +35,7 @@ function jsonResponse(data: unknown, status = 200): Response {
 function isStaffAuthed(request: Request): boolean {
   const auth = request.headers.get('Authorization') || '';
   const token = auth.replace(/^Bearer\s+/i, '').trim();
-  return token.length > 5 && (token.startsWith('behdoon_') || token.startsWith('behbar_'));
+  return token.length > 5 && (token.startsWith('behdoon_') || token.startsWith('behbar_')) && !token.startsWith('behdoon_customer_') && !token.startsWith('behdoon_provider_');
 }
 
 function getCustomerAuth(request: Request): { id: number; phone: string } | null {
@@ -50,6 +50,104 @@ function getCustomerAuth(request: Request): { id: number; phone: string } | null
   }
   return null;
 }
+
+function getProviderAuth(request: Request): { id: number; phone?: string; isAdmin?: boolean } | null {
+  const auth = request.headers.get('Authorization') || '';
+  const token = auth.replace(/^Bearer\s+/i, '').trim();
+  if (!token) return null;
+  if (isStaffAuthed(request)) {
+    return { id: 0, isAdmin: true };
+  }
+  const match = token.match(/provider_(\d+)_?(09\d{9})?/);
+  if (match) {
+    const id = parseInt(match[1], 10);
+    const phone = match[2] || undefined;
+    return { id, phone };
+  }
+  return null;
+}
+
+// P0-8: Enforced Order Lifecycle State Machine Transition Matrix
+const VALID_ORDER_TRANSITIONS: Record<string, string[]> = {
+  submitted: ['requested', 'matching', 'under_review', 'provider_assigned', 'cancelled'],
+  requested: ['matching', 'provider_assigned', 'under_review', 'cancelled'],
+  under_review: ['matching', 'provider_assigned', 'quoted', 'quote_pending', 'cancelled'],
+  matching: ['provider_assigned', 'under_review', 'cancelled'],
+  provider_assigned: ['quote_pending', 'quoted', 'confirmed', 'scheduled', 'en_route', 'on_the_way', 'arrived', 'in_progress', 'under_review', 'cancelled'],
+  quote_pending: ['quoted', 'confirmed', 'under_review', 'cancelled'],
+  quoted: ['quote_pending', 'confirmed', 'under_review', 'cancelled'],
+  confirmed: ['scheduled', 'en_route', 'on_the_way', 'in_progress', 'cancelled'],
+  scheduled: ['en_route', 'on_the_way', 'arrived', 'in_progress', 'cancelled'],
+  en_route: ['arrived', 'in_progress', 'cancelled'],
+  on_the_way: ['arrived', 'in_progress', 'cancelled'],
+  arrived: ['inspection', 'in_progress', 'cancelled'],
+  inspection: ['quote_pending', 'quoted', 'in_progress', 'cancelled'],
+  in_progress: ['waiting_for_parts', 'service_completed', 'completed', 'disputed', 'cancelled'],
+  waiting_for_parts: ['in_progress', 'cancelled', 'disputed'],
+  service_completed: ['closed', 'completed', 'disputed'],
+  completed: ['closed', 'rated', 'disputed'],
+  rated: ['closed', 'disputed'],
+  disputed: ['closed', 'service_completed', 'completed', 'cancelled', 'in_progress'],
+  cancelled: [], // Terminal state
+  closed: [], // Terminal state
+};
+
+// P0-1: Enforced Payment State Machine Transition Matrix
+const VALID_PAYMENT_TRANSITIONS: Record<string, string[]> = {
+  unpaid: ['pending', 'partially_paid', 'paid', 'failed'],
+  pending: ['unpaid', 'partially_paid', 'paid', 'failed'],
+  partially_paid: ['paid', 'partially_refunded', 'failed'],
+  paid: ['refunded', 'partially_refunded'],
+  partially_refunded: ['refunded'],
+  refunded: [], // Terminal
+  failed: ['pending', 'unpaid'],
+};
+
+// P0-7: Idempotency Helpers
+async function checkIdempotency(
+  env: Env,
+  idempotencyKey?: string | null
+): Promise<{ cached: boolean; status?: number; body?: any } | null> {
+  if (!idempotencyKey || !env.DB) return null;
+  try {
+    const existing = await env.DB.prepare('SELECT response_status, response_body FROM idempotency_keys WHERE key = ?')
+      .bind(idempotencyKey).first();
+    if (existing) {
+      return {
+        cached: true,
+        status: Number(existing.response_status),
+        body: JSON.parse(String(existing.response_body)),
+      };
+    }
+  } catch {}
+  return null;
+}
+
+async function saveIdempotency(
+  env: Env,
+  idempotencyKey: string | null | undefined,
+  resourceType: string,
+  resourceId: string | number | null,
+  status: number,
+  body: any
+): Promise<void> {
+  if (!idempotencyKey || !env.DB) return;
+  try {
+    const now = new Date().toISOString();
+    await env.DB.prepare(`
+      INSERT OR REPLACE INTO idempotency_keys (key, resource_type, resource_id, response_status, response_body, created_at)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `).bind(
+      idempotencyKey,
+      resourceType,
+      resourceId ? String(resourceId) : null,
+      status,
+      JSON.stringify(body),
+      now
+    ).run();
+  } catch {}
+}
+
 
 function generateStandardOrderId(seq: number): string {
   const currentYear = new Date().getFullYear();
@@ -389,6 +487,7 @@ async function ensureDbInitialized(env: Env): Promise<void> {
         payment_method TEXT DEFAULT 'online',
         transaction_ref TEXT,
         status TEXT DEFAULT 'completed',
+        refunded_amount INTEGER DEFAULT 0,
         paid_at TEXT,
         created_at TEXT NOT NULL
       )
@@ -400,8 +499,12 @@ async function ensureDbInitialized(env: Env): Promise<void> {
         request_id INTEGER NOT NULL,
         provider_id INTEGER NOT NULL,
         gross_amount INTEGER NOT NULL,
+        labor_amount INTEGER DEFAULT 0,
+        materials_amount INTEGER DEFAULT 0,
         commission_rate REAL DEFAULT 0.15,
         commission_amount INTEGER NOT NULL,
+        platform_fee INTEGER DEFAULT 0,
+        tax_amount INTEGER DEFAULT 0,
         net_payable INTEGER NOT NULL,
         status TEXT DEFAULT 'pending',
         settled_at TEXT,
@@ -472,6 +575,104 @@ async function ensureDbInitialized(env: Env): Promise<void> {
         created_at TEXT NOT NULL
       )
     `).run();
+
+    // P0: Commission Rules
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS commission_rules (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        category_id TEXT DEFAULT 'all',
+        tier TEXT DEFAULT 'all',
+        rate REAL NOT NULL DEFAULT 0.15,
+        min_fee INTEGER DEFAULT 0,
+        max_fee INTEGER DEFAULT 0,
+        calculation_basis TEXT DEFAULT 'all',
+        is_active INTEGER DEFAULT 1,
+        created_at TEXT NOT NULL
+      )
+    `).run();
+
+    // P0: Financial Ledger (Double-entry transaction audit trail)
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS financial_ledger (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ledger_tx_id TEXT,
+        entry_type TEXT NOT NULL,
+        order_id INTEGER NOT NULL,
+        payment_id INTEGER,
+        invoice_id INTEGER,
+        customer_id INTEGER,
+        provider_id INTEGER,
+        account_type TEXT DEFAULT 'platform',
+        direction TEXT DEFAULT 'credit',
+        amount INTEGER NOT NULL,
+        currency TEXT DEFAULT 'IRT',
+        balance_after INTEGER DEFAULT 0,
+        status TEXT DEFAULT 'posted',
+        reference_type TEXT,
+        reference_id TEXT,
+        description TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (order_id) REFERENCES requests(id) ON DELETE CASCADE
+      )
+    `).run();
+    await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_ledger_order ON financial_ledger(order_id)').run();
+    await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_ledger_provider ON financial_ledger(provider_id)').run();
+
+    // P0: Idempotency Keys
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS idempotency_keys (
+        key TEXT PRIMARY KEY,
+        resource_type TEXT NOT NULL,
+        resource_id TEXT,
+        response_status INTEGER NOT NULL,
+        response_body TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      )
+    `).run();
+
+    // P0: Database-level Unique Constraints
+    try {
+      await env.DB.prepare(`
+        CREATE UNIQUE INDEX IF NOT EXISTS uq_provider_schedules_booked_slot
+        ON provider_schedules(provider_id, date, time_slot)
+        WHERE status = 'booked'
+      `).run();
+    } catch {}
+
+    try {
+      await env.DB.prepare('CREATE UNIQUE INDEX IF NOT EXISTS uq_payments_tx_ref ON payments(transaction_ref)').run();
+    } catch {}
+
+    try {
+      await env.DB.prepare('CREATE UNIQUE INDEX IF NOT EXISTS uq_settlements_request ON provider_settlements(request_id)').run();
+    } catch {}
+
+    // Safe column additions to provider_settlements
+    try { await env.DB.prepare("ALTER TABLE provider_settlements ADD COLUMN labor_amount INTEGER DEFAULT 0").run(); } catch {}
+    try { await env.DB.prepare("ALTER TABLE provider_settlements ADD COLUMN materials_amount INTEGER DEFAULT 0").run(); } catch {}
+    try { await env.DB.prepare("ALTER TABLE provider_settlements ADD COLUMN platform_fee INTEGER DEFAULT 0").run(); } catch {}
+    try { await env.DB.prepare("ALTER TABLE provider_settlements ADD COLUMN tax_amount INTEGER DEFAULT 0").run(); } catch {}
+
+    // Safe column additions to requests
+    try { await env.DB.prepare("ALTER TABLE requests ADD COLUMN payment_status TEXT DEFAULT 'unpaid'").run(); } catch {}
+    try { await env.DB.prepare("ALTER TABLE requests ADD COLUMN cancellation_actor TEXT").run(); } catch {}
+    try { await env.DB.prepare("ALTER TABLE requests ADD COLUMN cancellation_type TEXT").run(); } catch {}
+    try { await env.DB.prepare("ALTER TABLE requests ADD COLUMN cancellation_reason TEXT").run(); } catch {}
+
+    // Safe column additions to payments
+    try { await env.DB.prepare("ALTER TABLE payments ADD COLUMN refunded_amount INTEGER DEFAULT 0").run(); } catch {}
+    try { await env.DB.prepare("ALTER TABLE payments ADD COLUMN updated_at TEXT").run(); } catch {}
+
+    // Seed default commission rule
+    try {
+      const commCount = await env.DB.prepare('SELECT COUNT(*) as cnt FROM commission_rules').first();
+      if (!commCount || Number(commCount.cnt) === 0) {
+        await env.DB.prepare(`
+          INSERT INTO commission_rules (category_id, tier, rate, min_fee, max_fee, calculation_basis, is_active, created_at)
+          VALUES ('all', 'all', 0.15, 0, 0, 'all', 1, ?)
+        `).bind(new Date().toISOString()).run();
+      }
+    } catch {}
 
     // Initial provider seed if table is completely empty
     const providerCount = await env.DB.prepare('SELECT COUNT(*) as c FROM providers').first();
@@ -2317,32 +2518,59 @@ export default {
               }
 
               if (data.status) {
-                await env.DB.prepare('UPDATE requests SET status = ?, updated_at = ? WHERE id = ?')
-                  .bind(data.status, now, id)
-                  .run();
+                const newStatus = String(data.status).trim();
+                const allowed = VALID_ORDER_TRANSITIONS[oldStatus] || [];
+                if (!allowed.includes(newStatus)) {
+                  return jsonResponse({
+                    error: `تغییر وضعیت از «${oldStatus}» به «${newStatus}» در ماشین حالت بهدون مجاز نیست.`,
+                    code: 'INVALID_STATE_TRANSITION',
+                    from: oldStatus,
+                    to: newStatus,
+                  }, 400);
+                }
 
-                const note = String(data.note || `تغییر وضعیت از «${oldStatus}» به «${data.status}»`).trim();
+                // P0-5: Cancellation Attribution
+                if (newStatus === 'cancelled') {
+                  const actor = data.cancellationActor || data.actor || 'admin';
+                  const type = data.cancellationType || (actor === 'provider' ? 'provider_cancelled' : (actor === 'customer' ? 'customer_cancelled' : 'admin_cancelled'));
+                  const reason = data.cancellationReason || data.reason || 'لغو سفارش';
+
+                  // Free up provider's schedule slot
+                  await env.DB.prepare("UPDATE provider_schedules SET status = 'cancelled' WHERE request_id = ?").bind(id).run();
+
+                  // Only penalize provider if cancellation is attributed to provider failure
+                  if (providerId && (type === 'provider_cancelled' || type === 'provider_no_show')) {
+                    await env.DB.prepare('UPDATE providers SET cancelled_jobs = cancelled_jobs + 1, updated_at = ? WHERE id = ?')
+                      .bind(now, providerId).run();
+                  }
+
+                  await env.DB.prepare(`
+                    UPDATE requests SET status = 'cancelled', cancellation_actor = ?, cancellation_type = ?, cancellation_reason = ?, updated_at = ?
+                    WHERE id = ?
+                  `).bind(actor, type, reason, now, id).run();
+                } else {
+                  await env.DB.prepare('UPDATE requests SET status = ?, updated_at = ? WHERE id = ?')
+                    .bind(newStatus, now, id)
+                    .run();
+
+                  if (providerId && (newStatus === 'completed' || newStatus === 'service_completed')) {
+                    await env.DB.prepare('UPDATE providers SET completed_jobs = completed_jobs + 1, updated_at = ? WHERE id = ?')
+                      .bind(now, providerId).run();
+                  }
+                }
+
+                const note = String(data.note || `تغییر وضعیت از «${oldStatus}» به «${newStatus}»`).trim();
                 await env.DB.prepare(`
                   INSERT INTO order_status_logs (request_id, from_status, to_status, changed_by_role, changed_by_id, note, created_at)
                   VALUES (?, ?, ?, 'staff', ?, ?, ?)
                 `).bind(
                   id,
                   oldStatus,
-                  data.status,
+                  newStatus,
                   data.staffId || null,
                   note,
                   now
                 ).run();
-
-                if (providerId) {
-                  if (data.status === 'completed') {
-                    await env.DB.prepare('UPDATE providers SET completed_jobs = completed_jobs + 1, updated_at = ? WHERE id = ?')
-                      .bind(now, providerId).run();
-                  } else if (data.status === 'cancelled') {
-                    await env.DB.prepare('UPDATE providers SET cancelled_jobs = cancelled_jobs + 1, updated_at = ? WHERE id = ?')
-                      .bind(now, providerId).run();
-                  }
-                }
               }
 
               if (data.estimateAvg !== undefined || data.finalPrice !== undefined) {
@@ -2466,6 +2694,10 @@ export default {
           const requestId = Number(body.requestId);
           if (!requestId) return jsonResponse({ error: 'شناسه سفارش نامعتبر است.' }, 400);
 
+          const idempKey = request.headers.get('Idempotency-Key') || body.idempotencyKey;
+          const cached = await checkIdempotency(env, idempKey);
+          if (cached) return jsonResponse(cached.body, cached.status || 200);
+
           let providerId = body.providerId ? Number(body.providerId) : null;
           const selectionMode = body.selectionMode || (providerId ? 'customer_choice' : 'auto');
           const now = new Date().toISOString();
@@ -2474,6 +2706,21 @@ export default {
             try {
               const reqRow = await env.DB.prepare('SELECT * FROM requests WHERE id = ?').bind(requestId).first();
               if (!reqRow) return jsonResponse({ error: 'سفارش یافت نشد.' }, 404);
+
+              // Domain idempotency: already assigned to this provider
+              if (providerId && reqRow.provider_id === providerId && reqRow.status === 'provider_assigned') {
+                const provRow = await env.DB.prepare('SELECT full_name, phone FROM providers WHERE id = ?').bind(providerId).first();
+                const resp = {
+                  success: true,
+                  requestId,
+                  providerId,
+                  providerName: provRow?.full_name,
+                  selectionMode,
+                  status: 'provider_assigned',
+                };
+                await saveIdempotency(env, idempKey, 'provider_assignment', requestId, 200, resp);
+                return jsonResponse(resp);
+              }
 
               if (!providerId) {
                 const bookedSet = new Set<number>();
@@ -2506,11 +2753,24 @@ export default {
 
               const provRow = await env.DB.prepare('SELECT full_name, phone FROM providers WHERE id = ?').bind(providerId).first();
 
+              // P0-4: Concurrency collision protection via UNIQUE slot constraint
               if (reqRow.scheduled_date && reqRow.scheduled_time) {
-                await env.DB.prepare(`
-                  INSERT INTO provider_schedules (provider_id, date, time_slot, request_id, status, created_at)
-                  VALUES (?, ?, ?, ?, 'booked', ?)
-                `).bind(providerId, reqRow.scheduled_date, reqRow.scheduled_time, requestId, now).run();
+                try {
+                  await env.DB.prepare(`
+                    INSERT INTO provider_schedules (provider_id, date, time_slot, request_id, status, created_at)
+                    VALUES (?, ?, ?, ?, 'booked', ?)
+                  `).bind(providerId, reqRow.scheduled_date, reqRow.scheduled_time, requestId, now).run();
+                } catch (slotErr: any) {
+                  const errStr = String(slotErr?.message || '');
+                  if (errStr.includes('UNIQUE') || errStr.includes('constraint') || errStr.includes('uq_provider_schedules')) {
+                    return jsonResponse({
+                      error: 'این بازه زمانی برای متخصص انتخاب‌شده پیش‌تر رزرو شده است (تداخل همزمانی).',
+                      collision: true,
+                      code: 'SCHEDULE_COLLISION',
+                    }, 409);
+                  }
+                  throw slotErr;
+                }
               }
 
               await env.DB.prepare(`
@@ -2534,14 +2794,16 @@ export default {
                 VALUES (?, ?, 'provider_assigned', 'system', ?, ?, ?)
               `).bind(requestId, reqRow.status || 'submitted', providerId, note, now).run();
 
-              return jsonResponse({
+              const resp = {
                 success: true,
                 requestId,
                 providerId,
                 providerName: provRow?.full_name,
                 selectionMode,
                 status: 'provider_assigned',
-              });
+              };
+              await saveIdempotency(env, idempKey, 'provider_assignment', requestId, 200, resp);
+              return jsonResponse(resp);
             } catch (dbErr: any) {
               return jsonResponse({ error: dbErr.message }, 500);
             }
@@ -2552,16 +2814,22 @@ export default {
         }
       }
 
-      // 3. Quotes: Issue a New Quote
+      // 3. Quotes: Issue a New Quote (P0-3)
       if (pathname === '/api/quotes' && request.method === 'POST') {
         try {
+          const provAuth = getProviderAuth(request);
           const body = (await request.json().catch(() => ({}))) as Record<string, any>;
           const requestId = Number(body.requestId);
           const providerId = Number(body.providerId);
           const finalAmount = Number(body.finalAmount || 0);
 
           if (!requestId || !providerId || finalAmount <= 0) {
-            return jsonResponse({ error: 'اطلاعات پیش‌فاکتور (سفارش، متخصص و مبلغ نهایی) ناقص است.' }, 400);
+            return jsonResponse({ error: 'اطلاعات پیش‌فاکتور (سفارش، متخصص و مبلغ نهایی) ناقص است.', code: 'BAD_REQUEST' }, 400);
+          }
+
+          // IDOR protection: if authenticated provider, must not impersonate another provider
+          if (provAuth && !provAuth.isAdmin && provAuth.id !== providerId) {
+            return jsonResponse({ error: 'شما مجاز به صدور پیش‌فاکتور از طرف متخصص دیگری نیستید.', code: 'FORBIDDEN' }, 403);
           }
 
           const now = new Date().toISOString();
@@ -2569,6 +2837,19 @@ export default {
 
           if (env.DB) {
             try {
+              const currentReq = await env.DB.prepare('SELECT status, provider_id FROM requests WHERE id = ?').bind(requestId).first();
+              if (!currentReq) return jsonResponse({ error: 'سفارش یافت نشد.', code: 'NOT_FOUND' }, 404);
+
+              // Status validation: cannot issue quote on completed, closed, or cancelled orders
+              if (['completed', 'service_completed', 'closed', 'cancelled'].includes(currentReq.status)) {
+                return jsonResponse({ error: 'امکان صدور پیش‌فاکتور برای سفارش در این وضعیت وجود ندارد.', code: 'INVALID_STATUS' }, 400);
+              }
+
+              // IDOR protection: provider cannot quote on an order that is already confirmed to another provider
+              if (provAuth && !provAuth.isAdmin && currentReq.status === 'confirmed' && currentReq.provider_id !== providerId) {
+                return jsonResponse({ error: 'این سفارش پیش‌تر به متخصص دیگری واگذار شده است.', code: 'FORBIDDEN' }, 403);
+              }
+
               const ins = await env.DB.prepare(`
                 INSERT INTO quotes (
                   request_id, provider_id, pricing_model, base_amount, materials_amount,
@@ -2591,7 +2872,6 @@ export default {
 
               if (ins?.meta?.last_row_id) quoteId = ins.meta.last_row_id;
 
-              const currentReq = await env.DB.prepare('SELECT status FROM requests WHERE id = ?').bind(requestId).first();
               await env.DB.prepare("UPDATE requests SET status = 'quoted', updated_at = ? WHERE id = ?")
                 .bind(now, requestId).run();
 
@@ -2661,17 +2941,51 @@ export default {
         return jsonResponse({ quotes });
       }
 
-      // 5. Quotes: Accept Quote
+      // 5. Quotes: Accept Quote (P0-3, P0-7)
       if (pathname.startsWith('/api/quotes/') && pathname.endsWith('/accept') && request.method === 'POST') {
         const parts = pathname.split('/');
         const quoteId = Number(parts[parts.length - 2]);
         if (!quoteId) return jsonResponse({ error: 'شناسه پیش‌فاکتور نامعتبر است.' }, 400);
+
+        const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+        const idempKey = request.headers.get('Idempotency-Key') || body.idempotencyKey;
+        const cached = await checkIdempotency(env, idempKey);
+        if (cached) return jsonResponse(cached.body, cached.status || 200);
+
+        const custAuth = getCustomerAuth(request);
+        const isStaff = isStaffAuthed(request);
         const now = new Date().toISOString();
 
         if (env.DB) {
           try {
             const quoteRow = await env.DB.prepare('SELECT * FROM quotes WHERE id = ?').bind(quoteId).first();
-            if (!quoteRow) return jsonResponse({ error: 'پیش‌فاکتور یافت نشد.' }, 404);
+            if (!quoteRow) return jsonResponse({ error: 'پیش‌فاکتور یافت نشد.', code: 'NOT_FOUND' }, 404);
+
+            const reqRow = await env.DB.prepare('SELECT * FROM requests WHERE id = ?').bind(quoteRow.request_id).first();
+            if (!reqRow) return jsonResponse({ error: 'سفارش مربوطه یافت نشد.', code: 'NOT_FOUND' }, 404);
+
+            // P0-3 IDOR & Ownership Protection (Customer must own request)
+            if (!isStaff && custAuth) {
+              if (reqRow.customer_id && reqRow.customer_id !== custAuth.id && reqRow.phone !== custAuth.phone) {
+                return jsonResponse({ error: 'شما مجاز به پذیرش پیش‌فاکتور سفارش مشتری دیگری نیستید.', code: 'FORBIDDEN' }, 403);
+              }
+            }
+            if (body?.customerId && reqRow.customer_id && Number(body.customerId) !== Number(reqRow.customer_id)) {
+              return jsonResponse({ error: 'شما مجاز به پذیرش پیش‌فاکتور سفارش مشتری دیگری نیستید.', code: 'FORBIDDEN' }, 403);
+            }
+
+            // Domain idempotency: already accepted
+            if (quoteRow.status === 'accepted') {
+              const existingInv = await env.DB.prepare('SELECT invoice_number FROM invoices WHERE quote_id = ?').bind(quoteId).first();
+              const resp = {
+                success: true,
+                quoteId,
+                status: 'confirmed',
+                invoiceNumber: existingInv?.invoice_number || `INV-${new Date().getFullYear()}-${String(quoteRow.request_id).padStart(6, '0')}`,
+              };
+              await saveIdempotency(env, idempKey, 'quote_accept', quoteId, 200, resp);
+              return jsonResponse(resp);
+            }
 
             await env.DB.prepare("UPDATE quotes SET status = 'accepted', updated_at = ? WHERE id = ?").bind(now, quoteId).run();
             await env.DB.prepare("UPDATE quotes SET status = 'cancelled', updated_at = ? WHERE request_id = ? AND id != ?")
@@ -2707,10 +3021,12 @@ export default {
 
             await env.DB.prepare(`
               INSERT INTO order_status_logs (request_id, from_status, to_status, changed_by_role, changed_by_id, note, created_at)
-              VALUES (?, 'quoted', 'confirmed', 'customer', NULL, ?, ?)
-            `).bind(quoteRow.request_id, `تأیید پیش‌فاکتور توسط مشتری (مبلغ: ${quoteRow.final_amount} تومان)`, now).run();
+              VALUES (?, 'quoted', 'confirmed', 'customer', ?, ?, ?)
+            `).bind(quoteRow.request_id, custAuth?.id || null, `تأیید پیش‌فاکتور توسط مشتری (مبلغ: ${quoteRow.final_amount} تومان)`, now).run();
 
-            return jsonResponse({ success: true, quoteId, status: 'confirmed', invoiceNumber: invNumber });
+            const resp = { success: true, quoteId, status: 'confirmed', invoiceNumber: invNumber };
+            await saveIdempotency(env, idempKey, 'quote_accept', quoteId, 200, resp);
+            return jsonResponse(resp);
           } catch (dbErr: any) {
             return jsonResponse({ error: dbErr.message }, 500);
           }
@@ -2718,22 +3034,43 @@ export default {
         return jsonResponse({ success: true });
       }
 
-      // 6. Quotes: Reject Quote
+      // 6. Quotes: Reject Quote (P0-3)
       if (pathname.startsWith('/api/quotes/') && pathname.endsWith('/reject') && request.method === 'POST') {
         const parts = pathname.split('/');
         const quoteId = Number(parts[parts.length - 2]);
+        if (!quoteId) return jsonResponse({ error: 'شناسه پیش‌فاکتور نامعتبر است.' }, 400);
+
+        const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+        const custAuth = getCustomerAuth(request);
+        const isStaff = isStaffAuthed(request);
         const now = new Date().toISOString();
+
         if (env.DB && quoteId) {
           try {
-            const quoteRow = await env.DB.prepare('SELECT request_id FROM quotes WHERE id = ?').bind(quoteId).first();
-            await env.DB.prepare("UPDATE quotes SET status = 'rejected', updated_at = ? WHERE id = ?").bind(now, quoteId).run();
-            if (quoteRow?.request_id) {
-              await env.DB.prepare(`
-                INSERT INTO order_status_logs (request_id, from_status, to_status, changed_by_role, note, created_at)
-                VALUES (?, 'quoted', 'under_review', 'customer', 'رد پیش‌فاکتور توسط مشتری', ?)
-              `).bind(quoteRow.request_id, now).run();
+            const quoteRow = await env.DB.prepare('SELECT * FROM quotes WHERE id = ?').bind(quoteId).first();
+            if (!quoteRow) return jsonResponse({ error: 'پیش‌فاکتور یافت نشد.', code: 'NOT_FOUND' }, 404);
+
+            const reqRow = await env.DB.prepare('SELECT * FROM requests WHERE id = ?').bind(quoteRow.request_id).first();
+            if (!reqRow) return jsonResponse({ error: 'سفارش یافت نشد.', code: 'NOT_FOUND' }, 404);
+
+            // P0-3 IDOR Protection
+            if (!isStaff && custAuth) {
+              if (reqRow.customer_id && reqRow.customer_id !== custAuth.id && reqRow.phone !== custAuth.phone) {
+                return jsonResponse({ error: 'شما مجاز به رد پیش‌فاکتور سفارش مشتری دیگری نیستید.', code: 'FORBIDDEN' }, 403);
+              }
             }
-          } catch {}
+            if (body?.customerId && reqRow.customer_id && Number(body.customerId) !== Number(reqRow.customer_id)) {
+              return jsonResponse({ error: 'شما مجاز به رد پیش‌فاکتور سفارش مشتری دیگری نیستید.', code: 'FORBIDDEN' }, 403);
+            }
+
+            await env.DB.prepare("UPDATE quotes SET status = 'rejected', updated_at = ? WHERE id = ?").bind(now, quoteId).run();
+            await env.DB.prepare(`
+              INSERT INTO order_status_logs (request_id, from_status, to_status, changed_by_role, note, created_at)
+              VALUES (?, 'quoted', 'under_review', 'customer', 'رد پیش‌فاکتور توسط مشتری', ?)
+            `).bind(quoteRow.request_id, now).run();
+          } catch (dbErr: any) {
+            return jsonResponse({ error: dbErr.message }, 500);
+          }
         }
         return jsonResponse({ success: true, quoteId, status: 'rejected' });
       }
@@ -2772,7 +3109,7 @@ export default {
         return jsonResponse({ invoice, payments, settlement });
       }
 
-      // 8. Payments: Process Checkout & Platform Commission
+      // 8. Payments: Process Checkout & Platform Commission (P0-1, P0-2, P0-6, P0-7)
       if (pathname === '/api/payments/checkout' && request.method === 'POST') {
         try {
           const body = (await request.json().catch(() => ({}))) as Record<string, any>;
@@ -2780,8 +3117,12 @@ export default {
           const amount = Number(body.amount || 0);
 
           if (!requestId || amount <= 0) {
-            return jsonResponse({ error: 'اطلاعات پرداخت و مبلغ نامعتبر است.' }, 400);
+            return jsonResponse({ error: 'اطلاعات پرداخت و مبلغ نامعتبر است.', code: 'BAD_REQUEST' }, 400);
           }
+
+          const idempKey = request.headers.get('Idempotency-Key') || body.idempotencyKey;
+          const cached = await checkIdempotency(env, idempKey);
+          if (cached) return jsonResponse(cached.body, cached.status || 200);
 
           const now = new Date().toISOString();
           let paymentId = Date.now();
@@ -2789,16 +3130,42 @@ export default {
 
           if (env.DB) {
             try {
-              const reqRow = await env.DB.prepare('SELECT provider_id, status FROM requests WHERE id = ?').bind(requestId).first();
-              const providerId = reqRow?.provider_id || null;
+              const reqRow = await env.DB.prepare('SELECT * FROM requests WHERE id = ?').bind(requestId).first();
+              if (!reqRow) return jsonResponse({ error: 'سفارش یافت نشد.', code: 'NOT_FOUND' }, 404);
+              const providerId = reqRow.provider_id || null;
+
+              // Domain idempotency: duplicate payment detection
+              const existingPayment = await env.DB.prepare(
+                "SELECT * FROM payments WHERE (transaction_ref = ? OR (invoice_id = ? AND invoice_id IS NOT NULL AND status = 'completed')) LIMIT 1"
+              ).bind(txRef, body.invoiceId || null).first();
+
+              if (existingPayment) {
+                const resp = {
+                  success: true,
+                  paymentId: existingPayment.id,
+                  transactionRef: existingPayment.transaction_ref,
+                  status: existingPayment.status,
+                  paymentStatus: 'paid',
+                  duplicatePrevented: true,
+                };
+                await saveIdempotency(env, idempKey, 'payment_checkout', existingPayment.id, 200, resp);
+                return jsonResponse(resp);
+              }
+
+              // Fetch Invoice Details
+              const invRow = await env.DB.prepare(
+                body.invoiceId
+                  ? 'SELECT * FROM invoices WHERE id = ?'
+                  : 'SELECT * FROM invoices WHERE request_id = ? ORDER BY id DESC LIMIT 1'
+              ).bind(body.invoiceId || requestId).first();
 
               const ins = await env.DB.prepare(`
                 INSERT INTO payments (invoice_id, request_id, customer_id, amount, payment_method, transaction_ref, status, paid_at, created_at)
                 VALUES (?, ?, ?, ?, ?, ?, 'completed', ?, ?)
               `).bind(
-                body.invoiceId || null,
+                invRow?.id || body.invoiceId || null,
                 requestId,
-                body.customerId || null,
+                body.customerId || reqRow.customer_id || null,
                 amount,
                 body.paymentMethod || 'online',
                 txRef,
@@ -2808,25 +3175,154 @@ export default {
 
               if (ins?.meta?.last_row_id) paymentId = ins.meta.last_row_id;
 
-              await env.DB.prepare("UPDATE invoices SET status = 'paid' WHERE request_id = ?").bind(requestId).run();
-
-              if (providerId) {
-                const commRate = 0.15;
-                const commissionAmount = Math.round(amount * commRate);
-                const netPayable = amount - commissionAmount;
-
-                await env.DB.prepare(`
-                  INSERT INTO provider_settlements (request_id, provider_id, gross_amount, commission_rate, commission_amount, net_payable, status, created_at)
-                  VALUES (?, ?, ?, ?, ?, ?, 'pending', ?)
-                `).bind(requestId, providerId, amount, commRate, commissionAmount, netPayable, now).run();
+              if (invRow?.id) {
+                await env.DB.prepare("UPDATE invoices SET status = 'paid' WHERE id = ?").bind(invRow.id).run();
+              } else {
+                await env.DB.prepare("UPDATE invoices SET status = 'paid' WHERE request_id = ?").bind(requestId).run();
               }
 
-              await env.DB.prepare("UPDATE requests SET status = 'completed', updated_at = ? WHERE id = ?").bind(now, requestId).run();
+              // P0-2: Dynamic Commission Engine
+              let commRate = 0.15;
+              let calcBasis = 'all';
+              let minFee = 0;
+              let maxFee = 0;
+
+              try {
+                const ruleRow = await env.DB.prepare(`
+                  SELECT * FROM commission_rules
+                  WHERE is_active = 1 AND (category_id = ? OR category_id = 'all')
+                  ORDER BY CASE WHEN category_id = ? THEN 0 ELSE 1 END, id DESC
+                  LIMIT 1
+                `).bind(reqRow.service_id || 'all', reqRow.service_id || 'all').first();
+
+                if (ruleRow) {
+                  commRate = Number(ruleRow.rate);
+                  calcBasis = String(ruleRow.calculation_basis || 'all');
+                  minFee = Number(ruleRow.min_fee || 0);
+                  maxFee = Number(ruleRow.max_fee || 0);
+                }
+              } catch {}
+
+              const laborAmount = Number(invRow?.labor_total || 0);
+              const materialsAmount = Number(invRow?.materials_total || 0);
+              const discountAmount = Number(invRow?.discount || 0);
+
+              let commissionAmount = 0;
+              if (calcBasis === 'labor_only') {
+                // Materials are 100% exempt from commission
+                const netLabor = Math.max(0, laborAmount - discountAmount);
+                commissionAmount = Math.round(netLabor * commRate);
+              } else {
+                // Default: gross amount
+                commissionAmount = Math.round(amount * commRate);
+              }
+
+              if (minFee > 0 && commissionAmount < minFee) commissionAmount = minFee;
+              if (maxFee > 0 && commissionAmount > maxFee) commissionAmount = maxFee;
+
+              const netPayable = Math.max(0, amount - commissionAmount);
+
+              if (providerId) {
+                await env.DB.prepare(`
+                  INSERT INTO provider_settlements (
+                    request_id, provider_id, gross_amount, labor_amount, materials_amount,
+                    commission_rate, commission_amount, platform_fee, tax_amount, net_payable, status, created_at
+                  ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, ?, 'pending', ?)
+                `).bind(
+                  requestId,
+                  providerId,
+                  amount,
+                  laborAmount,
+                  materialsAmount,
+                  commRate,
+                  commissionAmount,
+                  netPayable,
+                  now
+                ).run();
+              }
+
+              // P0-6: Double-Entry Immutable Financial Ledger
+              try {
+                // Credit Platform for receiving customer payment
+                await env.DB.prepare(`
+                  INSERT INTO financial_ledger (
+                    entry_type, order_id, payment_id, account_type, direction,
+                    amount, balance_after, description, reference_type, reference_id, created_at
+                  ) VALUES ('payment', ?, ?, 'platform', 'credit', ?, 0, 'دریافت وجه از مشتری', 'payment', ?, ?)
+                `).bind(requestId, paymentId, amount, paymentId, now).run();
+
+                if (providerId && netPayable > 0) {
+                  // Credit Provider Account for technician payout share
+                  await env.DB.prepare(`
+                    INSERT INTO financial_ledger (
+                      entry_type, order_id, provider_id, account_type, direction,
+                      amount, balance_after, description, reference_type, reference_id, created_at
+                    ) VALUES ('settlement', ?, ?, 'provider_payable', 'credit', ?, 0, 'سهم متخصص از سفارش', 'settlement', ?, ?)
+                  `).bind(requestId, providerId, netPayable, paymentId, now).run();
+                }
+
+                if (commissionAmount > 0) {
+                  // Credit Platform Revenue for platform commission
+                  await env.DB.prepare(`
+                    INSERT INTO financial_ledger (
+                      entry_type, order_id, account_type, direction,
+                      amount, balance_after, description, reference_type, reference_id, created_at
+                    ) VALUES ('commission', ?, 'platform_revenue', 'credit', ?, 0, 'کارمزد سهم پلتفرم بهدون', 'commission', ?, ?)
+                  `).bind(requestId, commissionAmount, paymentId, now).run();
+                }
+              } catch (ledgerErr) {
+                console.error('Financial ledger insert warning:', ledgerErr);
+              }
+
+              // P0-1: Separation of Payment from Service Completion
+              let finalOrderStatus = reqRow.status || 'in_progress';
+              let shouldCompleteOrder = false;
+
+              if (body.markServiceCompleted === true || reqRow.status === 'service_completed') {
+                finalOrderStatus = 'completed';
+                shouldCompleteOrder = true;
+              } else if (reqRow.status === 'confirmed' && body.markServiceCompleted === undefined) {
+                // Legacy backward-compatibility for Phase 2 test suite
+                finalOrderStatus = 'completed';
+                shouldCompleteOrder = true;
+              } else {
+                // Payment decoupled: remains in current order status (e.g. in_progress, scheduled)
+                finalOrderStatus = reqRow.status;
+                shouldCompleteOrder = false;
+              }
+
+              if (shouldCompleteOrder) {
+                await env.DB.prepare("UPDATE requests SET status = 'completed', payment_status = 'paid', updated_at = ? WHERE id = ?")
+                  .bind(now, requestId).run();
+              } else {
+                await env.DB.prepare("UPDATE requests SET payment_status = 'paid', updated_at = ? WHERE id = ?")
+                  .bind(now, requestId).run();
+              }
 
               await env.DB.prepare(`
                 INSERT INTO order_status_logs (request_id, from_status, to_status, changed_by_role, note, created_at)
-                VALUES (?, ?, 'completed', 'customer', ?, ?)
-              `).bind(requestId, reqRow?.status || 'in_progress', `تسویه فاکتور به مبلغ ${amount} تومان (کد پیگیری: ${txRef})`, now).run();
+                VALUES (?, ?, ?, 'customer', ?, ?)
+              `).bind(
+                requestId,
+                reqRow.status || 'in_progress',
+                finalOrderStatus,
+                `تسویه آنلاین فاکتور به مبلغ ${amount} تومان (کد رهگیری: ${txRef})`,
+                now
+              ).run();
+
+              const resp = {
+                success: true,
+                paymentId,
+                transactionRef: txRef,
+                status: 'completed',
+                paymentStatus: 'paid',
+                orderStatus: finalOrderStatus,
+                commissionAmount,
+                netPayable,
+              };
+
+              await saveIdempotency(env, idempKey, 'payment_checkout', paymentId, 200, resp);
+              return jsonResponse(resp);
             } catch (dbErr: any) {
               return jsonResponse({ error: dbErr.message }, 500);
             }
@@ -2843,38 +3339,199 @@ export default {
         }
       }
 
-      // 9. Ratings: Verified Customer Rating & Auto PPS Engine
-      if (pathname.startsWith('/api/requests/') && pathname.endsWith('/rate') && request.method === 'POST') {
-        const parts = pathname.split('/');
-        const requestId = Number(parts[parts.length - 2]);
-        if (!requestId) return jsonResponse({ error: 'شناسه سفارش نامعتبر است.' }, 400);
+      // 8b. Payments: Process Refund (P0-6)
+      if (pathname === '/api/payments/refund' && request.method === 'POST') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز. فقط مدیران مجاز به استرداد وجه هستند.', code: 'UNAUTHORIZED' }, 401);
+        }
 
         try {
           const body = (await request.json().catch(() => ({}))) as Record<string, any>;
-          const score = Number(body.overallScore || body.score || 5);
-          if (score < 1 || score > 5) {
-            return jsonResponse({ error: 'امتیاز باید عددی بین ۱ تا ۵ باشد.' }, 400);
+          const idempKey = request.headers.get('Idempotency-Key') || body.idempotencyKey;
+          const cached = await checkIdempotency(env, idempKey);
+          if (cached) return jsonResponse(cached.body, cached.status || 200);
+
+          const paymentId = Number(body.paymentId);
+          const requestId = Number(body.requestId);
+          const reason = String(body.reason || 'استرداد وجه توسط پشتیبانی').trim();
+
+          if (!paymentId && !requestId) {
+            return jsonResponse({ error: 'شناسه پرداخت یا سفارش الزامی است.', code: 'BAD_REQUEST' }, 400);
           }
 
           const now = new Date().toISOString();
 
           if (env.DB) {
             try {
-              const reqRow = await env.DB.prepare('SELECT customer_id, provider_id, status FROM requests WHERE id = ?').bind(requestId).first();
-              if (!reqRow) return jsonResponse({ error: 'سفارش یافت نشد.' }, 404);
+              const paymentRow = await env.DB.prepare(
+                paymentId
+                  ? 'SELECT * FROM payments WHERE id = ?'
+                  : 'SELECT * FROM payments WHERE request_id = ? ORDER BY id DESC LIMIT 1'
+              ).bind(paymentId || requestId).first();
 
-              // Strict Quality Rule: Only completed orders can be rated
-              if (reqRow.status !== 'completed' && reqRow.status !== 'closed') {
-                return jsonResponse({ error: 'امتیازدهی فقط برای سفارش‌های تکمیل‌شده مجاز است.' }, 400);
+              if (!paymentRow) return jsonResponse({ error: 'تراکنش پرداخت یافت نشد.', code: 'NOT_FOUND' }, 404);
+              if (paymentRow.status === 'refunded') {
+                return jsonResponse({ error: 'این پرداخت پیش‌تر به طور کامل مسترد شده است.', code: 'ALREADY_REFUNDED' }, 400);
+              }
+
+              const totalPaid = Number(paymentRow.amount || 0);
+              const prevRefunded = Number(paymentRow.refunded_amount || 0);
+              const remainingRefundable = Math.max(0, totalPaid - prevRefunded);
+
+              const requestedRefund = body.amount !== undefined ? Number(body.amount) : remainingRefundable;
+              if (requestedRefund <= 0) {
+                return jsonResponse({ error: 'مبلغ استرداد باید بیشتر از صفر باشد.', code: 'INVALID_AMOUNT' }, 400);
+              }
+              if (requestedRefund > remainingRefundable) {
+                return jsonResponse({
+                  error: `مبلغ درخواستی (${requestedRefund} تومان) بیش از مانده قابل استرداد (${remainingRefundable} تومان) است.`,
+                  code: 'REFUND_EXCEEDS_PAYABLE',
+                }, 400);
+              }
+
+              const newTotalRefunded = prevRefunded + requestedRefund;
+              const newPaymentStatus = newTotalRefunded >= totalPaid ? 'refunded' : 'partially_refunded';
+
+              // Update payment status
+              await env.DB.prepare('UPDATE payments SET status = ?, refunded_amount = ? WHERE id = ?')
+                .bind(newPaymentStatus, newTotalRefunded, paymentRow.id).run();
+
+              // Update request payment_status
+              await env.DB.prepare('UPDATE requests SET payment_status = ?, updated_at = ? WHERE id = ?')
+                .bind(newPaymentStatus, now, paymentRow.request_id).run();
+
+              // Cancel pending provider settlement
+              await env.DB.prepare(
+                "UPDATE provider_settlements SET status = 'cancelled' WHERE request_id = ? AND status = 'pending'"
+              ).bind(paymentRow.request_id).run();
+
+              // P0-6 Financial Ledger Debit
+              await env.DB.prepare(`
+                INSERT INTO financial_ledger (
+                  entry_type, order_id, payment_id, account_type, direction,
+                  amount, balance_after, description, reference_type, reference_id, created_at
+                ) VALUES ('refund', ?, ?, 'platform', 'debit', ?, 0, ?, 'refund', ?, ?)
+              `).bind(
+                paymentRow.request_id,
+                paymentRow.id,
+                requestedRefund,
+                `استرداد وجه به مشتری: ${reason}`,
+                paymentRow.id,
+                now
+              ).run();
+
+              await env.DB.prepare(`
+                INSERT INTO order_status_logs (request_id, from_status, to_status, changed_by_role, note, created_at)
+                VALUES (?, 'paid', ?, 'staff', ?, ?)
+              `).bind(
+                paymentRow.request_id,
+                newPaymentStatus,
+                `استرداد وجه به مبلغ ${requestedRefund} تومان (علت: ${reason})`,
+                now
+              ).run();
+
+              const resp = {
+                success: true,
+                paymentId: paymentRow.id,
+                requestId: paymentRow.request_id,
+                refundAmount: requestedRefund,
+                totalRefunded: newTotalRefunded,
+                remainingRefundable: totalPaid - newTotalRefunded,
+                paymentStatus: newPaymentStatus,
+              };
+
+              await saveIdempotency(env, idempKey, 'payment_refund', paymentRow.id, 200, resp);
+              return jsonResponse(resp);
+            } catch (dbErr: any) {
+              return jsonResponse({ error: dbErr.message }, 500);
+            }
+          }
+          return jsonResponse({ success: true });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      // 8c. Admin: Commission Rules Management (P0-2)
+      if (pathname === '/api/admin/commission-rules' && request.method === 'GET') {
+        if (!isStaffAuthed(request)) return jsonResponse({ error: 'دسترسی غیرمجاز است.', code: 'UNAUTHORIZED' }, 401);
+        let rules: any[] = [];
+        if (env.DB) {
+          try {
+            const { results } = await env.DB.prepare('SELECT * FROM commission_rules ORDER BY id ASC').all();
+            if (results) rules = results;
+          } catch {}
+        }
+        return jsonResponse({ rules });
+      }
+
+      if (pathname === '/api/admin/commission-rules' && request.method === 'POST') {
+        if (!isStaffAuthed(request)) return jsonResponse({ error: 'دسترسی غیرمجاز است.', code: 'UNAUTHORIZED' }, 401);
+        try {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const categoryId = String(body.categoryId || 'all').trim();
+          const tier = String(body.tier || 'all').trim();
+          const rate = Number(body.rate !== undefined ? body.rate : 0.15);
+          const minFee = Number(body.minFee || 0);
+          const maxFee = Number(body.maxFee || 0);
+          const calcBasis = String(body.calculationBasis || 'all').trim();
+          const isActive = body.isActive !== false ? 1 : 0;
+          const now = new Date().toISOString();
+
+          if (env.DB) {
+            await env.DB.prepare(`
+              INSERT OR REPLACE INTO commission_rules (
+                category_id, tier, rate, min_fee, max_fee, calculation_basis, is_active, created_at
+              ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `).bind(categoryId, tier, rate, minFee, maxFee, calcBasis, isActive, now).run();
+          }
+          return jsonResponse({ success: true, categoryId, tier, rate, calculationBasis: calcBasis });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      // 9. Ratings: Verified Customer Rating & Auto PPS Engine (P0-3)
+      if (pathname.startsWith('/api/requests/') && pathname.endsWith('/rate') && request.method === 'POST') {
+        const parts = pathname.split('/');
+        const requestId = Number(parts[parts.length - 2]);
+        if (!requestId) return jsonResponse({ error: 'شناسه سفارش نامعتبر است.', code: 'BAD_REQUEST' }, 400);
+
+        try {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const custAuth = getCustomerAuth(request);
+          const score = Number(body.overallScore || body.score || 5);
+          if (score < 1 || score > 5) {
+            return jsonResponse({ error: 'امتیاز باید عددی بین ۱ تا ۵ باشد.', code: 'INVALID_SCORE' }, 400);
+          }
+
+          const now = new Date().toISOString();
+
+          if (env.DB) {
+            try {
+              const reqRow = await env.DB.prepare('SELECT customer_id, provider_id, status, phone FROM requests WHERE id = ?').bind(requestId).first();
+              if (!reqRow) return jsonResponse({ error: 'سفارش یافت نشد.', code: 'NOT_FOUND' }, 404);
+
+              // P0-3 IDOR Protection
+              if (custAuth && reqRow.customer_id && reqRow.customer_id !== custAuth.id && reqRow.phone !== custAuth.phone) {
+                return jsonResponse({ error: 'شما مجاز به ثبت نظر برای سفارش مشتری دیگری نیستید.', code: 'FORBIDDEN' }, 403);
+              }
+              if (body.customerId && reqRow.customer_id && Number(body.customerId) !== Number(reqRow.customer_id)) {
+                return jsonResponse({ error: 'شما مجاز به ثبت نظر برای سفارش مشتری دیگری نیستید.', code: 'FORBIDDEN' }, 403);
+              }
+
+              // Strict Quality Rule: Only completed / service_completed / closed orders can be rated
+              if (!['completed', 'service_completed', 'closed'].includes(reqRow.status)) {
+                return jsonResponse({ error: 'امتیازدهی فقط برای سفارش‌های تکمیل‌شده مجاز است.', code: 'ORDER_NOT_COMPLETED' }, 400);
               }
 
               if (!reqRow.provider_id) {
-                return jsonResponse({ error: 'این سفارش متخصصی ندارد.' }, 400);
+                return jsonResponse({ error: 'این سفارش متخصصی ندارد.', code: 'NO_PROVIDER' }, 400);
               }
 
               const existing = await env.DB.prepare('SELECT id FROM ratings WHERE request_id = ?').bind(requestId).first();
               if (existing) {
-                return jsonResponse({ error: 'برای این سفارش قبلاً نظر و امتیاز ثبت شده است.' }, 400);
+                return jsonResponse({ error: 'برای این سفارش قبلاً نظر و امتیاز ثبت شده است.', code: 'DUPLICATE_RATING' }, 400);
               }
 
               await env.DB.prepare(`
@@ -2884,7 +3541,7 @@ export default {
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?)
               `).bind(
                 requestId,
-                reqRow.customer_id || 1,
+                reqRow.customer_id || body.customerId || 1,
                 reqRow.provider_id,
                 score,
                 body.punctualityScore || 5,
@@ -2943,26 +3600,35 @@ export default {
         return jsonResponse({ ratings });
       }
 
-      // 10. Disputes: File Dispute & Admin Review
+      // 10. Disputes: File Dispute & Admin Review (P0-3)
       if (pathname.startsWith('/api/requests/') && pathname.endsWith('/disputes') && request.method === 'POST') {
         const parts = pathname.split('/');
         const requestId = Number(parts[parts.length - 2]);
-        if (!requestId) return jsonResponse({ error: 'شناسه سفارش نامعتبر است.' }, 400);
+        if (!requestId) return jsonResponse({ error: 'شناسه سفارش نامعتبر است.', code: 'BAD_REQUEST' }, 400);
 
         try {
           const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const custAuth = getCustomerAuth(request);
           const reason = String(body.reason || 'poor_quality').trim();
           const description = String(body.description || '').trim();
 
-          if (!description) return jsonResponse({ error: 'توضیحات شکایت و اختلاف الزامی است.' }, 400);
+          if (!description) return jsonResponse({ error: 'توضیحات شکایت و اختلاف الزامی است.', code: 'BAD_REQUEST' }, 400);
 
           const now = new Date().toISOString();
           let disputeId = Date.now();
 
           if (env.DB) {
             try {
-              const reqRow = await env.DB.prepare('SELECT status, customer_id FROM requests WHERE id = ?').bind(requestId).first();
-              if (!reqRow) return jsonResponse({ error: 'سفارش یافت نشد.' }, 404);
+              const reqRow = await env.DB.prepare('SELECT status, customer_id, phone FROM requests WHERE id = ?').bind(requestId).first();
+              if (!reqRow) return jsonResponse({ error: 'سفارش یافت نشد.', code: 'NOT_FOUND' }, 404);
+
+              // P0-3 IDOR Protection
+              if (custAuth && reqRow.customer_id && reqRow.customer_id !== custAuth.id && reqRow.phone !== custAuth.phone) {
+                return jsonResponse({ error: 'شما مجاز به ثبت اختلاف برای سفارش مشتری دیگری نیستید.', code: 'FORBIDDEN' }, 403);
+              }
+              if (body.customerId && reqRow.customer_id && Number(body.customerId) !== Number(reqRow.customer_id)) {
+                return jsonResponse({ error: 'شما مجاز به ثبت اختلاف برای سفارش مشتری دیگری نیستید.', code: 'FORBIDDEN' }, 403);
+              }
 
               const ins = await env.DB.prepare(`
                 INSERT INTO disputes (
@@ -2971,7 +3637,7 @@ export default {
               `).bind(
                 requestId,
                 body.openedBy || 'customer',
-                reqRow.customer_id || null,
+                reqRow.customer_id || body.customerId || null,
                 reason,
                 body.claimAmount || 0,
                 description,
@@ -3000,7 +3666,7 @@ export default {
       }
 
       if (pathname === '/api/admin/disputes' && request.method === 'GET') {
-        if (!isStaffAuthed(request)) return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        if (!isStaffAuthed(request)) return jsonResponse({ error: 'دسترسی غیرمجاز است.', code: 'UNAUTHORIZED' }, 401);
         let disputes: any[] = [];
         if (env.DB) {
           try {
@@ -3018,10 +3684,10 @@ export default {
       }
 
       if (pathname.startsWith('/api/admin/disputes/') && request.method === 'PATCH') {
-        if (!isStaffAuthed(request)) return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        if (!isStaffAuthed(request)) return jsonResponse({ error: 'دسترسی غیرمجاز است.', code: 'UNAUTHORIZED' }, 401);
         const parts = pathname.split('/');
         const disputeId = Number(parts[parts.length - 1]);
-        if (!disputeId) return jsonResponse({ error: 'شناسه اختلاف نامعتبر است.' }, 400);
+        if (!disputeId) return jsonResponse({ error: 'شناسه اختلاف نامعتبر است.', code: 'BAD_REQUEST' }, 400);
 
         try {
           const body = (await request.json().catch(() => ({}))) as Record<string, any>;

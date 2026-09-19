@@ -105,8 +105,12 @@ CREATE TABLE IF NOT EXISTS provider_settlements (
   request_id INTEGER NOT NULL,
   provider_id INTEGER NOT NULL,
   gross_amount INTEGER NOT NULL,
+  labor_amount INTEGER DEFAULT 0,
+  materials_amount INTEGER DEFAULT 0,
   commission_rate REAL DEFAULT 0.15, -- 15% platform cut
   commission_amount INTEGER NOT NULL,
+  platform_fee INTEGER DEFAULT 0,
+  tax_amount INTEGER DEFAULT 0,
   net_payable INTEGER NOT NULL,
   status TEXT DEFAULT 'pending', -- pending, approved, settled
   settled_at TEXT,
@@ -201,3 +205,65 @@ CREATE TABLE IF NOT EXISTS notifications (
   created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_notifications_recipient ON notifications(recipient_type, recipient_id);
+
+-- ==============================================================================
+-- P0 Hardening Tables & Constraints
+-- ==============================================================================
+
+-- ۱۱. قفل سخت‌افزاری جلوگیری از رزرو همزمان (Double Booking Prevention)
+CREATE UNIQUE INDEX IF NOT EXISTS uq_provider_schedules_booked_slot
+ON provider_schedules(provider_id, date, time_slot)
+WHERE status = 'booked';
+
+-- ۱۲. یکتایی مراجع پرداخت و تسویه
+CREATE UNIQUE INDEX IF NOT EXISTS uq_payments_tx_ref ON payments(transaction_ref);
+CREATE UNIQUE INDEX IF NOT EXISTS uq_settlements_request ON provider_settlements(request_id);
+
+-- ۱۳. قوانین پویای کارمزد و کمیسیون (Dynamic Commission Engine)
+CREATE TABLE IF NOT EXISTS commission_rules (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  category_id TEXT DEFAULT 'all', -- all, hvac, plumbing, electrical, renovation
+  tier TEXT DEFAULT 'all', -- all, standard, gold, vip
+  rate REAL NOT NULL DEFAULT 0.15,
+  min_fee INTEGER DEFAULT 0,
+  max_fee INTEGER DEFAULT 0,
+  calculation_basis TEXT DEFAULT 'all', -- all, labor_only
+  is_active INTEGER DEFAULT 1,
+  created_at TEXT NOT NULL
+);
+
+-- ۱۴. دفتر کل حسابداری، تراکنش‌ها و ممیزی مالی (Financial Ledger)
+CREATE TABLE IF NOT EXISTS financial_ledger (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  ledger_tx_id TEXT,
+  entry_type TEXT NOT NULL, -- payment, settlement, commission, refund, clawback
+  order_id INTEGER NOT NULL,
+  payment_id INTEGER,
+  invoice_id INTEGER,
+  customer_id INTEGER,
+  provider_id INTEGER,
+  account_type TEXT DEFAULT 'platform', -- platform, provider_payable, platform_revenue
+  direction TEXT DEFAULT 'credit', -- credit, debit
+  amount INTEGER NOT NULL,
+  currency TEXT DEFAULT 'IRT',
+  balance_after INTEGER DEFAULT 0,
+  status TEXT DEFAULT 'posted', -- posted, reversed, void
+  reference_type TEXT,
+  reference_id TEXT,
+  description TEXT,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (order_id) REFERENCES requests(id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_ledger_order ON financial_ledger(order_id);
+CREATE INDEX IF NOT EXISTS idx_ledger_provider ON financial_ledger(provider_id);
+
+-- ۱۵. جدول کلیدهای تکرارناپذیری (Idempotency Keys)
+CREATE TABLE IF NOT EXISTS idempotency_keys (
+  key TEXT PRIMARY KEY,
+  resource_type TEXT NOT NULL,
+  resource_id TEXT,
+  response_status INTEGER NOT NULL,
+  response_body TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+
