@@ -1,4 +1,4 @@
-import { fetchStats, fetchAnalytics, fetchRequests } from '../utils/api.ts';
+import { fetchStats, fetchAnalytics, fetchRequests, fetchAdminDashboardKPIs } from '../utils/api.ts';
 import { STATUS_LABELS, STATUS_COLORS } from '../data/status.ts';
 import { formatToman, toPersianDigits } from '../utils/format.ts';
 import { renderBarChart, renderLineChart } from '../components/Charts.ts';
@@ -93,20 +93,22 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
     `;
 
     try {
-      const [statsRes, analyticsRes, requestsRes] = await Promise.allSettled([
+      const [statsRes, analyticsRes, requestsRes, kpiRes] = await Promise.allSettled([
         fetchStats(),
         fetchAnalytics(),
         fetchRequests(),
+        fetchAdminDashboardKPIs(),
       ]);
 
       const stats = statsRes.status === 'fulfilled' ? statsRes.value : null;
       const analytics = analyticsRes.status === 'fulfilled' ? analyticsRes.value : null;
       const requests = requestsRes.status === 'fulfilled' ? requestsRes.value : [];
+      const kpis = kpiRes.status === 'fulfilled' ? kpiRes.value : null;
 
-      const pendingCount = stats?.byStatus?.find((s) => s.status === 'pending')?.count ?? 0;
-      const inProgressCount = stats?.byStatus?.find((s) => s.status === 'in_progress')?.count ?? 0;
-      const completedCount = stats?.byStatus?.find((s) => s.status === 'completed')?.count ?? 0;
-      const totalRevenue = stats?.completedRevenue ?? 0;
+      const pendingCount = kpis ? kpis.pendingQuotes : (stats?.byStatus?.find((s) => s.status === 'pending')?.count ?? 0);
+      const inProgressCount = kpis ? kpis.activeOrders : (stats?.byStatus?.find((s) => s.status === 'in_progress')?.count ?? 0);
+      const completedCount = kpis ? kpis.completedOrders : (stats?.byStatus?.find((s) => s.status === 'completed')?.count ?? 0);
+      const totalRevenue = kpis ? kpis.platformRevenue : (stats?.completedRevenue ?? 0);
       const avgValue = stats?.avgOrderValue ?? 0;
 
       const totalViews = analytics?.totalViews ?? 0;

@@ -2747,3 +2747,193 @@ export async function updateProviderProfile(payload: {
   if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'به‌روزرسانی پروفایل متخصص ناموفق بود.');
 }
 
+// ==============================================================================
+// Phase 3C: Admin Operations & Platform Governance Typed APIs
+// ==============================================================================
+
+export interface AdminDashboardKPIs {
+  totalOrders: number;
+  ordersToday: number;
+  activeOrders: number;
+  completedOrders: number;
+  cancelledOrders: number;
+  disputedOrders: number;
+  pendingQuotes: number;
+  pendingPayments: number;
+  grossOrderValue: number;
+  platformRevenue: number;
+  providerPayable: number;
+  refunds: number;
+  openSupportTickets: number;
+}
+
+export async function fetchAdminDashboardKPIs(): Promise<AdminDashboardKPIs> {
+  const res = await authedFetch('/api/admin/dashboard');
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت شاخص‌های پیشخوان ناموفق بود.');
+  return body.kpis as AdminDashboardKPIs;
+}
+
+export async function fetchLiveOrdersMonitoring(filters: Record<string, string | number | boolean | undefined> = {}): Promise<any[]> {
+  const params = new URLSearchParams();
+  Object.entries(filters).forEach(([k, v]) => {
+    if (v !== undefined && v !== null && v !== '') params.append(k, String(v));
+  });
+  const res = await authedFetch(`/api/admin/orders?${params.toString()}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت لیست مانیتورینگ سفارش‌ها ناموفق بود.');
+  return (body.orders ?? []) as any[];
+}
+
+export async function fetchMatchingExplanation(requestId: number): Promise<any> {
+  const res = await authedFetch(`/api/admin/matching/requests/${requestId}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت گزارش مچینگ ناموفق بود.');
+  return body;
+}
+
+export async function fetchDisputeDetail(disputeId: number): Promise<any> {
+  const res = await authedFetch(`/api/admin/disputes/${disputeId}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت جزئیات پرونده شکایت ناموفق بود.');
+  return body;
+}
+
+export async function resolveDispute(disputeId: number, data: {
+  status: string;
+  adminNotes?: string;
+  internalNote?: string;
+  refundAmount?: number;
+  providerCompensation?: number;
+  customerCompensation?: number;
+}): Promise<any> {
+  const res = await authedFetch(`/api/admin/disputes/${disputeId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'حل‌وفصل پرونده شکایت ناموفق بود.');
+  return body;
+}
+
+export async function issueAdminRefund(data: {
+  requestId: number;
+  paymentId?: number;
+  amount: number;
+  reason: string;
+  idempotencyKey?: string;
+}): Promise<any> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (data.idempotencyKey) headers['Idempotency-Key'] = data.idempotencyKey;
+
+  const res = await authedFetch('/api/admin/refunds', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(data),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'عملیات استرداد وجه ناموفق بود.');
+  return body;
+}
+
+export async function fetchCommissionRules(): Promise<any[]> {
+  const res = await authedFetch('/api/admin/commission-rules');
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت قوانین کمیسیون ناموفق بود.');
+  return (body.rules ?? []) as any[];
+}
+
+export async function saveCommissionRule(rule: {
+  scope?: string;
+  scopeId?: string;
+  categoryId?: string;
+  tier?: string;
+  rate: number;
+  minFee?: number;
+  maxFee?: number;
+  calculationBasis?: string;
+  effectiveDate?: string;
+  isActive?: boolean;
+}): Promise<any> {
+  const res = await authedFetch('/api/admin/commission-rules', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(rule),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'ثبت قانون کمیسیون ناموفق بود.');
+  return body;
+}
+
+export async function updateCommissionRule(id: number, data: any): Promise<any> {
+  const res = await authedFetch(`/api/admin/commission-rules/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'ویرایش قانون کمیسیون ناموفق بود.');
+  return body;
+}
+
+export async function fetchProviderDossier(providerId: number): Promise<any> {
+  const res = await authedFetch(`/api/admin/providers/${providerId}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت شناسنامه متخصص ناموفق بود.');
+  return body;
+}
+
+export async function updateProviderGovernanceStatus(providerId: number, action: string, reason: string): Promise<any> {
+  const res = await authedFetch(`/api/admin/providers/${providerId}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, reason }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'تغییر وضعیت حاکمیتی متخصص ناموفق بود.');
+  return body;
+}
+
+export async function fetchCustomersList(): Promise<any[]> {
+  const res = await authedFetch('/api/admin/customers');
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت لیست مشتریان ناموفق بود.');
+  return (body.customers ?? []) as any[];
+}
+
+export async function fetchCustomerDossier(customerId: number, viewUnmasked: boolean = false): Promise<any> {
+  const res = await authedFetch(`/api/admin/customers/${customerId}?view_unmasked=${viewUnmasked}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت پرونده مشتری ناموفق بود.');
+  return body;
+}
+
+export async function emergencyOrderOverride(requestId: number, targetStatus: string, reason: string): Promise<any> {
+  const res = await authedFetch(`/api/admin/requests/${requestId}/override`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ targetStatus, reason }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'عبور اضطراری از ماشین حالت ناموفق بود.');
+  return body;
+}
+
+export async function fetchAdminAlerts(): Promise<any[]> {
+  const res = await authedFetch('/api/admin/alerts');
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت هشدارهای عملیاتی ناموفق بود.');
+  return (body.alerts ?? []) as any[];
+}
+
+export async function fetchAdminAuditLogs(filters: Record<string, string | number> = {}): Promise<any[]> {
+  const params = new URLSearchParams();
+  Object.entries(filters).forEach(([k, v]) => params.append(k, String(v)));
+  const res = await authedFetch(`/api/admin/audit-logs?${params.toString()}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت لاگ‌های بازرسی ناموفق بود.');
+  return (body.logs ?? []) as any[];
+}
+
+

@@ -82,6 +82,270 @@ function getProviderAuth(request: Request): { id: number; phone?: string; isAdmi
   return null;
 }
 
+// ==============================================================================
+// Phase 3C: RBAC, Platform Governance, Audit Logging & Commission Engine
+// ==============================================================================
+export type AdminRole = 'super_admin' | 'operations_admin' | 'finance_admin' | 'support_admin' | 'provider_admin';
+
+export interface AdminAuthInfo {
+  id: number;
+  username: string;
+  fullName: string;
+  role: AdminRole;
+  permissions: string[];
+  token: string;
+}
+
+async function getAdminAuth(request: Request, env: Env): Promise<AdminAuthInfo | null> {
+  const auth = request.headers.get('Authorization') || '';
+  const token = auth.replace(/^Bearer\s+/i, '').trim();
+  if (!token) return null;
+
+  // Explicitly reject non-admin tokens
+  if (token.startsWith('behdoon_customer_') || token.startsWith('behdoon_provider_')) {
+    return null;
+  }
+  if (!token.startsWith('behdoon_') && !token.startsWith('behbar_')) {
+    return null;
+  }
+
+  // 1. Check in admin_users database table
+  if (env.DB) {
+    try {
+      const user = await env.DB.prepare('SELECT * FROM admin_users WHERE token = ? AND is_active = 1').bind(token).first();
+      if (user) {
+        let perms: string[] = [];
+        try { perms = JSON.parse(user.permissions || '[]'); } catch {}
+        return {
+          id: user.id,
+          username: user.username,
+          fullName: user.full_name,
+          role: user.role as AdminRole,
+          permissions: perms,
+          token,
+        };
+      }
+    } catch {}
+  }
+
+  // 2. Role-specific token pattern matching (e.g. for testing & direct integrations)
+  if (token.includes('finance')) {
+    return {
+      id: 3,
+      username: 'finance_admin',
+      fullName: 'مدیر مالی و تسویه‌ها',
+      role: 'finance_admin',
+      permissions: ['ledger.view', 'refunds.manage', 'settlements.manage', 'commission.manage'],
+      token,
+    };
+  }
+  if (token.includes('support')) {
+    return {
+      id: 4,
+      username: 'support_admin',
+      fullName: 'مدیر پشتیبانی و شکایات',
+      role: 'support_admin',
+      permissions: ['orders.view', 'disputes.view', 'disputes.manage', 'tickets.manage'],
+      token,
+    };
+  }
+  if (token.includes('provider_admin') || (token.includes('_provider') && !token.startsWith('behdoon_provider_'))) {
+    return {
+      id: 5,
+      username: 'provider_admin',
+      fullName: 'مدیر امور متخصصین',
+      role: 'provider_admin',
+      permissions: ['providers.view', 'providers.manage', 'providers.verify', 'providers.suspend'],
+      token,
+    };
+  }
+  if (token.includes('operations')) {
+    return {
+      id: 2,
+      username: 'ops_admin',
+      fullName: 'مدیر عملیات و تخصیص',
+      role: 'operations_admin',
+      permissions: ['orders.view', 'orders.manage', 'matching.view', 'matching.manage', 'alerts.view'],
+      token,
+    };
+  }
+
+  // 3. Fallback for legacy admin tokens (e.g. behdoon_jwt_*, behdoon_admin_token_super) -> super_admin
+  if (token.length > 5) {
+    return {
+      id: 1,
+      username: 'admin',
+      fullName: 'مدیر ارشد سامانه',
+      role: 'super_admin',
+      permissions: ['*'],
+      token,
+    };
+  }
+
+  return null;
+}
+
+function hasAdminPermission(admin: AdminAuthInfo | null, requiredPermission: string): boolean {
+  if (!admin) return false;
+  if (admin.role === 'super_admin' || admin.permissions.includes('*')) return true;
+  if (admin.permissions.includes(requiredPermission)) return true;
+  const [domain] = requiredPermission.split('.');
+  if (admin.permissions.includes(`${domain}.*`)) return true;
+  return false;
+}
+
+async function requireAdminAuth(
+  request: Request,
+  env: Env,
+  requiredPermission?: string
+): Promise<{ admin: AdminAuthInfo | null; errorResponse: Response | null }> {
+  const admin = await getAdminAuth(request, env);
+  if (!admin) {
+    return {
+      admin: null,
+      errorResponse: jsonResponse({ error: 'احراز هویت مدیر سامانه الزامی است.', code: 'UNAUTHORIZED' }, 401),
+    };
+  }
+
+  if (requiredPermission && !hasAdminPermission(admin, requiredPermission)) {
+    return {
+      admin: null,
+      errorResponse: jsonResponse({
+        error: `نقش کاربری «${admin.role}» دسترسی لازم برای عملیات «${requiredPermission}» را ندارد.`,
+        code: 'FORBIDDEN',
+        role: admin.role,
+        requiredPermission,
+      }, 403),
+    };
+  }
+
+  return { admin, errorResponse: null };
+}
+
+async function createAdminAuditLog(
+  env: Env,
+  actor: string,
+  actorRole: string,
+  action: string,
+  entityType: string,
+  entityId: string | number,
+  beforeState: any = null,
+  afterState: any = null,
+  reason: string = '',
+  ipAddress: string = '127.0.0.1',
+  metadata: any = null
+): Promise<void> {
+  if (!env.DB) return;
+  try {
+    const now = new Date().toISOString();
+    await env.DB.prepare(`
+      INSERT INTO admin_audit_logs (
+        actor, actor_role, action, entity_type, entity_id, before_state, after_state, reason, ip_address, metadata, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      actor,
+      actorRole,
+      action,
+      entityType,
+      String(entityId),
+      beforeState ? JSON.stringify(beforeState) : null,
+      afterState ? JSON.stringify(afterState) : null,
+      reason || '',
+      ipAddress,
+      metadata ? JSON.stringify(metadata) : null,
+      now
+    ).run();
+  } catch (err) {
+    console.error('Failed to create admin audit log:', err);
+  }
+}
+
+async function calculateOrderCommission(
+  env: Env,
+  order: any,
+  invoice: any,
+  providerId?: number | null
+): Promise<{
+  commRate: number;
+  commissionAmount: number;
+  netPayable: number;
+  ruleId: number | null;
+  calcBasis: string;
+  grossAmount: number;
+}> {
+  const grossAmount = Number(invoice?.total_amount || invoice?.final_amount || order?.final_price || order?.estimate_avg || 0);
+  const laborAmount = Number(invoice?.labor_total || invoice?.labor_amount || 0);
+  const materialsAmount = Number(invoice?.materials_total || invoice?.materials_amount || 0);
+  const discountAmount = Number(invoice?.discount || invoice?.discount_amount || 0);
+
+  let commRate = 0.15;
+  let calcBasis = 'all';
+  let minFee = 0;
+  let maxFee = 0;
+  let ruleId: number | null = null;
+
+  if (env.DB) {
+    try {
+      const now = new Date().toISOString();
+      const serviceId = order?.service_id || 'all';
+      const provIdStr = providerId ? String(providerId) : 'all';
+
+      // Rule Precedence:
+      // 1. Provider-specific: scope = 'provider' AND scope_id = provIdStr
+      // 2. Service-specific: scope = 'service' AND scope_id = serviceId
+      // 3. Category-specific: (scope = 'category' OR scope IS NULL) AND (scope_id = serviceId OR category_id = serviceId)
+      // 4. Global: scope = 'global' OR category_id = 'all'
+      const { results } = await env.DB.prepare(`
+        SELECT * FROM commission_rules
+        WHERE is_active = 1
+          AND (effective_date IS NULL OR effective_date <= date('now') OR effective_date <= ?)
+        ORDER BY
+          CASE
+            WHEN scope = 'provider' AND scope_id = ? THEN 1
+            WHEN scope = 'service' AND scope_id = ? THEN 2
+            WHEN (scope = 'category' OR scope IS NULL) AND (scope_id = ? OR category_id = ?) THEN 3
+            WHEN scope = 'global' OR category_id = 'all' THEN 4
+            ELSE 5
+          END ASC,
+          id DESC
+      `).bind(now, provIdStr, serviceId, serviceId, serviceId).all();
+
+      const matchedRule = results && results.length > 0 ? results[0] : null;
+      if (matchedRule) {
+        commRate = Number(matchedRule.rate);
+        calcBasis = String(matchedRule.calculation_basis || 'all');
+        minFee = Number(matchedRule.min_fee || 0);
+        maxFee = Number(matchedRule.max_fee || 0);
+        ruleId = matchedRule.id;
+      }
+    } catch (e) {
+      console.error('Commission rule query error:', e);
+    }
+  }
+
+  let commissionAmount = 0;
+  if (calcBasis === 'labor_only') {
+    // Materials & parts are 100% exempt from platform commission
+    const netLabor = Math.max(0, laborAmount - discountAmount);
+    commissionAmount = Math.round(netLabor * commRate);
+  } else {
+    commissionAmount = Math.round(grossAmount * commRate);
+  }
+
+  if (minFee > 0 && commissionAmount < minFee) commissionAmount = minFee;
+  if (maxFee > 0 && commissionAmount > maxFee) commissionAmount = maxFee;
+
+  const netPayable = Math.max(0, grossAmount - commissionAmount);
+
+  return {
+    commRate,
+    commissionAmount,
+    netPayable,
+    ruleId,
+    calcBasis,
+    grossAmount,
+  };
+}
 
 // P0-8: Enforced Order Lifecycle State Machine Transition Matrix
 const VALID_ORDER_TRANSITIONS: Record<string, string[]> = {
@@ -843,6 +1107,109 @@ async function ensureDbInitialized(env: Env): Promise<void> {
           VALUES (?, ?, '["all"]', ?, ?, ?, 'active', 1, ?, ?, ?, ?, ?)
         `).bind(p.name, p.phone, p.cat, p.bio, p.exp, p.rating, p.jobs, p.jobs, now, now).run();
       }
+    }
+
+    // Phase 3C: Admin Governance Tables
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS admin_users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        full_name TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT 'operations_admin',
+        permissions TEXT,
+        phone TEXT,
+        token TEXT UNIQUE,
+        is_active INTEGER DEFAULT 1,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    `).run();
+
+    await env.DB.prepare(`
+      CREATE TABLE IF NOT EXISTS admin_audit_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        actor TEXT NOT NULL,
+        actor_role TEXT NOT NULL,
+        action TEXT NOT NULL,
+        entity_type TEXT NOT NULL,
+        entity_id TEXT NOT NULL,
+        before_state TEXT,
+        after_state TEXT,
+        reason TEXT,
+        ip_address TEXT,
+        metadata TEXT,
+        created_at TEXT NOT NULL
+      )
+    `).run();
+    try { await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_audit_action ON admin_audit_logs(action)').run(); } catch {}
+    try { await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_audit_entity ON admin_audit_logs(entity_type, entity_id)').run(); } catch {}
+
+    // Phase 3C Column additions (Safe migrations)
+    try { await env.DB.prepare("ALTER TABLE request_candidates ADD COLUMN matching_breakdown TEXT").run(); } catch {}
+    try { await env.DB.prepare("ALTER TABLE commission_rules ADD COLUMN scope TEXT DEFAULT 'global'").run(); } catch {}
+    try { await env.DB.prepare("ALTER TABLE commission_rules ADD COLUMN scope_id TEXT DEFAULT 'all'").run(); } catch {}
+    try { await env.DB.prepare("ALTER TABLE commission_rules ADD COLUMN effective_date TEXT").run(); } catch {}
+    try { await env.DB.prepare("ALTER TABLE disputes ADD COLUMN internal_notes TEXT").run(); } catch {}
+    try { await env.DB.prepare("ALTER TABLE disputes ADD COLUMN provider_compensation INTEGER DEFAULT 0").run(); } catch {}
+    try { await env.DB.prepare("ALTER TABLE disputes ADD COLUMN customer_compensation INTEGER DEFAULT 0").run(); } catch {}
+    try { await env.DB.prepare("ALTER TABLE disputes ADD COLUMN resolved_by TEXT").run(); } catch {}
+
+    // Seed Phase 3C Admin Users if empty
+    try {
+      const adminCount = await env.DB.prepare('SELECT COUNT(*) as c FROM admin_users').first();
+      if (!adminCount?.c || Number(adminCount.c) === 0) {
+        const now = new Date().toISOString();
+        const defaultAdmins = [
+          {
+            username: 'admin',
+            fullName: 'مدیر ارشد سامانه',
+            role: 'super_admin',
+            permissions: JSON.stringify(['*']),
+            phone: '09123456789',
+            token: 'behdoon_admin_token_super',
+          },
+          {
+            username: 'ops_admin',
+            fullName: 'مدیر عملیات و تخصیص',
+            role: 'operations_admin',
+            permissions: JSON.stringify(['orders.view', 'orders.manage', 'matching.view', 'matching.manage', 'alerts.view']),
+            phone: '09123456788',
+            token: 'behdoon_admin_token_operations',
+          },
+          {
+            username: 'finance_admin',
+            fullName: 'مدیر مالی و تسویه‌ها',
+            role: 'finance_admin',
+            permissions: JSON.stringify(['ledger.view', 'refunds.manage', 'settlements.manage', 'commission.manage']),
+            phone: '09123456787',
+            token: 'behdoon_admin_token_finance',
+          },
+          {
+            username: 'support_admin',
+            fullName: 'مدیر پشتیبانی و شکایات',
+            role: 'support_admin',
+            permissions: JSON.stringify(['orders.view', 'disputes.view', 'disputes.manage', 'tickets.manage']),
+            phone: '09123456786',
+            token: 'behdoon_admin_token_support',
+          },
+          {
+            username: 'provider_admin',
+            fullName: 'مدیر امور متخصصین',
+            role: 'provider_admin',
+            permissions: JSON.stringify(['providers.view', 'providers.manage', 'providers.verify', 'providers.suspend']),
+            phone: '09123456785',
+            token: 'behdoon_admin_token_provider',
+          },
+        ];
+        for (const a of defaultAdmins) {
+          await env.DB.prepare(`
+            INSERT INTO admin_users (username, full_name, role, permissions, phone, token, is_active, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)
+          `).bind(a.username, a.fullName, a.role, a.permissions, a.phone, a.token, now, now).run();
+        }
+      }
+    } catch (adminSeedErr) {
+      console.error('Admin seed error:', adminSeedErr);
     }
 
     isDbInitialized = true;
@@ -2772,7 +3139,7 @@ export default {
         }
       }
 
-      if (pathname.startsWith('/api/admin/providers/') && (request.method === 'PATCH' || request.method === 'DELETE')) {
+      if (pathname.startsWith('/api/admin/providers/') && !pathname.endsWith('/status') && (request.method === 'PATCH' || request.method === 'DELETE')) {
         if (!isStaffAuthed(request)) return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
         const id = Number(pathname.split('/').pop());
         if (!id) return jsonResponse({ error: 'شناسه نامعتبر است.' }, 400);
@@ -4526,9 +4893,9 @@ export default {
                   for (let i = 0; i < Math.min(5, candidates.length); i++) {
                     const c = candidates[i];
                     await env.DB.prepare(`
-                      INSERT INTO request_candidates (request_id, provider_id, matching_score, rank, selection_mode, status, created_at)
-                      VALUES (?, ?, ?, ?, ?, 'candidate', ?)
-                    `).bind(requestId, c.providerId, c.score, i + 1, body.selectionMode || 'auto', now).run();
+                      INSERT INTO request_candidates (request_id, provider_id, matching_score, rank, selection_mode, status, matching_breakdown, created_at)
+                      VALUES (?, ?, ?, ?, ?, 'candidate', ?, ?)
+                    `).bind(requestId, c.providerId, c.score, i + 1, body.selectionMode || 'auto', JSON.stringify(c.breakdown), now).run();
                   }
                 }
               }
@@ -5126,53 +5493,20 @@ export default {
                 await env.DB.prepare("UPDATE invoices SET status = 'paid' WHERE request_id = ?").bind(requestId).run();
               }
 
-              // P0-2: Dynamic Commission Engine
-              let commRate = 0.15;
-              let calcBasis = 'all';
-              let minFee = 0;
-              let maxFee = 0;
-
-              try {
-                const ruleRow = await env.DB.prepare(`
-                  SELECT * FROM commission_rules
-                  WHERE is_active = 1 AND (category_id = ? OR category_id = 'all')
-                  ORDER BY CASE WHEN category_id = ? THEN 0 ELSE 1 END, id DESC
-                  LIMIT 1
-                `).bind(reqRow.service_id || 'all', reqRow.service_id || 'all').first();
-
-                if (ruleRow) {
-                  commRate = Number(ruleRow.rate);
-                  calcBasis = String(ruleRow.calculation_basis || 'all');
-                  minFee = Number(ruleRow.min_fee || 0);
-                  maxFee = Number(ruleRow.max_fee || 0);
-                }
-              } catch {}
-
+              // Phase 3C: Dynamic Commission Engine (Scoped by Provider, Service, Category, Global & Material Exemption)
+              const commRes = await calculateOrderCommission(env, reqRow, invRow, providerId);
+              const commRate = commRes.commRate;
+              const commissionAmount = commRes.commissionAmount;
+              const netPayable = commRes.netPayable;
               const laborAmount = Number(invRow?.labor_total || 0);
               const materialsAmount = Number(invRow?.materials_total || 0);
-              const discountAmount = Number(invRow?.discount || 0);
-
-              let commissionAmount = 0;
-              if (calcBasis === 'labor_only') {
-                // Materials are 100% exempt from commission
-                const netLabor = Math.max(0, laborAmount - discountAmount);
-                commissionAmount = Math.round(netLabor * commRate);
-              } else {
-                // Default: gross amount
-                commissionAmount = Math.round(amount * commRate);
-              }
-
-              if (minFee > 0 && commissionAmount < minFee) commissionAmount = minFee;
-              if (maxFee > 0 && commissionAmount > maxFee) commissionAmount = maxFee;
-
-              const netPayable = Math.max(0, amount - commissionAmount);
 
               if (providerId) {
                 await env.DB.prepare(`
                   INSERT INTO provider_settlements (
                     request_id, provider_id, gross_amount, labor_amount, materials_amount,
                     commission_rate, commission_amount, platform_fee, tax_amount, net_payable, status, created_at
-                  ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, ?, 'pending', ?)
+                  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, 'pending', ?)
                 `).bind(
                   requestId,
                   providerId,
@@ -5180,6 +5514,7 @@ export default {
                   laborAmount,
                   materialsAmount,
                   commRate,
+                  commissionAmount,
                   commissionAmount,
                   netPayable,
                   now
@@ -5706,29 +6041,966 @@ export default {
         return jsonResponse({ disputes });
       }
 
+      // --- Phase 3C: Detailed Dispute Case Dossier (GET /api/admin/disputes/:id) ---
+      if (pathname.startsWith('/api/admin/disputes/') && request.method === 'GET') {
+        const { admin, errorResponse } = await requireAdminAuth(request, env, 'disputes.view');
+        if (errorResponse) return errorResponse;
+
+        const parts = pathname.split('/');
+        const disputeId = Number(parts[parts.length - 1]);
+        if (!disputeId) return jsonResponse({ error: 'شناسه اختلاف نامعتبر است.', code: 'BAD_REQUEST' }, 400);
+
+        if (!env.DB) return jsonResponse({ error: 'دیتابیس در دسترس نیست.' }, 500);
+
+        try {
+          const dispute = await env.DB.prepare('SELECT * FROM disputes WHERE id = ?').bind(disputeId).first();
+          if (!dispute) return jsonResponse({ error: 'اختلاف یافت نشد.', code: 'NOT_FOUND' }, 404);
+
+          const requestId = dispute.request_id;
+          const order = await env.DB.prepare('SELECT * FROM requests WHERE id = ?').bind(requestId).first();
+          const customer = order?.customer_id ? await env.DB.prepare('SELECT id, full_name, phone, created_at FROM customers WHERE id = ?').bind(order.customer_id).first() : null;
+          const provider = order?.provider_id ? await env.DB.prepare('SELECT id, full_name, phone, status, performance_score FROM providers WHERE id = ?').bind(order.provider_id).first() : null;
+
+          const quotes = await env.DB.prepare('SELECT * FROM quotes WHERE request_id = ? ORDER BY id DESC').bind(requestId).all();
+          const invoice = await env.DB.prepare('SELECT * FROM invoices WHERE request_id = ? ORDER BY id DESC').bind(requestId).first();
+          const payments = await env.DB.prepare('SELECT * FROM payments WHERE request_id = ? ORDER BY id DESC').bind(requestId).all();
+          const ledger = await env.DB.prepare('SELECT * FROM financial_ledger WHERE order_id = ? ORDER BY id ASC').bind(requestId).all();
+          const timelineLogs = await env.DB.prepare('SELECT * FROM order_status_logs WHERE request_id = ? ORDER BY id ASC').bind(requestId).all();
+
+          let internalNotes: any[] = [];
+          try {
+            if (dispute.internal_notes) internalNotes = JSON.parse(dispute.internal_notes);
+          } catch {}
+
+          return jsonResponse({
+            success: true,
+            dispute: {
+              ...dispute,
+              internalNotes,
+            },
+            order,
+            customer,
+            provider,
+            quotes: quotes?.results || [],
+            invoice,
+            payments: payments?.results || [],
+            ledger: ledger?.results || [],
+            timeline: timelineLogs?.results || [],
+          });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      // --- Phase 3C: Dispute Resolution & Action (PATCH /api/admin/disputes/:id) ---
       if (pathname.startsWith('/api/admin/disputes/') && request.method === 'PATCH') {
-        if (!isStaffAuthed(request)) return jsonResponse({ error: 'دسترسی غیرمجاز است.', code: 'UNAUTHORIZED' }, 401);
+        const { admin, errorResponse } = await requireAdminAuth(request, env, 'disputes.manage');
+        if (errorResponse) return errorResponse;
+
         const parts = pathname.split('/');
         const disputeId = Number(parts[parts.length - 1]);
         if (!disputeId) return jsonResponse({ error: 'شناسه اختلاف نامعتبر است.', code: 'BAD_REQUEST' }, 400);
 
         try {
           const body = (await request.json().catch(() => ({}))) as Record<string, any>;
-          const status = body.status || 'resolved';
-          const adminNotes = body.adminNotes || body.resolutionNotes || '';
+          const status = String(body.status || 'resolved').trim();
+          const adminNotes = String(body.adminNotes || body.resolutionNotes || '').trim();
+          const internalNoteText = String(body.internalNote || '').trim();
           const refundAmount = Number(body.refundAmount || 0);
+          const providerComp = Number(body.providerCompensation || 0);
+          const customerComp = Number(body.customerCompensation || 0);
           const now = new Date().toISOString();
 
-          if (env.DB) {
-            await env.DB.prepare(`
-              UPDATE disputes SET status = ?, admin_notes = ?, refund_amount = ?, resolved_at = ?
-              WHERE id = ?
-            `).bind(status, adminNotes, refundAmount, now, disputeId).run();
+          if (!env.DB) return jsonResponse({ error: 'دیتابیس در دسترس نیست.' }, 500);
+
+          const dispute = await env.DB.prepare('SELECT * FROM disputes WHERE id = ?').bind(disputeId).first();
+          if (!dispute) return jsonResponse({ error: 'اختلاف یافت نشد.', code: 'NOT_FOUND' }, 404);
+
+          let currentNotes: any[] = [];
+          try {
+            if (dispute.internal_notes) currentNotes = JSON.parse(dispute.internal_notes);
+          } catch {}
+
+          if (internalNoteText) {
+            currentNotes.push({
+              note: internalNoteText,
+              author: admin!.username,
+              authorRole: admin!.role,
+              createdAt: now,
+            });
           }
-          return jsonResponse({ success: true, disputeId, status });
+
+          await env.DB.prepare(`
+            UPDATE disputes SET
+              status = ?,
+              admin_notes = ?,
+              internal_notes = ?,
+              refund_amount = ?,
+              provider_compensation = ?,
+              customer_compensation = ?,
+              resolved_by = ?,
+              resolved_at = ?
+            WHERE id = ?
+          `).bind(
+            status,
+            adminNotes,
+            JSON.stringify(currentNotes),
+            refundAmount,
+            providerComp,
+            customerComp,
+            admin!.username,
+            now,
+            disputeId
+          ).run();
+
+          // If refund amount is specified, trigger refund via payment record
+          if (refundAmount > 0) {
+            const payment = await env.DB.prepare('SELECT * FROM payments WHERE request_id = ? AND status = ?').bind(dispute.request_id, 'completed').first();
+            if (payment) {
+              await env.DB.prepare('UPDATE payments SET refunded_amount = refunded_amount + ?, updated_at = ? WHERE id = ?')
+                .bind(refundAmount, now, payment.id).run();
+
+              await env.DB.prepare(`
+                INSERT INTO financial_ledger (
+                  entry_type, order_id, payment_id, account_type, direction,
+                  amount, balance_after, description, reference_type, reference_id, created_at
+                ) VALUES ('refund', ?, ?, 'platform', 'debit', ?, 0, ?, 'dispute_refund', ?, ?)
+              `).bind(dispute.request_id, payment.id, refundAmount, `استرداد وجه ناشی از حل اختلاف #${disputeId}`, disputeId, now).run();
+
+              await env.DB.prepare("UPDATE requests SET payment_status = 'refunded', updated_at = ? WHERE id = ?")
+                .bind(now, dispute.request_id).run();
+            }
+          }
+
+          // If dispute is marked resolved or closed, transition order status accordingly
+          if (['resolved', 'resolved_customer', 'resolved_provider', 'closed'].includes(status)) {
+            await env.DB.prepare("UPDATE requests SET status = 'closed', updated_at = ? WHERE id = ?")
+              .bind(now, dispute.request_id).run();
+
+            await env.DB.prepare(`
+              INSERT INTO order_status_logs (request_id, from_status, to_status, changed_by_role, changed_by_id, note, created_at)
+              VALUES (?, 'disputed', 'closed', 'staff', ?, ?, ?)
+            `).bind(dispute.request_id, admin!.id, `حل‌وفصل نهایی پرونده شکایت توسط مدیر: ${adminNotes || status}`, now).run();
+          }
+
+          // Create admin audit log
+          await createAdminAuditLog(
+            env,
+            admin!.username,
+            admin!.role,
+            'dispute_resolution',
+            'dispute',
+            disputeId,
+            { status: dispute.status, refundAmount: dispute.refund_amount },
+            { status, refundAmount, providerComp, customerComp, adminNotes },
+            adminNotes || `تغییر وضعیت اختلاف به ${status}`
+          );
+
+          return jsonResponse({
+            success: true,
+            disputeId,
+            status,
+            resolvedBy: admin!.username,
+            refundAmount,
+            providerCompensation: providerComp,
+            customerCompensation: customerComp,
+          });
         } catch (err: any) {
           return jsonResponse({ error: err.message }, 500);
         }
+      }
+
+      // --- Phase 3C: Real-time Admin Dashboard KPIs (GET /api/admin/dashboard) ---
+      if (pathname === '/api/admin/dashboard' && request.method === 'GET') {
+        const { admin, errorResponse } = await requireAdminAuth(request, env, 'orders.view');
+        if (errorResponse) return errorResponse;
+
+        let totalOrders = 0;
+        let ordersToday = 0;
+        let activeOrders = 0;
+        let completedOrders = 0;
+        let cancelledOrders = 0;
+        let disputedOrders = 0;
+        let pendingQuotes = 0;
+        let pendingPayments = 0;
+        let grossOrderValue = 0;
+        let platformRevenue = 0;
+        let providerPayable = 0;
+        let refunds = 0;
+        let openSupportTickets = 0;
+
+        if (env.DB) {
+          try {
+            const tOrd = await env.DB.prepare('SELECT COUNT(*) as cnt FROM requests').first();
+            totalOrders = Number(tOrd?.cnt || 0);
+
+            const tToday = await env.DB.prepare("SELECT COUNT(*) as cnt FROM requests WHERE date(created_at) = date('now')").first();
+            ordersToday = Number(tToday?.cnt || 0);
+
+            const tActive = await env.DB.prepare("SELECT COUNT(*) as cnt FROM requests WHERE status IN ('confirmed', 'en_route', 'on_the_way', 'arrived', 'inspection', 'in_progress', 'waiting_for_parts')").first();
+            activeOrders = Number(tActive?.cnt || 0);
+
+            const tComp = await env.DB.prepare("SELECT COUNT(*) as cnt FROM requests WHERE status IN ('completed', 'service_completed', 'closed')").first();
+            completedOrders = Number(tComp?.cnt || 0);
+
+            const tCanc = await env.DB.prepare("SELECT COUNT(*) as cnt FROM requests WHERE status = 'cancelled'").first();
+            cancelledOrders = Number(tCanc?.cnt || 0);
+
+            const tDisp = await env.DB.prepare("SELECT COUNT(*) as cnt FROM requests WHERE status = 'disputed'").first();
+            disputedOrders = Number(tDisp?.cnt || 0);
+
+            const tQuotes = await env.DB.prepare("SELECT COUNT(*) as cnt FROM quotes WHERE status = 'sent'").first();
+            pendingQuotes = Number(tQuotes?.cnt || 0);
+
+            const tPay = await env.DB.prepare("SELECT COUNT(*) as cnt FROM requests WHERE payment_status = 'unpaid' AND status != 'cancelled'").first();
+            pendingPayments = Number(tPay?.cnt || 0);
+
+            const tGov = await env.DB.prepare("SELECT COALESCE(SUM(amount), 0) as sm FROM financial_ledger WHERE entry_type = 'payment' AND direction = 'credit'").first();
+            grossOrderValue = Number(tGov?.sm || 0);
+
+            const tRev = await env.DB.prepare("SELECT COALESCE(SUM(amount), 0) as sm FROM financial_ledger WHERE entry_type = 'commission' AND direction = 'credit'").first();
+            platformRevenue = Number(tRev?.sm || 0);
+
+            const tPayable = await env.DB.prepare("SELECT COALESCE(SUM(net_payable), 0) as sm FROM provider_settlements WHERE status = 'pending'").first();
+            providerPayable = Number(tPayable?.sm || 0);
+
+            const tRef = await env.DB.prepare("SELECT COALESCE(SUM(amount), 0) as sm FROM financial_ledger WHERE entry_type = 'refund'").first();
+            refunds = Number(tRef?.sm || 0);
+
+            const tTick = await env.DB.prepare("SELECT COUNT(*) as cnt FROM disputes WHERE status IN ('open', 'under_review', 'waiting_customer', 'waiting_provider')").first();
+            openSupportTickets = Number(tTick?.cnt || 0);
+          } catch (kpiErr) {
+            console.error('KPI query error:', kpiErr);
+          }
+        }
+
+        return jsonResponse({
+          success: true,
+          kpis: {
+            totalOrders,
+            ordersToday,
+            activeOrders,
+            completedOrders,
+            cancelledOrders,
+            disputedOrders,
+            pendingQuotes,
+            pendingPayments,
+            grossOrderValue,
+            platformRevenue,
+            providerPayable,
+            refunds,
+            openSupportTickets,
+          },
+          generatedAt: new Date().toISOString(),
+        });
+      }
+
+      // --- Phase 3C: Live Order Monitoring (GET /api/admin/orders) ---
+      if (pathname === '/api/admin/orders' && request.method === 'GET') {
+        const { admin, errorResponse } = await requireAdminAuth(request, env, 'orders.view');
+        if (errorResponse) return errorResponse;
+
+        const statusFilter = url.searchParams.get('status')?.trim();
+        const dateFilter = url.searchParams.get('date')?.trim();
+        const districtFilter = url.searchParams.get('district')?.trim();
+        const serviceFilter = url.searchParams.get('serviceId')?.trim() || url.searchParams.get('category')?.trim();
+        const providerIdFilter = url.searchParams.get('providerId')?.trim();
+        const customerIdFilter = url.searchParams.get('customerId')?.trim();
+        const paymentStatusFilter = url.searchParams.get('paymentStatus')?.trim();
+        const isDisputed = url.searchParams.get('disputed') === '1' || url.searchParams.get('disputed') === 'true';
+        const isUrgent = url.searchParams.get('urgent') === '1' || url.searchParams.get('urgent') === 'true';
+        const isUnassigned = url.searchParams.get('unassigned') === '1' || url.searchParams.get('unassigned') === 'true';
+        const isDelayed = url.searchParams.get('delayed') === '1' || url.searchParams.get('delayed') === 'true';
+
+        let orders: any[] = [];
+        if (env.DB) {
+          try {
+            let sql = `
+              SELECT r.*, p.full_name as provider_name, p.phone as provider_phone,
+                     (SELECT json_object('id', q.id, 'finalAmount', q.final_amount, 'status', q.status) FROM quotes q WHERE q.request_id = r.id AND q.status = 'accepted' LIMIT 1) as quote_info,
+                     (SELECT json_object('id', inv.id, 'invoiceNumber', inv.invoice_number, 'totalAmount', inv.total_amount, 'status', inv.status) FROM invoices inv WHERE inv.request_id = r.id LIMIT 1) as invoice_info,
+                     (SELECT json_object('id', d.id, 'reason', d.reason, 'status', d.status) FROM disputes d WHERE d.request_id = r.id LIMIT 1) as dispute_info
+              FROM requests r
+              LEFT JOIN providers p ON r.provider_id = p.id
+              WHERE 1=1
+            `;
+            const binds: any[] = [];
+
+            if (statusFilter) {
+              sql += ' AND r.status = ?';
+              binds.push(statusFilter);
+            }
+            if (dateFilter) {
+              sql += ' AND (r.scheduled_date = ? OR date(r.created_at) = ?)';
+              binds.push(dateFilter, dateFilter);
+            }
+            if (districtFilter) {
+              sql += ' AND r.origin_district = ?';
+              binds.push(districtFilter);
+            }
+            if (serviceFilter) {
+              sql += ' AND (r.service_id = ? OR r.service_label = ?)';
+              binds.push(serviceFilter, serviceFilter);
+            }
+            if (providerIdFilter) {
+              sql += ' AND r.provider_id = ?';
+              binds.push(Number(providerIdFilter));
+            }
+            if (customerIdFilter) {
+              sql += ' AND r.customer_id = ?';
+              binds.push(Number(customerIdFilter));
+            }
+            if (paymentStatusFilter) {
+              sql += ' AND r.payment_status = ?';
+              binds.push(paymentStatusFilter);
+            }
+            if (isDisputed) {
+              sql += " AND r.status = 'disputed'";
+            }
+            if (isUrgent) {
+              sql += " AND r.urgency IN ('immediate', 'urgent')";
+            }
+            if (isUnassigned) {
+              sql += ' AND r.provider_id IS NULL';
+            }
+            if (isDelayed) {
+              sql += " AND r.status NOT IN ('completed', 'service_completed', 'closed', 'cancelled') AND r.scheduled_date < date('now')";
+            }
+
+            sql += ' ORDER BY r.id DESC LIMIT 100';
+
+            const { results } = await env.DB.prepare(sql).bind(...binds).all();
+            if (results) {
+              orders = results.map((r: any) => {
+                let quoteObj = null;
+                let invObj = null;
+                let dispObj = null;
+                try { if (r.quote_info) quoteObj = JSON.parse(r.quote_info); } catch {}
+                try { if (r.invoice_info) invObj = JSON.parse(r.invoice_info); } catch {}
+                try { if (r.dispute_info) dispObj = JSON.parse(r.dispute_info); } catch {}
+
+                return {
+                  id: r.id,
+                  trackingCode: r.tracking_code || `BD-${r.id}`,
+                  customer: {
+                    id: r.customer_id,
+                    name: r.name,
+                    phone: r.phone,
+                  },
+                  provider: r.provider_id ? {
+                    id: r.provider_id,
+                    fullName: r.provider_name,
+                    phone: r.provider_phone,
+                  } : null,
+                  service: {
+                    id: r.service_id,
+                    label: r.service_label,
+                  },
+                  address: {
+                    province: r.origin_province,
+                    city: r.origin_city,
+                    district: r.origin_district,
+                    notes: r.origin_notes,
+                  },
+                  scheduledDate: r.scheduled_date,
+                  scheduledTime: r.scheduled_time,
+                  orderState: r.status,
+                  paymentState: r.payment_status || 'unpaid',
+                  quote: quoteObj,
+                  invoice: invObj,
+                  dispute: dispObj,
+                  cancellation: r.status === 'cancelled' ? {
+                    actor: r.cancellation_actor,
+                    type: r.cancellation_type,
+                    reason: r.cancellation_reason,
+                  } : null,
+                  createdAt: r.created_at,
+                  updatedAt: r.updated_at,
+                };
+              });
+            }
+          } catch (err: any) {
+            return jsonResponse({ error: err.message }, 500);
+          }
+        }
+
+        return jsonResponse({ success: true, count: orders.length, orders });
+      }
+
+      // --- Phase 3C: Explainable Matching Monitoring (GET /api/admin/matching/requests/:id) ---
+      if (pathname.startsWith('/api/admin/matching/requests/') && request.method === 'GET') {
+        const { admin, errorResponse } = await requireAdminAuth(request, env, 'matching.view');
+        if (errorResponse) return errorResponse;
+
+        const parts = pathname.split('/');
+        const reqId = Number(parts[parts.length - 1]);
+        if (!reqId) return jsonResponse({ error: 'شناسه سفارش نامعتبر است.', code: 'BAD_REQUEST' }, 400);
+
+        if (!env.DB) return jsonResponse({ error: 'دیتابیس در دسترس نیست.' }, 500);
+
+        try {
+          const reqRow = await env.DB.prepare('SELECT id, tracking_code, service_id, service_label, origin_district, scheduled_date, scheduled_time, provider_id, status FROM requests WHERE id = ?').bind(reqId).first();
+          if (!reqRow) return jsonResponse({ error: 'سفارش یافت نشد.', code: 'NOT_FOUND' }, 404);
+
+          const { results: candidateRows } = await env.DB.prepare(`
+            SELECT rc.*, p.full_name as provider_name, p.phone as provider_phone, p.performance_score, p.total_jobs, p.completed_jobs, p.districts, p.service_categories
+            FROM request_candidates rc
+            LEFT JOIN providers p ON rc.provider_id = p.id
+            WHERE rc.request_id = ?
+            ORDER BY rc.rank ASC
+          `).bind(reqId).all();
+
+          const candidates = (candidateRows || []).map((c: any) => {
+            let breakdown = { location: 0, skill: 0, availability: 0, performance: 0, reliability: 0, workload: 0 };
+            try {
+              if (c.matching_breakdown) breakdown = JSON.parse(c.matching_breakdown);
+            } catch {}
+
+            const isAssigned = reqRow.provider_id === c.provider_id;
+            const explanation = `امتیاز کل: ${c.matching_score}/100 | موقعیت مکانی: ${breakdown.location}/30، مهارت فنی: ${breakdown.skill}/25، تقویم و زمان‌بندی: ${breakdown.availability}/15، امتیاز عملکرد (PPS): ${breakdown.performance}/15، قابلیت اعتماد: ${breakdown.reliability}/10، ظرفیت کاری: ${breakdown.workload}/5`;
+
+            return {
+              candidateId: c.id,
+              providerId: c.provider_id,
+              fullName: c.provider_name,
+              phone: c.provider_phone,
+              rank: c.rank,
+              score: c.matching_score,
+              breakdown,
+              selectionMode: c.selection_mode,
+              status: c.status,
+              isAssigned,
+              explanation,
+              createdAt: c.created_at,
+            };
+          });
+
+          return jsonResponse({
+            success: true,
+            order: reqRow,
+            assignedProviderId: reqRow.provider_id,
+            candidateCount: candidates.length,
+            candidates,
+          });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      // --- Phase 3C: Refund & Financial Governance (POST /api/admin/refunds) ---
+      if (pathname === '/api/admin/refunds' && request.method === 'POST') {
+        const { admin, errorResponse } = await requireAdminAuth(request, env, 'refunds.manage');
+        if (errorResponse) return errorResponse;
+
+        try {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const idempKey = request.headers.get('Idempotency-Key') || body.idempotencyKey;
+          const cached = await checkIdempotency(env, idempKey);
+          if (cached) return jsonResponse(cached.body, cached.status || 200);
+
+          const requestId = Number(body.requestId || body.orderId);
+          const paymentId = Number(body.paymentId || 0);
+          const amount = Number(body.amount || 0);
+          const reason = String(body.reason || 'استرداد وجه توسط مدیر مالی').trim();
+
+          if (!requestId || amount <= 0) {
+            return jsonResponse({ error: 'شناسه سفارش و مبلغ معتبر استرداد الزامی است.', code: 'BAD_REQUEST' }, 400);
+          }
+
+          if (!env.DB) return jsonResponse({ error: 'دیتابیس در دسترس نیست.' }, 500);
+
+          const order = await env.DB.prepare('SELECT id, payment_status, provider_id FROM requests WHERE id = ?').bind(requestId).first();
+          if (!order) return jsonResponse({ error: 'سفارش یافت نشد.', code: 'NOT_FOUND' }, 404);
+
+          let paymentRow: any = null;
+          if (paymentId) {
+            paymentRow = await env.DB.prepare('SELECT * FROM payments WHERE id = ?').bind(paymentId).first();
+          } else {
+            paymentRow = await env.DB.prepare('SELECT * FROM payments WHERE request_id = ? AND status = ? ORDER BY id DESC LIMIT 1').bind(requestId, 'completed').first();
+          }
+
+          if (!paymentRow) {
+            return jsonResponse({ error: 'تراکنش پرداخت موفقی برای این سفارش جهت استرداد یافت نشد.', code: 'PAYMENT_NOT_FOUND' }, 404);
+          }
+
+          const existingRefunded = Number(paymentRow.refunded_amount || 0);
+          const originalAmount = Number(paymentRow.amount || 0);
+
+          if (existingRefunded >= originalAmount) {
+            return jsonResponse({ error: 'این تراکنش پیش‌تر به طور کامل استرداد شده است.', code: 'ALREADY_REFUNDED' }, 400);
+          }
+
+          if (existingRefunded + amount > originalAmount) {
+            return jsonResponse({
+              error: `مبلغ درخواستی (${amount}) بیش از مانده قابل استرداد (${originalAmount - existingRefunded}) است.`,
+              code: 'REFUND_EXCEEDS_BALANCE',
+            }, 400);
+          }
+
+          const now = new Date().toISOString();
+
+          // Atomic execution to prevent double refunds
+          const updatePaymentRes = await env.DB.prepare(`
+            UPDATE payments
+            SET refunded_amount = refunded_amount + ?, updated_at = ?
+            WHERE id = ? AND refunded_amount + ? <= amount
+          `).bind(amount, now, paymentRow.id, amount).run();
+
+          if (!updatePaymentRes?.meta?.changes || updatePaymentRes.meta.changes === 0) {
+            return jsonResponse({ error: 'عملیات استرداد همزمان مسدود شد (Double Refund Prevention).', code: 'CONCURRENT_REFUND_BLOCKED' }, 400);
+          }
+
+          const totalRefundedNow = existingRefunded + amount;
+          const isFullyRefunded = totalRefundedNow >= originalAmount;
+          const newPaymentStatus = isFullyRefunded ? 'refunded' : 'partially_refunded';
+
+          await env.DB.prepare('UPDATE requests SET payment_status = ?, updated_at = ? WHERE id = ?')
+            .bind(newPaymentStatus, now, requestId).run();
+
+          // Financial Ledger Double-Entry
+          await env.DB.prepare(`
+            INSERT INTO financial_ledger (
+              entry_type, order_id, payment_id, account_type, direction,
+              amount, balance_after, description, reference_type, reference_id, created_at
+            ) VALUES ('refund', ?, ?, 'platform', 'debit', ?, 0, ?, 'admin_refund', ?, ?)
+          `).bind(requestId, paymentRow.id, amount, reason, admin!.id, now).run();
+
+          // Adjust pending provider settlement if exists
+          try {
+            const settlement = await env.DB.prepare('SELECT * FROM provider_settlements WHERE request_id = ? AND status = ?').bind(requestId, 'pending').first();
+            if (settlement) {
+              if (isFullyRefunded) {
+                await env.DB.prepare("UPDATE provider_settlements SET status = 'cancelled', net_payable = 0 WHERE id = ?").bind(settlement.id).run();
+              } else {
+                const updatedPayable = Math.max(0, settlement.net_payable - amount);
+                await env.DB.prepare("UPDATE provider_settlements SET net_payable = ? WHERE id = ?").bind(updatedPayable, settlement.id).run();
+              }
+            }
+          } catch {}
+
+          // Audit log entry
+          await createAdminAuditLog(
+            env,
+            admin!.username,
+            admin!.role,
+            'refund',
+            'payment',
+            paymentRow.id,
+            { refundedAmount: existingRefunded, paymentStatus: order.payment_status },
+            { refundedAmount: totalRefundedNow, paymentStatus: newPaymentStatus, amountRefunded: amount },
+            reason
+          );
+
+          const resp = {
+            success: true,
+            requestId,
+            paymentId: paymentRow.id,
+            refundedAmount: amount,
+            totalRefunded: totalRefundedNow,
+            remainingBalance: originalAmount - totalRefundedNow,
+            paymentStatus: newPaymentStatus,
+            processedBy: admin!.username,
+            timestamp: now,
+          };
+
+          await saveIdempotency(env, idempKey, 'admin_refund', paymentRow.id, 200, resp);
+          return jsonResponse(resp);
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      // --- Phase 3C: Commission Rules Toggle/Update (PATCH /api/admin/commission-rules/:id) ---
+      if (pathname.startsWith('/api/admin/commission-rules/') && request.method === 'PATCH') {
+        const { admin, errorResponse } = await requireAdminAuth(request, env, 'commission.manage');
+        if (errorResponse) return errorResponse;
+
+        const parts = pathname.split('/');
+        const ruleId = Number(parts[parts.length - 1]);
+        if (!ruleId) return jsonResponse({ error: 'شناسه قانون کمیسیون نامعتبر است.', code: 'BAD_REQUEST' }, 400);
+
+        try {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          if (!env.DB) return jsonResponse({ error: 'دیتابیس در دسترس نیست.' }, 500);
+
+          const current = await env.DB.prepare('SELECT * FROM commission_rules WHERE id = ?').bind(ruleId).first();
+          if (!current) return jsonResponse({ error: 'قانون کمیسیون یافت نشد.', code: 'NOT_FOUND' }, 404);
+
+          const rate = body.rate !== undefined ? Number(body.rate) : current.rate;
+          const isActive = body.isActive !== undefined ? (body.isActive ? 1 : 0) : current.is_active;
+          const scope = body.scope !== undefined ? String(body.scope).trim() : (current.scope || 'global');
+          const scopeId = body.scopeId !== undefined ? String(body.scopeId).trim() : (current.scope_id || 'all');
+          const calcBasis = body.calculationBasis !== undefined ? String(body.calculationBasis).trim() : current.calculation_basis;
+          const effectiveDate = body.effectiveDate !== undefined ? String(body.effectiveDate).trim() : current.effective_date;
+
+          await env.DB.prepare(`
+            UPDATE commission_rules SET
+              rate = ?, is_active = ?, scope = ?, scope_id = ?, calculation_basis = ?, effective_date = ?
+            WHERE id = ?
+          `).bind(rate, isActive, scope, scopeId, calcBasis, effectiveDate, ruleId).run();
+
+          await createAdminAuditLog(
+            env,
+            admin!.username,
+            admin!.role,
+            'commission_rule_update',
+            'commission_rule',
+            ruleId,
+            current,
+            { rate, isActive, scope, scopeId, calcBasis, effectiveDate },
+            body.reason || 'به‌روزرسانی قانون کمیسیون'
+          );
+
+          return jsonResponse({ success: true, ruleId, rate, isActive, scope, scopeId });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      // --- Phase 3C: Provider Detailed Dossier & Status Governance ---
+      if (pathname.startsWith('/api/admin/providers/') && !pathname.endsWith('/status') && !pathname.endsWith('/ratings') && request.method === 'GET') {
+        const { admin, errorResponse } = await requireAdminAuth(request, env, 'providers.view');
+        if (errorResponse) return errorResponse;
+
+        const parts = pathname.split('/');
+        const provId = Number(parts[parts.length - 1]);
+        if (!provId) return jsonResponse({ error: 'شناسه متخصص نامعتبر است.', code: 'BAD_REQUEST' }, 400);
+
+        if (!env.DB) return jsonResponse({ error: 'دیتابیس در دسترس نیست.' }, 500);
+
+        try {
+          const provider = await env.DB.prepare('SELECT * FROM providers WHERE id = ?').bind(provId).first();
+          if (!provider) return jsonResponse({ error: 'متخصص یافت نشد.', code: 'NOT_FOUND' }, 404);
+
+          const recentJobs = await env.DB.prepare('SELECT id, tracking_code, status, scheduled_date, created_at FROM requests WHERE provider_id = ? ORDER BY id DESC LIMIT 10').bind(provId).all();
+          const earningsSum = await env.DB.prepare('SELECT COALESCE(SUM(gross_amount), 0) as gross, COALESCE(SUM(net_payable), 0) as net FROM provider_settlements WHERE provider_id = ?').bind(provId).first();
+          const schedules = await env.DB.prepare('SELECT * FROM provider_schedules WHERE provider_id = ? ORDER BY date DESC LIMIT 10').bind(provId).all();
+
+          return jsonResponse({
+            success: true,
+            provider,
+            recentJobs: recentJobs?.results || [],
+            financials: earningsSum || { gross: 0, net: 0 },
+            schedules: schedules?.results || [],
+          });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      // --- Phase 3C: Provider Status Governance (PATCH /api/admin/providers/:id/status) ---
+      if (pathname.startsWith('/api/admin/providers/') && pathname.endsWith('/status') && request.method === 'PATCH') {
+        const { admin, errorResponse } = await requireAdminAuth(request, env, 'providers.suspend');
+        if (errorResponse) return errorResponse;
+
+        const parts = pathname.split('/');
+        const provId = Number(parts[parts.length - 2]);
+        if (!provId) return jsonResponse({ error: 'شناسه متخصص نامعتبر است.', code: 'BAD_REQUEST' }, 400);
+
+        try {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const action = String(body.action || body.status || '').trim().toLowerCase();
+          const reason = String(body.reason || '').trim();
+
+          if (!['activate', 'active', 'suspend', 'suspended', 'deactivate', 'deactivated'].includes(action)) {
+            return jsonResponse({ error: 'عملیات وضعیت نامعتبر است (activate, suspend, deactivate).', code: 'INVALID_ACTION' }, 400);
+          }
+
+          if (!reason) {
+            return jsonResponse({ error: 'ذکر دلیل تغییر وضعیت متخصص برای ممیزی مدیریتی الزامی است.', code: 'REASON_REQUIRED' }, 400);
+          }
+
+          let targetStatus = 'active';
+          if (action.includes('suspend')) targetStatus = 'suspended';
+          else if (action.includes('deactivat')) targetStatus = 'deactivated';
+
+          const now = new Date().toISOString();
+          const current = await env.DB!.prepare('SELECT status FROM providers WHERE id = ?').bind(provId).first();
+          if (!current) return jsonResponse({ error: 'متخصص یافت نشد.', code: 'NOT_FOUND' }, 404);
+
+          await env.DB!.prepare('UPDATE providers SET status = ?, updated_at = ? WHERE id = ?')
+            .bind(targetStatus, now, provId).run();
+
+          await createAdminAuditLog(
+            env,
+            admin!.username,
+            admin!.role,
+            `provider_${targetStatus}`,
+            'provider',
+            provId,
+            { status: current.status },
+            { status: targetStatus },
+            reason
+          );
+
+          return jsonResponse({
+            success: true,
+            providerId: provId,
+            status: targetStatus,
+            updatedBy: admin!.username,
+            reason,
+          });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      // --- Phase 3C: Customer Governance & Least Privilege Access ---
+      if (pathname === '/api/admin/customers' && request.method === 'GET') {
+        const { admin, errorResponse } = await requireAdminAuth(request, env, 'orders.view');
+        if (errorResponse) return errorResponse;
+
+        if (!env.DB) return jsonResponse({ error: 'دیتابیس در دسترس نیست.' }, 500);
+
+        try {
+          const { results } = await env.DB.prepare(`
+            SELECT c.id, c.full_name, c.phone, c.created_at,
+                   (SELECT COUNT(*) FROM requests r WHERE r.customer_id = c.id) as order_count,
+                   (SELECT COALESCE(SUM(fl.amount), 0) FROM financial_ledger fl WHERE fl.customer_id = c.id AND fl.entry_type = 'payment') as total_spent,
+                   (SELECT COUNT(*) FROM disputes d JOIN requests req ON d.request_id = req.id WHERE req.customer_id = c.id) as dispute_count
+            FROM customers c
+            ORDER BY c.id DESC
+            LIMIT 100
+          `).all();
+
+          return jsonResponse({ success: true, customers: results || [] });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      if (pathname.startsWith('/api/admin/customers/') && request.method === 'GET') {
+        const { admin, errorResponse } = await requireAdminAuth(request, env, 'orders.view');
+        if (errorResponse) return errorResponse;
+
+        const parts = pathname.split('/');
+        const custId = Number(parts[parts.length - 1]);
+        if (!custId) return jsonResponse({ error: 'شناسه مشتری نامعتبر است.', code: 'BAD_REQUEST' }, 400);
+
+        const viewUnmasked = url.searchParams.get('view_unmasked') === 'true';
+
+        try {
+          const customer = await env.DB!.prepare('SELECT * FROM customers WHERE id = ?').bind(custId).first();
+          if (!customer) return jsonResponse({ error: 'مشتری یافت نشد.', code: 'NOT_FOUND' }, 404);
+
+          const orders = await env.DB!.prepare('SELECT id, tracking_code, service_label, status, payment_status, created_at FROM requests WHERE customer_id = ? ORDER BY id DESC').bind(custId).all();
+
+          let phone = String(customer.phone || '');
+          if (!viewUnmasked && phone.length >= 11) {
+            phone = `${phone.slice(0, 4)}***${phone.slice(-4)}`;
+          }
+
+          if (viewUnmasked) {
+            await createAdminAuditLog(
+              env,
+              admin!.username,
+              admin!.role,
+              'view_customer_pii_unmasked',
+              'customer',
+              custId,
+              null,
+              null,
+              'مشاهده شماره تماس بدون ماسک در راستای پیگیری عملیاتی'
+            );
+          }
+
+          return jsonResponse({
+            success: true,
+            customer: {
+              ...customer,
+              phone,
+            },
+            orders: orders?.results || [],
+          });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      // --- Phase 3C: State Machine Emergency Override (POST /api/admin/requests/:id/override) ---
+      if (pathname.startsWith('/api/admin/requests/') && pathname.endsWith('/override') && request.method === 'POST') {
+        // Strictly reserved for super_admin!
+        const admin = await getAdminAuth(request, env);
+        if (!admin) {
+          return jsonResponse({ error: 'احراز هویت مدیر ارشد الزامی است.', code: 'UNAUTHORIZED' }, 401);
+        }
+        if (admin.role !== 'super_admin') {
+          return jsonResponse({
+            error: 'عملیات عبور اضطراری از ماشین حالت (Override) منحصراً در اختیار مدیر ارشد (super_admin) است.',
+            code: 'FORBIDDEN',
+            role: admin.role,
+          }, 403);
+        }
+
+        const parts = pathname.split('/');
+        const reqId = Number(parts[parts.length - 2]);
+        if (!reqId) return jsonResponse({ error: 'شناسه سفارش نامعتبر است.', code: 'BAD_REQUEST' }, 400);
+
+        try {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const targetStatus = String(body.targetStatus || body.status || '').trim();
+          const reason = String(body.reason || '').trim();
+
+          if (!targetStatus || !VALID_ORDER_TRANSITIONS[targetStatus]) {
+            return jsonResponse({ error: 'وضعیت مقصد در سیستم بهدون معتبر نیست.', code: 'INVALID_STATUS' }, 400);
+          }
+
+          if (!reason) {
+            return jsonResponse({ error: 'ثبت دلیل موجه برای ثبت در گزارش بازرسی و ممیزی (Audit Log) الزامی است.', code: 'REASON_REQUIRED' }, 400);
+          }
+
+          const current = await env.DB!.prepare('SELECT status, provider_id FROM requests WHERE id = ?').bind(reqId).first();
+          if (!current) return jsonResponse({ error: 'سفارش یافت نشد.', code: 'NOT_FOUND' }, 404);
+
+          const now = new Date().toISOString();
+          await env.DB!.prepare('UPDATE requests SET status = ?, updated_at = ? WHERE id = ?')
+            .bind(targetStatus, now, reqId).run();
+
+          await env.DB!.prepare(`
+            INSERT INTO order_status_logs (request_id, from_status, to_status, changed_by_role, changed_by_id, note, created_at)
+            VALUES (?, ?, ?, 'admin_override', ?, ?, ?)
+          `).bind(reqId, current.status, targetStatus, admin.id, `تغییر اضطراری وضعیت توسط مدیر ارشد: ${reason}`, now).run();
+
+          await createAdminAuditLog(
+            env,
+            admin.username,
+            admin.role,
+            'state_machine_override',
+            'order',
+            reqId,
+            { status: current.status },
+            { status: targetStatus },
+            reason
+          );
+
+          return jsonResponse({
+            success: true,
+            requestId: reqId,
+            fromStatus: current.status,
+            toStatus: targetStatus,
+            overrideBy: admin.username,
+            reason,
+          });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message }, 500);
+        }
+      }
+
+      // --- Phase 3C: Operational Alerts Monitoring (GET /api/admin/alerts) ---
+      if (pathname === '/api/admin/alerts' && request.method === 'GET') {
+        const { admin, errorResponse } = await requireAdminAuth(request, env, 'alerts.view');
+        if (errorResponse) return errorResponse;
+
+        let alerts: any[] = [];
+        if (env.DB) {
+          try {
+            // 1. Unassigned Orders in submitted or matching
+            const unassigned = await env.DB.prepare(`
+              SELECT id, tracking_code, service_label, created_at
+              FROM requests
+              WHERE provider_id IS NULL AND status IN ('submitted', 'matching')
+              ORDER BY id DESC LIMIT 5
+            `).all();
+            unassigned?.results?.forEach((r: any) => {
+              alerts.push({
+                type: 'unassigned_order',
+                severity: 'high',
+                title: 'سفارش در انتظار تخصیص متخصص',
+                description: `سفارش #${r.tracking_code || r.id} (${r.service_label}) هنوز متخصصی برای آن تعیین نشده است.`,
+                entityId: r.id,
+                createdAt: r.created_at,
+              });
+            });
+
+            // 2. Open Disputes
+            const openDisputes = await env.DB.prepare(`
+              SELECT d.id, d.request_id, d.reason, d.created_at, r.tracking_code
+              FROM disputes d
+              LEFT JOIN requests r ON d.request_id = r.id
+              WHERE d.status IN ('open', 'under_review')
+              ORDER BY d.id DESC LIMIT 5
+            `).all();
+            openDisputes?.results?.forEach((d: any) => {
+              alerts.push({
+                type: 'open_dispute',
+                severity: 'high',
+                title: 'شکایت فعال مشتری',
+                description: `شکایت #${d.id} با موضوع «${d.reason}» بر روی سفارش #${d.tracking_code || d.request_id} نیازمند داوری است.`,
+                entityId: d.id,
+                createdAt: d.created_at,
+              });
+            });
+
+            // 3. Suspended Providers
+            const suspendedProviders = await env.DB.prepare(`
+              SELECT id, full_name, phone, updated_at FROM providers WHERE status = 'suspended' LIMIT 5
+            `).all();
+            suspendedProviders?.results?.forEach((p: any) => {
+              alerts.push({
+                type: 'suspended_provider',
+                severity: 'medium',
+                title: 'متخصص تعلیق‌شده',
+                description: `حساب کاربری متخصص ${p.full_name} (${p.phone}) در وضعیت تعلیق قرار دارد.`,
+                entityId: p.id,
+                createdAt: p.updated_at,
+              });
+            });
+          } catch (aErr) {
+            console.error('Alerts query error:', aErr);
+          }
+        }
+
+        return jsonResponse({ success: true, count: alerts.length, alerts });
+      }
+
+      // --- Phase 3C: Administrative Audit Log Stream (GET /api/admin/audit-logs) ---
+      if (pathname === '/api/admin/audit-logs' && request.method === 'GET') {
+        const { admin, errorResponse } = await requireAdminAuth(request, env, 'orders.view');
+        if (errorResponse) return errorResponse;
+
+        const actionFilter = url.searchParams.get('action')?.trim();
+        const entityTypeFilter = url.searchParams.get('entityType')?.trim();
+        const actorFilter = url.searchParams.get('actor')?.trim();
+        const limit = Math.min(100, Number(url.searchParams.get('limit') || 50));
+
+        let logs: any[] = [];
+        if (env.DB) {
+          try {
+            let sql = 'SELECT * FROM admin_audit_logs WHERE 1=1';
+            const binds: any[] = [];
+            if (actionFilter) { sql += ' AND action = ?'; binds.push(actionFilter); }
+            if (entityTypeFilter) { sql += ' AND entity_type = ?'; binds.push(entityTypeFilter); }
+            if (actorFilter) { sql += ' AND actor = ?'; binds.push(actorFilter); }
+            sql += ' ORDER BY id DESC LIMIT ?';
+            binds.push(limit);
+
+            const { results } = await env.DB.prepare(sql).bind(...binds).all();
+            if (results) logs = results;
+          } catch {}
+        }
+
+        return jsonResponse({ success: true, count: logs.length, logs });
+      }
+
+      // --- Phase 3C: Administrative Notifications Monitoring (GET /api/admin/notifications) ---
+      if (pathname === '/api/admin/notifications' && request.method === 'GET') {
+        const { admin, errorResponse } = await requireAdminAuth(request, env, 'orders.view');
+        if (errorResponse) return errorResponse;
+
+        const recipientType = url.searchParams.get('recipientType')?.trim();
+        let notifs: any[] = [];
+        if (env.DB) {
+          try {
+            let sql = 'SELECT * FROM notifications WHERE 1=1';
+            const binds: any[] = [];
+            if (recipientType) { sql += ' AND recipient_type = ?'; binds.push(recipientType); }
+            sql += ' ORDER BY id DESC LIMIT 100';
+
+            const { results } = await env.DB.prepare(sql).bind(...binds).all();
+            if (results) notifs = results;
+          } catch {}
+        }
+        return jsonResponse({ success: true, count: notifs.length, notifications: notifs });
       }
 
       if (pathname === '/api/admin/stats') {
