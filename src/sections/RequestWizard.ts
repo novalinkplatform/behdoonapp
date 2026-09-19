@@ -509,16 +509,18 @@ export function renderRequestWizard(
 
         <!-- گام ۶: زمان مراجعه تکنسین، برآورد هزینه و پوشش بیمه -->
         <section class="request-panel" data-panel="6" hidden>
-          <div class="form-field">
-            <span class="field-label">${pick('تاریخ مراجعه تکنسین در تهران', 'Visit Date')}</span>
-            ${renderCalendarPicker('wizard-calendar')}
-          </div>
-          <div class="form-field">
-            <span class="field-label">${pick('ساعت مراجعه تکنسین', 'Visit Time')}</span>
-            ${renderTimePicker('wizard-time')}
+          <div class="wizard-schedule-datetime-grid">
+            <div class="form-field">
+              <span class="field-label">${pick('تاریخ مراجعه تکنسین در تهران', 'Visit Date')}</span>
+              ${renderCalendarPicker('wizard-calendar')}
+            </div>
+            <div class="form-field">
+              <span class="field-label">${pick('ساعت مراجعه تکنسین', 'Visit Time')}</span>
+              ${renderTimePicker('wizard-time')}
+            </div>
           </div>
 
-          <div style="margin-top: 24px;">
+          <div style="margin-top: 20px;">
             <div id="wizard-cost-chart"></div>
 
             <div class="wizard-insurance-section" style="margin-top: 20px;">
@@ -544,12 +546,15 @@ export function renderRequestWizard(
                     data-insurance-choice="${tier.id}"
                   >
                     ${tier.isRecommended ? `<span class="wizard-insurance-badge">${pick('پیشنهاد ویژه', 'Recommended')}</span>` : ''}
-                    <div class="wizard-insurance-card-top">
+                    <div class="wizard-insurance-card-header">
                       <span class="wizard-insurance-card-title">${pick(tier.title, tier.titleEn)}</span>
-                      <span class="wizard-insurance-card-coverage">${pick(tier.coverageCeiling, tier.coverageCeilingEn)}</span>
+                      <span class="wizard-insurance-card-check"><span class="icon">${icons.checkCircle}</span></span>
                     </div>
-                    <div class="wizard-insurance-card-cost">${pick(tier.costLabel, tier.costLabelEn)}</div>
+                    <div class="wizard-insurance-card-coverage">${pick(tier.coverageCeiling, tier.coverageCeilingEn)}</div>
                     <p class="wizard-insurance-card-desc">${pick(tier.description, tier.descriptionEn)}</p>
+                    <div class="wizard-insurance-card-footer">
+                      <span class="wizard-insurance-card-cost">${pick(tier.costLabel, tier.costLabelEn)}</span>
+                    </div>
                   </button>
                 `,
                 ).join('')}
@@ -576,8 +581,10 @@ export function renderRequestWizard(
         <section class="request-panel" data-panel="7" hidden>
           <div class="wizard-phone-insurance-banner">
             <div class="wizard-phone-insurance-info">
-              <span class="icon">${icons.shield || icons.checkCircle}</span>
-              <div>
+              <div class="wizard-phone-insurance-icon">
+                <span class="icon">${icons.shield || icons.checkCircle}</span>
+              </div>
+              <div class="wizard-phone-insurance-text-wrap">
                 <span class="wizard-phone-insurance-title">${pick('پوشش بیمه و تضمین خسارت انتخابی:', 'Selected Insurance Coverage:')}</span>
                 <span class="wizard-phone-insurance-value" id="wizard-selected-insurance-text">${pick('پوشش طلایی — تا سقف ۳۰۰ میلیون تومان', 'Gold Coverage — Up to 300M Toman')}</span>
               </div>
@@ -737,6 +744,10 @@ export function initRequestWizard(
   const costChartContainer = document.getElementById('wizard-cost-chart');
   const trackingCodeEl = document.getElementById('wizard-tracking-code');
   const finalSummaryEl = document.getElementById('wizard-final-summary');
+  const modalElRoot = document.getElementById('request-wizard-modal');
+  if (modalElRoot && modalElRoot.parentElement !== document.body) {
+    document.body.appendChild(modalElRoot);
+  }
 
   const noop: RequestWizardController = {
     selectService: () => {},
@@ -1402,6 +1413,9 @@ export function initRequestWizard(
   function openModal(serviceId?: string, vehicleId?: string): void {
     const modalEl = document.getElementById('request-wizard-modal');
     if (modalEl) {
+      if (modalEl.parentElement !== document.body) {
+        document.body.appendChild(modalEl);
+      }
       modalEl.classList.add('is-open');
       modalEl.hidden = false;
       document.body.classList.add('modal-open');

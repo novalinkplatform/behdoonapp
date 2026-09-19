@@ -458,6 +458,9 @@ export function initFooter(_settings?: SiteSettings): void {
         e.preventDefault();
         const modal = document.getElementById('request-wizard-modal');
         if (modal) {
+          if (modal.parentElement !== document.body) {
+            document.body.appendChild(modal);
+          }
           modal.hidden = false;
           modal.classList.add('is-open');
           document.body.classList.add('modal-open');

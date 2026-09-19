@@ -982,11 +982,24 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  width: 100%;
+  max-width: 500px;
+  margin-inline: auto;
+}
+
+.cost-chart-svg-wrap {
+  width: 100%;
+  max-width: 360px;
+  margin-inline: auto;
 }
 
 .cost-chart svg {
   width: 100%;
+  max-width: 360px;
   height: auto;
+  max-height: 135px;
+  margin-inline: auto;
+  display: block;
   overflow: visible;
 }
 
@@ -1150,59 +1163,54 @@
    ========================================================================== */
 .wizard-insurance-section {
   margin-top: 20px;
-  padding: 18px 16px;
-  background: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  padding: 18px 20px;
+  background: rgba(248, 250, 252, 0.95);
+  border: 1px solid #e2e8f0;
   border-radius: 18px;
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
 }
 
 .wizard-insurance-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
   margin-bottom: 14px;
 }
 
-.wizard-insurance-icon {
+.wizard-insurance-header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.wizard-insurance-header-title .icon {
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: rgba(5, 150, 105, 0.1);
+  border-radius: 10px;
+  background: rgba(5, 150, 105, 0.12);
   color: #059669;
   flex-shrink: 0;
 }
 
-.wizard-insurance-icon svg {
-  width: 22px;
-  height: 22px;
-}
-
-.wizard-insurance-title-group {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  text-align: right;
-}
-
-.wizard-insurance-title {
-  font-size: 0.96rem;
-  font-weight: 700;
-  color: var(--text);
+.wizard-insurance-header-title h4 {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
 }
 
 .wizard-insurance-subtitle {
-  font-size: 0.78rem;
-  color: var(--muted);
+  font-size: 0.82rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
 }
 
 .wizard-insurance-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
   margin-bottom: 14px;
 }
 
@@ -1212,94 +1220,109 @@
   flex-direction: column;
   align-items: flex-start;
   text-align: right;
-  padding: 12px 14px;
+  padding: 14px 16px;
   background: #ffffff;
   border: 1.5px solid #e2e8f0;
-  border-radius: 14px;
+  border-radius: 16px;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   width: 100%;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
 }
 
 .wizard-insurance-card:hover {
-  border-color: #059669;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+  border-color: #10b981;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.12);
 }
 
 .wizard-insurance-card.is-selected {
   border-color: #059669;
-  background: rgba(5, 150, 105, 0.04);
-  box-shadow: 0 0 0 1.5px #059669, 0 6px 18px rgba(5, 150, 105, 0.12);
+  background: linear-gradient(180deg, #ffffff, #f0fdf4);
+  box-shadow: 0 0 0 2px #059669, 0 8px 20px rgba(5, 150, 105, 0.16);
 }
 
+.wizard-insurance-badge,
+.insurance-card-badge {
+  position: absolute;
+  top: -10px;
+  left: 12px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.3);
+}
+
+.wizard-insurance-card-header,
 .insurance-card-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  gap: 6px;
   margin-bottom: 6px;
 }
 
+.wizard-insurance-card-title,
 .insurance-card-title {
-  font-size: 0.84rem;
-  font-weight: 700;
-  color: var(--text);
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #1e293b;
 }
 
-.insurance-card-badge {
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 6px;
-  background: #fef3c7;
-  color: #b45309;
+.wizard-insurance-card-check,
+.insurance-card-check {
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
+.wizard-insurance-card-check svg,
+.insurance-card-check svg {
+  width: 20px;
+  height: 20px;
+}
+
+.wizard-insurance-card.is-selected .wizard-insurance-card-check,
+.wizard-insurance-card.is-selected .insurance-card-check {
+  color: #059669;
+  transform: scale(1.1);
+}
+
+.wizard-insurance-card-coverage,
 .insurance-card-ceiling {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 800;
   color: #059669;
   margin-bottom: 6px;
 }
 
+.wizard-insurance-card-desc,
 .insurance-card-desc {
-  font-size: 0.72rem;
-  color: var(--muted);
-  line-height: 1.45;
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.5;
   margin-bottom: 10px;
-  flex: 1;
+  flex: 1 1 auto;
 }
 
+.wizard-insurance-card-footer,
 .insurance-card-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
   padding-top: 8px;
   border-top: 1px dashed #e2e8f0;
 }
 
+.wizard-insurance-card-cost,
 .insurance-card-cost {
-  font-size: 0.72rem;
-  color: #64748b;
+  font-size: 0.76rem;
   font-weight: 600;
-}
-
-.insurance-card-check {
-  display: flex;
-  align-items: center;
-  color: #cbd5e1;
-  transition: color 0.2s;
-}
-
-.insurance-card-check svg {
-  width: 18px;
-  height: 18px;
-}
-
-.wizard-insurance-card.is-selected .insurance-card-check {
-  color: #059669;
+  color: #475569;
 }
 
 /* کادر رسمی نهایی‌سازی بر اساس نام متغیر سایت */
@@ -1307,26 +1330,26 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  padding: 12px 14px;
+  padding: 12px 16px;
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
-  border-radius: 12px;
+  border-radius: 14px;
 }
 
 .wizard-insurance-notice-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 24px;
+  height: 24px;
   color: #16a34a;
   flex-shrink: 0;
   margin-top: 2px;
 }
 
 .wizard-insurance-notice-icon svg {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
 }
 
+.wizard-insurance-notice-content,
 .wizard-insurance-notice-body {
   display: flex;
   flex-direction: column;
@@ -1334,78 +1357,90 @@
   text-align: right;
 }
 
+.wizard-insurance-notice-content strong,
 .wizard-insurance-notice-text {
-  font-size: 0.85rem;
+  font-size: 0.86rem;
   font-weight: 700;
   color: #15803d;
+}
+
+.wizard-insurance-notice-content p,
+.wizard-insurance-notice-sub {
+  font-size: 0.78rem;
+  color: #166534;
   line-height: 1.5;
   margin: 0;
 }
 
-.wizard-insurance-notice-sub {
-  font-size: 0.74rem;
-  color: #166534;
-  line-height: 1.4;
-}
-
-/* بنر خلاصه بیمه در مرحله ۱۱ (شماره تماس و ثبت نهایی) */
+/* بنر خلاصه بیمه در مرحله ۷ (شماره تماس و ثبت نهایی) */
 .wizard-phone-insurance-banner {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px 14px;
-  background: #f8fafc;
+  gap: 10px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
   border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  margin-bottom: 16px;
+  border-radius: 16px;
+  margin-bottom: 20px;
   text-align: right;
 }
 
+.wizard-phone-insurance-info,
 .phone-insurance-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
+.wizard-phone-insurance-icon,
 .phone-insurance-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: rgba(5, 150, 105, 0.1);
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(5, 150, 105, 0.12);
   color: #059669;
   flex-shrink: 0;
 }
 
+.wizard-phone-insurance-icon svg,
 .phone-insurance-icon svg {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
 }
 
+.wizard-phone-insurance-text-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wizard-phone-insurance-title,
 .phone-insurance-label {
-  font-size: 0.74rem;
-  color: var(--muted);
+  font-size: 0.78rem;
+  color: #64748b;
   display: block;
 }
 
+.wizard-phone-insurance-value,
 .phone-insurance-value {
-  font-size: 0.86rem;
-  color: var(--text);
-  font-weight: 700;
+  font-size: 0.95rem;
+  color: #0f172a;
+  font-weight: 800;
 }
 
 .wizard-insurance-notice-compact {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: #15803d;
   background: #f0fdf4;
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid #dcfce7;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #bbf7d0;
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.5;
   text-align: right;
 }
 
@@ -1445,9 +1480,9 @@
   position: fixed;
   inset: 0;
   z-index: 99999;
-  background: rgba(15, 23, 42, 0.76);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1461,15 +1496,29 @@
 
 .request-wizard-modal-overlay.is-open,
 .request-wizard-modal-overlay:not([hidden]) {
-  opacity: 1;
-  visibility: visible;
+  opacity: 1 !important;
+  visibility: visible !important;
   display: flex !important;
 }
 
 .request-wizard-modal-overlay[hidden] {
   display: none !important;
-  opacity: 0;
-  visibility: hidden;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Background blur on main page elements when modal is open */
+body.modal-open #app,
+body.modal-open > *:not(#request-wizard-modal):not(#behbar-invoice-modal-overlay):not(script):not(style) {
+  filter: blur(8px) brightness(0.85);
+  -webkit-filter: blur(8px) brightness(0.85);
+  pointer-events: none !important;
+  user-select: none !important;
+  transition: filter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#app {
+  transition: filter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 body.modal-open {
@@ -2599,28 +2648,33 @@ body.modal-open {
     width: 100vw !important;
     height: 100vh !important;
     height: 100dvh !important;
-    padding: 0 !important;
+    padding: 0.5rem !important;
     z-index: 99999 !important;
-    background: #ffffff !important;
+    background: rgba(15, 23, 42, 0.7) !important;
+    backdrop-filter: blur(14px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   .request-wizard-modal-dialog {
     width: 100% !important;
-    height: 100% !important;
-    height: 100dvh !important;
-    max-height: 100vh !important;
-    max-height: 100dvh !important;
-    border-radius: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
+    max-width: 580px !important;
+    height: calc(100dvh - 1rem) !important;
+    max-height: calc(100dvh - 1rem) !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
     display: flex !important;
     flex-direction: column !important;
     background: #ffffff !important;
+    overflow: hidden !important;
   }
 
   .request-wizard-modal-topbar {
     padding: 0.85rem 1.1rem;
-    border-radius: 0;
+    border-radius: 20px 20px 0 0;
   }
 
   .request-wizard-modal-body {
@@ -3056,53 +3110,149 @@ body.modal-open {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
-  background: #f5f3ff;
+  background: linear-gradient(135deg, #f5f3ff, #ede9fe);
   border: 1.5px dashed #c4b5fd;
-  border-radius: 14px;
-  padding: 12px 18px;
-  margin: 16px 0;
+  border-radius: 16px;
+  padding: 14px 20px;
+  margin: 18px 0;
 }
 
 .wizard-tracking-label {
-  font-size: 0.84rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: #6d28d9;
 }
 
 .wizard-tracking-number {
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: 900;
   color: #4c1d95;
   letter-spacing: 0.08em;
   font-family: inherit;
 }
 
+#wizard-copy-tracking-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #0f172a;
+  transition: all 0.2s ease;
+}
+
+#wizard-copy-tracking-btn:hover {
+  background: #7c3aed;
+  color: #ffffff;
+  border-color: #7c3aed;
+}
+
+.request-summary-box {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px 18px;
+  margin: 18px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: right;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+}
+
+.request-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.88rem;
+}
+
+.request-summary-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+  padding-top: 4px;
+}
+
+.request-summary-row dt {
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.84rem;
+}
+
+.request-summary-row dd {
+  color: #0f172a;
+  font-weight: 700;
+  margin: 0;
+}
+
 .wizard-actions-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  margin-top: 16px;
+  margin-top: 18px;
 }
 
 .wizard-action-btn {
-  height: 44px;
+  height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border-radius: 12px;
-  font-size: 0.86rem;
+  border-radius: 14px;
+  font-size: 0.88rem;
   font-weight: 700;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.wizard-invoice-action {
+  grid-column: 1 / -1;
+  font-size: 0.95rem;
+  background: linear-gradient(135deg, #7c3aed, #9333ea) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.25);
+}
+
+.wizard-invoice-action:hover {
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35);
+  transform: translateY(-1px);
+}
+
+.wizard-whatsapp-action {
+  background: #25d366 !important;
+  color: #ffffff !important;
+  border-color: #25d366 !important;
+}
+
+.wizard-whatsapp-action:hover {
+  background: #1eb855 !important;
+  border-color: #1eb855 !important;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
 }
 
 .wizard-action-btn-reset {
   grid-column: 1 / -1;
-  margin-top: 6px;
-  font-size: 0.84rem;
+  margin-top: 8px;
+  font-size: 0.86rem;
+  font-weight: 600;
   color: #64748b;
   cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 8px;
+  transition: color 0.2s;
+}
+
+.wizard-action-btn-reset:hover {
+  color: #7c3aed;
 }
 
 /* ==========================================================================
