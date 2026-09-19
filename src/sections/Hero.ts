@@ -22,8 +22,8 @@ export function renderHero(
     heroSlogan?.headline?.en || section?.headingEn || section?.heading || 'Professional Building Services in Tehran',
   );
   const lead = pick(
-    heroSlogan?.subtitle?.fa || section?.body || 'سرمایش و گرمایش، لوله‌کشی، برقکاری و بازسازی؛ اعزام فوری تکنسین‌های مجرب با ضمانت کتبی در سراسر تهران.',
-    heroSlogan?.subtitle?.en || section?.bodyEn || section?.body || 'HVAC, plumbing, electrical and remodeling; fast certified technician dispatch across Tehran with written guarantee.',
+    heroSlogan?.subtitle?.fa || section?.body || '',
+    heroSlogan?.subtitle?.en || section?.bodyEn || section?.body || '',
   );
   const backgroundImageUrl = section?.backgroundImageUrl ?? '';
 
@@ -32,11 +32,11 @@ export function renderHero(
       ${backgroundImageUrl ? '<div class="hero-bg-overlay" aria-hidden="true"></div>' : ''}
       <div class="container hero-inner">
         ${
-          isEnabled
+          isEnabled && (headline || lead)
             ? `
         <div class="hero-content">
-          <h1>${headline}</h1>
-          <p class="hero-lead">${lead}</p>
+          ${headline ? `<h1>${headline}</h1>` : ''}
+          ${lead ? `<p class="hero-lead">${lead}</p>` : ''}
         </div>`
             : ''
         }
