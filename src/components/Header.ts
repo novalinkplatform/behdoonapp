@@ -95,6 +95,15 @@ export function renderHeader(settings?: SiteSettings): string {
           <span class="header-brand-title">${brandName}</span>
         </a>
 
+        <a
+          class="header-mobile-call-btn"
+          href="tel:09333256885"
+          aria-label="${pick('تماس مستقیم با بهدون', 'Call Behdoon')}"
+          title="${pick('تماس مستقیم: ۰۹۳۳۳۲۵۶۸۸۵', 'Direct Call: 09333256885')}"
+        >
+          <span class="icon">${icons.phone}</span>
+        </a>
+
         <div class="header-pill">
           <a class="header-item header-home" href="/" aria-label="${pick('خانه', 'Home')}">
             <span class="icon">${icons.home}</span>
