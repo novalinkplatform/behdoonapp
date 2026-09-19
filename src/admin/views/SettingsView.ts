@@ -566,25 +566,33 @@ export function renderSettingsView(): string {
       <div class="editor-sidebar-card">
         <div class="card-header-action">
           <h3 style="margin: 0;">پالت‌های رنگی آماده بهدون (یک کلیک)</h3>
-          <button type="button" class="btn btn-secondary btn-sm" id="theme-reset-btn">بازگردانی به پیش‌فرض</button>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn btn-secondary btn-sm" id="theme-reset-btn">بازگردانی به پیش‌فرض</button>
+            <button type="button" class="btn btn-primary btn-sm" data-save-setting="theme">ذخیره و انتشار تم</button>
+          </div>
         </div>
         <p class="settings-panel-hint">
-          با کلیک روی هر پالت، تم کلی سایت فوراً هماهنگ شده و در پیش‌نمایش زنده زیر قابل مشاهده خواهد بود.
+          با کلیک روی هر پالت، رنگ‌های سایت فوراً هماهنگ شده و در پیش‌نمایش زنده زیر قابل مشاهده است. با کلیک روی «ذخیره و انتشار تم»، پالت در تمام بخش‌های سایت ذخیره و فعال می‌شود.
         </p>
-        <div class="theme-presets-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; margin-top: 14px;">
+        <div class="theme-presets-grid">
           ${THEME_PRESETS.map((p) => `
-            <button type="button" class="theme-preset-card" data-preset-id="${p.id}" style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: var(--radius-md); border: 1.5px solid var(--border); background: var(--surface); cursor: pointer; text-align: right; transition: all 0.2s ease;">
-              <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                <span style="font-weight: 700; font-size: 0.86rem; color: var(--text);">${p.name}</span>
-                <span style="font-size: 0.72rem; background: var(--background); padding: 2px 6px; border-radius: 4px; color: var(--muted);">${p.badge}</span>
+            <button type="button" class="theme-preset-card" data-preset-id="${p.id}" aria-pressed="false">
+              <div class="preset-card-header">
+                <div class="preset-card-title-row">
+                  <span class="preset-radio-indicator" aria-hidden="true"></span>
+                  <span class="preset-card-name">${p.name}</span>
+                </div>
+                <span class="preset-badge">${p.badge}</span>
               </div>
-              <div style="display: flex; gap: 5px; align-items: center; margin-top: 4px;">
-                <span style="width: 18px; height: 18px; border-radius: 50%; background: ${p.colors.primary}; border: 1px solid rgba(0,0,0,0.1);" title="رنگ اصلی"></span>
-                <span style="width: 18px; height: 18px; border-radius: 50%; background: ${p.colors.secondary}; border: 1px solid rgba(0,0,0,0.1);" title="رنگ ثانویه"></span>
-                <span style="width: 18px; height: 18px; border-radius: 50%; background: ${p.colors.background}; border: 1px solid rgba(0,0,0,0.1);" title="پس‌زمینه"></span>
-                <span style="width: 18px; height: 18px; border-radius: 50%; background: ${p.colors.callGreen}; border: 1px solid rgba(0,0,0,0.1);" title="رنگ تماس"></span>
-                <span style="width: 18px; height: 18px; border-radius: 50%; background: ${p.colors.warning}; border: 1px solid rgba(0,0,0,0.1);" title="هشدار"></span>
+              <div class="theme-swatches-row">
+                <span class="theme-swatch-dot" style="background: ${p.colors.primary};" title="رنگ اصلی: ${p.colors.primary}"></span>
+                <span class="theme-swatch-dot" style="background: ${p.colors.secondary};" title="رنگ ثانویه: ${p.colors.secondary}"></span>
+                <span class="theme-swatch-dot" style="background: ${p.colors.background};" title="پس‌زمینه: ${p.colors.background}"></span>
+                <span class="theme-swatch-dot" style="background: ${p.colors.surface};" title="سطح کارت‌ها: ${p.colors.surface}"></span>
+                <span class="theme-swatch-dot" style="background: ${p.colors.callGreen};" title="رنگ تماس: ${p.colors.callGreen}"></span>
+                <span class="theme-swatch-dot" style="background: ${p.colors.warning};" title="هشدار: ${p.colors.warning}"></span>
               </div>
+              <span class="preset-status-tag">برای انتخاب کلیک کنید</span>
             </button>
           `).join('')}
         </div>
@@ -1497,6 +1505,49 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
   }
 
   // ----- theme -----
+  let activePresetId: string | null = null;
+
+  function sanitizeHex(val: string | undefined | null, fallback: string): string {
+    if (!val) return fallback;
+    let clean = val.trim();
+    if (!clean.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(clean)) {
+      clean = '#' + clean;
+    }
+    if (/^#[0-9a-fA-F]{3}$/.test(clean)) {
+      clean = '#' + clean[1] + clean[1] + clean[2] + clean[2] + clean[3] + clean[3];
+    }
+    return /^#[0-9a-fA-F]{6}$/i.test(clean) ? clean.toLowerCase() : fallback;
+  }
+
+  function highlightPresetCard(presetId: string | null): void {
+    activePresetId = presetId;
+    document.querySelectorAll<HTMLButtonElement>('[data-preset-id]').forEach((card) => {
+      const isMatch = card.dataset.presetId === presetId;
+      card.classList.toggle('is-selected', isMatch);
+      card.setAttribute('aria-pressed', isMatch ? 'true' : 'false');
+      const tag = card.querySelector<HTMLElement>('.preset-status-tag');
+      if (tag) {
+        tag.textContent = isMatch ? '✓ پالت فعال سایت' : 'برای انتخاب کلیک کنید';
+      }
+    });
+  }
+
+  function detectMatchingPreset(colors: Record<string, string>): string | null {
+    if (colors.presetId && THEME_PRESETS.some((p) => p.id === colors.presetId)) {
+      return colors.presetId;
+    }
+    const currentPrimary = (colors.primary || '').toLowerCase();
+    const currentBg = (colors.background || '').toLowerCase();
+    for (const p of THEME_PRESETS) {
+      if (p.colors.primary.toLowerCase() === currentPrimary) {
+        if (!currentBg || p.colors.background.toLowerCase() === currentBg) {
+          return p.id;
+        }
+      }
+    }
+    return null;
+  }
+
   function updateThemeLivePreview(): void {
     const box = document.getElementById('theme-live-preview-box');
     const card = document.getElementById('theme-preview-card');
@@ -1508,8 +1559,8 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
     const btnCall = document.getElementById('theme-preview-btn-call');
 
     const getVal = (k: string) => {
-      const v = (document.getElementById(`theme-${k}`) as HTMLInputElement)?.value.trim();
-      return /^#[0-9a-fA-F]{6}$/.test(v) ? v : THEME_DEFAULTS[k];
+      const v = (document.getElementById(`theme-${k}`) as HTMLInputElement)?.value;
+      return sanitizeHex(v, THEME_DEFAULTS[k]);
     };
 
     if (box) box.style.background = getVal('background');
@@ -1526,34 +1577,64 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
   }
 
   function applyThemeFieldValue(key: string, hex: string): void {
+    const validHex = sanitizeHex(hex, THEME_DEFAULTS[key]);
     const hexInput = document.getElementById(`theme-${key}`) as HTMLInputElement | null;
     const pickerInput = document.getElementById(`theme-${key}-picker`) as HTMLInputElement | null;
-    if (hexInput) hexInput.value = hex;
-    if (pickerInput && /^#[0-9a-fA-F]{6}$/.test(hex)) pickerInput.value = hex;
+    if (hexInput) hexInput.value = validHex;
+    if (pickerInput) pickerInput.value = validHex;
+  }
+
+  function checkCustomizedPreset(): void {
+    if (!activePresetId) return;
+    const preset = THEME_PRESETS.find((p) => p.id === activePresetId);
+    if (!preset) return;
+    const isStillMatch = THEME_FIELDS.every((f) => {
+      const v = (document.getElementById(`theme-${f.key}`) as HTMLInputElement)?.value;
+      return sanitizeHex(v, '') === (preset.colors[f.key] || THEME_DEFAULTS[f.key]).toLowerCase();
+    });
+    if (!isStillMatch) {
+      highlightPresetCard(null);
+    }
   }
 
   function renderTheme(): void {
     const theme = (settings.theme as Record<string, string> | undefined) ?? {};
     THEME_FIELDS.forEach((f) => applyThemeFieldValue(f.key, theme[f.key] ?? THEME_DEFAULTS[f.key]));
+    const matched = detectMatchingPreset(theme) || 'behdoon_purple';
+    highlightPresetCard(matched);
     updateThemeLivePreview();
   }
 
   document.querySelectorAll<HTMLInputElement>('[data-theme-picker]').forEach((picker) => {
-    picker.addEventListener('input', () => {
+    const onPickerChange = () => {
       const key = picker.dataset.themePicker!;
       applyThemeFieldValue(key, picker.value);
+      checkCustomizedPreset();
       updateThemeLivePreview();
-    });
+    };
+    picker.addEventListener('input', onPickerChange);
+    picker.addEventListener('change', onPickerChange);
   });
 
   document.querySelectorAll<HTMLInputElement>('[data-theme-hex]').forEach((hexInput) => {
-    hexInput.addEventListener('input', () => {
+    const onHexChange = () => {
       const key = hexInput.dataset.themeHex!;
-      const picker = document.getElementById(`theme-${key}-picker`) as HTMLInputElement | null;
-      if (picker && /^#[0-9a-fA-F]{6}$/.test(hexInput.value.trim())) {
-        picker.value = hexInput.value.trim();
+      let val = hexInput.value.trim();
+      if (!val.startsWith('#') && /^[0-9a-fA-F]{3,6}$/.test(val)) {
+        val = '#' + val;
       }
+      const picker = document.getElementById(`theme-${key}-picker`) as HTMLInputElement | null;
+      if (picker && /^#[0-9a-fA-F]{6}$/i.test(val)) {
+        picker.value = val;
+      }
+      checkCustomizedPreset();
       updateThemeLivePreview();
+    };
+    hexInput.addEventListener('input', onHexChange);
+    hexInput.addEventListener('change', onHexChange);
+    hexInput.addEventListener('blur', () => {
+      const key = hexInput.dataset.themeHex!;
+      hexInput.value = sanitizeHex(hexInput.value, THEME_DEFAULTS[key]);
     });
   });
 
@@ -1562,6 +1643,7 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
       const presetId = btn.dataset.presetId;
       const preset = THEME_PRESETS.find((p) => p.id === presetId);
       if (!preset) return;
+      highlightPresetCard(presetId || null);
       THEME_FIELDS.forEach((f) => {
         const val = preset.colors[f.key] || THEME_DEFAULTS[f.key];
         applyThemeFieldValue(f.key, val);
@@ -1571,6 +1653,7 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
   });
 
   document.getElementById('theme-reset-btn')?.addEventListener('click', () => {
+    highlightPresetCard('behdoon_purple');
     THEME_FIELDS.forEach((f) => applyThemeFieldValue(f.key, THEME_DEFAULTS[f.key]));
     updateThemeLivePreview();
   });
@@ -1581,14 +1664,24 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
         await handleSaveButton(btn, async () => {
           const theme: Record<string, string> = {};
           THEME_FIELDS.forEach((f) => {
-            const value = (document.getElementById(`theme-${f.key}`) as HTMLInputElement).value.trim();
-            theme[f.key] = /^#[0-9a-fA-F]{6}$/.test(value) ? value : THEME_DEFAULTS[f.key];
+            const raw = (document.getElementById(`theme-${f.key}`) as HTMLInputElement)?.value;
+            theme[f.key] = sanitizeHex(raw, THEME_DEFAULTS[f.key]);
           });
           const existingTheme = (settings.theme as Record<string, string> | undefined) ?? {};
-          theme.quickActionsStyle = existingTheme.quickActionsStyle === 'fixed' ? 'fixed' : 'floating';
+          
+          const styleEl = document.getElementById('theme-quick-actions-style') as HTMLSelectElement | null;
+          const posEl = document.getElementById('theme-quick-actions-position') as HTMLSelectElement | null;
+          theme.quickActionsStyle = styleEl ? styleEl.value : (existingTheme.quickActionsStyle === 'fixed' ? 'fixed' : 'floating');
+          theme.quickActionsPosition = posEl ? posEl.value : (existingTheme.quickActionsPosition === 'left' ? 'left' : 'right');
+
+          if (activePresetId) {
+            theme.presetId = activePresetId;
+          }
+
           await updateSetting('theme', theme);
           settings.theme = theme;
           applyTheme(theme, settings.typography as any);
+          highlightPresetCard(theme.presetId || null);
         });
         showSaved();
       } catch (err) {

@@ -1,54 +1,54 @@
 /* ==========================================================
-   تم مشکی با Frosted Glass سبز تیره لوکس (Dark Emerald)
-   سمت کاربر و پورتال مشتریان بهبار
+   تم تاریک شیشه‌ای هماهنگ با پالت انتخابی سایت (Dark Frosted Glass)
+   سمت کاربر و پورتال مشتریان بهدون
    ========================================================== */
 
 [data-theme="dark"] {
   color-scheme: dark;
 
-  /* پالت رنگی تیره و سبز زمردی شیشه‌ای */
-  --primary: #10b981;
-  --primary-dark: #059669;
-  --secondary: #34d399;
-  --secondary-light: rgba(16, 185, 129, 0.15);
+  /* مقادیر پیش‌فرض در صورت عدم تنظیم در پنل مدیریت */
+  --primary: #8b5cf6;
+  --primary-dark: #7c3aed;
+  --secondary: #a78bfa;
+  --secondary-light: rgba(139, 92, 246, 0.15);
 
-  --background: #060907;
-  --surface: #0a130e;
-  --surface-alt: #101f16;
-  --text: #f0fdf4;
-  --muted: #8ca394;
-  --border: rgba(52, 211, 153, 0.2);
+  --background: #0b0f19;
+  --surface: #111827;
+  --surface-alt: #1f2937;
+  --text: #f9fafb;
+  --muted: #9ca3af;
+  --border: rgba(167, 139, 250, 0.2);
 
-  --success: #34d399;
-  --success-dark: #10b981;
+  --success: #10b981;
+  --success-dark: #059669;
   --success-bg: rgba(16, 185, 129, 0.15);
-  --warning: #fbbf24;
+  --warning: #f59e0b;
 
   --call-green: #10b981;
   --call-green-dark: #059669;
 
-  --accent-purple: #a78bfa;
+  --accent-purple: #8b5cf6;
   --accent-purple-light: rgba(139, 92, 246, 0.18);
   --accent-purple-light-hover: rgba(139, 92, 246, 0.28);
 
-  --goose-green: #34d399;
-  --goose-green-light: rgba(52, 211, 153, 0.18);
+  --goose-green: #10b981;
+  --goose-green-light: rgba(16, 185, 129, 0.18);
 }
 
 [data-theme="dark"] body {
-  background: radial-gradient(circle at 10% 15%, rgba(6, 78, 59, 0.35) 0%, transparent 50%),
-              radial-gradient(circle at 90% 85%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
-              #060907;
+  background: radial-gradient(circle at 10% 15%, rgba(124, 58, 237, 0.18) 0%, transparent 50%),
+              radial-gradient(circle at 90% 85%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+              var(--background, #0b0f19);
   color: var(--text);
   min-height: 100vh;
 }
 
 /* هدر فلوتینگ و شیشه‌ای (Frosted Glass Header) */
 [data-theme="dark"] .site-header {
-  background: rgba(8, 18, 12, 0.75) !important;
+  background: rgba(17, 24, 39, 0.8) !important;
   backdrop-filter: blur(20px) saturate(190%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
-  border-bottom: 1px solid rgba(52, 211, 153, 0.22) !important;
+  border-bottom: 1px solid var(--border) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45) !important;
 }
 
@@ -57,20 +57,20 @@
 }
 
 [data-theme="dark"] .header-pill {
-  background: rgba(12, 26, 18, 0.68) !important;
+  background: rgba(17, 24, 39, 0.7) !important;
   backdrop-filter: blur(16px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-  border: 1px solid rgba(52, 211, 153, 0.22) !important;
+  border: 1px solid var(--border) !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
 }
 
 [data-theme="dark"] .header-item {
-  color: #ecfdf5 !important;
+  color: var(--text) !important;
 }
 
 [data-theme="dark"] .header-item:hover {
-  background-color: rgba(52, 211, 153, 0.15) !important;
-  color: #34d399 !important;
+  background-color: var(--secondary-light) !important;
+  color: var(--primary) !important;
 }
 
 [data-theme="dark"] .header-item .icon {
@@ -78,18 +78,18 @@
 }
 
 [data-theme="dark"] .header-item:hover .icon {
-  color: #34d399 !important;
+  color: var(--primary) !important;
 }
 
 [data-theme="dark"] .header-cta {
-  background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%) !important;
-  color: #042f20 !important;
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%) !important;
+  color: #ffffff !important;
   font-weight: 700 !important;
-  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35) !important;
+  box-shadow: 0 4px 20px var(--secondary-light) !important;
 }
 
 [data-theme="dark"] .header-cta .icon {
-  color: #042f20 !important;
+  color: #ffffff !important;
 }
 
 /* دکمه‌های تم و زبان */
@@ -100,24 +100,23 @@
   height: 42px;
   width: 42px;
   border-radius: var(--radius-header);
-  background: rgba(16, 32, 23, 0.65);
-  border: 1px solid rgba(52, 211, 153, 0.28);
-  color: #34d399;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
+  color: var(--primary);
   cursor: pointer;
   flex-shrink: 0;
   transition: transform var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
 }
 
 .theme-toggle:hover {
-  background: rgba(24, 48, 35, 0.85);
-  border-color: rgba(52, 211, 153, 0.5);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--primary);
   transform: scale(1.05);
 }
 
 .theme-toggle-floating {
   display: none !important;
 }
-
 
 /* کارت فرم جابه‌جایی هوشمند (Request Wizard Frosted Glass) */
 [data-theme="dark"] .request-wizard-card,
@@ -133,10 +132,10 @@
 [data-theme="dark"] .article-card,
 [data-theme="dark"] .magazine-card,
 [data-theme="dark"] .chat-widget-window {
-  background: rgba(12, 25, 18, 0.72) !important;
+  background: rgba(17, 24, 39, 0.8) !important;
   backdrop-filter: blur(20px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-  border: 1px solid rgba(52, 211, 153, 0.22) !important;
+  border: 1px solid var(--border) !important;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
   color: var(--text);
 }
@@ -144,68 +143,68 @@
 [data-theme="dark"] .wizard-pill,
 [data-theme="dark"] .service-choice-chip,
 [data-theme="dark"] .vehicle-choice-chip {
-  background: rgba(16, 32, 23, 0.65) !important;
-  border: 1px solid rgba(52, 211, 153, 0.22) !important;
-  color: #f0fdf4 !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
 }
 
 [data-theme="dark"] .wizard-pill:hover,
 [data-theme="dark"] .service-choice-chip:hover,
 [data-theme="dark"] .vehicle-choice-chip:hover {
-  background: rgba(24, 48, 35, 0.85) !important;
-  border-color: rgba(52, 211, 153, 0.45) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: var(--primary) !important;
 }
 
 [data-theme="dark"] .wizard-pill.is-selected,
 [data-theme="dark"] .service-choice-chip.is-selected,
 [data-theme="dark"] .vehicle-choice-chip.is-selected {
-  background: rgba(16, 185, 129, 0.25) !important;
-  border-color: #34d399 !important;
-  color: #a7f3d0 !important;
-  box-shadow: 0 0 15px rgba(52, 211, 153, 0.25) !important;
+  background: var(--secondary-light) !important;
+  border-color: var(--primary) !important;
+  color: var(--text) !important;
+  box-shadow: 0 0 15px var(--secondary-light) !important;
 }
 
 [data-theme="dark"] .wizard-footer {
   background: transparent !important;
-  border-top: 1px solid rgba(52, 211, 153, 0.18) !important;
+  border-top: 1px solid var(--border) !important;
 }
 
 [data-theme="dark"] .wizard-back-btn {
-  background: rgba(16, 32, 23, 0.7) !important;
-  border: 1px solid rgba(52, 211, 153, 0.25) !important;
-  color: #f0fdf4 !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
 }
 
 [data-theme="dark"] .wizard-next-btn {
-  background: linear-gradient(135deg, #059669, #10b981) !important;
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary)) !important;
   color: #ffffff !important;
   border: none !important;
-  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35) !important;
+  box-shadow: 0 4px 18px var(--secondary-light) !important;
 }
 
 /* فرم‌ها و ورودی‌ها */
 [data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
 [data-theme="dark"] select,
 [data-theme="dark"] textarea {
-  background: rgba(14, 28, 20, 0.75) !important;
-  color: #f0fdf4 !important;
-  border: 1px solid rgba(52, 211, 153, 0.25) !important;
+  background: rgba(17, 24, 39, 0.85) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
 }
 
 [data-theme="dark"] input:focus,
 [data-theme="dark"] select:focus,
 [data-theme="dark"] textarea:focus {
-  border-color: #34d399 !important;
-  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.25) !important;
-  background: rgba(18, 38, 27, 0.9) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px var(--secondary-light) !important;
+  background: rgba(17, 24, 39, 0.95) !important;
 }
 
 /* ناوبری پایین صفحه (Bottom Nav) */
 [data-theme="dark"] .bottom-nav {
-  background: rgba(8, 18, 12, 0.88) !important;
+  background: rgba(17, 24, 39, 0.92) !important;
   backdrop-filter: blur(20px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-  border-top: 1px solid rgba(52, 211, 153, 0.2) !important;
+  border-top: 1px solid var(--border) !important;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4) !important;
 }
 
@@ -214,35 +213,35 @@
 }
 
 [data-theme="dark"] .bottom-nav-item.is-active {
-  color: #34d399 !important;
+  color: var(--primary) !important;
 }
 
 /* فوتر سایت */
 [data-theme="dark"] .site-footer {
-  background: #040705 !important;
-  border-top: 1px solid rgba(52, 211, 153, 0.16) !important;
+  background: var(--background, #0b0f19) !important;
+  border-top: 1px solid var(--border) !important;
 }
 
 [data-theme="dark"] .footer-social-link {
-  background: rgba(16, 32, 23, 0.6) !important;
-  border: 1px solid rgba(52, 211, 153, 0.2) !important;
-  color: #34d399 !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--primary) !important;
 }
 
 [data-theme="dark"] .footer-social-link:hover {
-  background: rgba(24, 48, 35, 0.9) !important;
-  border-color: #34d399 !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: var(--primary) !important;
 }
 
 [data-theme="dark"] .quick-actions-side-toggle {
-  background: rgba(12, 24, 17, 0.85) !important;
-  border-color: rgba(52, 211, 153, 0.25) !important;
-  color: #94a3b8 !important;
+  background: rgba(17, 24, 39, 0.85) !important;
+  border-color: var(--border) !important;
+  color: var(--muted) !important;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5) !important;
 }
 
 [data-theme="dark"] .quick-actions-side-toggle:hover {
-  background: rgba(18, 38, 27, 0.95) !important;
-  color: #34d399 !important;
-  border-color: rgba(52, 211, 153, 0.5) !important;
+  background: rgba(17, 24, 39, 0.95) !important;
+  color: var(--primary) !important;
+  border-color: var(--primary) !important;
 }

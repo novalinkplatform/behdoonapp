@@ -43,6 +43,37 @@ const FONT_FAMILIES: Record<string, string> = {
   system: "system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
 };
 
+function adjustBrightness(hex: string, percent: number): string {
+  const num = parseInt(hex.replace('#', ''), 16);
+  if (isNaN(num)) return hex;
+  let r = (num >> 16) + Math.round(255 * (percent / 100));
+  let g = ((num >> 8) & 0x00ff) + Math.round(255 * (percent / 100));
+  let b = (num & 0x0000ff) + Math.round(255 * (percent / 100));
+  r = Math.min(255, Math.max(0, r));
+  g = Math.min(255, Math.max(0, g));
+  b = Math.min(255, Math.max(0, b));
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+}
+
+function hexToRgba(hex: string, alpha: number): string {
+  const num = parseInt(hex.replace('#', ''), 16);
+  if (isNaN(num)) return hex;
+  const r = (num >> 16) & 255;
+  const g = (num >> 8) & 255;
+  const b = num & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function isDarkColor(hex: string): boolean {
+  const num = parseInt(hex.replace('#', ''), 16);
+  if (isNaN(num)) return false;
+  const r = (num >> 16) & 255;
+  const g = (num >> 8) & 255;
+  const b = num & 255;
+  const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+  return luminance < 128;
+}
+
 export function applyTheme(theme?: ThemeSettings, typography?: TypographySettings): void {
   // «فیکس» یعنی دکمه‌های تماس/چت بخشی ثابت از صفحه‌اند (با اسکرول جابه‌جا نمی‌شوند)
   document.documentElement.classList.toggle('quick-actions-fixed', theme?.quickActionsStyle === 'fixed');
@@ -63,25 +94,56 @@ export function applyTheme(theme?: ThemeSettings, typography?: TypographySetting
       if (value && HEX_COLOR.test(value)) root.setProperty(varName, value);
     }
 
-    // Auto-calculate smart fallbacks if only simplified 9 keys are provided
-    if (theme.primary && !theme.primaryDark) {
-      root.setProperty('--primary-dark', theme.primary);
+    // Auto-calculate smart fallbacks and derived shades
+    if (theme.primary) {
+      if (!theme.primaryDark) {
+        root.setProperty('--primary-dark', adjustBrightness(theme.primary, -12));
+      }
+      if (!theme.accentPurple) {
+        root.setProperty('--accent-purple', theme.primary);
+      }
+      if (!theme.accentPurpleLight) {
+        root.setProperty('--accent-purple-light', hexToRgba(theme.primary, 0.12));
+      }
+      if (!theme.accentPurpleLightHover) {
+        root.setProperty('--accent-purple-light-hover', hexToRgba(theme.primary, 0.22));
+      }
     }
-    if (theme.primary && !theme.accentPurple) {
-      root.setProperty('--accent-purple', theme.primary);
+
+    if (theme.secondary) {
+      if (!theme.secondaryLight) {
+        root.setProperty('--secondary-light', hexToRgba(theme.secondary, 0.15));
+      }
     }
-    if (theme.primary && !theme.accentPurpleLight) {
-      root.setProperty('--accent-purple-light', `${theme.primary}18`);
+
+    if (theme.callGreen) {
+      if (!theme.callGreenDark) {
+        root.setProperty('--call-green-dark', adjustBrightness(theme.callGreen, -12));
+      }
+      if (!theme.gooseGreen) {
+        root.setProperty('--goose-green', theme.callGreen);
+      }
+      if (!theme.gooseGreenLight) {
+        root.setProperty('--goose-green-light', hexToRgba(theme.callGreen, 0.15));
+      }
     }
-    if (theme.primary && !theme.accentPurpleLightHover) {
-      root.setProperty('--accent-purple-light-hover', `${theme.primary}28`);
-    }
-    if (theme.callGreen && !theme.callGreenDark) {
-      root.setProperty('--call-green-dark', theme.callGreen);
-      root.setProperty('--goose-green', theme.callGreen);
-    }
+
     if (theme.surface && !theme.surfaceAlt) {
-      root.setProperty('--surface-alt', theme.background || '#f1f5f9');
+      root.setProperty('--surface-alt', theme.background ? (isDarkColor(theme.background) ? adjustBrightness(theme.surface, 8) : adjustBrightness(theme.surface, -4)) : '#f1f5f9');
+    }
+
+    // Dynamic color-scheme based on theme background
+    if (theme.background) {
+      const isDark = isDarkColor(theme.background);
+      root.setProperty('color-scheme', isDark ? 'dark' : 'light');
+      if (isDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        const localTheme = localStorage.getItem('behbar_theme') || localStorage.getItem('behdoon_theme');
+        if (localTheme !== 'dark') {
+          document.documentElement.removeAttribute('data-theme');
+        }
+      }
     }
   }
 

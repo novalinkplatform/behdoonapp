@@ -69,8 +69,8 @@
     </script>
       <script>
       (function() {
-        var t = localStorage.getItem('behbar_theme');
-        if (t === 'dark' || (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        var t = localStorage.getItem('behbar_theme') || localStorage.getItem('behdoon_theme');
+        if (t === 'dark') {
           document.documentElement.setAttribute('data-theme', 'dark');
         }
       })();
