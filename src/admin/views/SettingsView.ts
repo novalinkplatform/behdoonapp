@@ -19,7 +19,7 @@ import { getStaff, hasPermission } from '../utils/auth.ts';
 import { renderUpdatePanel, initUpdatePanel } from '../components/UpdatePanel.ts';
 import { ensureLanguageMode, applyLanguageVisibility } from '../utils/languageMode.ts';
 import { renderPagesListView, initPagesListView } from './PagesListView.ts';
-import { renderSlidersManagerView, initSlidersManagerView } from './SlidersManagerView.ts';
+
 import { API_BASE_URL } from '../data/config.ts';
 import type { Permission } from '../utils/auth.ts';
 import { handleSaveButton } from '../utils/save-button.ts';
@@ -262,8 +262,7 @@ const CORE_SOCIAL_LIST: CoreSocialItem[] = [
 
 const SETTINGS_TABS: { id: string; label: string; permission: Permission }[] = [
   { id: 'pages', label: 'صفحات سایت', permission: 'settings' },
-  { id: 'sliders', label: 'اسلایدر موبایل و وب‌سایت', permission: 'settings' },
-  { id: 'general', label: 'تنظیمات اصلی (سایت، تماس و شبکه‌ها)', permission: 'settings' },
+    { id: 'general', label: 'تنظیمات اصلی (سایت، تماس و شبکه‌ها)', permission: 'settings' },
   { id: 'theme', label: 'رنگ‌بندی و تم', permission: 'settings' },
   { id: 'typography', label: 'تنظیمات فونت و قلم', permission: 'settings' },
   { id: 'map', label: 'نقشه', permission: 'settings' },
@@ -299,10 +298,6 @@ export function renderSettingsView(): string {
 
     <div class="settings-panel" data-settings-panel="pages" ${hiddenAttr('pages')}>
       ${renderPagesListView(true)}
-    </div>
-
-    <div class="settings-panel" data-settings-panel="sliders" ${hiddenAttr('sliders')}>
-      ${renderSlidersManagerView(true)}
     </div>
 
     <div class="settings-panel" data-settings-panel="language" ${hiddenAttr('language')}>
@@ -772,7 +767,7 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
   if (!errorEl || !savedNote) return;
 
   initPagesListView((id) => onNavigate?.('page-editor', id));
-  initSlidersManagerView();
+
 
   if (initialTab) {
     const targetTabBtn = document.querySelector<HTMLButtonElement>(`[data-settings-tab="${initialTab}"]`);
