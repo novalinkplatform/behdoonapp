@@ -181,6 +181,13 @@ export async function initContactManagerView(): Promise<void> {
     const contact = (settings.contact as ContactSettings | undefined) ?? { phoneDisplay: '', phoneTelHref: '', socialLinks: [] };
     phoneDisplayEl.value = contact.phoneDisplay || '';
     phoneTelHrefEl.value = contact.phoneTelHref || '';
+    phoneDisplayEl.addEventListener('input', () => {
+      const digits = phoneDisplayEl.value.replace(/[^\d+]/g, '');
+      if (!phoneTelHrefEl.value || phoneTelHrefEl.value.startsWith('tel:')) {
+        phoneTelHrefEl.value = digits ? `tel:${digits}` : '';
+      }
+    });
+
   }
 
   const enabledEl = document.getElementById('theme-quick-actions-enabled') as HTMLInputElement | null;
