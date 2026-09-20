@@ -232,8 +232,41 @@
   letter-spacing: -0.02em;
 }
 
-.header-mobile-call-btn {
-  display: none;
+.header-support-btn,
+.header-support-icon-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface-alt);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.header-support-icon-btn {
+  padding: 6px;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  justify-content: center;
+}
+
+.header-support-btn:hover,
+.header-support-icon-btn:hover {
+  background: rgba(124, 58, 237, 0.1);
+  color: var(--primary);
+  border-color: rgba(124, 58, 237, 0.2);
+}
+
+.header-support-btn .icon,
+.header-support-icon-btn .icon {
+  width: 18px;
+  height: 18px;
 }
 
 @media (max-width: 768px) {
@@ -329,28 +362,8 @@
     color: var(--primary);
   }
 
-  .header-mobile-call-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(16, 185, 129, 0.12);
-    border: 1px solid rgba(16, 185, 129, 0.25);
-    color: #059669;
-    flex-shrink: 0;
-    transition: all var(--transition-fast);
-  }
-
-  .header-mobile-call-btn .icon {
-    width: 17px;
-    height: 17px;
-  }
-
-  .header-mobile-call-btn:hover {
-    background: #059669;
-    color: #ffffff;
+  .header-desktop-only {
+    display: none !important;
   }
 
   .header-pill,

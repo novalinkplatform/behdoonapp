@@ -2519,6 +2519,13 @@ export default {
           const isProduction = (env as any)?.ENVIRONMENT === 'production' || (typeof process !== 'undefined' && process.env?.NODE_ENV === 'production');
           const isTest = !isProduction && ((typeof process !== 'undefined' && (process.env?.NODE_ENV === 'test' || !process.env?.NODE_ENV)) || (env as any)?.ENVIRONMENT === 'test');
 
+          // اگر در پروداکشن هستیم و پیامک نرفت، خطا بدهیم که در فرانت گیر نکند
+          if (!smsSent && isProduction) {
+            return jsonResponse({
+              error: `سرویس پیامک در حال حاضر با مشکل مواجه است. لطفاً بعداً تلاش کنید. ${smsError ? `(${smsError})` : ''}`
+            }, 500, request);
+          }
+
           const responsePayload: Record<string, any> = {
             success: true,
             message: smsSent
@@ -2676,9 +2683,13 @@ export default {
 
       if (pathname === '/api/customer/me') {
         const auth = getCustomerAuth(request);
-        const phone = auth?.phone || '09123456789';
-        let customerId = auth?.id || 1;
-        let fullName = 'مشتری گرامی بهدون';
+        if (!auth) {
+          return jsonResponse({ error: 'ابتدا وارد حساب کاربری خود شوید.' }, 401, request);
+        }
+        
+        const phone = auth.phone;
+        let customerId = auth.id;
+        let fullName = '';
         let gender = 'male';
         let companyName = null;
 

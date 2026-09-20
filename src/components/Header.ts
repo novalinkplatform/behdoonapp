@@ -78,30 +78,11 @@ export function renderHeader(settings?: SiteSettings): string {
   return `
     <header class="site-header">
       <div class="header-group">
-        <button
-          type="button"
-          class="header-mobile-menu-btn"
-          id="header-mobile-menu-btn"
-          aria-label="${pick('منوی ناوبری', 'Navigation menu')}"
-          title="${pick('منوی ناوبری', 'Navigation menu')}"
-        >
-          <span class="icon">${icons.menu}</span>
-        </button>
-
         <a class="header-brand" href="/" aria-label="${pick('خانه', 'Home')}">
           <span class="header-logo">
             <img src="/favicon.svg" alt="" />
           </span>
           <span class="header-brand-title">${brandName}</span>
-        </a>
-
-        <a
-          class="header-mobile-call-btn"
-          href="tel:09333256885"
-          aria-label="${pick('تماس مستقیم با بهدون', 'Call Behdoon')}"
-          title="${pick('تماس مستقیم: ۰۹۳۳۳۲۵۶۸۸۵', 'Direct Call: 09333256885')}"
-        >
-          <span class="icon">${icons.phone}</span>
         </a>
 
         <div class="header-pill">
@@ -128,13 +109,33 @@ export function renderHeader(settings?: SiteSettings): string {
           <span class="header-label">${pick('ثبت درخواست', 'Submit request')}</span>
         </a>
 
-        ${renderThemeToggle()}
+        <!-- Desktop Support Icons -->
+        <a class="header-support-btn header-desktop-only" href="tel:02122345678" aria-label="${pick('تماس با پشتیبانی', 'Support Call')}">
+          <span class="icon">${icons.phone}</span>
+          <span class="header-label" dir="ltr">۰۲۱-۲۲۳۴۵۶۷۸</span>
+        </a>
+        
+        <button type="button" class="header-support-icon-btn header-desktop-only" aria-label="${pick('پشتیبانی', 'Support')}">
+          <span class="icon">${icons.chat}</span>
+        </button>
+
+        ${renderThemeToggle('header-desktop-only')}
         ${renderLangToggle()}
 
         <a class="header-profile" href="/profile">
           <span class="icon">${icons.user}</span>
           <span class="header-label">${pick('ورود', 'Log in')}</span>
         </a>
+
+        <button
+          type="button"
+          class="header-mobile-menu-btn"
+          id="header-mobile-menu-btn"
+          aria-label="${pick('منوی ناوبری', 'Navigation menu')}"
+          title="${pick('منوی ناوبری', 'Navigation menu')}"
+        >
+          <span class="icon">${icons.menu}</span>
+        </button>
       </div>
     </header>
 
@@ -164,6 +165,10 @@ export function renderHeader(settings?: SiteSettings): string {
           <span class="icon">${icons.phone}</span>
           <span>${pick('تماس مستقیم: ۰۹۳۳۳۲۵۶۸۸۵', 'Direct Call: 09333256885')}</span>
         </a>
+      </div>
+      
+      <div class="mobile-nav-settings" style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+        ${renderThemeToggle()}
       </div>
 
       <div class="mobile-nav-list">

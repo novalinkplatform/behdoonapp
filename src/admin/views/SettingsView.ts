@@ -509,7 +509,10 @@ export function renderSettingsView(): string {
 
       <div class="editor-sidebar-card">
         <div class="card-header-action">
-          <h3 style="margin: 0;">دکمه‌های تماس و چت</h3>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <h3 style="margin: 0;">دکمه‌های تماس و چت</h3>
+            <label class="settings-inline-toggle" style="margin: 0;"><input type="checkbox" id="theme-quick-actions-enabled" /> فعال</label>
+          </div>
           <button type="button" class="btn btn-primary btn-sm" data-save-setting="contact">ذخیره</button>
         </div>
         <div class="form-field">
@@ -1256,9 +1259,15 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
     renderSocialLinksList();
     // این فیلد رنگ نیست، ولی چون درباره‌ی همین دکمه‌های شناور تماس/چت است، اینجا ویرایش می‌شود؛
     // برای سازگاری با نسخه‌های قبلی همچنان زیر کلید «theme» ذخیره می‌شود (نه یک کلید جدید).
-    const themeSettings = (settings.theme as Record<string, string> | undefined) ?? {};
-    (document.getElementById('theme-quick-actions-style') as HTMLSelectElement).value =
-      themeSettings.quickActionsStyle === 'fixed' ? 'fixed' : 'floating';
+    const themeSettings = (settings.theme as Record<string, string | boolean> | undefined) ?? {};
+    const styleEl = document.getElementById('theme-quick-actions-style') as HTMLSelectElement | null;
+    if (styleEl) {
+      styleEl.value = themeSettings.quickActionsStyle === 'fixed' ? 'fixed' : 'floating';
+    }
+    const enabledEl = document.getElementById('theme-quick-actions-enabled') as HTMLInputElement | null;
+    if (enabledEl) {
+      enabledEl.checked = themeSettings.quickActionsEnabled !== false;
+    }
     const posSelect = document.getElementById('theme-quick-actions-position') as HTMLSelectElement | null;
     if (posSelect) {
       posSelect.value = themeSettings.quickActionsPosition === 'left' ? 'left' : 'right';
@@ -1279,10 +1288,11 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
           await updateSetting('contact', contactData);
           settings.contact = contactData;
           const quickActionsStyle = (document.getElementById('theme-quick-actions-style') as HTMLSelectElement).value;
+          const quickActionsEnabled = (document.getElementById('theme-quick-actions-enabled') as HTMLInputElement)?.checked ?? true;
           const quickActionsPosition = (document.getElementById('theme-quick-actions-position') as HTMLSelectElement)?.value ?? 'right';
-          const existingTheme = (settings.theme as Record<string, string> | undefined) ?? {};
-          await updateSetting('theme', { ...existingTheme, quickActionsStyle, quickActionsPosition });
-          settings.theme = { ...existingTheme, quickActionsStyle, quickActionsPosition };
+          const existingTheme = (settings.theme as Record<string, string | boolean> | undefined) ?? {};
+          await updateSetting('theme', { ...existingTheme, quickActionsStyle, quickActionsPosition, quickActionsEnabled });
+          settings.theme = { ...existingTheme, quickActionsStyle, quickActionsPosition, quickActionsEnabled };
         });
         showSaved();
       } catch (err) {
@@ -1662,26 +1672,28 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
     btn.addEventListener('click', async () => {
       try {
         await handleSaveButton(btn, async () => {
-          const theme: Record<string, string> = {};
+          const theme: Record<string, string | boolean> = {};
           THEME_FIELDS.forEach((f) => {
             const raw = (document.getElementById(`theme-${f.key}`) as HTMLInputElement)?.value;
             theme[f.key] = sanitizeHex(raw, THEME_DEFAULTS[f.key]);
           });
-          const existingTheme = (settings.theme as Record<string, string> | undefined) ?? {};
+          const existingTheme = (settings.theme as Record<string, string | boolean> | undefined) ?? {};
           
           const styleEl = document.getElementById('theme-quick-actions-style') as HTMLSelectElement | null;
           const posEl = document.getElementById('theme-quick-actions-position') as HTMLSelectElement | null;
-          theme.quickActionsStyle = styleEl ? styleEl.value : (existingTheme.quickActionsStyle === 'fixed' ? 'fixed' : 'floating');
-          theme.quickActionsPosition = posEl ? posEl.value : (existingTheme.quickActionsPosition === 'left' ? 'left' : 'right');
+          const enabledEl = document.getElementById('theme-quick-actions-enabled') as HTMLInputElement | null;
+          theme.quickActionsStyle = styleEl ? styleEl.value : (existingTheme.quickActionsStyle === 'fixed' ? 'fixed' : 'floating') as string;
+          theme.quickActionsPosition = posEl ? posEl.value : (existingTheme.quickActionsPosition === 'left' ? 'left' : 'right') as string;
+          theme.quickActionsEnabled = enabledEl ? enabledEl.checked : (existingTheme.quickActionsEnabled !== false);
 
           if (activePresetId) {
             theme.presetId = activePresetId;
           }
 
           await updateSetting('theme', theme);
-          settings.theme = theme;
-          applyTheme(theme, settings.typography as any);
-          highlightPresetCard(theme.presetId || null);
+          settings.theme = theme as any;
+          applyTheme(theme as any, settings.typography as any);
+          highlightPresetCard((theme.presetId as string) || null);
         });
         showSaved();
       } catch (err) {

@@ -525,8 +525,18 @@ async function init(): Promise<void> {
     phoneSubmitBtn!.textContent = pick('در حال ارسال کد...', 'Sending code...');
 
     sendCustomerOtp(phone)
-      .then(() => {
+      .then((data) => {
         showStepOtp(phone);
+        if (data?.devCode && otpHandle) {
+          // Fill code for developer convenience
+          const chars = data.devCode.split('');
+          const inputs = document.querySelectorAll<HTMLInputElement>('.otp-digit');
+          inputs.forEach((input, i) => {
+            if (chars[i]) input.value = chars[i];
+          });
+          // Auto submit
+          submitOtp(data.devCode);
+        }
       })
       .catch((err) => {
         phoneError!.hidden = false;
@@ -538,12 +548,14 @@ async function init(): Promise<void> {
       });
   });
 
-  function handleResendOtp(): Promise<void> {
+  async function handleResendOtp(): Promise<void> {
     otpError!.hidden = true;
-    return sendCustomerOtp(currentPhone).catch((err) => {
+    try {
+      await sendCustomerOtp(currentPhone);
+    } catch (err) {
       otpError!.hidden = false;
       otpError!.textContent = err instanceof Error ? err.message : pick('ارسال مجدد کد با خطا مواجه شد.', 'Failed to resend code.');
-    });
+    }
   }
 
   async function submitOtp(code: string): Promise<void> {

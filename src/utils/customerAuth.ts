@@ -104,13 +104,21 @@ async function readError(res: Response, fallback: string): Promise<string> {
   return typeof body?.error === 'string' ? body.error : fallback;
 }
 
-export async function sendCustomerOtp(phone: string): Promise<void> {
+export async function sendCustomerOtp(phone: string): Promise<{devCode?: string, message?: string} | void> {
   const res = await fetch(`${API_BASE_URL}/api/customer/otp/send`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ phone }),
   });
   if (!res.ok) throw new Error(await readError(res, pick('ارسال کد تأیید ناموفق بود.', 'Failed to send verification code.')));
+  
+  try {
+    const data = await res.json();
+    if (data.devCode) {
+      console.log('OTP Code (Dev):', data.devCode);
+    }
+    return data;
+  } catch {}
 }
 
 export async function verifyCustomerOtp(phone: string, code: string): Promise<VerifyOtpResult> {

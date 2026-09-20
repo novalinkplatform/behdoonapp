@@ -25,6 +25,11 @@ export function setQuickActionsSide(side: 'left' | 'right'): void {
 }
 
 export function renderQuickActions(settings?: SiteSettings): string {
+  const theme = settings?.theme as Record<string, any> | undefined;
+  if (theme && theme.quickActionsEnabled === false) {
+    return '';
+  }
+
   return `
     <div class="header-quick-actions" id="header-quick-actions">
       <button
