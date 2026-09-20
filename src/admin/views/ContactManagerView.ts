@@ -21,16 +21,16 @@ interface ContactSettings {
 }
 
 const CORE_SOCIAL_LIST = [
-  { id: 'instagram', name: 'اینستاگرام', brandColor: '#E1306C', iconSvg: publicIcons.instagramFilled || icons.link, placeholder: 'https://instagram.com/...' },
-  { id: 'telegram', name: 'تلگرام', brandColor: '#26A5E4', iconSvg: publicIcons.telegramFilled || icons.link, placeholder: 'https://t.me/...' },
-  { id: 'whatsapp', name: 'واتس‌اپ', brandColor: '#25D366', iconSvg: publicIcons.whatsappFilled || icons.link, placeholder: 'https://wa.me/...' },
-  { id: 'bale', name: 'بله', brandColor: '#45C4A0', iconSvg: publicIcons.baleFilled || icons.link, placeholder: 'https://ble.ir/...' },
-  { id: 'eitaa', name: 'ایتا', brandColor: '#FF7D00', iconSvg: publicIcons.eitaaFilled || icons.link, placeholder: 'https://eitaa.com/...' },
-  { id: 'rubika', name: 'روبیکا', brandColor: '#27B8EB', iconSvg: publicIcons.rubikaFilled || icons.link, placeholder: 'https://rubika.ir/...' },
-  { id: 'aparat', name: 'آپارات', brandColor: '#EE2853', iconSvg: publicIcons.aparatFilled || icons.link, placeholder: 'https://aparat.com/...' },
-  { id: 'linkedin', name: 'لینکدین', brandColor: '#0A66C2', iconSvg: publicIcons.linkedinFilled || icons.link, placeholder: 'https://linkedin.com/in/...' },
-  { id: 'youtube', name: 'یوتیوب', brandColor: '#FF0000', iconSvg: publicIcons.youtubeFilled || icons.link, placeholder: 'https://youtube.com/...' },
-  { id: 'x', name: 'ایکس (توییتر)', brandColor: '#000000', iconSvg: publicIcons.twitterX || icons.link, placeholder: 'https://x.com/...' },
+  { id: 'instagram', name: 'اینستاگرام', brandColor: '#E1306C', iconSvg: publicIcons.instagramFilled || icons.link, placeholder: 'شناسه پیج', baseUrl: 'https://instagram.com/' },
+  { id: 'telegram', name: 'تلگرام', brandColor: '#26A5E4', iconSvg: publicIcons.telegramFilled || icons.link, placeholder: 'آیدی کانال/شخص', baseUrl: 'https://t.me/' },
+  { id: 'whatsapp', name: 'واتس‌اپ', brandColor: '#25D366', iconSvg: publicIcons.whatsappFilled || icons.link, placeholder: 'شماره با کد (مثال: 98912...)', baseUrl: 'https://wa.me/' },
+  { id: 'bale', name: 'بله', brandColor: '#45C4A0', iconSvg: publicIcons.baleFilled || icons.link, placeholder: 'شناسه بله', baseUrl: 'https://ble.ir/' },
+  { id: 'eitaa', name: 'ایتا', brandColor: '#FF7D00', iconSvg: publicIcons.eitaaFilled || icons.link, placeholder: 'شناسه ایتا', baseUrl: 'https://eitaa.com/' },
+  { id: 'rubika', name: 'روبیکا', brandColor: '#27B8EB', iconSvg: publicIcons.rubikaFilled || icons.link, placeholder: 'شناسه روبیکا', baseUrl: 'https://rubika.ir/' },
+  { id: 'aparat', name: 'آپارات', brandColor: '#EE2853', iconSvg: publicIcons.aparatFilled || icons.link, placeholder: 'شناسه کانال', baseUrl: 'https://aparat.com/' },
+  { id: 'linkedin', name: 'لینکدین', brandColor: '#0A66C2', iconSvg: publicIcons.linkedinFilled || icons.link, placeholder: 'آیدی لینکدین', baseUrl: 'https://linkedin.com/in/' },
+  { id: 'youtube', name: 'یوتیوب', brandColor: '#FF0000', iconSvg: publicIcons.youtubeFilled || icons.link, placeholder: 'آیدی یوتیوب (مثل @test)', baseUrl: 'https://youtube.com/' },
+  { id: 'x', name: 'ایکس (توییتر)', brandColor: '#000000', iconSvg: publicIcons.twitterX || icons.link, placeholder: 'آیدی ایکس', baseUrl: 'https://x.com/' },
 ];
 
 const SOCIAL_PLATFORMS = [
@@ -136,7 +136,10 @@ export function renderContactManagerView(): string {
                 </label>
               </div>
               <div>
-                <input type="text" id="social-core-url-${item.id}" data-social-core-url="${item.id}" dir="ltr" placeholder="${item.placeholder}" style="width: 100%; font-size: 0.84rem; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border);" />
+                <div style="display: flex; align-items: stretch; width: 100%; direction: ltr;">
+                  <span style="display: flex; align-items: center; padding: 0 8px; background: var(--surface-alt); border: 1px solid var(--border); border-right: none; border-radius: 6px 0 0 6px; color: var(--muted); font-size: 0.75rem; white-space: nowrap;">${item.baseUrl || ''}</span>
+                  <input type="text" id="social-core-url-${item.id}" data-social-core-url="${item.id}" dir="ltr" placeholder="${item.placeholder}" style="flex: 1; min-width: 0; font-size: 0.84rem; padding: 6px 10px; border-radius: 0 6px 6px 0; border: 1px solid var(--border);" />
+                </div>
               </div>
             </div>
           `).join('')}
@@ -391,13 +394,17 @@ export async function initContactManagerView(): Promise<void> {
         const toggle = document.querySelector<HTMLInputElement>(`[data-social-core-toggle="${core.id}"]`);
         const urlInput = document.querySelector<HTMLInputElement>(`[data-social-core-url="${core.id}"]`);
         if (toggle?.checked && urlInput?.value.trim()) {
-          linksToSave.push({
-            id: core.id,
-            platform: core.id,
-            label: core.name,
-            url: urlInput.value.trim(),
-          });
-        }
+            let finalUrl = urlInput.value.trim();
+            if (core.baseUrl && !finalUrl.startsWith('http')) {
+              finalUrl = core.baseUrl + finalUrl.replace(/^@/, '');
+            }
+            linksToSave.push({
+              id: core.id,
+              platform: core.id,
+              label: core.name,
+              url: finalUrl,
+            });
+          }
       });
 
       customSocialList.forEach((c) => {
