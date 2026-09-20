@@ -30,6 +30,7 @@ export function renderHomeView(staff: StaffInfo): string {
   if (showContent) tiles.push(tile('content', icons.grid, 'مدیریت محتوا'));
   if (showPersonnel) tiles.push(tile('personnel', icons.users, 'مدیریت پرسنل'));
   if (hasPermission(staff, 'plugins')) tiles.push(tile('plugins', icons.plugin, 'افزونه‌ها'));
+  if (showSettings) tiles.push(tile('contact-manager', icons.phone, 'ارتباطات و شبکه‌ها'));
 
   return `<div class="home-grid">${tiles.join('')}</div>`;
 }
