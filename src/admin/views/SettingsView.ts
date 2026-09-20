@@ -263,11 +263,9 @@ const CORE_SOCIAL_LIST: CoreSocialItem[] = [
 const SETTINGS_TABS: { id: string; label: string; permission: Permission }[] = [
   { id: 'pages', label: 'صفحات سایت', permission: 'settings' },
   { id: 'sliders', label: 'اسلایدر موبایل و وب‌سایت', permission: 'settings' },
-  { id: 'general', label: 'نام سایت و فوتر', permission: 'settings' },
+  { id: 'general', label: 'تنظیمات اصلی (سایت، تماس و شبکه‌ها)', permission: 'settings' },
   { id: 'theme', label: 'رنگ‌بندی و تم', permission: 'settings' },
   { id: 'typography', label: 'تنظیمات فونت و قلم', permission: 'settings' },
-  { id: 'social', label: 'شبکه‌های اجتماعی', permission: 'settings' },
-  { id: 'contact', label: 'تماس و دکمه‌ها', permission: 'settings' },
   { id: 'map', label: 'نقشه', permission: 'settings' },
   { id: 'language', label: 'زبان', permission: 'settings' },
   { id: 'license', label: 'لایسنس', permission: 'settings' },
@@ -418,7 +416,133 @@ export function renderSettingsView(): string {
           <div class="form-field" data-i18n="en"><label for="settings-copyright-en">متن کپی‌رایت (انگلیسی)</label><input type="text" id="settings-copyright-en" dir="ltr" /></div>
         </div>
       </div>
-    </div>
+    
+      <div class="editor-sidebar-card">
+        <div class="card-header-action">
+          <h3 style="margin: 0;">مدیریت تماس و دکمه‌های شناور</h3>
+          <button type="button" class="btn btn-primary btn-sm" data-save-setting="contact">ذخیره تماس</button>
+        </div>
+        <div class="settings-form-grid">
+          <div class="form-field">
+            <label for="settings-phone-display">شماره تماس در هدر (نمایشی)</label>
+            <input type="text" id="settings-phone-display" dir="ltr" placeholder="021-200200" />
+          </div>
+          <div class="form-field">
+            <label for="settings-phone-tel">لینک شماره‌گیری</label>
+            <input type="text" id="settings-phone-tel" dir="ltr" placeholder="tel:+9821200200" />
+          </div>
+        </div>
+        <hr style="margin: var(--space-4) 0; border: none; border-top: 1px solid var(--border);" />
+        
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <h4 style="margin: 0; font-size: 0.95rem;">دکمه‌های شناور سایت (واتس‌اپ، تماس و ...)</h4>
+          <label class="settings-inline-toggle" style="margin: 0;"><input type="checkbox" id="theme-quick-actions-enabled" /> فعال باشند</label>
+        </div>
+        <div class="settings-form-grid">
+          <div class="form-field">
+            <label for="theme-quick-actions-style">نحوه نمایش در اسکرول</label>
+            <select id="theme-quick-actions-style">
+              <option value="floating">شناور در گوشه تصویر (توصیه‌شده)</option>
+              <option value="fixed">ثابت در نوار پایین</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="theme-quick-actions-position">موقعیت دکمه‌ها</label>
+            <select id="theme-quick-actions-position">
+              <option value="right">گوشه راست (پیش‌فرض)</option>
+              <option value="left">گوشه چپ</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="editor-sidebar-card">
+        <div class="card-header-action">
+          <h3 style="margin: 0;">شبکه‌های اجتماعی و پیام‌رسان‌ها</h3>
+          <button type="button" class="btn btn-primary btn-sm" data-save-setting="social">ذخیره شبکه‌ها</button>
+        </div>
+        <p class="settings-panel-hint">
+          آدرس کانال‌ها و شناسه‌های خود را وارد کنید تا در فوتر و هدر سایت نمایش داده شوند.
+        </p>
+
+        <div style="display: flex; gap: 16px; align-items: center; margin: 16px 0; background: var(--background); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border);">
+          <label for="social-tab-color-hex" style="font-weight: 700; font-size: 0.88rem; color: var(--text);">رنگ یکپارچه آیکون‌ها (اختیاری):</label>
+          <div class="theme-color-input-row" style="display: flex; gap: 8px; align-items: center;">
+            <input type="color" id="social-tab-color-picker" style="width: 36px; height: 32px; border: none; cursor: pointer; border-radius: 6px; background: transparent;" />
+            <input type="text" id="social-tab-color-hex" dir="ltr" maxlength="7" placeholder="مثال: #8b5cf6" style="max-width: 140px; font-family: monospace; font-size: 0.88rem;" />
+          </div>
+          <span style="font-size: 0.78rem; color: var(--muted);">(در صورت خالی بودن، رنگ رسمی هر اپلیکیشن اعمال می‌شود)</span>
+        </div>
+
+        <div class="social-core-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 14px; margin-top: 14px;">
+          ${CORE_SOCIAL_LIST.map((item) => `
+            <div class="social-network-card" data-core-social="${item.id}" style="background: var(--background); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px; display: flex; flex-direction: column; gap: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="icon" style="width: 24px; height: 24px; color: ${item.brandColor}; display: inline-flex; align-items: center; justify-content: center;">${item.iconSvg}</span>
+                  <span style="font-weight: 700; font-size: 0.88rem; color: var(--text);">${item.name}</span>
+                </div>
+                <label class="settings-inline-toggle" style="margin: 0;">
+                  <input type="checkbox" id="social-core-toggle-${item.id}" data-social-core-toggle="${item.id}" />
+                  فعال
+                </label>
+              </div>
+              <div>
+                <input type="text" id="social-core-url-${item.id}" data-social-core-url="${item.id}" dir="ltr" placeholder="${item.placeholder}" style="width: 100%; font-size: 0.84rem; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border);" />
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        
+        <div style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 16px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <h4 style="margin: 0;">لینک‌های اضافی / سفارشی</h4>
+            <button type="button" class="btn btn-secondary btn-sm" id="social-tab-custom-add-btn">
+              <span class="icon">${icons.plusCircle}</span>
+              افزودن لینک
+            </button>
+          </div>
+          <div id="social-tab-custom-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
+        
+        <div style="margin-top: 24px; background: #0f172a; border-radius: 8px; padding: 16px;">
+          <span style="color: #94a3b8; font-size: 0.82rem; margin-bottom: 8px; display: block;">پیش‌نمایش آیکون‌ها در فوتر:</span>
+          <div id="social-tab-preview-icons" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;"></div>
+        </div>
+      </div>
+
+      <div class="editor-sidebar-card">
+        <div class="card-header-action">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <h3 style="margin: 0;">دکمه‌های دانلود اپلیکیشن</h3>
+            <label class="settings-inline-toggle" style="margin: 0;"><input type="checkbox" id="applinks-enabled" /> فعال</label>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" data-save-setting="app_links">ذخیره</button>
+        </div>
+        <p class="settings-panel-hint">دکمه‌های استورها که در فوتر سایت نمایش داده می‌شوند.</p>
+        <div id="app-links-list"></div>
+        <button type="button" class="btn btn-secondary btn-sm" id="app-link-add-btn">
+          <span class="icon">${icons.plusCircle}</span>
+          افزودن لینک اپلیکیشن
+        </button>
+      </div>
+
+      <div class="editor-sidebar-card">
+        <div class="card-header-action">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <h3 style="margin: 0;">نمادهای اعتماد و مجوزها</h3>
+            <label class="settings-inline-toggle" style="margin: 0;"><input type="checkbox" id="certifications-enabled" /> فعال</label>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" data-save-setting="certifications">ذخیره</button>
+        </div>
+        <p class="settings-panel-hint">اینماد، ساماندهی، جواز کسب و ...</p>
+        <div id="certifications-list"></div>
+        <button type="button" class="btn btn-secondary btn-sm" id="certification-add-btn">
+          <span class="icon">${icons.plusCircle}</span>
+          افزودن مجوز
+        </button>
+      </div>
+</div>
 
     <div class="settings-panel" data-settings-panel="map" ${hiddenAttr('map')}>
       <div class="editor-sidebar-card">
@@ -476,181 +600,6 @@ export function renderSettingsView(): string {
           <span class="settings-panel-hint">نشانگر را جابه‌جا کنید یا بزرگ‌نمایی را تغییر دهید.</span>
         </div>
         <div id="settings-map-preview" style="height: 340px; width: 100%; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-color); margin-top: var(--space-2);"></div>
-      </div>
-    </div>
-
-    <div class="settings-panel" data-settings-panel="contact" ${hiddenAttr('contact')}>
-      <div class="editor-sidebar-card">
-        <div class="card-header-action">
-          <h3 style="margin: 0;">شماره تماس</h3>
-          <button type="button" class="btn btn-primary btn-sm" data-save-setting="contact">ذخیره</button>
-        </div>
-        <div class="settings-form-grid">
-          <div class="form-field">
-            <label for="settings-phone-display">شماره تماس (نمایشی)</label>
-            <input type="text" id="settings-phone-display" dir="ltr" placeholder="021-200200" />
-          </div>
-          <div class="form-field">
-            <label for="settings-phone-tel">لینک شماره‌گیری</label>
-            <input type="text" id="settings-phone-tel" dir="ltr" placeholder="tel:+9821200200" />
-          </div>
-        </div>
-      </div>
-
-      <div class="editor-sidebar-card">
-        <div class="card-header-action">
-          <h3 style="margin: 0;">شبکه‌های اجتماعی و پیام‌رسان‌ها</h3>
-          <button type="button" class="btn btn-secondary btn-sm" data-switch-to-tab="social">رفتن به تنظیمات شبکه‌های اجتماعی</button>
-        </div>
-        <p class="settings-panel-hint" style="margin: 6px 0 0 0;">
-          کلیه پیام‌رسان‌های ایرانی (بله، ایتا، روبیکا، آپارات) و خارجی (واتس‌اپ، تلگرام، اینستاگرام) به همراه تنظیم آیکون‌ها و لینک‌های دلخواه به تب اختصاصی <strong>«شبکه‌های اجتماعی»</strong> منتقل شده است.
-        </p>
-      </div>
-
-      <div class="editor-sidebar-card">
-        <div class="card-header-action">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <h3 style="margin: 0;">دکمه‌های تماس و چت</h3>
-            <label class="settings-inline-toggle" style="margin: 0;"><input type="checkbox" id="theme-quick-actions-enabled" /> فعال</label>
-          </div>
-          <button type="button" class="btn btn-primary btn-sm" data-save-setting="contact">ذخیره</button>
-        </div>
-        <div class="form-field">
-          <label for="theme-quick-actions-style">نحوه نمایش</label>
-          <select id="theme-quick-actions-style">
-            <option value="floating">شناور (همیشه روی صفحه ثابت می‌ماند)</option>
-            <option value="fixed">فیکس (با اسکرول صفحه جابه‌جا می‌شود)</option>
-          </select>
-        </div>
-        <div class="form-field" style="margin-top: 12px;">
-          <label for="theme-quick-actions-position">سمت قرارگیری در وب (دسکتاپ)</label>
-          <select id="theme-quick-actions-position">
-            <option value="right">سمت راست (پیش‌فرض)</option>
-            <option value="left">سمت چپ</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="editor-sidebar-card">
-        <div class="card-header-action">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <h3 style="margin: 0;">دکمه‌های دانلود اپلیکیشن</h3>
-            <label class="settings-inline-toggle" style="margin: 0;"><input type="checkbox" id="applinks-enabled" /> فعال</label>
-          </div>
-          <button type="button" class="btn btn-primary btn-sm" data-save-setting="app_links">ذخیره</button>
-        </div>
-        <p class="settings-panel-hint">اگر اپلیکیشن موبایل دارید، دکمه‌های دانلود آن در فوتر سایت نمایش داده می‌شود.</p>
-        <div id="app-links-list"></div>
-        <button type="button" class="btn btn-secondary btn-sm" id="app-link-add-btn">
-          <span class="icon">${icons.plusCircle}</span>
-          افزودن لینک اپلیکیشن
-        </button>
-      </div>
-
-      <div class="editor-sidebar-card">
-        <div class="card-header-action">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <h3 style="margin: 0;">مجوزها و نمادهای اعتماد</h3>
-            <label class="settings-inline-toggle" style="margin: 0;"><input type="checkbox" id="certifications-enabled" /> فعال</label>
-          </div>
-          <button type="button" class="btn btn-primary btn-sm" data-save-setting="certifications">ذخیره</button>
-        </div>
-        <p class="settings-panel-hint">مثلاً نماد اعتماد الکترونیکی یا ساماندهی؛ لینک تصویر نماد و لینک صفحه تایید را وارد کنید.</p>
-        <div id="certifications-list"></div>
-        <button type="button" class="btn btn-secondary btn-sm" id="certification-add-btn">
-          <span class="icon">${icons.plusCircle}</span>
-          افزودن مجوز
-        </button>
-      </div>
-    </div>
-
-    <!-- تب رنگ‌بندی و تم -->
-    <div class="settings-panel" data-settings-panel="theme" ${hiddenAttr('theme')}>
-      <div class="editor-sidebar-card">
-        <div class="card-header-action">
-          <h3 style="margin: 0;">پالت‌های رنگی آماده بهدون (یک کلیک)</h3>
-          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-            <button type="button" class="btn btn-secondary btn-sm" id="theme-reset-btn">بازگردانی به پیش‌فرض</button>
-            <button type="button" class="btn btn-primary btn-sm" data-save-setting="theme">ذخیره و انتشار تم</button>
-          </div>
-        </div>
-        <p class="settings-panel-hint">
-          با کلیک روی هر پالت، رنگ‌های سایت فوراً هماهنگ شده و در پیش‌نمایش زنده زیر قابل مشاهده است. با کلیک روی «ذخیره و انتشار تم»، پالت در تمام بخش‌های سایت ذخیره و فعال می‌شود.
-        </p>
-        <div class="theme-presets-grid">
-          ${THEME_PRESETS.map((p) => `
-            <button type="button" class="theme-preset-card" data-preset-id="${p.id}" aria-pressed="false">
-              <div class="preset-card-header">
-                <div class="preset-card-title-row">
-                  <span class="preset-radio-indicator" aria-hidden="true"></span>
-                  <span class="preset-card-name">${p.name}</span>
-                </div>
-                <span class="preset-badge">${p.badge}</span>
-              </div>
-              <div class="theme-swatches-row">
-                <span class="theme-swatch-dot" style="background: ${p.colors.primary};" title="رنگ اصلی: ${p.colors.primary}"></span>
-                <span class="theme-swatch-dot" style="background: ${p.colors.secondary};" title="رنگ ثانویه: ${p.colors.secondary}"></span>
-                <span class="theme-swatch-dot" style="background: ${p.colors.background};" title="پس‌زمینه: ${p.colors.background}"></span>
-                <span class="theme-swatch-dot" style="background: ${p.colors.surface};" title="سطح کارت‌ها: ${p.colors.surface}"></span>
-                <span class="theme-swatch-dot" style="background: ${p.colors.callGreen};" title="رنگ تماس: ${p.colors.callGreen}"></span>
-                <span class="theme-swatch-dot" style="background: ${p.colors.warning};" title="هشدار: ${p.colors.warning}"></span>
-              </div>
-              <span class="preset-status-tag">برای انتخاب کلیک کنید</span>
-            </button>
-          `).join('')}
-        </div>
-      </div>
-
-      <div class="editor-sidebar-card" style="margin-top: var(--space-4);">
-        <div class="card-header-action">
-          <h3 style="margin: 0;">شخصی‌سازی دقیق رنگ‌ها</h3>
-          <button type="button" class="btn btn-primary btn-sm" data-save-setting="theme">ذخیره رنگ‌ها</button>
-        </div>
-        <p class="settings-panel-hint">
-          رنگ‌های کاربردی زیر را متناسب با هویت برند خود تنظیم کنید. سایر کدهای هدر، فوتر و المان‌ها خودکار منطبق می‌شوند.
-        </p>
-        <div class="theme-color-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 14px;">
-          ${THEME_FIELDS.map((f) => `
-            <div class="theme-color-field" style="background: var(--background); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border);">
-              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
-                <label for="theme-${f.key}" style="font-weight: 700; font-size: 0.88rem; color: var(--text);">${f.label}</label>
-                <span style="font-size: 0.72rem; color: var(--muted);">${f.group}</span>
-              </div>
-              <p style="font-size: 0.76rem; color: var(--muted); margin: 0 0 8px 0; line-height: 1.4;">${f.desc}</p>
-              <div class="theme-color-input-row" style="display: flex; gap: 8px; align-items: center;">
-                <input type="color" id="theme-${f.key}-picker" data-theme-picker="${f.key}" style="width: 40px; height: 36px; border: none; cursor: pointer; border-radius: 6px; padding: 0; background: transparent;" />
-                <input type="text" id="theme-${f.key}" dir="ltr" data-theme-hex="${f.key}" maxlength="7" placeholder="#000000" style="flex: 1; font-family: monospace; font-size: 0.9rem;" />
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-
-      <div class="editor-sidebar-card" style="margin-top: var(--space-4);">
-        <div class="card-header-action">
-          <h3 style="margin: 0;">پیش‌نمایش زنده تم</h3>
-          <span class="settings-panel-hint">شبیه‌سازی فوری کارت‌ها و دکمه‌ها</span>
-        </div>
-        <div id="theme-live-preview-box" style="margin-top: 14px; padding: 20px; border-radius: 12px; border: 1.5px solid var(--border); background: var(--background); transition: all 0.2s ease;">
-          <div id="theme-preview-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; max-width: 480px; margin: 0 auto; box-shadow: 0 4px 14px rgba(0,0,0,0.05);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span id="theme-preview-badge" style="background: var(--primary); color: #ffffff; padding: 3px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 700;">گارانتی کتبی ۱۸۰ روزه</span>
-              <span id="theme-preview-urgent" style="color: var(--warning); font-size: 0.78rem; font-weight: 700;">اعزام فوری کمتر از ۳۰ دقیقه</span>
-            </div>
-            <h4 id="theme-preview-title" style="margin: 0 0 6px 0; font-size: 1.05rem; font-weight: 800; color: var(--text);">تعمیر و سرویس تخصصی پکیج دیواری</h4>
-            <p id="theme-preview-desc" style="font-size: 0.85rem; color: var(--muted); margin: 0 0 16px 0; line-height: 1.6;">
-              عیب‌یابی برد، رفع کدهای ارور، شستشوی مبدل و تنظیم فشار توسط متخصصین دارای گواهی معتبر.
-            </p>
-            <div style="display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
-              <button type="button" id="theme-preview-btn-primary" style="background: var(--primary); color: #ffffff; border: none; padding: 8px 16px; border-radius: 8px; font-size: 0.84rem; font-weight: 700; cursor: default;">
-                ثبت آنلاین درخواست
-              </button>
-              <button type="button" id="theme-preview-btn-call" style="background: var(--call-green); color: #ffffff; border: none; padding: 8px 14px; border-radius: 8px; font-size: 0.84rem; font-weight: 700; cursor: default; display: flex; align-items: center; gap: 6px;">
-                تماس فوری ۰۲۱-۲۲۳۴۵۶۷۸
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -718,70 +667,6 @@ export function renderSettingsView(): string {
     </div>
 
     <!-- تب شبکه‌های اجتماعی -->
-    <div class="settings-panel" data-settings-panel="social" ${hiddenAttr('social')}>
-      <div class="editor-sidebar-card">
-        <div class="card-header-action">
-          <h3 style="margin: 0;">پیام‌رسان‌ها و شبکه‌های اجتماعی</h3>
-          <button type="button" class="btn btn-primary btn-sm" data-save-setting="social">ذخیره شبکه‌های اجتماعی</button>
-        </div>
-        <p class="settings-panel-hint">
-          پیام‌رسان‌های ایرانی و بین‌المللی کسب‌وکار خود را فعال و آدرس یا شناسه آن‌ها را وارد کنید. این آیکون‌ها در هدر، فوتر و دکمه‌های ارتباطی سایت قرار می‌گیرند.
-        </p>
-
-        <div style="display: flex; gap: 16px; align-items: center; margin: 16px 0; background: var(--background); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border);">
-          <label for="social-tab-color-hex" style="font-weight: 700; font-size: 0.88rem; color: var(--text);">رنگ یکدست برای آیکون‌های فوتر (اختیاری):</label>
-          <div class="theme-color-input-row" style="display: flex; gap: 8px; align-items: center;">
-            <input type="color" id="social-tab-color-picker" style="width: 36px; height: 32px; border: none; cursor: pointer; border-radius: 6px; background: transparent;" />
-            <input type="text" id="social-tab-color-hex" dir="ltr" maxlength="7" placeholder="رنگ رسمی برندها" style="max-width: 140px; font-family: monospace; font-size: 0.88rem;" />
-          </div>
-          <span style="font-size: 0.78rem; color: var(--muted);">(در صورت خالی بودن، هر پیام‌رسان با رنگ رسمی خودش نمایش می‌یابد)</span>
-        </div>
-
-        <div class="social-core-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 14px; margin-top: 14px;">
-          ${CORE_SOCIAL_LIST.map((item) => `
-            <div class="social-network-card" data-core-social="${item.id}" style="background: var(--background); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px; display: flex; flex-direction: column; gap: 10px;">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <span class="icon" style="width: 24px; height: 24px; color: ${item.brandColor}; display: inline-flex; align-items: center; justify-content: center;">${item.iconSvg}</span>
-                  <span style="font-weight: 700; font-size: 0.88rem; color: var(--text);">${item.name}</span>
-                </div>
-                <label class="settings-inline-toggle" style="margin: 0;">
-                  <input type="checkbox" id="social-core-toggle-${item.id}" data-social-core-toggle="${item.id}" />
-                  فعال
-                </label>
-              </div>
-              <div>
-                <input type="text" id="social-core-url-${item.id}" data-social-core-url="${item.id}" dir="ltr" placeholder="${item.placeholder}" style="width: 100%; font-size: 0.84rem; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border);" />
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-
-      <div class="editor-sidebar-card" style="margin-top: var(--space-4);">
-        <div class="card-header-action">
-          <h3 style="margin: 0;">لینک‌ها و کانال‌های دلخواه اضافی</h3>
-          <button type="button" class="btn btn-secondary btn-sm" id="social-tab-custom-add-btn">
-            <span class="icon">${icons.plusCircle}</span>
-            افزودن لینک سفارشی
-          </button>
-        </div>
-        <p class="settings-panel-hint">اگر کانال، گروه یا صفحه دیگری در پلتفرم‌های دیگر دارید، در این بخش اضافه نمایید.</p>
-        <div id="social-tab-custom-list" style="margin-top: 12px; display: flex; flex-direction: column; gap: 10px;"></div>
-      </div>
-
-      <div class="editor-sidebar-card" style="margin-top: var(--space-4);">
-        <div class="card-header-action">
-          <h3 style="margin: 0;">پیش‌نمایش آیکون‌ها در فوتر سایت</h3>
-          <span class="settings-panel-hint">چیدمان و رنگ آیکون‌ها در بخش پایین سایت</span>
-        </div>
-        <div id="social-tab-preview-row" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 12px; padding: 16px; background: #0f172a; border-radius: 8px;">
-          <span style="color: #94a3b8; font-size: 0.82rem;">آیکون‌های فعال در فوتر:</span>
-          <div id="social-tab-preview-icons" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;"></div>
-        </div>
-      </div>
-    </div>
-
     <div class="settings-panel" data-settings-panel="license" ${hiddenAttr('license')}>
       <div class="editor-sidebar-card">
         <h3>فعال‌سازی لایسنس</h3>
@@ -1243,17 +1128,17 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
     renderSocialLinksList();
   });
 
-  document.getElementById('social-color-picker')?.addEventListener('input', (e) => {
-    (document.getElementById('social-color-hex') as HTMLInputElement).value = (e.currentTarget as HTMLInputElement).value;
+  document.getElementById('social-tab-color-picker')?.addEventListener('input', (e) => {
+    (document.getElementById('social-tab-color-hex') as HTMLInputElement).value = (e.currentTarget as HTMLInputElement).value;
   });
 
   function renderContact(): void {
     const contact = (settings.contact as ContactSettings | undefined) ?? { phoneDisplay: '', phoneTelHref: '', socialLinks: [] };
     (document.getElementById('settings-phone-display') as HTMLInputElement).value = contact.phoneDisplay ?? '';
     (document.getElementById('settings-phone-tel') as HTMLInputElement).value = contact.phoneTelHref ?? '';
-    (document.getElementById('social-color-hex') as HTMLInputElement).value = contact.socialIconColor ?? '';
+    (document.getElementById('social-tab-color-hex') as HTMLInputElement).value = contact.socialIconColor ?? '';
     if (contact.socialIconColor && /^#[0-9a-fA-F]{6}$/.test(contact.socialIconColor)) {
-      (document.getElementById('social-color-picker') as HTMLInputElement).value = contact.socialIconColor;
+      (document.getElementById('social-tab-color-picker') as HTMLInputElement).value = contact.socialIconColor;
     }
     socialLinks = contact.socialLinks ?? [];
     renderSocialLinksList();
@@ -1282,7 +1167,7 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
           const contactData = {
             phoneDisplay: (document.getElementById('settings-phone-display') as HTMLInputElement).value,
             phoneTelHref: (document.getElementById('settings-phone-tel') as HTMLInputElement).value,
-            socialIconColor: (document.getElementById('social-color-hex') as HTMLInputElement).value.trim(),
+            socialIconColor: (document.getElementById('social-tab-color-hex') as HTMLInputElement).value.trim(),
             socialLinks,
           };
           await updateSetting('contact', contactData);
