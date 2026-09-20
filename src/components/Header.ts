@@ -73,6 +73,26 @@ export function renderHeader(settings?: SiteSettings): string {
     )
     .join('');
 
+  
+  const socialLinks = settings?.contact?.socialLinks || [];
+  let floatingSocialHtml = '';
+  if (socialLinks.length > 0) {
+    floatingSocialHtml = `
+      <div class="floating-social-beads header-desktop-only">
+        ${socialLinks.map(link => {
+          let iconSvg = icons.globe;
+          if (link.platform === 'instagram') iconSvg = icons.instagram;
+          if (link.platform === 'telegram') iconSvg = icons.telegram;
+          if (link.platform === 'whatsapp') iconSvg = icons.whatsapp;
+          if (link.platform === 'twitter') iconSvg = icons.twitterX;
+          return `<a href="${link.url}" target="_blank" rel="noopener noreferrer" class="social-bead-item" title="${link.label}">
+            <span class="icon">${iconSvg}</span>
+          </a>`;
+        }).join('')}
+      </div>
+    `;
+  }
+
   const brandName = getSiteName(settings);
 
   return `
@@ -138,10 +158,11 @@ export function renderHeader(settings?: SiteSettings): string {
         </button>
       </div>
     </header>
+    ${floatingSocialHtml}
 
     <div class="mobile-nav-backdrop" id="mobile-nav-backdrop" hidden></div>
     <nav class="mobile-nav-drawer" id="mobile-nav-drawer" hidden aria-label="${pick('منوی ناوبری موبایل', 'Mobile Navigation')}">
-      <div class="mobile-nav-header">
+      <div class="mobile-nav-header wavy-green-header">
         <div class="mobile-nav-brand">
           <span class="mobile-nav-logo">
             <img src="/favicon.svg" alt="" />
