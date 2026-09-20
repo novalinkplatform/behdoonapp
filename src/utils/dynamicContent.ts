@@ -67,6 +67,8 @@ export interface SocialLinkSetting {
 export interface ContactSettings {
   phoneDisplay: string;
   phoneTelHref: string;
+  headerPhoneEnabled?: boolean;
+  headerSupportEnabled?: boolean;
   socialIconColor?: string;
   socialLinks: SocialLinkSetting[];
 }

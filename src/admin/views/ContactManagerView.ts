@@ -14,6 +14,8 @@ interface SocialLinkSetting {
 interface ContactSettings {
   phoneDisplay: string;
   phoneTelHref: string;
+  headerPhoneEnabled?: boolean;
+  headerSupportEnabled?: boolean;
   socialIconColor?: string;
   socialLinks: SocialLinkSetting[];
 }
@@ -49,14 +51,11 @@ const SOCIAL_PLATFORMS = [
 
 export function renderContactManagerView(): string {
   return `
-    <div class="admin-view-header">
-      <h1 class="admin-view-title">
-        <span class="icon">${icons.phone}</span>
-        مدیریت تماس و شبکه‌های اجتماعی
-      </h1>
-      <p class="admin-view-desc">
-        در این بخش می‌توانید شماره تماس هدر، دکمه‌های شناور (واتس‌اپ، تماس) و شبکه‌های اجتماعی فوتر را کنترل کنید.
-      </p>
+    <div class="view-header" style="margin-bottom: 1.5rem;">
+      <div>
+        <h1 style="font-size: 1.4rem; font-weight: 800; margin: 0 0 0.35rem 0;">مدیریت تماس و شبکه‌های اجتماعی</h1>
+        <p style="color: var(--muted, #64748b); margin: 0; font-size: 0.88rem;">در این بخش می‌توانید اطلاعات تماس هدر، دکمه‌های شناور (واتس‌اپ، تماس) و شبکه‌های اجتماعی فوتر را کنترل کنید.</p>
+      </div>
     </div>
     
     <div class="admin-view-content" style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;">
@@ -76,6 +75,11 @@ export function renderContactManagerView(): string {
             <input type="text" id="settings-phone-tel" dir="ltr" placeholder="tel:+9821200200" />
           </div>
         </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 16px; margin-bottom: 12px; gap: 10px; flex-wrap: wrap;">
+          <label class="settings-inline-toggle" style="margin: 0;"><input type="checkbox" id="settings-header-phone-enabled" /> نمایش شماره تماس در هدر</label>
+          <label class="settings-inline-toggle" style="margin: 0;"><input type="checkbox" id="settings-header-support-enabled" /> نمایش آیکون پشتیبانی در هدر</label>
+        </div>
+    
         <hr style="margin: var(--space-4) 0; border: none; border-top: 1px solid var(--border);" />
         
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">

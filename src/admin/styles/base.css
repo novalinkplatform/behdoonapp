@@ -152,3 +152,5 @@ p {
   background-color: #15803d !important;
   border-color: #15803d !important;
 }
+
+.icon svg { width: 100%; height: 100%; }

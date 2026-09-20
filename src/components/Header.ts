@@ -110,14 +110,14 @@ export function renderHeader(settings?: SiteSettings): string {
         </a>
 
         <!-- Desktop Support Icons -->
-        <a class="header-support-btn header-desktop-only" href="tel:02122345678" aria-label="${pick('تماس با پشتیبانی', 'Support Call')}">
+        ${settings?.contact?.headerPhoneEnabled === false ? '' : `<a class="header-support-btn header-desktop-only" href="${settings?.contact?.phoneTelHref || 'tel:02122345678'}" aria-label="${pick('تماس با پشتیبانی', 'Support Call')}">
           <span class="icon">${icons.phone}</span>
-          <span class="header-label" dir="ltr">۰۲۱-۲۲۳۴۵۶۷۸</span>
-        </a>
+          <span class="header-label" dir="ltr">${settings?.contact?.phoneDisplay || '۰۲۱-۲۲۳۴۵۶۷۸'}</span>
+        </a>`}
         
-        <button type="button" class="header-support-icon-btn header-desktop-only" aria-label="${pick('پشتیبانی', 'Support')}">
+        ${settings?.contact?.headerSupportEnabled === false ? '' : `<button type="button" class="header-support-icon-btn header-desktop-only" aria-label="${pick('پشتیبانی', 'Support')}">
           <span class="icon">${icons.chat}</span>
-        </button>
+        </button>`}
 
         ${renderThemeToggle('header-desktop-only')}
         ${renderLangToggle()}
