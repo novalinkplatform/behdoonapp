@@ -1,5 +1,5 @@
 import { icons } from '../components/icons.ts';
-import { icons as publicIcons } from '../../components/icons.ts';
+
 import { applyTheme } from '../../utils/theme.ts';
 import {
   fetchSettings,
@@ -42,12 +42,7 @@ interface SocialLinkSetting {
   customIconUrl?: string;
 }
 
-interface ContactSettings {
-  phoneDisplay: string;
-  phoneTelHref: string;
-  socialIconColor?: string;
-  socialLinks: SocialLinkSetting[];
-}
+
 
 interface AppLinkSetting {
   id: string;
@@ -240,29 +235,13 @@ const TYPOGRAPHY_FONTS: { id: string; name: string; desc: string }[] = [
   { id: 'system', name: 'قلم پیش‌فرض سیستم‌عامل (System UI)', desc: 'بدون دانلود فونت وب، استفاده از فونت پیش‌فرض دستگاه' },
 ];
 
-export interface CoreSocialItem {
-  id: string;
-  name: string;
-  nameEn: string;
-  brandColor: string;
-  placeholder: string;
-  iconSvg: string;
-}
 
-const CORE_SOCIAL_LIST: CoreSocialItem[] = [
-  { id: 'whatsapp', name: 'واتس‌اپ (WhatsApp)', nameEn: 'WhatsApp', brandColor: '#25D366', placeholder: 'https://wa.me/989333256885 یا ۰۹۳۳۳۲۵۶۸۸۵', iconSvg: publicIcons.whatsappFilled },
-  { id: 'telegram', name: 'تلگرام (Telegram)', nameEn: 'Telegram', brandColor: '#229ED9', placeholder: 'https://t.me/behdoon_ir یا @behdoon_ir', iconSvg: publicIcons.telegramFilled },
-  { id: 'instagram', name: 'اینستاگرام (Instagram)', nameEn: 'Instagram', brandColor: '#E4405F', placeholder: 'https://instagram.com/behdoon.ir یا behdoon.ir', iconSvg: publicIcons.instagramFilled },
-  { id: 'bale', name: 'پیام‌رسان بله (Bale)', nameEn: 'Bale', brandColor: '#15803D', placeholder: 'https://ble.ir/behdoon یا @behdoon', iconSvg: publicIcons.baleFilled },
-  { id: 'eitaa', name: 'پیام‌رسان ایتا (Eitaa)', nameEn: 'Eitaa', brandColor: '#F97316', placeholder: 'https://eitaa.com/behdoon یا @behdoon', iconSvg: publicIcons.eitaaFilled },
-  { id: 'rubika', name: 'روبیکا (Rubika)', nameEn: 'Rubika', brandColor: '#8B5CF6', placeholder: 'https://rubika.ir/behdoon یا @behdoon', iconSvg: publicIcons.rubikaFilled },
-  { id: 'aparat', name: 'آپارات (Aparat)', nameEn: 'Aparat', brandColor: '#EA1D5D', placeholder: 'https://aparat.com/behdoon', iconSvg: publicIcons.aparatFilled },
-  { id: 'linkedin', name: 'لینکدین (LinkedIn)', nameEn: 'LinkedIn', brandColor: '#0A66C2', placeholder: 'https://linkedin.com/company/behdoon', iconSvg: publicIcons.linkedinFilled },
-];
+
+
 
 const SETTINGS_TABS: { id: string; label: string; permission: Permission }[] = [
   { id: 'pages', label: 'صفحات سایت', permission: 'settings' },
-    { id: 'general', label: 'تنظیمات اصلی (سایت، تماس و شبکه‌ها)', permission: 'settings' },
+    { id: 'general', label: 'تنظیمات اصلی', permission: 'settings' },
   { id: 'theme', label: 'رنگ‌بندی و تم', permission: 'settings' },
   { id: 'typography', label: 'تنظیمات فونت و قلم', permission: 'settings' },
   { id: 'map', label: 'نقشه', permission: 'settings' },
@@ -1028,65 +1007,6 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
     socialLinks.push({ id: `social-${crypto.randomUUID().slice(0, 8)}`, platform: 'telegram', label: '', url: '' });
     renderSocialLinksList();
   });
-
-  document.getElementById('social-tab-color-picker')?.addEventListener('input', (e) => {
-    (document.getElementById('social-tab-color-hex') as HTMLInputElement).value = (e.currentTarget as HTMLInputElement).value;
-  });
-
-  function renderContact(): void {
-    const contact = (settings.contact as ContactSettings | undefined) ?? { phoneDisplay: '', phoneTelHref: '', socialLinks: [] };
-    (document.getElementById('settings-phone-display') as HTMLInputElement).value = contact.phoneDisplay ?? '';
-    (document.getElementById('settings-phone-tel') as HTMLInputElement).value = contact.phoneTelHref ?? '';
-    (document.getElementById('social-tab-color-hex') as HTMLInputElement).value = contact.socialIconColor ?? '';
-    if (contact.socialIconColor && /^#[0-9a-fA-F]{6}$/.test(contact.socialIconColor)) {
-      (document.getElementById('social-tab-color-picker') as HTMLInputElement).value = contact.socialIconColor;
-    }
-    socialLinks = contact.socialLinks ?? [];
-    renderSocialLinksList();
-    // این فیلد رنگ نیست، ولی چون درباره‌ی همین دکمه‌های شناور تماس/چت است، اینجا ویرایش می‌شود؛
-    // برای سازگاری با نسخه‌های قبلی همچنان زیر کلید «theme» ذخیره می‌شود (نه یک کلید جدید).
-    const themeSettings = (settings.theme as Record<string, string | boolean> | undefined) ?? {};
-    const styleEl = document.getElementById('theme-quick-actions-style') as HTMLSelectElement | null;
-    if (styleEl) {
-      styleEl.value = themeSettings.quickActionsStyle === 'fixed' ? 'fixed' : 'floating';
-    }
-    const enabledEl = document.getElementById('theme-quick-actions-enabled') as HTMLInputElement | null;
-    if (enabledEl) {
-      enabledEl.checked = themeSettings.quickActionsEnabled !== false;
-    }
-    const posSelect = document.getElementById('theme-quick-actions-position') as HTMLSelectElement | null;
-    if (posSelect) {
-      posSelect.value = themeSettings.quickActionsPosition === 'left' ? 'left' : 'right';
-    }
-  }
-
-  document.querySelectorAll<HTMLButtonElement>('[data-save-setting="contact"]').forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      try {
-        await handleSaveButton(btn, async () => {
-          readSocialLinksFromDom();
-          const contactData = {
-            phoneDisplay: (document.getElementById('settings-phone-display') as HTMLInputElement).value,
-            phoneTelHref: (document.getElementById('settings-phone-tel') as HTMLInputElement).value,
-            socialIconColor: (document.getElementById('social-tab-color-hex') as HTMLInputElement).value.trim(),
-            socialLinks,
-          };
-          await updateSetting('contact', contactData);
-          settings.contact = contactData;
-          const quickActionsStyle = (document.getElementById('theme-quick-actions-style') as HTMLSelectElement).value;
-          const quickActionsEnabled = (document.getElementById('theme-quick-actions-enabled') as HTMLInputElement)?.checked ?? true;
-          const quickActionsPosition = (document.getElementById('theme-quick-actions-position') as HTMLSelectElement)?.value ?? 'right';
-          const existingTheme = (settings.theme as Record<string, string | boolean> | undefined) ?? {};
-          await updateSetting('theme', { ...existingTheme, quickActionsStyle, quickActionsPosition, quickActionsEnabled });
-          settings.theme = { ...existingTheme, quickActionsStyle, quickActionsPosition, quickActionsEnabled };
-        });
-        showSaved();
-      } catch (err) {
-        showError(err);
-      }
-    });
-  });
-
   // ----- app download links -----
   function renderAppLinksList(): void {
     const list = document.getElementById('app-links-list');
@@ -1562,218 +1482,6 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
     });
   });
 
-  // ----- social networks tab -----
-  interface CustomSocialItem {
-    id: string;
-    platform: string;
-    label: string;
-    url: string;
-  }
-  let customSocialList: CustomSocialItem[] = [];
-
-  function updateSocialTabPreview(): void {
-    const previewContainer = document.getElementById('social-tab-preview-icons');
-    if (!previewContainer) return;
-
-    const iconColor = (document.getElementById('social-tab-color-hex') as HTMLInputElement)?.value.trim();
-
-    const activeIcons: { name: string; brandColor: string; iconSvg: string }[] = [];
-
-    CORE_SOCIAL_LIST.forEach((core) => {
-      const toggle = document.querySelector<HTMLInputElement>(`[data-social-core-toggle="${core.id}"]`);
-      const urlInput = document.querySelector<HTMLInputElement>(`[data-social-core-url="${core.id}"]`);
-      if (toggle?.checked && urlInput?.value.trim()) {
-        activeIcons.push({
-          name: core.nameEn,
-          brandColor: iconColor && /^#[0-9a-fA-F]{6}$/.test(iconColor) ? iconColor : core.brandColor,
-          iconSvg: core.iconSvg,
-        });
-      }
-    });
-
-    customSocialList.forEach((c) => {
-      if (c.url.trim()) {
-        activeIcons.push({
-          name: c.label || c.platform,
-          brandColor: iconColor && /^#[0-9a-fA-F]{6}$/.test(iconColor) ? iconColor : '#94a3b8',
-          iconSvg: publicIcons.globeFilled || icons.link,
-        });
-      }
-    });
-
-    if (activeIcons.length === 0) {
-      previewContainer.innerHTML = '<span style="color: #64748b; font-size: 0.78rem;">هنوز هیچ شبکه‌ای فعال نشده است.</span>';
-      return;
-    }
-
-    previewContainer.innerHTML = activeIcons
-      .map(
-        (ic) => `
-        <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; color: ${ic.brandColor}; border: 1px solid rgba(255,255,255,0.15);" title="${ic.name}">
-          <span style="width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center;">${ic.iconSvg}</span>
-        </div>
-      `,
-      )
-      .join('');
-  }
-
-  function renderCustomSocialList(): void {
-    const list = document.getElementById('social-tab-custom-list');
-    if (!list) return;
-    list.innerHTML = customSocialList
-      .map(
-        (item, idx) => `
-        <div class="settings-form-grid" data-custom-social-index="${idx}" style="grid-template-columns: 140px 160px 1fr auto; align-items: end; gap: 8px;">
-          <div class="form-field">
-            <label>نوع پلتفرم</label>
-            <select data-field="platform">
-              ${SOCIAL_PLATFORMS.map((p) => `<option value="${p.value}" ${p.value === item.platform ? 'selected' : ''}>${p.label}</option>`).join('')}
-            </select>
-          </div>
-          <div class="form-field">
-            <label>عنوان / برچسب</label>
-            <input type="text" data-field="label" value="${item.label}" placeholder="مثال: کانال دوم یا پیج پشتیبانی" />
-          </div>
-          <div class="form-field">
-            <label>آدرس اینترنتی (URL)</label>
-            <input type="text" dir="ltr" data-field="url" value="${item.url}" placeholder="https://..." />
-          </div>
-          <button type="button" class="btn btn-ghost btn-sm" data-remove-custom-social="${idx}" style="margin-bottom: 4px; color: var(--danger);">حذف</button>
-        </div>
-      `,
-      )
-      .join('');
-  }
-
-  function readCustomSocialFromDom(): void {
-    const rows = Array.from(document.querySelectorAll<HTMLElement>('[data-custom-social-index]'));
-    customSocialList = rows.map((r, i) => ({
-      id: customSocialList[i]?.id ?? `custom-soc-${crypto.randomUUID().slice(0, 8)}`,
-      platform: r.querySelector<HTMLSelectElement>('[data-field="platform"]')!.value,
-      label: r.querySelector<HTMLInputElement>('[data-field="label"]')!.value.trim(),
-      url: r.querySelector<HTMLInputElement>('[data-field="url"]')!.value.trim(),
-    }));
-  }
-
-  document.getElementById('social-tab-custom-add-btn')?.addEventListener('click', () => {
-    readCustomSocialFromDom();
-    customSocialList.push({ id: `custom-soc-${crypto.randomUUID().slice(0, 8)}`, platform: 'bale', label: '', url: '' });
-    renderCustomSocialList();
-    updateSocialTabPreview();
-  });
-
-  document.getElementById('social-tab-custom-list')?.addEventListener('click', (e) => {
-    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-remove-custom-social]');
-    if (!btn) return;
-    readCustomSocialFromDom();
-    customSocialList.splice(Number(btn.dataset.removeCustomSocial), 1);
-    renderCustomSocialList();
-    updateSocialTabPreview();
-  });
-
-  document.getElementById('social-tab-color-picker')?.addEventListener('input', (e) => {
-    (document.getElementById('social-tab-color-hex') as HTMLInputElement).value = (e.currentTarget as HTMLInputElement).value;
-    updateSocialTabPreview();
-  });
-  document.getElementById('social-tab-color-hex')?.addEventListener('input', updateSocialTabPreview);
-
-  document.querySelectorAll<HTMLInputElement>('[data-social-core-toggle]').forEach((toggle) => {
-    toggle.addEventListener('change', updateSocialTabPreview);
-  });
-  document.querySelectorAll<HTMLInputElement>('[data-social-core-url]').forEach((input) => {
-    input.addEventListener('input', updateSocialTabPreview);
-  });
-
-  function renderSocialTab(): void {
-    const contact = (settings.contact as ContactSettings | undefined) ?? { phoneDisplay: '', phoneTelHref: '', socialLinks: [] };
-    const savedLinks = (settings.social_links as SocialLinkSetting[] | undefined) ?? contact.socialLinks ?? [];
-
-    const iconColorHex = document.getElementById('social-tab-color-hex') as HTMLInputElement | null;
-    const iconColorPicker = document.getElementById('social-tab-color-picker') as HTMLInputElement | null;
-    if (iconColorHex && contact.socialIconColor) {
-      iconColorHex.value = contact.socialIconColor;
-      if (iconColorPicker && /^#[0-9a-fA-F]{6}$/.test(contact.socialIconColor)) {
-        iconColorPicker.value = contact.socialIconColor;
-      }
-    }
-
-    // Populate core items
-    const customItems: CustomSocialItem[] = [];
-    savedLinks.forEach((link) => {
-      const core = CORE_SOCIAL_LIST.find((c) => c.id === link.platform || c.id === link.id);
-      if (core) {
-        const toggle = document.getElementById(`social-core-toggle-${core.id}`) as HTMLInputElement | null;
-        const urlInput = document.getElementById(`social-core-url-${core.id}`) as HTMLInputElement | null;
-        if (toggle) toggle.checked = Boolean(link.url);
-        if (urlInput) urlInput.value = link.url || '';
-      } else {
-        customItems.push({
-          id: link.id,
-          platform: link.platform,
-          label: link.label,
-          url: link.url,
-        });
-      }
-    });
-
-    customSocialList = customItems;
-    renderCustomSocialList();
-    updateSocialTabPreview();
-  }
-
-  document.querySelectorAll<HTMLButtonElement>('[data-save-setting="social"]').forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      try {
-        await handleSaveButton(btn, async () => {
-          readCustomSocialFromDom();
-          const socialColor = (document.getElementById('social-tab-color-hex') as HTMLInputElement)?.value.trim() || undefined;
-
-          const linksToSave: SocialLinkSetting[] = [];
-          CORE_SOCIAL_LIST.forEach((core) => {
-            const toggle = document.querySelector<HTMLInputElement>(`[data-social-core-toggle="${core.id}"]`);
-            const urlInput = document.querySelector<HTMLInputElement>(`[data-social-core-url="${core.id}"]`);
-            if (toggle?.checked && urlInput?.value.trim()) {
-              linksToSave.push({
-                id: core.id,
-                platform: core.id,
-                label: core.name,
-                url: urlInput.value.trim(),
-              });
-            }
-          });
-
-          customSocialList.forEach((c) => {
-            if (c.url.trim()) {
-              linksToSave.push({
-                id: c.id,
-                platform: c.platform,
-                label: c.label,
-                url: c.url.trim(),
-              });
-            }
-          });
-
-          // Save to social_links
-          await updateSetting('social_links', linksToSave);
-          settings.social_links = linksToSave;
-
-          // Also synchronize with contact settings so Footer.ts and other consumers stay 100% updated
-          const existingContact = (settings.contact as ContactSettings | undefined) ?? { phoneDisplay: '', phoneTelHref: '', socialLinks: [] };
-          const updatedContact = {
-            ...existingContact,
-            socialIconColor: socialColor,
-            socialLinks: linksToSave,
-          };
-          await updateSetting('contact', updatedContact);
-          settings.contact = updatedContact;
-        });
-        showSaved();
-      } catch (err) {
-        showError(err);
-      }
-    });
-  });
-
   // ----- map settings -----
   let previewMapInstance: L.Map | null = null;
   let currentPreviewTileLayer: L.TileLayer | null = null;
@@ -1905,10 +1613,8 @@ export function initSettingsView(onNavigate?: (screen: string, detail?: unknown)
       settings = data;
 
       renderGeneral();
-      renderContact();
       renderTheme();
       renderTypography();
-      renderSocialTab();
       renderAppLinks();
       renderCertifications();
       renderMapSettings();
