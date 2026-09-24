@@ -12,6 +12,8 @@ interface SmsPluginConfig {
   username: string;
   password: string;
   bodyId: string;
+  orderBodyId?: string;
+  fromNumber?: string;
   autoNotifyStatusChange: boolean;
   lastCheck?: AiProviderLastCheck;
 }
@@ -140,11 +142,19 @@ export function renderPluginsView(): string {
           <input type="password" id="settings-sms-password" dir="ltr" autocomplete="off" />
         </div>
         <div class="form-field">
-          <label for="settings-sms-body-id">شناسه پترن خط خدماتی</label>
-          <input type="text" id="settings-sms-body-id" dir="ltr" required />
+          <label for="settings-sms-body-id">شناسه پترن کد تایید ورود (OTP)</label>
+          <input type="text" id="settings-sms-body-id" dir="ltr" placeholder="مثال: 540077" required />
+        </div>
+        <div class="form-field">
+          <label for="settings-sms-order-body-id">شناسه پترن تأیید ثبت سفارش (اختیاری)</label>
+          <input type="text" id="settings-sms-order-body-id" dir="ltr" placeholder="اختیاری (پترن متغیردار)" />
+        </div>
+        <div class="form-field">
+          <label for="settings-sms-from-number">شماره خط اختصاصی پیامک (اختیاری)</label>
+          <input type="text" id="settings-sms-from-number" dir="ltr" placeholder="50004001959294" />
         </div>
       </div>
-      <p class="settings-panel-hint">ارسال همیشه از طریق همین پترن (خط خدماتی اشتراکی) انجام می‌شود — چون پترن خودش خط ارسال را هم مشخص می‌کند، شماره‌ی خط جدا لازم نیست. شناسه‌ی پترن را باید قبلاً در پنل ملی‌پیامک ثبت کرده باشید.</p>
+      <p class="settings-panel-hint">ارسال کد ورود و اعلان‌های سریع از طریق خط خدماتی اشتراکی یا خط اختصاصی انجام می‌شود. در صورت ثبت پترن اختصاصی سفارش، مشخصات کامل به همراه کد پیگیری ارسال خواهد شد.</p>
       <div class="editor-header-actions" style="margin-top: var(--space-3)">
         <button type="button" class="btn btn-secondary btn-sm" id="settings-sms-test-btn">تست اتصال</button>
         <span id="settings-sms-status"></span>
@@ -228,6 +238,10 @@ export function initPluginsView(): void {
     (document.getElementById('settings-sms-username') as HTMLInputElement).value = sms.username ?? '';
     (document.getElementById('settings-sms-password') as HTMLInputElement).value = sms.password ?? '';
     (document.getElementById('settings-sms-body-id') as HTMLInputElement).value = sms.bodyId ?? '';
+    const orderBodyEl = document.getElementById('settings-sms-order-body-id') as HTMLInputElement | null;
+    if (orderBodyEl) orderBodyEl.value = sms.orderBodyId ?? '';
+    const fromNumEl = document.getElementById('settings-sms-from-number') as HTMLInputElement | null;
+    if (fromNumEl) fromNumEl.value = sms.fromNumber ?? '';
     (document.getElementById('settings-sms-auto-notify') as HTMLInputElement).checked = Boolean(sms.autoNotifyStatusChange);
     renderLastCheckStatus(document.getElementById('settings-sms-status'), sms.lastCheck);
 
@@ -340,12 +354,16 @@ export function initPluginsView(): void {
         return;
       }
       const existingSms = (plugins.sms as SmsPluginConfig | undefined) ?? ({} as SmsPluginConfig);
+      const orderBodyVal = (document.getElementById('settings-sms-order-body-id') as HTMLInputElement | null)?.value.trim() ?? '';
+      const fromNumVal = (document.getElementById('settings-sms-from-number') as HTMLInputElement | null)?.value.trim() ?? '';
       const nextSms: SmsPluginConfig = {
         ...existingSms,
         enabled: (document.getElementById('settings-sms-enabled') as HTMLInputElement).checked,
         username: (document.getElementById('settings-sms-username') as HTMLInputElement).value.trim(),
         password: (document.getElementById('settings-sms-password') as HTMLInputElement).value,
         bodyId,
+        orderBodyId: orderBodyVal,
+        fromNumber: fromNumVal || '50004001959294',
         autoNotifyStatusChange: (document.getElementById('settings-sms-auto-notify') as HTMLInputElement).checked,
       };
       try {

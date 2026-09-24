@@ -550,6 +550,11 @@ export function renderRequestWizard(
               )}
             </p>
 
+            <div class="wizard-sms-sent-banner" id="wizard-sms-sent-banner">
+              <span class="icon" style="color: #16a34a; font-size: 1.15rem;">${icons.checkCircle}</span>
+              <span id="wizard-sms-sent-text">${pick('پیامک تأیید شامل مشخصات کامل خدمت و کد پیگیری به شماره شما ارسال شد.', 'Confirmation SMS with service details and tracking code has been sent.')}</span>
+            </div>
+
             <div class="wizard-tracking-box">
               <span class="wizard-tracking-label">${pick('شماره پیگیری اختصاصی سفارش:', 'Exclusive Tracking Number:')}</span>
               <span class="wizard-tracking-number" id="wizard-tracking-code"></span>
@@ -1425,6 +1430,14 @@ export function initRequestWizard(
       });
 
       trackingCodeEl!.textContent = trackingCode;
+
+      const smsTextEl = document.getElementById('wizard-sms-sent-text');
+      if (smsTextEl) {
+        smsTextEl.textContent = pick(
+          `پیامک تأیید شامل خدمت «${serviceLabel()}»، مشخصات سفارش و کد پیگیری به شماره ${toPersianDigits(phone)} ارسال شد.`,
+          `Confirmation SMS for "${serviceLabel()}" with order specs and tracking code was sent to ${phone}.`
+        );
+      }
 
       // Copy tracking code button
       const copyBtn = document.getElementById('wizard-copy-tracking-btn');

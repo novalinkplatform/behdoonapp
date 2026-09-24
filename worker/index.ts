@@ -1886,7 +1886,16 @@ export default {
           // ارسال خودکار پیامک رهگیری به مشتری در صورت معتبر بودن شماره تلفن
           if (phone && /^09\d{9}$/.test(phone)) {
             try {
-              await sendOrderCreatedSms(env, phone, trackingCode, customerName);
+              await sendOrderCreatedSms(env, phone, trackingCode, {
+                serviceLabel: data.serviceLabel || data.service_label || 'خدمات تخصصی بهدون',
+                customerName: customerName || 'مشتری گرامی',
+                scheduledDate: data.scheduledDate || data.scheduled_date || 'امروز',
+                scheduledTime: data.scheduledTime || data.scheduled_time || 'فوری',
+                urgency: data.urgency || (data.scheduledTime === 'اعزام فوری' ? 'urgent' : 'normal'),
+                withParts: Boolean(data.with_parts || data.wantsParts || data.wants_parts),
+                address: data.originNotes || data.locationNotes || data.address || data.notes || '',
+                estimateAvg: data.estimateAvg ?? data.estimated_price,
+              });
             } catch (smsErr) {
               console.error('Failed to send order creation SMS:', smsErr);
             }

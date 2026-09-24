@@ -5,6 +5,8 @@ export interface SmsConfig {
   username: string;
   password: string;
   bodyId: string;
+  orderBodyId?: string;
+  fromNumber?: string;
   autoNotifyStatusChange: boolean;
 }
 
@@ -48,6 +50,8 @@ export async function getSmsConfig(env: Env): Promise<SmsConfig> {
     username: envAny.SMS_USERNAME || envAny.MELIPAYAMAK_USERNAME || '',
     password: envAny.SMS_PASSWORD || envAny.MELIPAYAMAK_PASSWORD || '',
     bodyId: String(envAny.SMS_BODY_ID || envAny.MELIPAYAMAK_BODY_ID || ''),
+    orderBodyId: String(envAny.SMS_ORDER_BODY_ID || ''),
+    fromNumber: String(envAny.SMS_FROM_NUMBER || '50004001959294'),
     autoNotifyStatusChange: false,
   };
 
@@ -68,6 +72,12 @@ export async function getSmsConfig(env: Env): Promise<SmsConfig> {
           if (plugins.sms.password) config.password = String(plugins.sms.password);
           if (plugins.sms.bodyId !== undefined && plugins.sms.bodyId !== null) {
             config.bodyId = String(plugins.sms.bodyId).trim();
+          }
+          if (plugins.sms.orderBodyId !== undefined && plugins.sms.orderBodyId !== null) {
+            config.orderBodyId = String(plugins.sms.orderBodyId).trim();
+          }
+          if (plugins.sms.fromNumber !== undefined && plugins.sms.fromNumber !== null) {
+            config.fromNumber = String(plugins.sms.fromNumber).trim();
           }
           if (typeof plugins.sms.autoNotifyStatusChange === 'boolean') {
             config.autoNotifyStatusChange = plugins.sms.autoNotifyStatusChange;
@@ -291,14 +301,26 @@ export async function sendOtpSms(env: Env, phone: string, code: string): Promise
   return sendDirectSms(config, phone, message);
 }
 
+export interface OrderCreatedDetails {
+  serviceLabel?: string;
+  customerName?: string;
+  scheduledDate?: string;
+  scheduledTime?: string;
+  urgency?: string;
+  withParts?: boolean | number;
+  address?: string;
+  estimateAvg?: number;
+}
+
 /**
- * ارسال پیامک تأیید ثبت سفارش و اعلام کد رهگیری
+ * ارسال پیامک تأیید ثبت سفارش و اعلام مشخصات و کد رهگیری
+ * پس از ثبت: پیامک به مشتری که خدمات فلان با مشخصات و کد پیگیری ثبت شد
  */
 export async function sendOrderCreatedSms(
   env: Env,
   phone: string,
   trackingCode: string,
-  customerName?: string
+  detailsOrName?: string | OrderCreatedDetails
 ): Promise<SmsSendResult> {
   const config = await getSmsConfig(env);
 
@@ -306,16 +328,62 @@ export async function sendOrderCreatedSms(
     return { success: false, error: 'سرویس پیامک غیرفعال است.' };
   }
 
-  // اگر پترن تعریف شده باشد
-  if (config.bodyId && parseInt(config.bodyId, 10) > 0) {
-    // پترن‌های متداول تک‌متغیره کد رهگیری را ارسال می‌کنند
-    return sendPatternSms(config, phone, trackingCode);
+  const details: OrderCreatedDetails =
+    typeof detailsOrName === 'string'
+      ? { customerName: detailsOrName }
+      : (detailsOrName || {});
+
+  const customerName = details.customerName && details.customerName !== 'مشتری گرامی'
+    ? details.customerName.trim()
+    : '';
+  const namePart = customerName ? `${customerName} عزیز،\n` : '';
+
+  const serviceLabel = details.serviceLabel || 'خدمات فنی ساختمان';
+  const isUrgent = details.urgency === 'urgent' || details.scheduledTime === 'اعزام فوری';
+  const scheduleText = isUrgent
+    ? 'اعزام فوری (کمتر از ۴۵ دقیقه)'
+    : `${details.scheduledDate || 'امروز'} (ساعت ${details.scheduledTime || 'طبق هماهنگی'})`;
+
+  const partsText = details.withParts
+    ? 'همراه با قطعات و لوازم (فاکتور خرید)'
+    : 'بدون لوازم (فقط اجرت کار تکنسین)';
+
+  // ساخت پیام کامل و شفاف فارسی حاوی: خدمات فلان + مشخصات + کد پیگیری ثبت شد
+  let message = `بهدون\n${namePart}درخواست خدمت «${serviceLabel}» با مشخصات زیر با موفقیت ثبت شد:\n` +
+    `▫️ کد پیگیری: ${trackingCode}\n` +
+    `▫️ زمان مراجعه: ${scheduleText}\n` +
+    `▫️ تأمین لوازم: ${partsText}\n`;
+
+  if (details.address) {
+    const cleanAddr = details.address.replace(/[\r\n\t]+/g, ' ').trim();
+    const shortAddr = cleanAddr.length > 50 ? cleanAddr.slice(0, 47) + '...' : cleanAddr;
+    message += `▫️ نشانی: ${shortAddr}\n`;
   }
 
-  // پیامک مستقیم
-  const namePart = customerName ? `${customerName} عزیز،\n` : '';
-  const message = `بهدون\n${namePart}سفارش شما با موفقیت ثبت شد.\nکد رهگیری: ${trackingCode}\nپیگیری سفارش: behdoon.ir/orders?code=${trackingCode}`;
-  return sendDirectSms(config, phone, message);
+  message += `\nپیگیری سفارش: behdoon.ir/orders?code=${trackingCode}`;
+
+  // ۱. اگر پترن اختصاصی سفارش در تنظیمات ثبت شده باشد (orderBodyId)
+  if (config.orderBodyId && parseInt(config.orderBodyId, 10) > 0) {
+    const patternArg = `${trackingCode};${serviceLabel};${isUrgent ? 'فوری' : scheduleText}`;
+    const patRes = await sendPatternSms(config, phone, patternArg, config.orderBodyId);
+    if (patRes.success) return patRes;
+    const fallbackRes = await sendPatternSms(config, phone, trackingCode, config.orderBodyId);
+    if (fallbackRes.success) return fallbackRes;
+  }
+
+  // ۲. ارسال پیام مستقیم متنی با سرشماره پنل
+  const fromNum = config.fromNumber || '50004001959294';
+  const directRes = await sendDirectSms(config, phone, message, fromNum);
+  if (directRes.success) return directRes;
+
+  // ۳. در صورتی که ارسال مستقیم ناموفق بود و پترن عمومی bodyId وجود داشت
+  if (config.bodyId && parseInt(config.bodyId, 10) > 0) {
+    const fallbackPat = await sendPatternSms(config, phone, `${trackingCode};${serviceLabel}`, config.bodyId);
+    if (fallbackPat.success) return fallbackPat;
+    return sendPatternSms(config, phone, trackingCode, config.bodyId);
+  }
+
+  return directRes;
 }
 
 /**
@@ -348,5 +416,5 @@ export async function sendStatusChangeSms(
   }
 
   const message = `بهدون (پیگیری: ${trackingCode})\n${statusDesc}\nbehdoon.ir/orders?code=${trackingCode}`;
-  return sendDirectSms(config, phone, message);
+  return sendDirectSms(config, phone, message, config.fromNumber || '50004001959294');
 }
