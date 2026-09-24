@@ -261,7 +261,7 @@ async function runTests() {
   );
   body = await res.json();
   assert(res.status === 200 && body.success === true, 'Order created successfully');
-  assert(/^BD-\d{4}-\d{6}$/.test(body.trackingCode), `Tracking code follows standard format: ${body.trackingCode}`);
+  assert(/^\d{8,}$/.test(body.trackingCode), `Tracking code follows numeric Shahanshahi format without English letters: ${body.trackingCode}`);
   const orderId = body.orderId;
 
   // --- Section 4: Status Change Notification Hook ---

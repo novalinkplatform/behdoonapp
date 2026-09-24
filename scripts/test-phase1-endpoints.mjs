@@ -181,7 +181,7 @@ async function runTests() {
     env
   );
   body = await res.json();
-  assert(res.status === 200 && body.trackingCode.startsWith('BD-'), `Order created with tracking code: ${body.trackingCode}`);
+  assert(res.status === 200 && /^\d{8,}$/.test(body.trackingCode), `Order created with numeric tracking code: ${body.trackingCode}`);
   const orderId = body.orderId;
   const trackingCode = body.trackingCode;
 

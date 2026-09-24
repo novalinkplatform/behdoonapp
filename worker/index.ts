@@ -751,10 +751,10 @@ function buildCustomerTimeline(order: any, logs: any[] = []): Array<{
   return timeline;
 }
 
-function generateStandardOrderId(seq: number): string {
-  const currentYear = new Date().getFullYear();
-  const seqStr = String(seq).padStart(6, '0');
-  return `BD-${currentYear}-${seqStr}`;
+function generateStandardOrderId(seq: number, datePrefix?: string): string {
+  const prefix = datePrefix || getShahanshahiDatePrefix();
+  const seqStr = seq < 100 ? String(seq).padStart(2, '0') : String(seq);
+  return `${prefix}${seqStr}`;
 }
 
 export interface MatchingCandidate {
@@ -1792,8 +1792,8 @@ export default {
             }
           }
 
-          // Generate standard Behdoon Order ID: BD-YYYY-XXXXXX
-          const trackingCode = generateStandardOrderId(dailyCount);
+          // کد رهگیری تمام‌عددی و اختصاصی شاهنشاهی بهدون بدون الفبای انگلیسی (مثال: 85070201)
+          const trackingCode = generateStandardOrderId(dailyCount, datePrefix);
           const now = new Date().toISOString();
           let phone = String(data.phone || data.customer_phone || data.customerPhone || data.mobile || '').trim();
           if (phone) {
@@ -1970,7 +1970,13 @@ export default {
           else if (phoneParam.startsWith('98')) phoneParam = phoneParam.slice(2);
           if (phoneParam.startsWith('9') && phoneParam.length === 10) phoneParam = '0' + phoneParam;
         }
-        const codeParam = url.searchParams.get('code')?.trim() || url.searchParams.get('trackingCode')?.trim();
+        let codeParam = url.searchParams.get('code')?.trim() || url.searchParams.get('trackingCode')?.trim() || '';
+        if (codeParam) {
+          codeParam = codeParam
+            .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776))
+            .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 1632))
+            .replace(/[\s\-_\(\)\+]/g, '');
+        }
 
         if ((!phoneParam || phoneParam.length < 10) && !codeParam) {
           return jsonResponse({ requests: [] });
@@ -4263,7 +4269,7 @@ export default {
         // Send SMS notification if configured
         if (order.phone) {
           try {
-            await sendStatusChangeSms(env, order.phone, order.tracking_code || `BD-${id}`, targetStatus);
+            await sendStatusChangeSms(env, order.phone, order.tracking_code || `${getShahanshahiDatePrefix()}${String(id < 100 ? id : id).padStart(2, '0')}`, targetStatus);
           } catch {}
         }
 
@@ -5078,7 +5084,7 @@ export default {
               // ارسال پیامک تخصیص متخصص به مشتری در صورت فعال بودن
               if (providerId && currentReq?.phone) {
                 try {
-                  await sendStatusChangeSms(env, currentReq.phone, currentReq.tracking_code || `BD-${id}`, newStatus);
+                  await sendStatusChangeSms(env, currentReq.phone, currentReq.tracking_code || `${getShahanshahiDatePrefix()}${String(id < 100 ? id : id).padStart(2, '0')}`, newStatus);
                 } catch (smsErr) {
                   console.error('Failed to send assignment SMS:', smsErr);
                 }
@@ -5218,7 +5224,7 @@ export default {
                 // ارسال خودکار پیامک تغییر وضعیت به مشتری در مراحل مهم
                 if (oldStatus !== newStatus && currentReq?.phone) {
                   try {
-                    await sendStatusChangeSms(env, currentReq.phone, currentReq.tracking_code || `BD-${id}`, newStatus);
+                    await sendStatusChangeSms(env, currentReq.phone, currentReq.tracking_code || `${getShahanshahiDatePrefix()}${String(id < 100 ? id : id).padStart(2, '0')}`, newStatus);
                   } catch (smsErr) {
                     console.error('Failed to send status change SMS:', smsErr);
                   }
@@ -6820,7 +6826,7 @@ export default {
 
                 return {
                   id: r.id,
-                  trackingCode: r.tracking_code || `BD-${r.id}`,
+                  trackingCode: r.tracking_code || `${getShahanshahiDatePrefix()}${String(r.id < 100 ? r.id : r.id).padStart(2, '0')}`,
                   customer: {
                     id: r.customer_id,
                     name: r.name,
