@@ -3308,5 +3308,294 @@ body.modal-open {
   }
 }
 
+/* ==========================================================================
+   Simplified Wizard V2 Components (Schedule, Auth, OTP & Direct Tracking)
+   ========================================================================== */
+.wizard-pricing-summary-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
+.wizard-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #f1f5f9;
+}
 
+.wizard-price-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.wizard-price-label-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wizard-price-label-wrap strong {
+  display: block;
+  font-size: 0.92rem;
+  color: #1e293b;
+}
+
+.wizard-price-label-wrap p {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin: 2px 0 0;
+}
+
+.wizard-price-value {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #7c3aed;
+  white-space: nowrap;
+}
+
+.wizard-schedule-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 600px) {
+  .wizard-schedule-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.wizard-logged-in-box {
+  background: #f0fdf4;
+  border: 1.5px solid #86efac;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+  transition: all 0.2s ease;
+}
+
+@media (max-width: 540px) {
+  .wizard-logged-in-box {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.wizard-logged-in-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wizard-logged-in-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #dcfce7;
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.wizard-logged-in-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.wizard-logged-in-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #14532d;
+  margin: 0 0 4px;
+}
+
+.wizard-logged-in-phone {
+  font-size: 0.85rem;
+  color: #166534;
+  margin: 0;
+}
+
+.wizard-switch-btn {
+  font-size: 0.8rem;
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  background: #ffffff;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.wizard-switch-btn:hover {
+  background: #ecfdf5;
+  border-color: #059669;
+}
+
+.wizard-order-preview-box {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wizard-order-preview-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.88rem;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #f1f5f9;
+}
+
+.wizard-order-preview-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.wizard-order-preview-label {
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.84rem;
+}
+
+.wizard-order-preview-val {
+  color: #0f172a;
+  font-weight: 700;
+  text-align: left;
+}
+
+/* OTP Verification Box in Wizard */
+.wizard-otp-wrap {
+  background: #f8fafc;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 16px;
+  padding: 18px 16px;
+  margin-top: 14px;
+  text-align: center;
+  animation: wizardFadeIn 0.25s ease;
+}
+
+.wizard-otp-title {
+  font-size: 0.96rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0 0 6px;
+}
+
+.wizard-otp-phone-badge {
+  display: inline-block;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #7c3aed;
+  background: #ede9fe;
+  padding: 2px 10px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.wizard-otp-digits-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  direction: ltr;
+  margin: 14px 0 10px;
+}
+
+.wizard-otp-digit {
+  width: 46px;
+  height: 52px;
+  text-align: center;
+  font-size: 1.35rem;
+  font-weight: 800;
+  border: 2px solid #cbd5e1;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #0f172a;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.wizard-otp-digit:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+  background: #faf5ff;
+}
+
+.wizard-otp-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  font-size: 0.82rem;
+  color: #64748b;
+  margin-top: 10px;
+}
+
+.wizard-otp-resend-btn {
+  background: transparent;
+  border: none;
+  color: #7c3aed;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 2px 4px;
+  font-size: 0.82rem;
+  text-decoration: underline;
+}
+
+.wizard-otp-resend-btn:disabled {
+  color: #94a3b8;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.wizard-otp-change-phone {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Primary Direct Button to Orders */
+.wizard-primary-orders-btn {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5) !important;
+  color: #ffffff !important;
+  border: none !important;
+  font-size: 1.05rem !important;
+  font-weight: 800 !important;
+  padding: 14px 24px !important;
+  height: auto !important;
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  border-radius: 16px !important;
+}
+
+.wizard-primary-orders-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 26px rgba(124, 58, 237, 0.45) !important;
+}

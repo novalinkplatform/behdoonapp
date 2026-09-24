@@ -30,7 +30,8 @@ import { applySiteSeoSettings } from './utils/seo.ts';
 import { applyBranding, applySiteNameEverywhere } from './utils/branding.ts';
 import { forceSiteLanguageIfSingleMode, hideLanguageToggleIfSingleMode } from './i18n/languageMode.ts';
 import { markAppReady } from './utils/appReady.ts';
-import { fetchCurrentCustomer, getCustomerToken } from './utils/customerAuth.ts';
+import { fetchCurrentCustomer, getCustomerToken, getLocalCustomerInfo } from './utils/customerAuth.ts';
+import { getLastPhone, saveLastPhone } from './utils/localOrders.ts';
 
 const ACTIVE_STATUSES = ['pending', 'contacted', 'scheduled', 'in_progress'];
 const HISTORY_STATUSES = ['completed', 'cancelled'];
@@ -289,32 +290,91 @@ async function init(): Promise<void> {
     wireOrderActions();
   }
 
-  function search(phone: string): void {
-    currentPhone = phone;
+  async function search(phoneOrCode: string): Promise<void> {
+    let cleanQuery = phoneOrCode
+      .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776))
+      .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 1632))
+      .replace(/[\s\-_\(\)\+]/g, '')
+      .trim();
+
+    if (cleanQuery.startsWith('0098')) cleanQuery = '0' + cleanQuery.slice(4);
+    else if (cleanQuery.startsWith('98')) cleanQuery = '0' + cleanQuery.slice(2);
+    else if (cleanQuery.startsWith('9') && cleanQuery.length === 10) cleanQuery = '0' + cleanQuery;
+
+    currentPhone = cleanQuery;
     const token = getCustomerToken();
-    const fetcher = token ? fetchCustomerOrders() : fetchOrdersByPhone(phone);
-    fetcher
-      .then((orders) => renderResults(orders))
-      .catch(() => {
-        fetchOrdersByPhone(phone)
-          .then((orders) => renderResults(orders))
-          .catch(() => renderResults([]));
-      });
+
+    try {
+      let orders: OrderRecord[] = [];
+      if (/^09\d{9}$/.test(cleanQuery)) {
+        if (token) {
+          try {
+            orders = await fetchCustomerOrders();
+          } catch {}
+        }
+        if (!orders || orders.length === 0) {
+          orders = await fetchOrdersByPhone(cleanQuery);
+        }
+      } else {
+        // Look up by tracking code
+        const res = await fetch(`/api/requests?code=${encodeURIComponent(cleanQuery)}`);
+        const body = await res.json().catch(() => ({}));
+        orders = (body.requests ?? []) as OrderRecord[];
+      }
+      renderResults(orders);
+    } catch {
+      renderResults([]);
+    }
   }
+
+  // Wire quick search form on login prompt
+  const trackForm = document.getElementById('orders-quick-track-form') as HTMLFormElement | null;
+  const trackInput = document.getElementById('orders-quick-track-input') as HTMLInputElement | null;
+  const trackError = document.getElementById('orders-quick-track-error');
+
+  if (trackForm && trackInput) {
+    trackForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const val = trackInput.value.trim();
+      if (!val) {
+        if (trackError) {
+          trackError.hidden = false;
+          trackError.textContent = pick('لطفاً شماره موبایل یا کد رهگیری را وارد کنید.', 'Enter mobile or tracking code.');
+        }
+        return;
+      }
+      if (trackError) trackError.hidden = true;
+      loginPrompt!.hidden = true;
+      contentEl!.hidden = false;
+      saveLastPhone(val);
+      void search(val);
+    });
+  }
+
+  const localCust = getLocalCustomerInfo();
+  const lastPhone = getLastPhone();
 
   fetchCurrentCustomer()
     .then((customer) => {
       loadingEl!.hidden = true;
-      if (customer) {
+      const target = customer?.phone || localCust?.phone || lastPhone;
+      if (target) {
         loginPrompt!.hidden = true;
         contentEl!.hidden = false;
-        search(customer.phone);
+        void search(target);
         return;
       }
       loginPrompt!.hidden = false;
     })
     .catch(() => {
       loadingEl!.hidden = true;
+      const target = localCust?.phone || lastPhone;
+      if (target) {
+        loginPrompt!.hidden = true;
+        contentEl!.hidden = false;
+        void search(target);
+        return;
+      }
       loginPrompt!.hidden = false;
     });
 }

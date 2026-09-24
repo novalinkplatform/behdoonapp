@@ -20,9 +20,26 @@ export function renderOrdersView(): string {
 
           <div id="orders-login-prompt" class="orders-login-prompt" hidden>
             <span class="icon orders-login-prompt-icon">${icons.user}</span>
-            <h1>${pick('درخواست‌های من', 'My requests')}</h1>
-            <p>${pick('هنوز وارد نشده‌اید.', "You haven't logged in yet.")}</p>
-            <a class="btn btn-primary btn-sm" href="/profile.html">${pick('برای ورود یا ثبت‌نام وارد شوید', 'Log in or sign up')}</a>
+            <h1>${pick('پیگیری درخواست‌های من', 'My Requests Tracking')}</h1>
+            <p>${pick('جهت مشاهده وضعیت سفارش، شماره موبایل یا کد رهگیری خود را وارد نمایید:', 'Enter your mobile number or tracking code to view your orders:')}</p>
+            
+            <form id="orders-quick-track-form" style="display: flex; gap: 8px; max-width: 380px; margin: 16px auto; width: 100%;">
+              <input
+                type="text"
+                id="orders-quick-track-input"
+                placeholder="${pick('۰۹xxxxxxxxx یا کد رهگیری', '09xxxxxxxxx or Tracking code')}"
+                style="flex: 1; height: 44px; border: 1.5px solid var(--border); border-radius: 12px; padding: 0 14px; font-size: 0.95rem; text-align: center; direction: ltr;"
+              />
+              <button type="submit" class="btn btn-primary btn-sm" style="height: 44px; padding: 0 18px; border-radius: 12px; font-weight: 700;">
+                ${pick('جستجو', 'Search')}
+              </button>
+            </form>
+            <p id="orders-quick-track-error" hidden style="color: #dc2626; font-size: 0.85rem; font-weight: 700; margin: 4px auto 12px;"></p>
+
+            <div style="margin-top: 10px; font-size: 0.85rem; color: #64748b;">
+              <span>${pick('یا برای ورود به حساب کاربری:', 'Or log in to your account:')} </span>
+              <a href="/profile.html" style="color: #7c3aed; font-weight: 700; text-decoration: underline;">${pick('ورود با کد پیامکی', 'Log in with SMS')}</a>
+            </div>
           </div>
 
           <div class="orders-content" id="orders-page-content" hidden>
