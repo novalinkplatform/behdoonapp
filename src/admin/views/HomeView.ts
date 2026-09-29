@@ -22,7 +22,7 @@ export function renderHomeView(staff: StaffInfo): string {
 
   const tiles: string[] = [];
   tiles.push(tile('dashboard', icons.chart, 'داشبورد'));
-  if (showRequests) tiles.push(tile('requests', icons.columns, 'درخواست‌ها'));
+  if (showRequests) tiles.push(tile('pipeline', icons.columns, 'درخواست‌ها'));
   if (showSettings || showContent) tiles.push(tile('services', icons.wrench, 'مدیریت خدمات'));
   if (showFinance) tiles.push(tile('finance', icons.finance, 'مدیریت مالی'));
   if (showSettings) tiles.push(tile('settings', icons.settings, 'تنظیمات سایت'));
@@ -31,6 +31,7 @@ export function renderHomeView(staff: StaffInfo): string {
   if (showPersonnel) tiles.push(tile('personnel', icons.users, 'مدیریت پرسنل'));
   if (hasPermission(staff, 'plugins')) tiles.push(tile('plugins', icons.plugin, 'افزونه‌ها'));
   if (showSettings) tiles.push(tile('contact-manager', icons.phone, 'ارتباطات و شبکه‌ها'));
+  tiles.push(tile('ai', icons.ai, 'هوشواره'));
 
   return `<div class="home-grid">${tiles.join('')}</div>`;
 }

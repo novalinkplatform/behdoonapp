@@ -34,6 +34,14 @@ export interface OrderRecord {
   phone: string;
   status: string;
   assignedStaffId: number | null;
+  providerId?: number | null;
+  providerName?: string | null;
+  providerPhone?: string | null;
+  originDistrict?: string | null;
+  originPropertyType?: string | null;
+  urgency?: 'normal' | 'urgent' | string;
+  pricingModel?: string;
+  finalPrice?: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -73,6 +81,11 @@ export interface StaffRecord {
   salaryAmountOverride: number | null;
   bonusTypeOverride: WalletBonusType | null;
   bonusAmountOverride: number | null;
+  specialty?: string | null;
+  yearsExperience?: number | string | null;
+  rating?: number | string | null;
+  showInSlider?: boolean;
+  bio?: string | null;
   createdAt: string;
 }
 
@@ -608,131 +621,6 @@ export async function fetchStaff(): Promise<StaffRecord[]> {
       bonusAmountOverride: null,
       createdAt: '1402/01/01',
     },
-    {
-      id: 2,
-      username: 'sara.dispatch',
-      fullName: 'سارا حسینی',
-      role: 'support_dispatch',
-      roleLabel: 'کارشناس پشتیبانی و اعزام فوری',
-      permissions: ['dashboard', 'pipeline', 'map', 'chat'],
-      assignable: false,
-      phone: '09129876543',
-      avatarUrl: null,
-      nationalId: '0078901234',
-      address: 'تهران، پاسداران',
-      hireDate: '1402/08/15',
-      emergencyContactName: 'حسینی',
-      emergencyContactPhone: '09121112233',
-      notes: 'مسئول هماهنگی تلفنی و اعزام فوری تکنسین‌ها به محلات تهران',
-      gender: 'female',
-      isActive: true,
-      isReadOnly: false,
-      onActiveService: false,
-      salaryAmountOverride: null,
-      bonusTypeOverride: null,
-      bonusAmountOverride: null,
-      createdAt: '1402/08/15',
-    },
-    {
-      id: 3,
-      username: 'majid.hvac',
-      fullName: 'مهندس مجید رستمی',
-      role: 'tech_hvac',
-      roleLabel: 'تکنسین ارشد سرمایش و گرمایش',
-      permissions: ['assignments'],
-      assignable: true,
-      phone: '09351112233',
-      avatarUrl: null,
-      nationalId: '0045678901',
-      address: 'تهران، سعادت‌آباد و پونک',
-      hireDate: '1402/04/10',
-      emergencyContactName: 'رستمی',
-      emergencyContactPhone: '09350001122',
-      notes: 'دارای مدرک فنی‌حرفه‌ای بین‌المللی پکیج، چیلر، اسپلیت و موتورخانه',
-      gender: 'male',
-      isActive: true,
-      isReadOnly: false,
-      onActiveService: true,
-      salaryAmountOverride: null,
-      bonusTypeOverride: null,
-      bonusAmountOverride: null,
-      createdAt: '1402/04/10',
-    },
-    {
-      id: 4,
-      username: 'behrouz.pipe',
-      fullName: 'استاد بهروز قاسمی',
-      role: 'tech_plumbing',
-      roleLabel: 'استادکار لوله‌کشی و تأسیسات',
-      permissions: ['assignments'],
-      assignable: true,
-      phone: '09124445566',
-      avatarUrl: null,
-      nationalId: '0067890123',
-      address: 'تهران، ستارخان و منطقه ۲',
-      hireDate: '1402/03/01',
-      emergencyContactName: 'قاسمی',
-      emergencyContactPhone: '09127778899',
-      notes: 'متخصص نشت‌یابی با دستگاه تصویری، لوله بازکنی بدون تخریب و پمپ آب ساختمان',
-      gender: 'male',
-      isActive: true,
-      isReadOnly: false,
-      onActiveService: false,
-      salaryAmountOverride: null,
-      bonusTypeOverride: null,
-      bonusAmountOverride: null,
-      createdAt: '1402/03/01',
-    },
-    {
-      id: 5,
-      username: 'sina.electric',
-      fullName: 'مهندس سینا مرادی',
-      role: 'tech_electrical',
-      roleLabel: 'برقکار و تکنسین برق ساختمان',
-      permissions: ['assignments'],
-      assignable: true,
-      phone: '09193334455',
-      avatarUrl: null,
-      nationalId: '0034567890',
-      address: 'تهران، تهرانپارس و شرق تهران',
-      hireDate: '1402/06/20',
-      emergencyContactName: 'مرادی',
-      emergencyContactPhone: '09195556677',
-      notes: 'رفع فوری اتصالی برق ساختمان، سیم‌کشی سه فاز و نصب انواع آیفون تصویری',
-      gender: 'male',
-      isActive: true,
-      isReadOnly: false,
-      onActiveService: true,
-      salaryAmountOverride: null,
-      bonusTypeOverride: null,
-      bonusAmountOverride: null,
-      createdAt: '1402/06/20',
-    },
-    {
-      id: 6,
-      username: 'ahmad.reno',
-      fullName: 'استاد احمد کریمی',
-      role: 'tech_renovation',
-      roleLabel: 'استادکار تعمیرات و بازسازی ساختمان',
-      permissions: ['assignments'],
-      assignable: true,
-      phone: '09128889900',
-      avatarUrl: null,
-      nationalId: '0098765432',
-      address: 'تهران، یوسف‌آباد و مرکز شهر',
-      hireDate: '1402/02/12',
-      emergencyContactName: 'کریمی',
-      emergencyContactPhone: '09122223344',
-      notes: 'استادکار بازسازی صفر تا صد، کاشی‌کاری پرسلان، نقاشی مدرن و کناف ضد رطوبت',
-      gender: 'male',
-      isActive: true,
-      isReadOnly: false,
-      onActiveService: false,
-      salaryAmountOverride: null,
-      bonusTypeOverride: null,
-      bonusAmountOverride: null,
-      createdAt: '1402/02/12',
-    },
   ];
 }
 
@@ -751,6 +639,11 @@ export interface CreateStaffPayload {
   notes?: string;
   gender?: 'male' | 'female' | null;
   isReadOnly?: boolean;
+  specialty?: string;
+  yearsExperience?: number | string | null;
+  rating?: number | string | null;
+  showInSlider?: boolean;
+  bio?: string;
 }
 
 export async function createStaff(payload: CreateStaffPayload): Promise<StaffRecord> {
@@ -950,6 +843,11 @@ export interface UpdateStaffPayload {
   isActive?: boolean;
   isReadOnly?: boolean;
   password?: string;
+  specialty?: string;
+  yearsExperience?: number | string | null;
+  rating?: number | string | null;
+  showInSlider?: boolean;
+  bio?: string;
 }
 
 export async function updateStaff(id: number, payload: UpdateStaffPayload): Promise<StaffRecord> {
@@ -1359,10 +1257,16 @@ export async function fetchChatMessages(id: number): Promise<ChatMessage[]> {
 }
 
 export async function sendChatMessage(id: number, text: string): Promise<void> {
+  const me = getStaff();
   const res = await authedFetch(`/api/admin/chat/conversations/${id}/messages`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text }),
+    body: JSON.stringify({
+      text,
+      staffId: me?.id,
+      staffName: me?.fullName,
+      staffAvatar: me?.avatarUrl,
+    }),
   });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'ارسال پیام ناموفق بود.');
@@ -1409,6 +1313,13 @@ export async function fetchRequestsByPhone(phone: string): Promise<OrderRecord[]
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت درخواست‌های مرتبط ناموفق بود.');
   return (body.requests ?? []) as OrderRecord[];
+}
+
+export async function fetchRequestById(id: number): Promise<OrderRecord> {
+  const res = await authedFetch(`/api/admin/requests/${id}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'دریافت جزئیات سفارش ناموفق بود.');
+  return body.request as OrderRecord;
 }
 
 export async function fetchRequestsByStaff(staffId: number): Promise<OrderRecord[]> {
@@ -1560,7 +1471,7 @@ export const DEFAULT_SLIDER_CONFIG: SliderConfig = {
       imageUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80',
       title: 'برقکاری ساختمانی فوری و رفع اتصالی شبانه‌روزی',
       titleEn: '24/7 Building Electrical Emergency & Wiring',
-      subtitle: 'حضور برقکار در کمتر از ۴۵ دقیقه، تعویض فیوز، سیم‌کشی و رفع اتصالی',
+      subtitle: 'حضور برقکار در کمتر از سریع‌ترین زمان، تعویض فیوز، سیم‌کشی و رفع اتصالی',
       subtitleEn: 'Electrician arrival in under 45 mins with Union-approved pricing',
       target: 'both',
       linkUrl: '/services/electrical',

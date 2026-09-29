@@ -445,20 +445,15 @@
 }
 
 @media print {
-  body * {
-    visibility: hidden;
-  }
-  .behbar-invoice-sheet,
-  .behbar-invoice-sheet * {
-    visibility: visible;
+  body:has(#admin-invoice-modal-backdrop) > *:not(#admin-invoice-modal-backdrop) {
+    display: none !important;
   }
   .behbar-invoice-sheet {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    padding: 20px;
-    border: none;
+    border: 2px solid #334155 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    padding: 18px 22px !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 }

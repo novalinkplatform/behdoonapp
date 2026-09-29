@@ -14,11 +14,18 @@ export function renderOtpInputMarkup(idPrefix: string, length = 6): string {
   `;
 }
 
+function toEnglishDigits(str: string): string {
+  return (str || '')
+    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776))
+    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 1632));
+}
+
 export interface OtpInputHandle {
   reset(): void;
   focusFirst(): void;
   stopWebOtp(): void;
   getCode(): string;
+  destroy(): void;
 }
 
 export function initOtpInput(
@@ -32,12 +39,20 @@ export function initOtpInput(
   const resendBtn = document.getElementById(`${idPrefix}-resend-btn`) as HTMLButtonElement | null;
   if (!group || !timerEl || !resendBtn) return null;
 
+  // پاک‌سازی نمونه‌ی قبلی روی همین المنت تا از شنوندگان رویداد تکراری جلوگیری شود
+  if ((group as any)._otpCleanup) {
+    try {
+      (group as any)._otpCleanup();
+    } catch {}
+  }
+
+  const ac = new AbortController();
   const digits = Array.from(group.querySelectorAll<HTMLInputElement>('.otp-digit'));
   let intervalId: number | null = null;
   let abortController: AbortController | null = null;
 
   function currentCode(): string {
-    return digits.map((d) => d.value).join('');
+    return digits.map((d) => toEnglishDigits(d.value).replace(/\D/g, '')).join('');
   }
 
   function checkComplete(): void {
@@ -49,30 +64,43 @@ export function initOtpInput(
   }
 
   digits.forEach((input, index) => {
-    input.addEventListener('input', () => {
-      input.value = input.value.replace(/\D/g, '').slice(-1);
-      if (input.value && index < digits.length - 1) digits[index + 1].focus();
-      checkComplete();
-    });
-    input.addEventListener('keydown', (event) => {
-      if (event.key === 'Backspace' && !input.value && index > 0) {
-        digits[index - 1].focus();
-      }
-    });
-    input.addEventListener('paste', (event) => {
-      const pasted = event.clipboardData?.getData('text').replace(/\D/g, '') ?? '';
-      if (!pasted) return;
-      event.preventDefault();
-      pasted
-        .slice(0, length)
-        .split('')
-        .forEach((ch, i) => {
-          if (digits[i]) digits[i].value = ch;
-        });
-      const lastFilledIndex = Math.min(pasted.length, length) - 1;
-      if (lastFilledIndex >= 0) digits[lastFilledIndex].focus();
-      checkComplete();
-    });
+    input.addEventListener(
+      'input',
+      () => {
+        input.value = toEnglishDigits(input.value).replace(/\D/g, '').slice(-1);
+        if (input.value && index < digits.length - 1) digits[index + 1].focus();
+        checkComplete();
+      },
+      { signal: ac.signal }
+    );
+    input.addEventListener(
+      'keydown',
+      (event) => {
+        if (event.key === 'Backspace' && !input.value && index > 0) {
+          digits[index - 1].focus();
+        }
+      },
+      { signal: ac.signal }
+    );
+    input.addEventListener(
+      'paste',
+      (event) => {
+        const raw = event.clipboardData?.getData('text') ?? '';
+        const pasted = toEnglishDigits(raw).replace(/\D/g, '');
+        if (!pasted) return;
+        event.preventDefault();
+        pasted
+          .slice(0, length)
+          .split('')
+          .forEach((ch, i) => {
+            if (digits[i]) digits[i].value = ch;
+          });
+        const lastFilledIndex = Math.min(pasted.length, length) - 1;
+        if (lastFilledIndex >= 0) digits[lastFilledIndex].focus();
+        checkComplete();
+      },
+      { signal: ac.signal }
+    );
   });
 
   function startTimer(): void {
@@ -95,11 +123,15 @@ export function initOtpInput(
     intervalId = window.setInterval(tick, 1000);
   }
 
-  resendBtn.addEventListener('click', () => {
-    options.onResend();
-    reset();
-    startTimer();
-  });
+  resendBtn.addEventListener(
+    'click',
+    () => {
+      options.onResend();
+      reset();
+      startTimer();
+    },
+    { signal: ac.signal }
+  );
 
   function reset(): void {
     digits.forEach((d) => (d.value = ''));
@@ -115,6 +147,16 @@ export function initOtpInput(
     abortController = null;
   }
 
+  function destroy(): void {
+    if (intervalId) {
+      window.clearInterval(intervalId);
+      intervalId = null;
+    }
+    stopWebOtp();
+    ac.abort();
+  }
+  (group as any)._otpCleanup = destroy;
+
   // WebOTP: فقط کروم روی اندروید پشتیبانی می‌کند و فقط اگر پیامک با فرمت ویژه‌ی «@دامنه #کد» ختم شده
   // باشد (سمت سرور تضمین شده) — در غیر این صورت این کد بی‌اثر می‌ماند، بدون خطا.
   if ('OTPCredential' in window) {
@@ -127,7 +169,7 @@ export function initOtpInput(
       }) as Promise<{ code?: string } | null>
     )
       .then((cred) => {
-        const code = cred?.code?.replace(/\D/g, '');
+        const code = toEnglishDigits(cred?.code ?? '').replace(/\D/g, '');
         if (code && code.length === length) {
           code.split('').forEach((ch, i) => {
             if (digits[i]) digits[i].value = ch;
@@ -143,5 +185,5 @@ export function initOtpInput(
   startTimer();
   focusFirst();
 
-  return { reset, focusFirst, stopWebOtp, getCode: currentCode };
+  return { reset, focusFirst, stopWebOtp, getCode: currentCode, destroy };
 }

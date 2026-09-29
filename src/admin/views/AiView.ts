@@ -1,4 +1,4 @@
-import { icons } from './icons.ts';
+import { icons } from '../components/icons.ts';
 import {
   sendAiChatMessage,
   executeAiAction,
@@ -19,39 +19,38 @@ const WELCOME_TEXT =
 // دستیار هوش مصنوعی یک ویجت شناور است (نه یک صفحه‌ی جدا در ناوبری)، چون در همه‌ی صفحات پنل در
 // دسترس می‌ماند؛ اما با کلیک، کل صفحه را می‌گیرد (مثل چت‌جی‌پی‌تی) با یک نوار کناری از گفتگوهای
 // جدا و تاریخچه‌ی مستقل هرکدام — نه یک ترد تک و ناپایدار که با رفرش پاک می‌شود.
-export function renderAiWidget(): string {
+export function renderAiView(): string {
   return `
-    <button type="button" class="ai-widget-toggle" id="ai-widget-toggle" aria-label="دستیار هوش مصنوعی">
-      <span class="icon">${icons.ai}</span>
-    </button>
-    <div class="ai-widget-overlay" id="ai-widget-panel" hidden>
+    <div class="ai-view-container" id="ai-view-panel">
       <aside class="ai-widget-sidebar">
         <div class="ai-widget-sidebar-header">
           <button type="button" class="btn btn-primary btn-block" id="ai-widget-new-chat-btn">
             <span class="icon">${icons.plusCircle}</span>
             گفتگوی جدید
           </button>
-          <button type="button" class="ai-widget-close ai-widget-mobile-close" id="ai-widget-sidebar-close" aria-label="بستن" title="بستن">
-            <span class="icon">${icons.close}</span>
-          </button>
         </div>
         <div class="ai-widget-conversation-list" id="ai-widget-conversation-list"></div>
       </aside>
       <div class="ai-widget-main">
-        <div class="ai-widget-header">
-          <span class="ai-widget-title"><span class="icon">${icons.ai}</span> دستیار هوش مصنوعی</span>
-          <button type="button" class="ai-widget-close" id="ai-widget-close" aria-label="بستن" title="بستن">
-            <span class="icon">${icons.close}</span>
+        <div class="ai-widget-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <span class="ai-widget-title"><span class="icon">${icons.ai}</span> هوشواره</span>
+          <button type="button" class="btn btn-icon btn-sm" id="ai-widget-settings-btn" title="تنظیمات هوشواره">
+            <span class="icon">${icons.settings}</span>
           </button>
         </div>
         <p class="error-text" id="ai-widget-error" hidden></p>
         <div class="chat-thread ai-widget-thread">
           <div class="chat-thread-messages" id="ai-widget-messages"></div>
           <form class="chat-thread-form" id="ai-widget-form">
-            <textarea id="ai-widget-input" rows="1" placeholder="مثلاً: چند مقاله عنوان سئو ندارند؟"></textarea>
-            <button type="submit" class="btn btn-primary" id="ai-widget-send-btn">
-              <span class="icon">${icons.ai}</span>
-              ارسال
+            <textarea
+              class="chat-thread-input"
+              id="ai-widget-input"
+              rows="1"
+              placeholder="Ø¯Ø³ØªÙˆØ± ÛŒØ§ Ø³Ø¤Ø§Ù„ Ø®ÙˆØ¯ Ø±Ø§ Ø¨Ù†ÙˆÛŒØ³ÛŒØ¯..."
+              dir="auto"
+            ></textarea>
+            <button type="submit" class="chat-thread-send-btn" id="ai-widget-send-btn" aria-label="Ø§Ø±Ø³Ø§Ù„" disabled>
+              <span class="icon">ارسال</span>
             </button>
           </form>
         </div>
@@ -60,9 +59,9 @@ export function renderAiWidget(): string {
   `;
 }
 
-export function initAiWidget(): void {
-  const toggleBtn = document.getElementById('ai-widget-toggle');
-  const closeBtn = document.getElementById('ai-widget-close');
+export function initAiView(onNavigate?: (screen: string) => void): void {
+
+
   const panel = document.getElementById('ai-widget-panel');
   const errorEl = document.getElementById('ai-widget-error');
   const messagesEl = document.getElementById('ai-widget-messages');
@@ -70,8 +69,13 @@ export function initAiWidget(): void {
   const input = document.getElementById('ai-widget-input') as HTMLTextAreaElement | null;
   const sendBtn = document.getElementById('ai-widget-send-btn') as HTMLButtonElement | null;
   const newChatBtn = document.getElementById('ai-widget-new-chat-btn');
+    const settingsBtn = document.getElementById('ai-widget-settings-btn');
+    
+    settingsBtn?.addEventListener('click', () => {
+      if (onNavigate) onNavigate('plugins');
+    });
   const listEl = document.getElementById('ai-widget-conversation-list');
-  if (!toggleBtn || !closeBtn || !panel || !errorEl || !messagesEl || !form || !input || !sendBtn || !newChatBtn || !listEl) return;
+  if (!panel || !errorEl || !messagesEl || !form || !input || !sendBtn || !newChatBtn || !listEl) return;
 
   let conversations: AiConversationSummary[] = [];
   let activeId: number | null = null;
@@ -171,7 +175,8 @@ export function initAiWidget(): void {
     }
   }
 
-  async function ensureLoaded(): Promise<void> {
+
+  (async function initData() {
     if (loaded) return;
     loaded = true;
     try {
@@ -185,27 +190,7 @@ export function initAiWidget(): void {
     } catch (err) {
       showError(err);
     }
-  }
-
-  toggleBtn.addEventListener('click', () => {
-    panel.hidden = !panel.hidden;
-    if (!panel.hidden) {
-      void ensureLoaded();
-      input.focus();
-    }
-  });
-  const hidePanel = () => {
-    panel.hidden = true;
-  };
-
-  closeBtn.addEventListener('click', hidePanel);
-  document.getElementById('ai-widget-sidebar-close')?.addEventListener('click', hidePanel);
-
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && !panel.hidden) {
-      hidePanel();
-    }
-  });
+  })();
 
   newChatBtn.addEventListener('click', () => void newChat());
 

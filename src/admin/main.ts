@@ -33,6 +33,9 @@ import { renderStoriesView, initStoriesView } from './views/StoriesView.ts';
 import { renderServicesManagerView, initServicesManagerView } from './views/ServicesManagerView.ts';
 import { renderSlidersManagerView, initSlidersManagerView } from './views/SlidersManagerView.ts';
 import { renderContactManagerView, initContactManagerView } from './views/ContactManagerView.ts';
+import { renderAiView, initAiView } from './views/AiView.ts';
+
+
 import { renderJobApplicationsView, initJobApplicationsView } from './views/JobApplicationsView.ts';
 import { renderActivityLogView, initActivityLogView } from './views/ActivityLogView.ts';
 import { renderSettingsView, initSettingsView } from './views/SettingsView.ts';
@@ -50,7 +53,6 @@ import {
   renderPersonnelHomeView,
   wireHomeTiles,
 } from './views/HomeView.ts';
-import { initAiWidget } from './components/AiWidget.ts';
 import {
   isAuthenticated,
   isPanelRole,
@@ -67,7 +69,7 @@ import { setUnauthorizedHandler, logout, fetchMe, fetchVersion, fetchSettings } 
 import { ensureLanguageMode } from './utils/languageMode.ts';
 import { applySiteNameToAdminChrome } from './utils/siteName.ts';
 
-type AdminView = 'contact-manager' |
+type AdminView = 'ai' | 'contact-manager' |
   'pipeline'
   | 'map'
   | 'staff'
@@ -129,6 +131,7 @@ function showLogin(): void {
 
 const SCREEN_TO_PATH: Record<AdminScreen, string> = {
   home: '',
+  ai: 'ai',
   dashboard: 'dashboard',
   requests: 'requests',
   pipeline: 'pipeline',
@@ -275,7 +278,7 @@ function showScreen(screen: AdminScreen, editingDetailId: number | null = null, 
     initDashboardStaffView();
   } else if (screen === 'pipeline') {
     container.innerHTML = renderPipelineView();
-    initPipelineView();
+    initPipelineView((view) => showScreen(view as AdminScreen));
   } else if (screen === 'map') {
     container.innerHTML = renderMapView();
     initMapView();
@@ -316,7 +319,10 @@ function showScreen(screen: AdminScreen, editingDetailId: number | null = null, 
   } else if (screen === 'services') {
     container.innerHTML = renderServicesManagerView();
     initServicesManagerView();
-  } else if (screen === 'contact-manager') {
+    } else if (screen === 'ai') {
+      container.innerHTML = renderAiView();
+      initAiView((target) => showScreen(target as AdminScreen));
+    } else if (screen === 'contact-manager') {
     container.innerHTML = renderContactManagerView();
     initContactManagerView();
   } else if (screen === 'sliders') {
@@ -427,7 +433,7 @@ function showAdminShell(staff: StaffInfo, restore = false): void {
   void loadSidebarBranding();
   void ensureLanguageMode();
   void applySiteNameToAdminChrome();
-  if (hasPermission(staff, 'ai')) initAiWidget();
+
 
   const fromUrl = getScreenFromUrl();
   const saved = restore ? getScreenState() : null;

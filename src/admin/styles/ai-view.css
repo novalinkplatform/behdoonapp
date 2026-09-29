@@ -1,38 +1,21 @@
-.ai-widget-toggle {
-  position: fixed;
-  bottom: var(--space-5);
-  left: var(--space-5);
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-full);
-  border: none;
-  background-color: var(--primary);
-  color: #fff;
-  box-shadow: var(--shadow-lg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 900;
-}
 
 .ai-widget-toggle .icon {
   width: 24px;
   height: 24px;
 }
 
-.ai-widget-toggle:hover {
-  background-color: var(--primary-dark);
-}
 
 /* کل صفحه را می‌گیرد (مثل چت‌جی‌پی‌تی) — نه یک باکس شناور کوچک؛ نوار کناری فهرست گفتگوها و ناحیه‌ی
    اصلی خود مکالمه، هرکدام ستون خودشان. */
-.ai-widget-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 950;
-  background-color: var(--background);
+.ai-view-container {
   display: flex;
+  height: calc(100vh - 60px); /* minus topbar */
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  margin: var(--space-4);
 }
 
 .ai-widget-sidebar {
@@ -144,21 +127,7 @@
   color: var(--primary);
 }
 
-.ai-widget-close {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: var(--radius-md, 8px);
-  border: 1px solid var(--border, #e3e1d9);
-  background: var(--surface, #ffffff);
-  color: var(--text, #334155);
-  cursor: pointer;
-  padding: 0;
-  transition: all 0.15s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
+
 
 .ai-widget-close .icon,
 .ai-widget-close svg {
@@ -167,12 +136,7 @@
   display: block;
 }
 
-.ai-widget-close:hover {
-  background-color: #fee2e2;
-  color: #ef4444;
-  border-color: #fca5a5;
-  transform: scale(1.05);
-}
+
 
 .ai-widget-sidebar-header {
   display: flex;

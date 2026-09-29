@@ -745,3 +745,142 @@
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* ==========================================================================
+   Technician Recruitment CTA Banner in Footer
+   ========================================================================== */
+.footer-recruitment-container {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.footer-recruitment-card {
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.08) 0%, rgba(16, 185, 129, 0.03) 50%, rgba(15, 23, 42, 0.02) 100%);
+  border: 1.5px solid rgba(5, 150, 105, 0.35);
+  border-radius: 16px;
+  padding: 1.5rem 1.75rem;
+  box-shadow: 0 4px 20px rgba(5, 150, 105, 0.06);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.footer-recruitment-card:hover {
+  border-color: rgba(5, 150, 105, 0.6);
+  box-shadow: 0 8px 30px rgba(5, 150, 105, 0.12);
+}
+
+.recruitment-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.recruitment-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.recruitment-chip .icon {
+  width: 14px;
+  height: 14px;
+}
+
+.recruitment-perk-pill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #059669;
+  background: rgba(5, 150, 105, 0.08);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.recruitment-body-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.recruitment-text-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.recruitment-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.recruitment-desc {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.recruitment-btn-col {
+  flex-shrink: 0;
+}
+
+.recruitment-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: #ffffff !important;
+  font-weight: 700;
+  font-size: 0.92rem;
+  padding: 0.75rem 1.4rem;
+  border-radius: 12px;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.recruitment-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.45);
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+}
+
+.recruitment-cta-btn .icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.recruitment-cta-btn:hover .icon {
+  transform: translateX(-3px);
+}
+
+@media (max-width: 768px) {
+  .recruitment-body-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .recruitment-title {
+    font-size: 1.02rem;
+  }
+
+  .recruitment-cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+

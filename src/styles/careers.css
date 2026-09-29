@@ -1,50 +1,424 @@
-.careers-form-card {
-  margin-top: var(--space-6);
-  padding: var(--space-5);
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-header);
+/* ==========================================================================
+   Careers & Master Technician Recruitment Landing Page
+   ========================================================================== */
+
+.careers-page {
+  padding-bottom: var(--space-8, 3.5rem);
 }
 
-.careers-form-card form {
+.careers-hero-banner {
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.12) 0%, rgba(16, 185, 129, 0.05) 50%, var(--surface) 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 2.5rem 0 3rem;
+  margin-bottom: 2rem;
+}
+
+.careers-hero-content {
+  max-width: 820px;
+  margin-top: 1rem;
+}
+
+.careers-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  border-radius: 30px;
+  padding: 5px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.careers-badge .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.careers-main-title {
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: var(--text);
+  line-height: 1.4;
+  margin: 0 0 1rem;
+}
+
+.careers-main-subtitle {
+  font-size: 1.05rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0;
+}
+
+.careers-layout-container {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: 3rem;
 }
 
-.careers-form-grid {
+.careers-section-heading {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-inline-start: 14px;
+}
+
+.careers-section-heading::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  inset-inline-start: 0;
+  width: 4px;
+  background: var(--primary, #059669);
+  border-radius: 4px;
+}
+
+/* Perks Grid */
+.careers-perks-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-4);
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.careers-perk-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem 1.25rem;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.careers-perk-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(5, 150, 105, 0.4);
+  box-shadow: 0 8px 24px rgba(5, 150, 105, 0.08);
+}
+
+.perk-icon-wrap {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.perk-icon-wrap .icon {
+  width: 22px;
+  height: 22px;
+}
+
+.perk-icon-money {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.perk-icon-shield {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.perk-icon-clock {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.perk-icon-phone {
+  background: #fdf2f8;
+  color: #db2777;
+}
+
+.careers-perk-card h3 {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 0.5rem;
+}
+
+.careers-perk-card p {
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* 3 Steps Process */
+.careers-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.careers-step-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  position: relative;
+}
+
+.step-number {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #059669;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 10px rgba(5, 150, 105, 0.3);
+}
+
+.careers-step-card h4 {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 0.5rem;
+}
+
+.careers-step-card p {
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Application Form */
+.careers-form-container {
+  max-width: 820px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.careers-form-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  padding: 2rem 2.25rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.careers-form-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.75rem;
+}
+
+.form-head-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(5, 150, 105, 0.1);
+  color: #059669;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.form-head-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.careers-form-header h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 0.25rem;
+}
+
+.careers-form-header p {
+  font-size: 0.84rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.careers-form-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.careers-form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.required-star {
+  color: #dc2626;
+  font-weight: 700;
 }
 
 .careers-textarea {
   width: 100%;
-  min-height: 110px;
-  padding: var(--space-3);
+  min-height: 90px;
+  padding: 0.75rem 1rem;
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 10px;
   background-color: var(--background);
   font-family: inherit;
   font-size: 0.9rem;
+  color: var(--text);
   resize: vertical;
+  line-height: 1.6;
+  box-sizing: border-box;
 }
 
 .careers-textarea:focus {
   outline: none;
-  border-color: var(--secondary);
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
 }
 
-.careers-success {
-  margin-top: var(--space-6);
-  padding: var(--space-6) var(--space-5);
-  background-color: var(--surface);
+.careers-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0.85rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: white;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: 0.5rem;
+}
+
+.careers-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(5, 150, 105, 0.4);
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+}
+
+.careers-submit-btn .icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Success State Card */
+.careers-success-card {
+  background: var(--surface);
+  border: 1.5px solid #a7f3d0;
+  border-radius: 18px;
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: 0 10px 35px rgba(5, 150, 105, 0.08);
+}
+
+.success-icon-badge {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #ecfdf5;
+  color: #059669;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+  box-shadow: 0 4px 15px rgba(5, 150, 105, 0.2);
+}
+
+.success-icon-badge .icon {
+  width: 32px;
+  height: 32px;
+}
+
+.careers-success-card h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #065f46;
+  margin: 0 0 0.5rem;
+}
+
+.success-lead {
+  font-size: 0.95rem;
+  color: var(--text);
+  margin: 0 0 1.5rem;
+}
+
+.success-steps-hint {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 440px;
+  margin: 0 auto 2rem;
+  text-align: right;
+  background: #f8fafc;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
   border: 1px solid var(--border);
-  border-radius: var(--radius-header);
 }
 
-@media (max-width: 640px) {
-  .careers-form-grid {
+.hint-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.hint-icon {
+  width: 18px;
+  height: 18px;
+  color: #059669;
+  flex-shrink: 0;
+}
+
+.success-actions {
+  display: flex;
+  justify-content: center;
+}
+
+/* Responsiveness */
+@media (max-width: 1024px) {
+  .careers-perks-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .careers-steps-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .careers-form-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .careers-form-card {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .careers-main-title {
+    font-size: 1.45rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .careers-perks-grid {
     grid-template-columns: 1fr;
   }
 }

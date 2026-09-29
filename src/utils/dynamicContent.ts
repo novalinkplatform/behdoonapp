@@ -69,6 +69,7 @@ export interface ContactSettings {
   phoneTelHref: string;
   headerPhoneEnabled?: boolean;
   headerSupportEnabled?: boolean;
+  chatDisplayMode?: 'floating' | 'header' | 'hidden';
   socialIconColor?: string;
   socialLinks: SocialLinkSetting[];
 }

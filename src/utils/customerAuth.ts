@@ -104,11 +104,24 @@ async function readError(res: Response, fallback: string): Promise<string> {
   return typeof body?.error === 'string' ? body.error : fallback;
 }
 
+export function normalizeCustomerPhone(val: string): string {
+  let p = (val || '')
+    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776))
+    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 1632))
+    .trim()
+    .replace(/[\s\-_\(\)\+]/g, '');
+  if (p.startsWith('0098')) p = p.slice(4);
+  else if (p.startsWith('98')) p = p.slice(2);
+  if (p.startsWith('9') && p.length === 10) p = '0' + p;
+  return p;
+}
+
 export async function sendCustomerOtp(phone: string): Promise<{devCode?: string, message?: string} | void> {
+  const cleanPhone = normalizeCustomerPhone(phone);
   const res = await fetch(`${API_BASE_URL}/api/customer/otp/send`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ phone }),
+    body: JSON.stringify({ phone: cleanPhone }),
   });
   if (!res.ok) throw new Error(await readError(res, pick('ارسال کد تأیید ناموفق بود.', 'Failed to send verification code.')));
   
@@ -122,15 +135,24 @@ export async function sendCustomerOtp(phone: string): Promise<{devCode?: string,
 }
 
 export async function verifyCustomerOtp(phone: string, code: string): Promise<VerifyOtpResult> {
+  const cleanPhone = normalizeCustomerPhone(phone);
+  const cleanCode = (code || '')
+    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776))
+    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 1632))
+    .replace(/\D/g, '')
+    .trim();
   const res = await fetch(`${API_BASE_URL}/api/customer/otp/verify`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ phone, code }),
+    body: JSON.stringify({ phone: cleanPhone, code: cleanCode }),
   });
   if (!res.ok) throw new Error(await readError(res, pick('کد واردشده معتبر نیست.', 'Invalid verification code.')));
   const body = await res.json();
   if (body.token) {
     saveCustomerToken(body.token);
+  }
+  if (body.customer) {
+    saveCustomerSession(body.customer, body.token);
   }
   return body as VerifyOtpResult;
 }
@@ -152,6 +174,9 @@ export async function updateCustomerProfile(
   });
   if (!res.ok) throw new Error(await readError(res, pick('ثبت اطلاعات ناموفق بود.', 'Failed to save profile.')));
   const body = await res.json();
+  if (body.customer) {
+    saveCustomerSession(body.customer, token);
+  }
   return body.customer as CustomerInfo;
 }
 
@@ -245,13 +270,15 @@ export async function fetchCurrentCustomer(): Promise<CustomerInfo | null> {
         } catch {}
         return body.customer as CustomerInfo;
       }
+    } else if (res.status === 401) {
+      clearCustomerToken();
+      return null;
     }
   } catch {}
 
   const local = getLocalCustomerInfo();
   if (local) return local;
 
-  clearCustomerToken();
   return null;
 }
 

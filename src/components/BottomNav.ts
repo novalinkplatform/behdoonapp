@@ -12,18 +12,18 @@ export function renderBottomNav(): string {
         <span class="icon">${icons.home}</span>
         <span>${pick('خانه', 'Home')}</span>
       </a>
-      <a class="bottom-nav-item" href="/magazine">
-        <span class="icon">${icons.layers}</span>
-        <span>${pick('مجله', 'Magazine')}</span>
-      </a>
       <a class="bottom-nav-item" href="/orders">
         <span class="icon">${icons.box}</span>
         <span>${pick('درخواست‌ها', 'Orders')}</span>
       </a>
-      <button type="button" class="bottom-nav-item" id="bottom-nav-chat-btn">
-        <span class="icon">${icons.chat}</span>
-        <span>${pick('پیام', 'Message')}</span>
+      <button type="button" class="bottom-nav-item chat-widget-toggle" id="bottom-nav-chat-btn" aria-label="${pick('چت با پشتیبانی', 'Support Chat')}" style="background: none; border: none; font-family: inherit; cursor: pointer;">
+        <span class="icon" style="color: var(--primary);">${icons.chat}</span>
+        <span>${pick('پشتیبانی', 'Support')}</span>
       </button>
+      <a class="bottom-nav-item" href="/magazine">
+        <span class="icon">${icons.layers}</span>
+        <span>${pick('مجله', 'Magazine')}</span>
+      </a>
       <a class="bottom-nav-item" href="/profile">
         <span class="icon">${icons.user}</span>
         <span>${pick('پروفایل', 'Profile')}</span>
@@ -46,8 +46,4 @@ export function initBottomNav(): void {
       break;
     }
   }
-
-  document.getElementById('bottom-nav-chat-btn')?.addEventListener('click', () => {
-    document.getElementById('chat-widget-toggle')?.click();
-  });
 }

@@ -53,6 +53,11 @@ function managementRewritePlugin() {
 
 export default defineConfig({
   plugins: [managementRewritePlugin()],
+  server: {
+    proxy: {
+      '/api': 'http://localhost:8787'
+    }
+  },
   build: {
     rollupOptions: { input },
   },

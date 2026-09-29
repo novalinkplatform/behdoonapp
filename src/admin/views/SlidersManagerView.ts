@@ -110,7 +110,7 @@ export function renderSlidersManagerView(_isEmbeddedInSettings = false): string 
 
         <div class="form-field">
           <label for="slide-subtitle-fa">توضیحات تکمیلی / زیرعنوان</label>
-          <input type="text" id="slide-subtitle-fa" placeholder="حضور تکنسین در کمتر از ۴۵ دقیقه با ضمانت کتبی" />
+          <input type="text" id="slide-subtitle-fa" placeholder="حضور تکنسین در کمتر از سریع‌ترین زمان با ضمانت کتبی" />
         </div>
 
         <div class="form-field">

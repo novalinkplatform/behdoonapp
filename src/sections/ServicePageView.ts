@@ -36,48 +36,97 @@ export function renderServicesDirectoryView(_settings: any): string {
             <span>${toPersianDigits(totalServices)} ${pick('خدمت ساختمانی دارای ضمانت کتبی', 'Guaranteed Building Services')}</span>
           </span>
           <span class="service-hero-badge">
+            <span class="icon">${icons.shield}</span>
+            <span>${pick('ضمانت ۳۰ روزه کیفیت بهدون', '30-Day Quality Warranty')}</span>
+          </span>
+          <span class="service-hero-badge">
             <span class="icon">${icons.pin}</span>
             <span>${pick('پوشش سراسری کلیه مناطق ۲۲ گانه تهران', 'All 22 Districts of Tehran')}</span>
           </span>
         </div>
 
         <h1 class="service-hero-title">
-          ${pick('کاتالوگ جامع خدمات فنی و تعمیرات ساختمان بهدون', 'Behdoon Building Services & Repair Catalog')}
+          ${pick('کاتالوگ جامع خدمات فنی و تعمیرات ساختمان در تهران', 'Behdoon Building Services & Repair Catalog')}
         </h1>
         <p class="service-hero-subtitle">
           ${pick(
-            'دسترسی سریع به کلیه خدمات سرمایش و گرمایش، لوله‌کشی و تأسیسات، برقکاری، بازسازی، کلیدسازی، کابینت، در و پنجره و نظافت با اعزام فوری تکنسین، نرخ مصوب اتحادیه و ضمانت ۳۰ روزه.',
-            'Instant access to HVAC, plumbing, electrical, remodeling, locksmith, carpentry, doors/windows and cleaning services in Tehran.'
+            'دسترسی سریع و مستقیم به ۵۳ خدمت تخصصی در ۸ حوزه ساختمانی با اعزام فوری کارشناس، نرخ شفاف و پشتیبانی ۲۴ ساعته در تمامی مناطق ۲۲ گانه تهران.',
+            'Quick, direct access to 53 specialized services across 8 building sectors with immediate dispatch, transparent rates, and 24/7 support in all 22 Tehran districts.'
           )}
         </p>
 
         <!-- Search input for services -->
-        <div style="max-width: 600px; margin-bottom: 1.5rem; position: relative;">
-          <input
-            type="text"
-            id="services-live-search"
-            placeholder="${pick('جستجوی سریع میان ۵۳ خدمت تخصصی (مثلاً: نشت‌یابی، پکیج، کلیدسازی...)', 'Search 53 services (e.g. leak detection, boiler, locksmith)...')}"
-            style="width: 100%; padding: 0.9rem 1.25rem 0.9rem 3rem; border-radius: 1rem; border: 2px solid rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.15); color: #fff; font-size: 0.95rem; outline: none; backdrop-filter: blur(10px);"
-          />
-          <span class="icon" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #e2e8f0; pointer-events: none;">
-            ${icons.search}
-          </span>
+        <div class="services-search-wrapper">
+          <div class="services-search-box">
+            <span class="search-icon" aria-hidden="true">${icons.search}</span>
+            <input
+              type="text"
+              id="services-live-search"
+              class="services-search-input"
+              placeholder="${pick('جستجوی سریع خدمت (مثلاً: نشت‌یابی، پکیج، کلیدسازی، نقاشی...)', 'Search 53 services (e.g. leak detection, boiler, locksmith, painting)...')}"
+              autocomplete="off"
+            />
+            <button type="button" id="services-search-clear" class="services-search-clear" aria-label="${pick('پاک کردن جستجو', 'Clear search')}" style="display: none;">
+              <span class="icon">${icons.close}</span>
+            </button>
+          </div>
+          <div id="services-search-status" class="services-search-status" aria-live="polite"></div>
         </div>
 
         <div class="service-hero-actions">
           <button type="button" class="btn-hero-primary" data-open-wizard="all">
             <span class="icon">${icons.plusCircle}</span>
-            <span>${pick('ثبت درخواست آنلاین تکنسین', 'Request Technician Online')}</span>
+            <span>${pick('ثبت آنلاین درخواست تکنسین', 'Request Technician Online')}</span>
           </button>
           <a href="tel:${SUPPORT_PHONE}" class="btn-hero-call">
             <span class="icon">${icons.phone}</span>
-            <span>${pick('تماس مستقیم:', 'Direct Call:')} ${toPersianDigits(SUPPORT_PHONE_DISPLAY)}</span>
+            <span>${pick('مشاوره و اعزام فوری:', 'Immediate Dispatch:')} ${toPersianDigits(SUPPORT_PHONE_DISPLAY)}</span>
           </a>
         </div>
       </section>
 
+      <!-- Category Filter Pills Bar -->
+      <nav class="services-filter-nav" aria-label="${pick('دسته‌بندی خدمات', 'Service Categories')}">
+        <div class="services-filter-scroll">
+          <button type="button" class="services-filter-pill active" data-filter-cat="all">
+            <span class="icon">${icons.layers || icons.bolt}</span>
+            <span>${pick('همه خدمات', 'All Services')}</span>
+            <span class="pill-count">${toPersianDigits(totalServices)}</span>
+          </button>
+          ${categories
+            .map(
+              (cat) => `
+            <button type="button" class="services-filter-pill" data-filter-cat="${cat.id}">
+              <span class="icon">${cat.icon}</span>
+              <span>${pick(cat.title, cat.titleEn)}</span>
+              <span class="pill-count">${toPersianDigits(cat.subServices.length)}</span>
+            </button>
+          `
+            )
+            .join('')}
+        </div>
+      </nav>
+
       <!-- Categories Directory List -->
       <div id="services-directory-list">
+        <!-- Empty state when no search matches -->
+        <div id="services-empty-state" class="services-empty-state" style="display: none;">
+          <div class="empty-state-icon">
+            <span class="icon">${icons.search}</span>
+          </div>
+          <h3>${pick('خدمتی با این عنوان یافت نشد', 'No matching services found')}</h3>
+          <p>${pick('می‌توانید عبارت دیگری را جستجو فرمایید یا برای هماهنگی و ثبت خدمت مورد نظرتان با پشتیبانی تماس بگیرید.', 'Try a different keyword or call Behdoon support.')}</p>
+          <div class="empty-state-actions">
+            <button type="button" id="btn-reset-search" class="btn-reset-search">
+              ${pick('نمایش مجدد همه خدمات', 'Show All Services')}
+            </button>
+            <a href="tel:${SUPPORT_PHONE}" class="btn-hero-call">
+              <span class="icon">${icons.phone}</span>
+              <span>${pick('تماس با پشتیبانی', 'Call Support')}</span>
+            </a>
+          </div>
+        </div>
+
         ${categories
           .map(
             (cat) => `
@@ -88,16 +137,19 @@ export function renderServicesDirectoryView(_settings: any): string {
                   <span class="icon">${cat.icon}</span>
                 </div>
                 <div>
-                  <h2 class="directory-category-title">
-                    <a href="/services/${cat.slug}" style="color: inherit; text-decoration: none;">
-                      ${pick(cat.title, cat.titleEn)}
-                    </a>
-                  </h2>
+                  <div class="directory-category-title-row">
+                    <h2 class="directory-category-title">
+                      <a href="/services/${cat.slug}">
+                        ${pick(cat.title, cat.titleEn)}
+                      </a>
+                    </h2>
+                    <span class="directory-category-badge">${toPersianDigits(cat.subServices.length)} ${pick('خدمت تخصصی', 'services')}</span>
+                  </div>
                   <p class="directory-category-sub">${pick(cat.subtitle, cat.subtitleEn)}</p>
                 </div>
               </div>
               <a href="/services/${cat.slug}" class="directory-category-link">
-                <span>${pick('صفحه جامع و راهنما', 'Full Category Guide')}</span>
+                <span>${pick('صفحه اختصاصی و راهنما', 'Full Category Guide')}</span>
                 <span class="icon">${icons.chevronLeft}</span>
               </a>
             </div>
@@ -132,7 +184,7 @@ export function renderServicesDirectoryView(_settings: any): string {
                       <span>${pick('ثبت درخواست', 'Order')}</span>
                     </button>
                     <a href="/services/${cat.slug}/${sub.slug}" class="btn-details">
-                      <span>${pick('جزئیات', 'Details')}</span>
+                      <span>${pick('جزئیات و تعرفه', 'Details')}</span>
                     </a>
                   </div>
                 </div>
@@ -191,7 +243,7 @@ export function renderCategoryPageView(category: ServiceCategoryDetail, _setting
             <div class="service-spec-icon">${icons.bolt}</div>
             <div class="service-spec-info">
               <span class="service-spec-label">${pick('زمان حضور تکنسین', 'Arrival Time')}</span>
-              <span class="service-spec-val">${pick('کمتر از ۴۵ دقیقه در تهران', 'Under 45 mins')}</span>
+              <span class="service-spec-val">${pick('کمتر از سریع‌ترین زمان در تهران', 'Under 45 mins')}</span>
             </div>
           </div>
           <div class="service-spec-item">
@@ -205,7 +257,7 @@ export function renderCategoryPageView(category: ServiceCategoryDetail, _setting
             <div class="service-spec-icon">${icons.checkCircle}</div>
             <div class="service-spec-info">
               <span class="service-spec-label">${pick('تعرفه و شفافیت', 'Pricing')}</span>
-              <span class="service-spec-val">${pick('مطابق نرخنامه مصوب اتحادیه', 'Union-Approved Rates')}</span>
+              <span class="service-spec-val">${pick('مطابق تعرفه شفاف و منصفانه', 'Union-Approved Rates')}</span>
             </div>
           </div>
           <div class="service-spec-item">
@@ -367,7 +419,7 @@ export function renderSubServicePageView(
             <div class="service-spec-icon">${icons.calendar}</div>
             <div class="service-spec-info">
               <span class="service-spec-label">${pick('زمان حضور', 'Arrival Time')}</span>
-              <span class="service-spec-val">${pick('زیر ۴۵ دقیقه یا زمان دلخواه شما', 'Under 45 mins / Scheduled')}</span>
+              <span class="service-spec-val">${pick('زیر سریع‌ترین زمان یا زمان دلخواه شما', 'Under 45 mins / Scheduled')}</span>
             </div>
           </div>
           <div class="service-spec-item">
@@ -406,11 +458,13 @@ export function renderSubServicePageView(
       <!-- Main Detail Layout (Content + Sidebar) -->
       <div class="service-detail-layout">
         <!-- Main Technical Article / Guide -->
-        <main class="service-detail-main">
-          ${subService.detailHtml}
+          <main class="service-detail-main category-guide-wrapper">
+            <article>
+              ${subService.detailHtml}
+            </article>
 
           <!-- Features block if not already in detail -->
-          <div style="margin-top: 2rem; padding: 1.5rem; background: #f8fafc; border-radius: 1rem; border: 1px solid #e2e8f0;">
+          <div style="margin-top: 2rem; padding: 1.5rem; background: var(--surface-alt, #f1efe9); border-radius: 1rem; border: 1px solid var(--border, #e6e2d8);">
             <h4 style="font-weight: 800; color: #1e293b; margin-bottom: 0.75rem;">
               ${pick('چرا برای این خدمت بهدون را انتخاب کنید؟', 'Why choose Behdoon for this service?')}
             </h4>
@@ -427,7 +481,7 @@ export function renderSubServicePageView(
             <div class="sidebar-price-tag">
               <div class="sidebar-price-label">${pick('حداقل تعرفه شروع خدمت:', 'Starting Price from:')}</div>
               <div class="sidebar-price-amount">${formatToman(subService.basePrice)}</div>
-              <div class="sidebar-price-note">${pick('مطابق نرخنامه مصوب اتحادیه تهران', 'Official Union Rates')}</div>
+              <div class="sidebar-price-note">${pick('مطابق تعرفه شفاف و منصفانه تهران', 'Official Union Rates')}</div>
             </div>
 
             <div class="sidebar-actions">
@@ -452,7 +506,7 @@ export function renderSubServicePageView(
               </li>
               <li class="sidebar-trust-item">
                 <span class="icon">${icons.checkCircle}</span>
-                <span>${pick('اعزام تکنسین زیر ۴۵ دقیقه در محل', 'Dispatch under 45 minutes')}</span>
+                <span>${pick('اعزام تکنسین زیر سریع‌ترین زمان در محل', 'Dispatch under 45 minutes')}</span>
               </li>
               <li class="sidebar-trust-item">
                 <span class="icon">${icons.checkCircle}</span>
@@ -555,7 +609,7 @@ export function renderServiceNotFound(): string {
           <a href="/services" class="btn-hero-primary" style="text-decoration: none;">
             <span>${pick('مشاهده کاتالوگ همه خدمات بهدون', 'View All Services')}</span>
           </a>
-          <a href="tel:${SUPPORT_PHONE}" class="btn-hero-call" style="color: #334155 !important; border-color: #cbd5e1; background: #f8fafc;">
+          <a href="tel:${SUPPORT_PHONE}" class="btn-hero-call" style="color: var(--text, #334155) !important; border-color: var(--border, #e6e2d8); background: var(--surface-alt, #f1efe9);">
             <span class="icon">${icons.phone}</span>
             <span>${pick('تماس با پشتیبانی بهدون', 'Contact Support')}</span>
           </a>
@@ -564,3 +618,5 @@ export function renderServiceNotFound(): string {
     </div>
   `;
 }
+
+

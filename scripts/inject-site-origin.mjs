@@ -26,6 +26,21 @@ if (existsSync(join(distDir, 'management.html'))) {
   );
 }
 
+// Generate high-performance, lightweight JPEG for WhatsApp and social crawlers
+const publicDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
+try {
+  const sharp = (await import('sharp')).default;
+  const pngPath = existsSync(join(publicDir, 'og-image.png')) ? join(publicDir, 'og-image.png') : join(distDir, 'og-image.png');
+  if (existsSync(pngPath)) {
+    const jpgBuffer = await sharp(pngPath).jpeg({ quality: 85, mozjpeg: true }).toBuffer();
+    writeFileSync(join(publicDir, 'og-image.jpg'), jpgBuffer);
+    writeFileSync(join(distDir, 'og-image.jpg'), jpgBuffer);
+    console.log(`[inject-site-origin] generated optimized og-image.jpg (${(jpgBuffer.length / 1024).toFixed(1)} KB)`);
+  }
+} catch (err) {
+  console.warn('[inject-site-origin] sharp jpg generation skipped:', err?.message);
+}
+
 writeFileSync(join(distDir, 'api-base.txt'), process.env.VITE_API_BASE_URL ?? '', 'utf-8');
 
 const siteOrigin = process.env.SITE_ORIGIN ?? 'https://behdoon.ir';

@@ -26,7 +26,7 @@ export const faqItems: FaqItem[] = [
     question: 'سرعت اعزام تکنسین در تهران چقدر است؟',
     questionEn: 'How fast are technicians dispatched in Tehran?',
     answer:
-      'با توجه به حضور تیم‌های سیار بهدون در مناطق شمال، جنوب، شرق، غرب و مرکز تهران، در موارد اورژانسی مانند ترکیدگی لوله یا اتصالی برق، اعزام در کمتر از ۴۵ دقیقه انجام می‌شود.',
+      'با توجه به حضور تیم‌های سیار بهدون در مناطق شمال، جنوب، شرق، غرب و مرکز تهران، در موارد اورژانسی مانند ترکیدگی لوله یا اتصالی برق، اعزام در کمتر از سریع‌ترین زمان انجام می‌شود.',
     answerEn:
       'With mobile technical teams across North, South, East, West, and Central Tehran, emergency dispatches arrive in under 45 minutes.',
   },
@@ -34,7 +34,7 @@ export const faqItems: FaqItem[] = [
     question: 'هزینه خدمات چگونه محاسبه می‌شود؟',
     questionEn: 'How are service costs calculated?',
     answer:
-      'هزینه‌ها کاملاً شفاف، منصفانه و بر اساس نرخ مصوب اتحادیه محاسبه می‌شوند. پیش از شروع کار، تکنسین پس از بررسی، برآورد دقیق هزینه را به شما اعلام می‌نماید.',
+      'هزینه‌ها کاملاً شفاف، منصفانه و بر اساس قیمت منصفانه محاسبه می‌شوند. پیش از شروع کار، تکنسین پس از بررسی، برآورد دقیق هزینه را به شما اعلام می‌نماید.',
     answerEn:
       'Pricing is transparent, fair, and based on official guild rates. Technicians provide an exact estimate after initial inspection before starting work.',
   },

@@ -59,73 +59,53 @@ export function renderContactManagerView(): string {
       </div>
     </div>
     
-    
     <div class="admin-view-content" style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;">
       
-      <!-- 1. Online Chat (Support) Card -->
       <div class="editor-sidebar-card">
         <div class="card-header-action">
-          <h3 style="margin: 0;">چت آنلاین و پشتیبانی</h3>
-          <button type="button" class="btn btn-primary btn-sm" data-save-setting="contact">ذخیره چت</button>
-        </div>
-        <p class="settings-panel-hint">پشتیبانی به صورت اختصاصی در هدر سایت و منوهای ناوبری فعال است تا از نمایش دکمه‌های شناور تکراری جلوگیری شود.</p>
-        <div class="settings-form-grid" style="margin-top: 16px;">
-          <div class="form-field">
-            <label for="settings-chat-mode">حالت نمایش چت و پشتیبانی</label>
-            <select id="settings-chat-mode">
-              <option value="header">فعال در هدر و ناوبری سایت</option>
-              <option value="hidden">مخفی (غیرفعال)</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- 2. Call Settings Card -->
-      <div class="editor-sidebar-card">
-        <div class="card-header-action">
-          <h3 style="margin: 0;">تنظیمات تماس</h3>
+          <h3 style="margin: 0;">مدیریت تماس و دکمه‌های شناور</h3>
           <button type="button" class="btn btn-primary btn-sm" data-save-setting="contact">ذخیره تماس</button>
-        </div>
-        <p class="settings-panel-hint">شماره تماس اصلی سایت و نحوه نمایش آن را مدیریت کنید.</p>
-        <div class="settings-form-grid" style="margin-top: 16px;">
-          <div class="form-field">
-            <label for="settings-phone-display">شماره تماس نمایشی</label>
-            <input type="text" id="settings-phone-display" dir="ltr" placeholder="مثال: 021-200200" />
-          </div>
-          <div class="form-field">
-            <label for="settings-phone-tel">لینک شماره‌گیری سیستم (tel)</label>
-            <input type="text" id="settings-phone-tel" dir="ltr" placeholder="مثال: tel:+9821200200" />
-          </div>
-        </div>
-        <div style="margin-top: 16px;">
-          <label class="settings-inline-toggle" style="margin: 0;">
-            <input type="checkbox" id="settings-header-phone-enabled" /> نمایش شماره تماس در هدر سایت
-          </label>
-        </div>
-      </div>
-
-      <!-- 3. Floating Quick Actions Card -->
-      <div class="editor-sidebar-card">
-        <div class="card-header-action">
-          <h3 style="margin: 0;">دکمه‌های شناور (واتس‌اپ، تماس سریع و ...)</h3>
-          <button type="button" class="btn btn-primary btn-sm" data-save-setting="contact">ذخیره دکمه‌ها</button>
-        </div>
-        <p class="settings-panel-hint">دکمه‌های دسترسی سریع شناور که در پایین صفحه یا گوشه‌ها نمایش داده می‌شوند.</p>
-        <div style="margin: 16px 0;">
-          <label class="settings-inline-toggle" style="margin: 0;">
-            <input type="checkbox" id="theme-quick-actions-enabled" /> فعال بودن دکمه‌های دسترسی سریع
-          </label>
         </div>
         <div class="settings-form-grid">
           <div class="form-field">
-            <label for="theme-quick-actions-style">نحوه نمایش</label>
+            <label for="settings-phone-display">شماره تماس در هدر (نمایشی)</label>
+            <input type="text" id="settings-phone-display" dir="ltr" placeholder="021-200200" />
+          </div>
+          <div class="form-field">
+            <label for="settings-phone-tel">لینک شماره‌گیری</label>
+            <input type="text" id="settings-phone-tel" dir="ltr" placeholder="tel:+9821200200" />
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 16px; margin-bottom: 12px; gap: 10px; flex-wrap: wrap;">
+          
+          <label class="settings-inline-toggle" style="margin: 0;"><input type="checkbox" id="settings-header-phone-enabled" /> نمایش شماره تماس در هدر</label>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label for="settings-chat-mode" style="margin: 0; font-size: 0.9rem;">نمایش آیکون پشتیبانی:</label>
+            <select id="settings-chat-mode" style="padding: 4px; border-radius: 4px; border: 1px solid var(--border);">
+              <option value="floating">شناور (گوشه صفحه)</option>
+              <option value="header">در هدر (جزیره تماس)</option>
+              <option value="hidden">مخفی</option>
+            </select>
+          </div>
+
+        </div>
+    
+        <hr style="margin: var(--space-4) 0; border: none; border-top: 1px solid var(--border);" />
+        
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <h4 style="margin: 0; font-size: 0.95rem;">دکمه‌های شناور سایت (واتس‌اپ، تماس و ...)</h4>
+          <label class="settings-inline-toggle" style="margin: 0;"><input type="checkbox" id="theme-quick-actions-enabled" /> فعال باشند</label>
+        </div>
+        <div class="settings-form-grid">
+          <div class="form-field">
+            <label for="theme-quick-actions-style">نحوه نمایش در اسکرول</label>
             <select id="theme-quick-actions-style">
-              <option value="floating">شناور در گوشه (توصیه‌شده)</option>
+              <option value="floating">شناور در گوشه تصویر (توصیه‌شده)</option>
               <option value="fixed">ثابت در نوار پایین</option>
             </select>
           </div>
           <div class="form-field">
-            <label for="theme-quick-actions-position">موقعیت قرارگیری</label>
+            <label for="theme-quick-actions-position">موقعیت دکمه‌ها</label>
             <select id="theme-quick-actions-position">
               <option value="right">گوشه راست (پیش‌فرض)</option>
               <option value="left">گوشه چپ</option>
@@ -134,14 +114,13 @@ export function renderContactManagerView(): string {
         </div>
       </div>
 
-      <!-- 4. Social Media Card -->
       <div class="editor-sidebar-card">
         <div class="card-header-action">
-          <h3 style="margin: 0;">سایر شبکه‌های اجتماعی و پیام‌رسان‌ها</h3>
+          <h3 style="margin: 0;">شبکه‌های اجتماعی و پیام‌رسان‌ها</h3>
           <button type="button" class="btn btn-primary btn-sm" data-save-setting="social">ذخیره شبکه‌ها</button>
         </div>
         <p class="settings-panel-hint">
-          آدرس کانال‌ها و شناسه‌های خود را وارد کنید تا در فوتر سایت نمایش داده شوند.
+          آدرس کانال‌ها و شناسه‌های خود را وارد کنید تا در فوتر و هدر سایت نمایش داده شوند.
         </p>
 
         <div style="display: flex; gap: 16px; align-items: center; margin: 16px 0; background: var(--background); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border);">
@@ -193,7 +172,6 @@ export function renderContactManagerView(): string {
         </div>
       </div>
     </div>
-
   `;
 }
 
@@ -217,7 +195,7 @@ export async function initContactManagerView(): Promise<void> {
       const headerPhoneEl = document.getElementById('settings-header-phone-enabled') as HTMLInputElement | null;
       if (headerPhoneEl) headerPhoneEl.checked = contact.headerPhoneEnabled !== false;
       const chatModeEl = document.getElementById('settings-chat-mode') as HTMLSelectElement | null;
-      if (chatModeEl) chatModeEl.value = (contact.chatDisplayMode === 'hidden') ? 'hidden' : 'header';
+      if (chatModeEl) chatModeEl.value = contact.chatDisplayMode || 'floating';
     phoneDisplayEl.value = contact.phoneDisplay || '';
     phoneTelHrefEl.value = contact.phoneTelHref || '';
     phoneDisplayEl.addEventListener('input', () => {
@@ -393,7 +371,7 @@ export async function initContactManagerView(): Promise<void> {
 
   renderSocialTab();
 
-  document.querySelectorAll<HTMLButtonElement>('[data-save-setting="contact"]').forEach(el => el.addEventListener('click', async (e) => {
+  document.querySelector<HTMLButtonElement>('[data-save-setting="contact"]')?.addEventListener('click', async (e) => {
     const btn = e.currentTarget as HTMLButtonElement;
     await handleSaveButton(btn, async () => {
       // Re-read existing settings from backend just to be safe
@@ -410,12 +388,6 @@ export async function initContactManagerView(): Promise<void> {
 
       currentContact.phoneDisplay = phoneDisplay;
       currentContact.phoneTelHref = phoneTelHref;
-        
-        const headerPhoneEnabled = (document.getElementById('settings-header-phone-enabled') as HTMLInputElement)?.checked ?? true;
-        const chatDisplayMode = (document.getElementById('settings-chat-mode') as HTMLSelectElement)?.value ?? 'header';
-        currentContact.headerPhoneEnabled = headerPhoneEnabled;
-        currentContact.chatDisplayMode = chatDisplayMode as any;
-
       await updateSetting('contact', currentContact);
       
       currentTheme.quickActionsStyle = quickActionsStyle;
@@ -423,7 +395,7 @@ export async function initContactManagerView(): Promise<void> {
       currentTheme.quickActionsPosition = quickActionsPosition;
       await updateSetting('theme', currentTheme);
     });
-  }));
+  });
 
   document.querySelector<HTMLButtonElement>('[data-save-setting="social"]')?.addEventListener('click', async (e) => {
     const btn = e.currentTarget as HTMLButtonElement;

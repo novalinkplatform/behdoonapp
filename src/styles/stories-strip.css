@@ -9,8 +9,7 @@
 
 @media (max-width: 768px) {
   .stories-strip-wrap {
-    /* روی موبایل هدر اصلی مخفی می‌شود اما دکمه شناور تغییر زبان (lang-toggle-floating) بالا-راست باقی می‌ماند. */
-    margin-top: 52px;
+    margin-top: 56px;
   }
 }
 

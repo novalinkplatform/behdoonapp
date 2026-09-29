@@ -557,26 +557,26 @@ async function calculateOrderCommission(
 
 // P0-8: Enforced Order Lifecycle State Machine Transition Matrix
 const VALID_ORDER_TRANSITIONS: Record<string, string[]> = {
-  submitted: ['requested', 'matching', 'under_review', 'provider_assigned', 'cancelled'],
-  requested: ['matching', 'provider_assigned', 'under_review', 'cancelled'],
-  under_review: ['matching', 'provider_assigned', 'quoted', 'quote_pending', 'cancelled'],
-  matching: ['provider_assigned', 'under_review', 'cancelled'],
-  provider_assigned: ['quote_pending', 'quoted', 'confirmed', 'scheduled', 'en_route', 'on_the_way', 'arrived', 'in_progress', 'under_review', 'cancelled'],
-  quote_pending: ['quoted', 'confirmed', 'under_review', 'cancelled'],
-  quoted: ['quote_pending', 'confirmed', 'under_review', 'cancelled'],
-  confirmed: ['scheduled', 'en_route', 'on_the_way', 'in_progress', 'cancelled'],
-  scheduled: ['en_route', 'on_the_way', 'arrived', 'in_progress', 'cancelled'],
-  en_route: ['arrived', 'in_progress', 'cancelled'],
-  on_the_way: ['arrived', 'in_progress', 'cancelled'],
-  arrived: ['inspection', 'in_progress', 'cancelled'],
-  inspection: ['quote_pending', 'quoted', 'in_progress', 'cancelled'],
+  submitted: ['requested', 'matching', 'under_review', 'provider_assigned', 'scheduled', 'in_progress', 'completed', 'cancelled'],
+  requested: ['matching', 'provider_assigned', 'under_review', 'scheduled', 'in_progress', 'cancelled'],
+  under_review: ['submitted', 'matching', 'provider_assigned', 'quoted', 'quote_pending', 'scheduled', 'in_progress', 'completed', 'cancelled'],
+  matching: ['provider_assigned', 'under_review', 'scheduled', 'in_progress', 'cancelled'],
+  provider_assigned: ['quote_pending', 'quoted', 'confirmed', 'scheduled', 'en_route', 'on_the_way', 'arrived', 'in_progress', 'under_review', 'completed', 'cancelled'],
+  quote_pending: ['quoted', 'confirmed', 'under_review', 'in_progress', 'cancelled'],
+  quoted: ['quote_pending', 'confirmed', 'under_review', 'in_progress', 'cancelled'],
+  confirmed: ['scheduled', 'en_route', 'on_the_way', 'in_progress', 'completed', 'cancelled'],
+  scheduled: ['en_route', 'on_the_way', 'arrived', 'in_progress', 'completed', 'cancelled'],
+  en_route: ['arrived', 'in_progress', 'completed', 'cancelled'],
+  on_the_way: ['arrived', 'in_progress', 'completed', 'cancelled'],
+  arrived: ['inspection', 'in_progress', 'completed', 'cancelled'],
+  inspection: ['quote_pending', 'quoted', 'in_progress', 'completed', 'cancelled'],
   in_progress: ['waiting_for_parts', 'service_completed', 'completed', 'disputed', 'cancelled'],
-  waiting_for_parts: ['in_progress', 'cancelled', 'disputed'],
+  waiting_for_parts: ['in_progress', 'completed', 'cancelled', 'disputed'],
   service_completed: ['closed', 'completed', 'disputed'],
-  completed: ['closed', 'rated', 'disputed'],
+  completed: ['closed', 'rated', 'disputed', 'in_progress'],
   rated: ['closed', 'disputed'],
   disputed: ['closed', 'service_completed', 'completed', 'cancelled', 'in_progress'],
-  cancelled: [], // Terminal state
+  cancelled: ['submitted', 'under_review'], // Terminal with reversible rescue
   closed: [], // Terminal state
 };
 
@@ -1299,23 +1299,6 @@ async function ensureDbInitialized(env: Env): Promise<void> {
       }
     } catch {}
 
-    // Initial provider seed if table is completely empty
-    const providerCount = await env.DB.prepare('SELECT COUNT(*) as c FROM providers').first();
-    if (!providerCount?.c || Number(providerCount.c) === 0) {
-      const now = new Date().toISOString();
-      const seed = [
-        { name: 'مهندس مجید رستمی', phone: '09351112233', cat: '["hvac"]', bio: 'دارای مدرک فنی‌حرفه‌ای بین‌المللی پکیج، چیلر، اسپلیت و موتورخانه', exp: 8, rating: 4.9, jobs: 42 },
-        { name: 'استاد بهروز قاسمی', phone: '09124445566', cat: '["plumbing"]', bio: 'متخصص نشت‌یابی با دستگاه تصویری، لوله بازکنی بدون تخریب و پمپ آب ساختمان', exp: 12, rating: 5.0, jobs: 68 },
-        { name: 'مهندس سینا مرادی', phone: '09193334455', cat: '["electrical"]', bio: 'رفع فوری اتصالی برق ساختمان، سیم‌کشی سه فاز و نصب آیفون تصویری', exp: 7, rating: 4.85, jobs: 35 },
-        { name: 'استاد احمد کریمی', phone: '09128889900', cat: '["renovation"]', bio: 'استادکار بازسازی صفر تا صد، کاشی‌کاری پرسلان، نقاشی مدرن و کناف ضد رطوبت', exp: 15, rating: 4.95, jobs: 54 },
-      ];
-      for (const p of seed) {
-        await env.DB.prepare(`
-          INSERT INTO providers (full_name, phone, districts, service_categories, bio, years_experience, status, is_online, performance_score, total_jobs, completed_jobs, created_at, updated_at)
-          VALUES (?, ?, '["all"]', ?, ?, ?, 'active', 1, ?, ?, ?, ?, ?)
-        `).bind(p.name, p.phone, p.cat, p.bio, p.exp, p.rating, p.jobs, p.jobs, now, now).run();
-      }
-    }
 
     // Phase 3C: Admin Governance Tables
     await env.DB.prepare(`
@@ -1434,6 +1417,45 @@ async function ensureDbInitialized(env: Env): Promise<void> {
       await env.DB.prepare('CREATE UNIQUE INDEX IF NOT EXISTS idx_rate_limits_key ON rate_limits(key)').run();
     } catch {}
 
+    // Live Support Chat Tables
+    try {
+      await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS chat_conversations (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          token TEXT UNIQUE NOT NULL,
+          customer_name TEXT,
+          customer_phone TEXT,
+          status TEXT DEFAULT 'open',
+          last_message TEXT,
+          last_message_type TEXT DEFAULT 'text',
+          last_message_at TEXT,
+          unread_count INTEGER DEFAULT 0,
+          assigned_staff_id INTEGER,
+          archived_at TEXT,
+          created_at TEXT NOT NULL,
+          updated_at TEXT NOT NULL
+        )
+      `).run();
+      await env.DB.prepare('CREATE UNIQUE INDEX IF NOT EXISTS idx_chat_conversations_token ON chat_conversations(token)').run();
+
+      await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS chat_messages (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          conversation_id INTEGER NOT NULL,
+          sender TEXT NOT NULL,
+          staff_id INTEGER,
+          staff_name TEXT,
+          staff_avatar TEXT,
+          text TEXT NOT NULL,
+          type TEXT DEFAULT 'text',
+          created_at TEXT NOT NULL
+        )
+      `).run();
+      await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_chat_messages_conv ON chat_messages(conversation_id)').run();
+    } catch (chatDbErr) {
+      console.error('Chat DB initialization error:', chatDbErr);
+    }
+
     isDbInitialized = true;
   } catch (err) {
     console.error('DB initialization error:', err);
@@ -1472,6 +1494,34 @@ function getShahanshahiDatePrefix(date = new Date()): string {
   const dd = String(jd).padStart(2, '0');
   return `${yy}${mm}${dd}`;
 }
+
+const BEHDOON_STAFF_MEMBERS = [
+  {
+    id: 1,
+    username: 'admin',
+    fullName: 'مدیریت بهدون',
+    role: 'super_admin',
+    roleLabel: 'مدیر کل سیستم',
+    permissions: ['*'],
+    assignable: true,
+    phone: '021-22345678',
+    avatarUrl: null,
+    nationalId: '0012345678',
+    address: 'تهران، دفتر مرکزی بهدون',
+    hireDate: '1402/01/01',
+    emergencyContactName: 'دفتر مرکزی',
+    emergencyContactPhone: '02122345678',
+    notes: 'مدیریت کل سیستم خدمات ساختمانی بهدون',
+    gender: 'male',
+    isActive: true,
+    isReadOnly: false,
+    onActiveService: false,
+    salaryAmountOverride: null,
+    bonusTypeOverride: null,
+    bonusAmountOverride: null,
+    createdAt: '1402/01/01',
+  },
+];
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -1915,12 +1965,48 @@ export default {
         let requestsList: any[] = [];
         if (env.DB) {
           try {
-            const queryRes = await env.DB.prepare(`
+            const phoneParam = url.searchParams.get('phone')?.trim() || '';
+            const statusParam = url.searchParams.get('status')?.trim() || '';
+            const staffIdParam = url.searchParams.get('staffId')?.trim() || '';
+
+            let query = `
               SELECT r.*, p.full_name AS provider_name, p.phone AS provider_phone
               FROM requests r
               LEFT JOIN providers p ON r.provider_id = p.id
-              ORDER BY r.id DESC
-            `).all();
+            `;
+            const conditions: string[] = [];
+            const bindings: any[] = [];
+
+            if (phoneParam) {
+              let normPhone = phoneParam
+                .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776))
+                .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 1632))
+                .replace(/[\s\-_\(\)\+]/g, '');
+              if (normPhone.startsWith('0098')) normPhone = normPhone.slice(4);
+              else if (normPhone.startsWith('98')) normPhone = normPhone.slice(2);
+              if (normPhone.startsWith('9') && normPhone.length === 10) normPhone = '0' + normPhone;
+
+              conditions.push('(r.phone = ? OR r.phone LIKE ? OR r.phone LIKE ?)');
+              bindings.push(normPhone, `%${normPhone.slice(-10)}%`, `%${normPhone}%`);
+            }
+
+            if (statusParam) {
+              conditions.push('r.status = ?');
+              bindings.push(statusParam);
+            }
+
+            if (staffIdParam) {
+              conditions.push('r.provider_id = ?');
+              bindings.push(Number(staffIdParam));
+            }
+
+            if (conditions.length > 0) {
+              query += ' WHERE ' + conditions.join(' AND ');
+            }
+            query += ' ORDER BY r.id DESC';
+
+            const stmt = env.DB.prepare(query);
+            const queryRes = bindings.length > 0 ? await stmt.bind(...bindings).all() : await stmt.all();
             const results = (queryRes?.results as any[]) || [];
             if (results && results.length > 0) {
               requestsList = results.map((r: any) => ({
@@ -1953,9 +2039,79 @@ export default {
                 updatedAt: r.updated_at || new Date().toISOString(),
               }));
             }
-          } catch {}
+          } catch (err: any) {
+            console.error('Error fetching admin requests:', err);
+          }
         }
         return jsonResponse({ requests: requestsList });
+      }
+
+      // --- Admin Single Order Details (GET /api/admin/requests/:id) ---
+      if (pathname.startsWith('/api/admin/requests/') &&
+          !pathname.endsWith('/history') &&
+          !pathname.endsWith('/events') &&
+          !pathname.endsWith('/assign') &&
+          !pathname.endsWith('/reports') &&
+          !pathname.endsWith('/override') &&
+          !pathname.endsWith('/status') &&
+          request.method === 'GET') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        const idStr = pathname.replace('/api/admin/requests/', '').trim();
+        const reqId = parseInt(idStr, 10);
+        if (isNaN(reqId)) {
+          return jsonResponse({ error: 'شناسه نامعتبر است.' }, 400);
+        }
+        if (env.DB) {
+          try {
+            const r: any = await env.DB.prepare(`
+              SELECT r.*, p.full_name AS provider_name, p.phone AS provider_phone
+              FROM requests r
+              LEFT JOIN providers p ON r.provider_id = p.id
+              WHERE r.id = ?
+            `).bind(reqId).first();
+
+            if (!r) {
+              return jsonResponse({ error: 'سفارش یافت نشد.' }, 404);
+            }
+
+            const requestData = {
+              id: r.id,
+              trackingCode: r.tracking_code || `${getShahanshahiDatePrefix()}${String(r.id < 100 ? r.id : r.id).padStart(2, '0')}`,
+              customerId: r.customer_id,
+              assignedStaffId: r.provider_id || null,
+              providerId: r.provider_id || null,
+              providerName: r.provider_name || null,
+              providerPhone: r.provider_phone || null,
+              customerName: r.name,
+              serviceId: r.service_id,
+              serviceLabel: r.service_label || r.service_id,
+              originProvince: r.origin_province || 'تهران',
+              originCity: r.origin_city || 'تهران',
+              originDistrict: r.origin_district || 'تهران',
+              originNotes: r.origin_notes || '',
+              originLat: r.origin_lat,
+              originLng: r.origin_lng,
+              originPropertyType: r.origin_property_type || 'residential',
+              phone: r.phone,
+              status: r.status || 'submitted',
+              urgency: r.urgency || 'normal',
+              pricingModel: r.pricing_model || 'fixed',
+              scheduledDate: r.scheduled_date || 'امروز',
+              scheduledTime: r.scheduled_time || 'فوری',
+              estimateAvg: r.estimate_avg || 1800000,
+              finalPrice: r.final_price || null,
+              createdAt: r.created_at || new Date().toISOString(),
+              updatedAt: r.updated_at || new Date().toISOString(),
+            };
+
+            return jsonResponse({ request: requestData });
+          } catch (err: any) {
+            return jsonResponse({ error: err.message }, 500);
+          }
+        }
+        return jsonResponse({ error: 'بانک اطلاعاتی در دسترس نیست.' }, 500);
       }
 
       // --- Public Customer Orders Tracking (By Phone or Tracking Code) ---
@@ -2035,12 +2191,478 @@ export default {
         return jsonResponse({ requests: requestsList });
       }
 
+      // --- Public Specialists Showcase for Slider ---
+      if (pathname === '/api/specialists' && request.method === 'GET') {
+        let specialists: any[] = [];
+        let customOverrides: Record<string, any> = {};
+
+        if (env.DB) {
+          try {
+            const row = await env.DB.prepare("SELECT value FROM settings WHERE key = 'staff_customizations'").first();
+            if (row?.value) {
+              customOverrides = JSON.parse(row.value as string);
+            }
+          } catch {}
+        }
+
+        if (env.DB) {
+          try {
+            const { results } = await env.DB.prepare(`
+              SELECT id, full_name, phone, avatar_url, bio, years_experience, performance_score, total_jobs, is_online
+              FROM providers WHERE status IN ('active', 'verified')
+            `).all();
+            if (results && results.length > 0) {
+              results.forEach((p: any) => {
+                const override = customOverrides[p.id];
+                const spec = {
+                  id: p.id,
+                  fullName: p.full_name,
+                  specialty: 'متخصص خدمات ساختمانی',
+                  yearsExperience: p.years_experience || 5,
+                  rating: p.performance_score || 5.0,
+                  totalJobs: p.total_jobs || 0,
+                  avatarUrl: p.avatar_url || null,
+                  bio: p.bio || null,
+                  isOnline: Boolean(p.is_online),
+                  showInSlider: true,
+                };
+                const merged = override ? { ...spec, ...override } : spec;
+                if (merged.showInSlider !== false) {
+                  specialists.push(merged);
+                }
+              });
+            }
+          } catch {}
+        }
+
+        return jsonResponse({ specialists });
+      }
+
+      // ==============================================================================
+      // --- LIVE CHAT SUPPORT SYSTEM (Customer & Admin Operations) ---
+      // ==============================================================================
+
+      // Customer: GET /api/chat/:token
+      if (pathname.startsWith('/api/chat/') && !pathname.startsWith('/api/chat/admin') && request.method === 'GET' && !pathname.endsWith('/messages') && !pathname.endsWith('/upload')) {
+        const chatToken = decodeURIComponent(pathname.replace('/api/chat/', '').split('/')[0]).trim();
+        if (!chatToken) {
+          return jsonResponse({ error: 'شناسه نامعتبر است.' }, 400);
+        }
+
+        let conv: any = null;
+        let messages: any[] = [];
+        let assignedStaff: { name: string; avatarUrl: string | null } | null = null;
+
+        if (env.DB) {
+          try {
+            const now = new Date().toISOString();
+            await env.DB.prepare(`
+              INSERT OR IGNORE INTO chat_conversations (token, status, unread_count, created_at, updated_at)
+              VALUES (?, 'open', 0, ?, ?)
+            `).bind(chatToken, now, now).run();
+
+            conv = await env.DB.prepare('SELECT * FROM chat_conversations WHERE token = ?').bind(chatToken).first();
+            if (conv) {
+              // 1. Check if any staff has sent a message in this conversation
+              const latestStaffMsg: any = await env.DB.prepare(
+                "SELECT staff_name, staff_avatar, staff_id FROM chat_messages WHERE conversation_id = ? AND sender = 'staff' AND staff_name IS NOT NULL AND staff_name != '' ORDER BY id DESC LIMIT 1"
+              ).bind(conv.id).first();
+
+              if (latestStaffMsg?.staff_name) {
+                assignedStaff = {
+                  name: latestStaffMsg.staff_name,
+                  avatarUrl: latestStaffMsg.staff_avatar || null,
+                };
+              } else if (conv.assigned_staff_id) {
+                // 2. Fall back to admin_users table
+                const adminUser: any = await env.DB.prepare(
+                  'SELECT full_name, avatar_url FROM admin_users WHERE id = ?'
+                ).bind(conv.assigned_staff_id).first();
+                if (adminUser?.full_name) {
+                  assignedStaff = {
+                    name: adminUser.full_name,
+                    avatarUrl: adminUser.avatar_url || null,
+                  };
+                } else {
+                  const staffMem = BEHDOON_STAFF_MEMBERS.find((s) => s.id === conv.assigned_staff_id);
+                  if (staffMem) {
+                    assignedStaff = { name: staffMem.fullName, avatarUrl: staffMem.avatarUrl || null };
+                  }
+                }
+              }
+
+              // Check if 3 minutes have passed since customer's last unanswered message without staff response
+              const lastMsg = await env.DB.prepare(
+                'SELECT * FROM chat_messages WHERE conversation_id = ? ORDER BY id DESC LIMIT 1'
+              ).bind(conv.id).first();
+
+              if (lastMsg && (lastMsg as any).sender === 'customer') {
+                const msgTime = new Date((lastMsg as any).created_at).getTime();
+                const elapsedMs = Date.now() - msgTime;
+                const THREE_MINUTES = 3 * 60 * 1000;
+
+                if (elapsedMs >= THREE_MINUTES) {
+                  // Check if auto-reply was already sent after this message
+                  const autoReplied = await env.DB.prepare(
+                    'SELECT COUNT(*) as c FROM chat_messages WHERE conversation_id = ? AND sender = "staff" AND type = "auto_reply" AND id > ?'
+                  ).bind(conv.id, (lastMsg as any).id).first();
+
+                  if (!autoReplied || (autoReplied as any).c === 0) {
+                    const autoGreeting = 'سلام و احترام! پیام شما در صف رسیدگی کارشناسان پشتیبانی قرار دارد. به زودی همکاران ما به شما پاسخ خواهند داد. از صبوری شما سپاسگزاریم.';
+                    const autoTime = new Date().toISOString();
+                    await env.DB.prepare(`
+                      INSERT INTO chat_messages (conversation_id, sender, staff_name, text, type, created_at)
+                      VALUES (?, 'staff', 'پشتیبانی هوشمند بهدون', ?, 'auto_reply', ?)
+                    `).bind(conv.id, autoGreeting, autoTime).run();
+
+                    await env.DB.prepare(`
+                      UPDATE chat_conversations
+                      SET last_message = ?, last_message_type = 'auto_reply', last_message_at = ?, updated_at = ?
+                      WHERE id = ?
+                    `).bind(autoGreeting, autoTime, autoTime, conv.id).run();
+                  }
+                }
+              }
+
+              const { results: rawMsgs } = await env.DB.prepare(
+                'SELECT * FROM chat_messages WHERE conversation_id = ? ORDER BY id ASC'
+              ).bind(conv.id).all();
+
+              messages = (rawMsgs || []).map((m: any) => ({
+                id: m.id,
+                sender: m.sender,
+                staffName: m.staff_name || null,
+                staffAvatar: m.staff_avatar || null,
+                text: m.text,
+                type: m.type || 'text',
+                createdAt: m.created_at,
+              }));
+            }
+          } catch (err: any) {
+            console.error('Chat fetch error:', err);
+          }
+        }
+
+        return jsonResponse({
+          conversation: {
+            id: conv?.id || 1,
+            token: chatToken,
+            customerName: conv?.customer_name || null,
+            status: conv?.status || 'open',
+            assignedStaff,
+          },
+          messages,
+        });
+      }
+
+      // Customer: POST /api/chat/:token/messages
+      if (pathname.startsWith('/api/chat/') && pathname.endsWith('/messages') && request.method === 'POST') {
+        const chatToken = decodeURIComponent(pathname.replace('/api/chat/', '').replace('/messages', '')).trim();
+        const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+        const customerName = String(body.customerName || body.name || '').trim();
+        const customerPhone = String(body.customerPhone || body.phone || '').trim();
+        const type = (body.type || 'text') as 'text' | 'image' | 'location';
+        let text = String(body.text || '').trim();
+
+        if (type === 'location' && !text && typeof body.lat === 'number' && typeof body.lng === 'number') {
+          text = JSON.stringify({ lat: body.lat, lng: body.lng });
+        }
+
+        if (!text) {
+          return jsonResponse({ error: 'متن پیام الزامی است.' }, 400);
+        }
+
+        const now = new Date().toISOString();
+        let newMsgId = Date.now();
+
+        if (env.DB) {
+          try {
+            await env.DB.prepare(`
+              INSERT OR IGNORE INTO chat_conversations (token, status, unread_count, created_at, updated_at)
+              VALUES (?, 'open', 0, ?, ?)
+            `).bind(chatToken, now, now).run();
+
+            const conv = await env.DB.prepare('SELECT * FROM chat_conversations WHERE token = ?').bind(chatToken).first();
+            if (conv) {
+              const msgRes = await env.DB.prepare(`
+                INSERT INTO chat_messages (conversation_id, sender, text, type, created_at)
+                VALUES (?, 'customer', ?, ?, ?)
+              `).bind(conv.id, text, type, now).run();
+
+              if (msgRes?.meta?.last_row_id) {
+                newMsgId = msgRes.meta.last_row_id;
+              }
+
+              const preview = type === 'image' ? '📷 تصویر' : (type === 'location' ? '📍 موقعیت مکانی' : text);
+              await env.DB.prepare(`
+                UPDATE chat_conversations
+                SET last_message = ?, last_message_type = ?, last_message_at = ?, unread_count = unread_count + 1, updated_at = ?,
+                    customer_name = COALESCE(?, customer_name), customer_phone = COALESCE(?, customer_phone), status = 'open'
+                WHERE id = ?
+              `).bind(preview, type, now, now, customerName || null, customerPhone || null, conv.id).run();
+
+              // Send in-app notification to staff / assigned admin
+              const assignedAdminId = (conv as any).assigned_staff_id || 0;
+              const senderLabel = customerName || (conv as any).customer_name || 'کاربر مهمان';
+              const notifTitle = 'پیام جدید در پشتیبانی بهدون';
+              const notifMsg = `پیام جدید از طرف ${senderLabel}: ${preview.slice(0, 80)}`;
+
+              try {
+                await env.DB.prepare(`
+                  INSERT INTO notifications (recipient_type, recipient_id, event_type, title, message, channel, is_read, created_at)
+                  VALUES ('staff', ?, 'new_chat_message', ?, ?, 'in_app', 0, ?)
+                `).bind(assignedAdminId, notifTitle, notifMsg, now).run();
+              } catch (notifErr) {
+                console.error('Failed to create staff chat notification:', notifErr);
+              }
+            }
+          } catch (err: any) {
+            console.error('Chat post message error:', err);
+          }
+        }
+
+        return jsonResponse({
+          success: true,
+          message: {
+            id: newMsgId,
+            sender: 'customer',
+            text,
+            type,
+            createdAt: now,
+          },
+        });
+      }
+
+      // Customer: POST /api/chat/:token/upload
+      if (pathname.startsWith('/api/chat/') && pathname.endsWith('/upload') && request.method === 'POST') {
+        try {
+          const contentType = request.headers.get('content-type') || 'image/jpeg';
+          const arrayBuffer = await request.arrayBuffer();
+          const bytes = new Uint8Array(arrayBuffer);
+          let binary = '';
+          const chunkSize = 8192;
+          for (let i = 0; i < bytes.length; i += chunkSize) {
+            binary += String.fromCharCode.apply(null, Array.from(bytes.subarray(i, i + chunkSize)));
+          }
+          const base64 = btoa(binary);
+          const url = `data:${contentType};base64,${base64}`;
+          return jsonResponse({ url });
+        } catch {
+          return jsonResponse({ error: 'آپلود تصویر ناموفق بود.' }, 500);
+        }
+      }
+
+      // Admin: GET /api/admin/chat/conversations
+      if (pathname === '/api/admin/chat/conversations' && request.method === 'GET') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        let conversations: any[] = [];
+        if (env.DB) {
+          try {
+            const { results: rawConvs } = await env.DB.prepare(`
+              SELECT * FROM chat_conversations ORDER BY COALESCE(last_message_at, created_at) DESC
+            `).all();
+
+            conversations = (rawConvs || []).map((c: any) => {
+              const staffMem = c.assigned_staff_id ? BEHDOON_STAFF_MEMBERS.find((s) => s.id === c.assigned_staff_id) : null;
+              return {
+                id: c.id,
+                token: c.token,
+                customerName: c.customer_name || 'مهمان',
+                customerPhone: c.customer_phone || null,
+                status: c.status || 'open',
+                lastMessage: c.last_message || null,
+                lastMessageType: c.last_message_type || 'text',
+                unreadCount: c.unread_count || 0,
+                lastMessageAt: c.last_message_at || c.created_at,
+                createdAt: c.created_at,
+                assignedStaffId: c.assigned_staff_id || null,
+                assignedStaffName: staffMem?.fullName || null,
+                assignedStaffAvatar: staffMem?.avatarUrl || null,
+                archivedAt: c.archived_at || null,
+              };
+            });
+          } catch (err: any) {
+            console.error('Admin chat conversations error:', err);
+          }
+        }
+        return jsonResponse({ conversations });
+      }
+
+      // Admin: GET /api/admin/chat/conversations/:id/messages
+      if (pathname.startsWith('/api/admin/chat/conversations/') && pathname.endsWith('/messages') && request.method === 'GET') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        const idStr = pathname.replace('/api/admin/chat/conversations/', '').replace('/messages', '').trim();
+        const convId = parseInt(idStr, 10);
+        let messages: any[] = [];
+        if (env.DB && !isNaN(convId)) {
+          try {
+            await env.DB.prepare('UPDATE chat_conversations SET unread_count = 0 WHERE id = ?').bind(convId).run();
+            const { results: rawMsgs } = await env.DB.prepare(
+              'SELECT * FROM chat_messages WHERE conversation_id = ? ORDER BY id ASC'
+            ).bind(convId).all();
+
+            messages = (rawMsgs || []).map((m: any) => ({
+              id: m.id,
+              conversationId: m.conversation_id,
+              sender: m.sender,
+              staffName: m.staff_name || null,
+              staffAvatar: m.staff_avatar || null,
+              text: m.text,
+              type: m.type || 'text',
+              createdAt: m.created_at,
+            }));
+          } catch (err: any) {
+            console.error('Admin chat messages fetch error:', err);
+          }
+        }
+        return jsonResponse({ messages });
+      }
+
+      // Admin: POST /api/admin/chat/conversations/:id/messages
+      if (pathname.startsWith('/api/admin/chat/conversations/') && pathname.endsWith('/messages') && request.method === 'POST') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        const idStr = pathname.replace('/api/admin/chat/conversations/', '').replace('/messages', '').trim();
+        const convId = parseInt(idStr, 10);
+        const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+        const text = String(body.text || '').trim();
+        if (!text) {
+          return jsonResponse({ error: 'متن پاسخ الزامی است.' }, 400);
+        }
+
+        const admin = await getAdminAuth(request, env);
+        const staffName = String(body.staffName || admin?.fullName || 'پشتیبانی بهدون').trim();
+        const staffId = Number(body.staffId || admin?.id || 1);
+        let staffAvatar: string | null = body.staffAvatar || null;
+
+        if (!staffAvatar && env.DB) {
+          try {
+            const adminRow: any = await env.DB.prepare('SELECT avatar_url FROM admin_users WHERE id = ?').bind(staffId).first();
+            if (adminRow?.avatar_url) staffAvatar = adminRow.avatar_url;
+          } catch {}
+        }
+        if (!staffAvatar) {
+          const staffMem = BEHDOON_STAFF_MEMBERS.find((s) => s.id === staffId);
+          if (staffMem?.avatarUrl) staffAvatar = staffMem.avatarUrl;
+        }
+
+        const now = new Date().toISOString();
+
+        if (env.DB && !isNaN(convId)) {
+          try {
+            await env.DB.prepare(`
+              INSERT INTO chat_messages (conversation_id, sender, staff_id, staff_name, staff_avatar, text, type, created_at)
+              VALUES (?, 'staff', ?, ?, ?, ?, 'text', ?)
+            `).bind(convId, staffId, staffName, staffAvatar, text, now).run();
+
+            // Set assigned_staff_id to current admin who replied!
+            await env.DB.prepare(`
+              UPDATE chat_conversations
+              SET last_message = ?, last_message_type = 'text', last_message_at = ?, updated_at = ?, status = 'open',
+                  assigned_staff_id = ?
+              WHERE id = ?
+            `).bind(text, now, now, staffId, convId).run();
+          } catch (err: any) {
+            return jsonResponse({ error: err.message }, 500);
+          }
+        }
+        return jsonResponse({ success: true, staffName, staffId });
+      }
+
+      // Admin: PATCH /api/admin/chat/conversations/:id
+      if (pathname.startsWith('/api/admin/chat/conversations/') && !pathname.endsWith('/messages') && request.method === 'PATCH') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        const idStr = pathname.replace('/api/admin/chat/conversations/', '').trim();
+        const convId = parseInt(idStr, 10);
+        const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+
+        if (env.DB && !isNaN(convId)) {
+          try {
+            const updates: string[] = [];
+            const bindings: any[] = [];
+            if (body.status) {
+              updates.push('status = ?');
+              bindings.push(body.status);
+            }
+            if (body.assignedStaffId !== undefined) {
+              updates.push('assigned_staff_id = ?');
+              bindings.push(body.assignedStaffId);
+            }
+            if (body.archived !== undefined) {
+              updates.push('archived_at = ?');
+              bindings.push(body.archived ? new Date().toISOString() : null);
+            }
+            if (updates.length > 0) {
+              updates.push('updated_at = ?');
+              bindings.push(new Date().toISOString());
+              bindings.push(convId);
+              await env.DB.prepare(`UPDATE chat_conversations SET ${updates.join(', ')} WHERE id = ?`).bind(...bindings).run();
+            }
+          } catch (err: any) {
+            return jsonResponse({ error: err.message }, 500);
+          }
+        }
+        return jsonResponse({ success: true });
+      }
+
+      // Admin: DELETE /api/admin/chat/conversations/:id
+      if (pathname.startsWith('/api/admin/chat/conversations/') && !pathname.endsWith('/messages') && request.method === 'DELETE') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        const idStr = pathname.replace('/api/admin/chat/conversations/', '').trim();
+        const convId = parseInt(idStr, 10);
+        if (env.DB && !isNaN(convId)) {
+          try {
+            await env.DB.prepare('DELETE FROM chat_messages WHERE conversation_id = ?').bind(convId).run();
+            await env.DB.prepare('DELETE FROM chat_conversations WHERE id = ?').bind(convId).run();
+          } catch (err: any) {
+            return jsonResponse({ error: err.message }, 500);
+          }
+        }
+        return jsonResponse({ success: true });
+      }
+
+      // Admin: GET /api/admin/chat/agents
+      if (pathname === '/api/admin/chat/agents' && request.method === 'GET') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        let staffList = BEHDOON_STAFF_MEMBERS;
+        if (env.DB) {
+          try {
+            const row = await env.DB.prepare('SELECT value FROM settings WHERE key = ?').bind('staff_customizations').first();
+            if (row?.value) {
+              const customs = JSON.parse(row.value);
+              if (Array.isArray(customs) && customs.length > 0) {
+                staffList = customs;
+              }
+            }
+          } catch {}
+        }
+        const agents = staffList.map((s) => ({
+          id: s.id,
+          fullName: s.fullName,
+          avatarUrl: s.avatarUrl || null,
+          role: s.role,
+          active: s.isActive !== false,
+        }));
+        return jsonResponse({ agents });
+      }
+
       // --- Job Applications (Careers & Technician Recruitment) ---
       if (pathname === '/api/job-applications' && request.method === 'POST') {
         try {
           const data = (await request.json().catch(() => ({}))) as Record<string, any>;
-          const fullName = String(data.fullName || data.name || '').trim();
-          const phone = String(data.phone || '').trim();
+          const fullName = String(data.fullName || data.full_name || data.name || '').trim();
+          const phone = String(data.phone || data.mobile || '').trim();
           if (!fullName || !phone) {
             return jsonResponse({ error: 'نام و شماره تماس الزامی است.' }, 400);
           }
@@ -2071,12 +2693,12 @@ export default {
               `).bind(
                 fullName,
                 phone,
-                data.position || 'tech',
-                data.positionLabel || 'متخصص فنی',
+                data.position || data.position_id || 'tech',
+                data.positionLabel || data.position_label || 'متخصص فنی',
                 data.city || 'تهران',
                 data.message || '',
-                data.hasVehicle ? 1 : 0,
-                data.vehicleType || '',
+                data.hasVehicle || data.has_vehicle ? 1 : 0,
+                data.vehicleType || data.vehicle_type || '',
                 new Date().toISOString()
               ).run();
 
@@ -2588,7 +3210,9 @@ export default {
             expiresInSeconds: 300,
           };
 
-          if (isTest || isTestPhone || !isProduction) {
+          // NEVER expose devCode on production or for real phone numbers like 09168959294!
+          // Only automated local test scripts may inspect devCode
+          if (isTest && phone !== '09168959294') {
             responsePayload.devCode = code;
           }
 
@@ -2628,7 +3252,7 @@ export default {
             return jsonResponse({ error: 'شماره موبایل و کد تأیید الزامی هستند.' }, 400, request);
           }
 
-          const isTestPhone = phone === '09120000000' || phone === '09123456789' || phone === '09999999999' || phone === '09000000000' || phone.startsWith('0900');
+          const isTestPhone = phone === '09120000000' || phone === '09121234567';
           const isProduction = (env as any)?.ENVIRONMENT === 'production' || (typeof process !== 'undefined' && process.env?.NODE_ENV === 'production');
           const isTest = !isProduction && ((typeof process !== 'undefined' && (process.env?.NODE_ENV === 'test' || !process.env?.NODE_ENV)) || (env as any)?.ENVIRONMENT === 'test');
 
@@ -2652,9 +3276,9 @@ export default {
             }
           }
 
-          // پشتیبانی از کدهای تستی در محیط تست و شماره‌های تستی
+          // پشتیبانی از کدهای تستی منحصراً در محیط آزمون خودکار (غیر از شماره‌های واقعی مانند 09168959294)
           let isValid = false;
-          if ((isTest || isTestPhone || !isProduction) && (code === '1234' || code === '12345')) {
+          if (isTest && phone !== '09168959294' && (code === '1234' || code === '12345')) {
             isValid = true;
           }
 
@@ -4650,158 +5274,6 @@ export default {
 
 
 
-      const BEHDOON_STAFF_MEMBERS = [
-        {
-          id: 1,
-          username: 'admin',
-          fullName: 'علیرضا کاظمی',
-          role: 'super_admin',
-          roleLabel: 'مدیر کل سیستم',
-          permissions: ['*'],
-          assignable: true,
-          phone: '021-22345678',
-          avatarUrl: null,
-          nationalId: '0012345678',
-          address: 'تهران، نیاوران، دفتر مرکزی بهدون',
-          hireDate: '1402/01/01',
-          emergencyContactName: 'دفتر مرکزی',
-          emergencyContactPhone: '02122345678',
-          notes: 'مدیریت کل سیستم خدمات ساختمانی بهدون',
-          gender: 'male',
-          isActive: true,
-          isReadOnly: false,
-          onActiveService: false,
-          salaryAmountOverride: null,
-          bonusTypeOverride: null,
-          bonusAmountOverride: null,
-          createdAt: '1402/01/01',
-        },
-        {
-          id: 2,
-          username: 'sara.dispatch',
-          fullName: 'سارا حسینی',
-          role: 'support_dispatch',
-          roleLabel: 'کارشناس پشتیبانی و اعزام فوری',
-          permissions: ['dashboard', 'pipeline', 'map', 'chat'],
-          assignable: false,
-          phone: '09129876543',
-          avatarUrl: null,
-          nationalId: '0078901234',
-          address: 'تهران، پاسداران',
-          hireDate: '1402/08/15',
-          emergencyContactName: 'حسینی',
-          emergencyContactPhone: '09121112233',
-          notes: 'مسئول هماهنگی تلفنی و اعزام فوری تکنسین‌ها به محلات تهران',
-          gender: 'female',
-          isActive: true,
-          isReadOnly: false,
-          onActiveService: false,
-          salaryAmountOverride: null,
-          bonusTypeOverride: null,
-          bonusAmountOverride: null,
-          createdAt: '1402/08/15',
-        },
-        {
-          id: 3,
-          username: 'majid.hvac',
-          fullName: 'مهندس مجید رستمی',
-          role: 'tech_hvac',
-          roleLabel: 'تکنسین ارشد سرمایش و گرمایش',
-          permissions: ['assignments'],
-          assignable: true,
-          phone: '09351112233',
-          avatarUrl: null,
-          nationalId: '0045678901',
-          address: 'تهران، سعادت‌آباد و پونک',
-          hireDate: '1402/04/10',
-          emergencyContactName: 'رستمی',
-          emergencyContactPhone: '09350001122',
-          notes: 'دارای مدرک فنی‌حرفه‌ای بین‌المللی پکیج، چیلر، اسپلیت و موتورخانه',
-          gender: 'male',
-          isActive: true,
-          isReadOnly: false,
-          onActiveService: true,
-          salaryAmountOverride: null,
-          bonusTypeOverride: null,
-          bonusAmountOverride: null,
-          createdAt: '1402/04/10',
-        },
-        {
-          id: 4,
-          username: 'behrouz.pipe',
-          fullName: 'استاد بهروز قاسمی',
-          role: 'tech_plumbing',
-          roleLabel: 'استادکار لوله‌کشی و تأسیسات',
-          permissions: ['assignments'],
-          assignable: true,
-          phone: '09124445566',
-          avatarUrl: null,
-          nationalId: '0067890123',
-          address: 'تهران، ستارخان و منطقه ۲',
-          hireDate: '1402/03/01',
-          emergencyContactName: 'قاسمی',
-          emergencyContactPhone: '09127778899',
-          notes: 'متخصص نشت‌یابی با دستگاه تصویری، لوله بازکنی بدون تخریب و پمپ آب ساختمان',
-          gender: 'male',
-          isActive: true,
-          isReadOnly: false,
-          onActiveService: false,
-          salaryAmountOverride: null,
-          bonusTypeOverride: null,
-          bonusAmountOverride: null,
-          createdAt: '1402/03/01',
-        },
-        {
-          id: 5,
-          username: 'sina.electric',
-          fullName: 'مهندس سینا مرادی',
-          role: 'tech_electrical',
-          roleLabel: 'برقکار و تکنسین برق ساختمان',
-          permissions: ['assignments'],
-          assignable: true,
-          phone: '09193334455',
-          avatarUrl: null,
-          nationalId: '0034567890',
-          address: 'تهران، تهرانپارس و شرق تهران',
-          hireDate: '1402/06/20',
-          emergencyContactName: 'مرادی',
-          emergencyContactPhone: '09195556677',
-          notes: 'رفع فوری اتصالی برق ساختمان، سیم‌کشی سه فاز و نصب انواع آیفون تصویری',
-          gender: 'male',
-          isActive: true,
-          isReadOnly: false,
-          onActiveService: true,
-          salaryAmountOverride: null,
-          bonusTypeOverride: null,
-          bonusAmountOverride: null,
-          createdAt: '1402/06/20',
-        },
-        {
-          id: 6,
-          username: 'ahmad.reno',
-          fullName: 'استاد احمد کریمی',
-          role: 'tech_renovation',
-          roleLabel: 'استادکار تعمیرات و بازسازی ساختمان',
-          permissions: ['assignments'],
-          assignable: true,
-          phone: '09128889900',
-          avatarUrl: null,
-          nationalId: '0098765432',
-          address: 'تهران، یوسف‌آباد و مرکز شهر',
-          hireDate: '1402/02/12',
-          emergencyContactName: 'کریمی',
-          emergencyContactPhone: '09122223344',
-          notes: 'استادکار بازسازی صفر تا صد، کاشی‌کاری پرسلان، نقاشی مدرن و کناف ضد رطوبت',
-          gender: 'male',
-          isActive: true,
-          isReadOnly: false,
-          onActiveService: false,
-          salaryAmountOverride: null,
-          bonusTypeOverride: null,
-          bonusAmountOverride: null,
-          createdAt: '1402/02/12',
-        },
-      ];
 
       const BEHDOON_ROLE_RECORDS = [
         {
@@ -4903,9 +5375,18 @@ export default {
         { key: 'wallet', label: 'حقوق و دستمزد', labelEn: 'Payroll' },
       ];
 
-      if (pathname === '/api/admin/staff') {
+      if (pathname === '/api/admin/staff' && request.method === 'GET') {
         let staffList = [...BEHDOON_STAFF_MEMBERS];
+        let customOverrides: Record<string, any> = {};
+
         if (env.DB) {
+          try {
+            const row = await env.DB.prepare("SELECT value FROM settings WHERE key = 'staff_customizations'").first();
+            if (row?.value) {
+              customOverrides = JSON.parse(row.value as string);
+            }
+          } catch {}
+
           try {
             const { results } = await env.DB.prepare(`
               SELECT id, full_name, phone, national_id, avatar_url, bio, years_experience, status, is_online, performance_score, total_jobs
@@ -4938,6 +5419,11 @@ export default {
                     salaryAmountOverride: null,
                     bonusTypeOverride: null,
                     bonusAmountOverride: null,
+                    specialty: 'متخصص فنی ساختمان',
+                    yearsExperience: p.years_experience || 5,
+                    rating: p.performance_score || 4.9,
+                    showInSlider: true,
+                    bio: p.bio || null,
                     createdAt: '1403/01/01',
                   });
                 }
@@ -4945,7 +5431,167 @@ export default {
             }
           } catch {}
         }
+
+        staffList = staffList.map((s) => {
+          const override = customOverrides[s.id];
+          return override ? { ...s, ...override } : s;
+        });
+
+        if (customOverrides['new_staff'] && Array.isArray(customOverrides['new_staff'])) {
+          customOverrides['new_staff'].forEach((ns: any) => {
+            if (!staffList.some((s) => s.id === ns.id)) {
+              staffList.push(ns);
+            }
+          });
+        }
+
         return jsonResponse({ staff: staffList });
+      }
+
+      if (pathname === '/api/admin/staff' && request.method === 'POST') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        const data = (await request.json().catch(() => ({}))) as Record<string, any>;
+        const fullName = String(data.fullName || '').trim();
+        if (!fullName) return jsonResponse({ error: 'نام و نام خانوادگی الزامی است.' }, 400);
+
+        const newId = Date.now();
+        const newStaff = {
+          id: newId,
+          username: data.username || `user_${newId}`,
+          fullName,
+          role: data.role || 'support_dispatch',
+          roleLabel: 'همکار سامانه بهدون',
+          permissions: ['assignments'],
+          assignable: true,
+          phone: data.phone || '',
+          avatarUrl: data.avatarUrl || null,
+          nationalId: data.nationalId || '',
+          address: data.address || 'تهران',
+          hireDate: data.hireDate || '1403/01/01',
+          emergencyContactName: data.emergencyContactName || '',
+          emergencyContactPhone: data.emergencyContactPhone || '',
+          notes: data.notes || '',
+          gender: data.gender || 'male',
+          isActive: true,
+          isReadOnly: Boolean(data.isReadOnly),
+          onActiveService: false,
+          salaryAmountOverride: null,
+          bonusTypeOverride: null,
+          bonusAmountOverride: null,
+          specialty: data.specialty || '',
+          yearsExperience: data.yearsExperience || 3,
+          rating: data.rating || 4.9,
+          showInSlider: data.showInSlider !== false,
+          bio: data.bio || '',
+          createdAt: new Date().toISOString(),
+        };
+
+        if (env.DB) {
+          try {
+            await env.DB.prepare('CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)').run();
+            const row = await env.DB.prepare("SELECT value FROM settings WHERE key = 'staff_customizations'").first();
+            let customOverrides: Record<string, any> = row?.value ? JSON.parse(row.value as string) : {};
+            if (!Array.isArray(customOverrides['new_staff'])) customOverrides['new_staff'] = [];
+            customOverrides['new_staff'].push(newStaff);
+            await env.DB.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)')
+              .bind('staff_customizations', JSON.stringify(customOverrides))
+              .run();
+
+            if (String(data.role || '').startsWith('tech_')) {
+              await env.DB.prepare(`
+                INSERT INTO providers (full_name, phone, national_id, avatar_url, bio, years_experience, status, service_categories, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, 'active', ?, ?, ?)
+              `).bind(
+                fullName,
+                data.phone || `09${Math.floor(100000000 + Math.random() * 900000000)}`,
+                data.nationalId || null,
+                data.avatarUrl || null,
+                data.bio || data.notes || null,
+                data.yearsExperience || 3,
+                data.specialty || 'خدمات ساختمانی',
+                new Date().toISOString(),
+                new Date().toISOString()
+              ).run();
+            }
+          } catch {}
+        }
+
+        return jsonResponse({ staff: newStaff });
+      }
+
+      if (pathname.startsWith('/api/admin/staff/') && request.method === 'PATCH') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        const idStr = pathname.split('/').pop() || '';
+        const id = parseInt(idStr, 10);
+        if (isNaN(id)) return jsonResponse({ error: 'شناسه نامعتبر است.' }, 400);
+
+        const payload = (await request.json().catch(() => ({}))) as Record<string, any>;
+        let customOverrides: Record<string, any> = {};
+
+        if (env.DB) {
+          try {
+            await env.DB.prepare('CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)').run();
+            const row = await env.DB.prepare("SELECT value FROM settings WHERE key = 'staff_customizations'").first();
+            if (row?.value) customOverrides = JSON.parse(row.value as string);
+            customOverrides[id] = { ...(customOverrides[id] || {}), ...payload };
+            await env.DB.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)')
+              .bind('staff_customizations', JSON.stringify(customOverrides))
+              .run();
+
+            await env.DB.prepare(`
+              UPDATE providers SET
+                full_name = COALESCE(?, full_name),
+                phone = COALESCE(?, phone),
+                avatar_url = COALESCE(?, avatar_url),
+                bio = COALESCE(?, bio),
+                years_experience = COALESCE(?, years_experience),
+                performance_score = COALESCE(?, performance_score),
+                updated_at = ?
+              WHERE id = ?
+            `).bind(
+              payload.fullName || null,
+              payload.phone || null,
+              payload.avatarUrl || null,
+              payload.bio || null,
+              payload.yearsExperience || null,
+              payload.rating || null,
+              new Date().toISOString(),
+              id
+            ).run();
+          } catch {}
+        }
+
+        return jsonResponse({ success: true, staff: { id, ...payload } });
+      }
+
+      if (pathname.startsWith('/api/admin/staff/') && request.method === 'DELETE') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        const idStr = pathname.split('/').pop() || '';
+        const id = parseInt(idStr, 10);
+        if (isNaN(id)) return jsonResponse({ error: 'شناسه نامعتبر است.' }, 400);
+
+        if (env.DB) {
+          try {
+            const row = await env.DB.prepare("SELECT value FROM settings WHERE key = 'staff_customizations'").first();
+            let customOverrides: Record<string, any> = row?.value ? JSON.parse(row.value as string) : {};
+            customOverrides[id] = { ...(customOverrides[id] || {}), isActive: false, showInSlider: false };
+            if (Array.isArray(customOverrides['new_staff'])) {
+              customOverrides['new_staff'] = customOverrides['new_staff'].filter((s: any) => s.id !== id);
+            }
+            await env.DB.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)')
+              .bind('staff_customizations', JSON.stringify(customOverrides))
+              .run();
+
+            await env.DB.prepare("UPDATE providers SET status = 'inactive' WHERE id = ?").bind(id).run();
+          } catch {}
+        }
+        return jsonResponse({ success: true });
       }
 
       if (pathname === '/api/admin/roles') {
@@ -7477,14 +8123,7 @@ export default {
           topCities: [{ city: 'تهران', count: 28 }],
           topProvinces: [{ province: 'تهران', count: 28 }],
           avgOrderValue: 1732000,
-          staffPerformance: [
-            { name: 'علیرضا کاظمی', role: 'super_admin', role_label: 'مدیر کل سیستم', total: 28, completed: 5 },
-            { name: 'سارا حسینی', role: 'support_dispatch', role_label: 'پشتیبانی و اعزام فوری', total: 24, completed: 18 },
-            { name: 'مهندس مجید رستمی', role: 'tech_hvac', role_label: 'تکنسین سرمایش و گرمایش', total: 12, completed: 10 },
-            { name: 'استاد بهروز قاسمی', role: 'tech_plumbing', role_label: 'استادکار تأسیسات', total: 9, completed: 8 },
-            { name: 'مهندس سینا مرادی', role: 'tech_electrical', role_label: 'برقکار ساختمان', total: 4, completed: 4 },
-            { name: 'استاد احمد کریمی', role: 'tech_renovation', role_label: 'استادکار بازسازی', total: 3, completed: 2 },
-          ],
+          staffPerformance: [],
         });
       }
     }
@@ -7495,38 +8134,59 @@ export default {
       return Response.redirect(targetUrl.toString(), 301);
     }
 
+    async function serveHtmlWithMeta(assetPath: string, req: Request): Promise<Response> {
+      const assetUrl = new URL(assetPath + url.search, url.origin);
+      const res = await env.ASSETS.fetch(new Request(assetUrl, req));
+      if (!res.ok) return res;
+
+      const headers = new Headers(res.headers);
+      headers.set('Content-Type', 'text/html; charset=utf-8');
+      headers.set('Link', '<https://behdoon.ir/og-image.jpg>; rel="image_src"');
+      headers.set('Vary', 'Accept-Encoding');
+      return new Response(res.body, {
+        status: res.status,
+        statusText: res.statusText,
+        headers,
+      });
+    }
+
     if (pathname === '/management' || pathname.startsWith('/management/')) {
-      const assetUrl = new URL('/management.html' + url.search, url.origin);
-      return env.ASSETS.fetch(new Request(assetUrl, request));
+      return serveHtmlWithMeta('/management.html', request);
     }
 
     if (pathname === '/' || pathname === '') {
-      const assetUrl = new URL('/index.html' + url.search, url.origin);
-      return env.ASSETS.fetch(new Request(assetUrl, request));
+      return serveHtmlWithMeta('/index.html', request);
     }
 
     const cleanPages = ['/orders', '/profile', '/careers', '/magazine', '/about', '/privacy', '/terms'];
     if (cleanPages.includes(pathname)) {
-      const assetUrl = new URL(`${pathname}.html` + url.search, url.origin);
-      return env.ASSETS.fetch(new Request(assetUrl, request));
+      return serveHtmlWithMeta(`${pathname}.html`, request);
     }
 
     if (pathname === '/services' || pathname.startsWith('/services/')) {
-      const assetUrl = new URL('/services.html' + url.search, url.origin);
-      return env.ASSETS.fetch(new Request(assetUrl, request));
+      return serveHtmlWithMeta('/services.html', request);
     }
 
     if (pathname.startsWith('/magazine/') && !pathname.includes('.')) {
-      const assetUrl = new URL('/article-template.html' + url.search, url.origin);
-      return env.ASSETS.fetch(new Request(assetUrl, request));
+      return serveHtmlWithMeta('/article-template.html', request);
     }
 
     if (pathname.startsWith('/page/') && !pathname.includes('.')) {
-      const assetUrl = new URL('/page-template.html' + url.search, url.origin);
-      return env.ASSETS.fetch(new Request(assetUrl, request));
+      return serveHtmlWithMeta('/page-template.html', request);
     }
 
-      return env.ASSETS.fetch(request);
+      const defaultAssetRes = await env.ASSETS.fetch(request);
+      const defaultCt = defaultAssetRes.headers.get('content-type') || '';
+      if (defaultCt.includes('text/html') && !defaultCt.includes('charset=')) {
+        const enhancedHeaders = new Headers(defaultAssetRes.headers);
+        enhancedHeaders.set('Content-Type', 'text/html; charset=utf-8');
+        return new Response(defaultAssetRes.body, {
+          status: defaultAssetRes.status,
+          statusText: defaultAssetRes.statusText,
+          headers: enhancedHeaders,
+        });
+      }
+      return defaultAssetRes;
     } catch (unhandledErr: any) {
       logStructuredEvent({
         level: 'error',

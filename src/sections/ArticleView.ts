@@ -87,7 +87,7 @@ export function renderArticleView(article: DynamicArticle): string {
           <div class="article-cta">
             <h3>${pick('نیاز به خدمات یا تعمیرات ساختمان دارید؟', 'Need building repair services?')}</h3>
             <p>${pick(
-              'موقعیت خود را روی نقشه تهران مشخص کنید و در کمتر از ۴۵ دقیقه تکنسین متخصص بهدون را دریافت نمایید.',
+              'موقعیت خود را روی نقشه تهران مشخص کنید و در کمتر از سریع‌ترین زمان تکنسین متخصص بهدون را دریافت نمایید.',
               'Pinpoint your location on the map and receive a certified Behdoon technician in under 45 minutes.',
             )}</p>
             <a class="btn btn-primary" href="/#request">

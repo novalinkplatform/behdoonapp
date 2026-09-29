@@ -123,7 +123,15 @@ async function runTests() {
   // -------------------------------------------------------------
   console.log('\n--- [Section 2] Authentication Hardening & Rate Limiting ---');
 
-  const prodEnv = { ...env, ENVIRONMENT: 'production' };
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url, opts) => {
+    if (typeof url === 'string' && (url.includes('melipayamak') || url.includes('payamak'))) {
+      return new Response(JSON.stringify({ Value: '123456789', RetStatus: 1, StrRetStatus: 'Ok' }), { status: 200 });
+    }
+    return originalFetch(url, opts);
+  };
+
+  const prodEnv = { ...env, ENVIRONMENT: 'production', SMS_USERNAME: 'mock_user', SMS_PASSWORD: 'mock_password', SMS_BODY_ID: '12345' };
   const targetPhone = '09128889900';
 
   // 2.1 Production OTP Send Shields devCode
@@ -135,6 +143,8 @@ async function runTests() {
   let body = await res.json();
   assert(res.status === 200 && body.success === true, 'Production OTP request succeeds (200)');
   assert(body.devCode === undefined, 'CRITICAL: devCode is NEVER returned in production API response');
+
+  globalThis.fetch = originalFetch;
 
   // 2.2 Production OTP Verify rejects test bypass codes (1234, 12345)
   res = await worker.fetch(new Request('https://behdoon.ir/api/customer/otp/verify', {

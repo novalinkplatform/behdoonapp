@@ -20,19 +20,23 @@ export function renderHeroSlider(settings: SiteSettings): string {
         <img class="hero-slide-bg" src="${slide.imageUrl}" alt="${pick(slide.title, slide.titleEn || slide.title)}" loading="${idx === 0 ? 'eager' : 'lazy'}" />
         <div class="hero-slide-overlay"></div>
         <div class="hero-slide-content">
-          <div class="hero-slide-tag">
-            <span class="icon" style="width: 14px; height: 14px;">${icons.bolt}</span>
-            <span>${pick('خدمات تخصصی تضمینی بهدون', 'Guaranteed Behdoon Services')}</span>
+          <div class="hero-slide-info">
+            <div class="hero-slide-tag">
+              <span class="icon" style="width: 14px; height: 14px;">${icons.bolt}</span>
+              <span>${pick('خدمات تخصصی تضمینی بهدون', 'Guaranteed Behdoon Services')}</span>
+            </div>
+            <h2 class="hero-slide-title">${pick(slide.title, slide.titleEn || slide.title)}</h2>
+            <p class="hero-slide-desc">${pick(slide.subtitle || '', slide.subtitleEn || slide.subtitle || '')}</p>
           </div>
-          <h2 class="hero-slide-title">${pick(slide.title, slide.titleEn || slide.title)}</h2>
-          <p class="hero-slide-desc">${pick(slide.subtitle || '', slide.subtitleEn || slide.subtitle || '')}</p>
           ${
             slide.linkUrl
               ? `
-            <a href="${slide.linkUrl}" class="hero-slide-btn ${slide.linkUrl.startsWith('#request') ? 'service-order-trigger' : ''}">
-              <span>${pick(slide.buttonText || 'ثبت فوری درخواست', 'Request Online')}</span>
-              <span class="icon" style="width: 18px; height: 18px;">${icons.chevronLeft}</span>
-            </a>
+            <div class="hero-slide-action">
+              <a href="${slide.linkUrl}" class="hero-slide-btn ${slide.linkUrl.startsWith('#request') ? 'service-order-trigger' : ''}">
+                <span>${pick(slide.buttonText || 'ثبت فوری درخواست', 'Request Online')}</span>
+                <span class="icon" style="width: 18px; height: 18px;">${icons.chevronLeft}</span>
+              </a>
+            </div>
           `
               : ''
           }

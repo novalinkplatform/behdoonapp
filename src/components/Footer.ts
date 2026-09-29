@@ -2,7 +2,7 @@ import { phoneNumberDisplay, resolveContact } from '../data/contact.ts';
 import { icons } from './icons.ts';
 import { pick } from '../i18n/lang.ts';
 import { toPersianDigits } from '../utils/jalali.ts';
-import type { CertificationBadge, SiteSettings, SocialLinkSetting } from '../utils/dynamicContent.ts';
+import type { SiteSettings, SocialLinkSetting } from '../utils/dynamicContent.ts';
 
 export function buildFooterLinks(settings?: SiteSettings): Array<{ href: string; label: string }> {
   const links: Array<{ href: string; label: string }> = [];
@@ -130,59 +130,10 @@ function renderAppLinks(appLinks?: SiteSettings['app_links']): string {
   `;
 }
 
-function renderTrustBadges(certifications?: SiteSettings['certifications']): string {
-  if (certifications?.enabled && certifications.badges.length) {
-    return `
-      <div class="footer-certifications-grid">
-        ${certifications.badges
-          .map(
-            (b: CertificationBadge) => `
-          <a class="footer-cert-card" href="${b.linkUrl || '#'}" target="_blank" rel="noopener" aria-label="${b.label}">
-            <img src="${b.imageUrl}" alt="${b.label}" loading="lazy" />
-          </a>
-        `,
-          )
-          .join('')}
-      </div>
-    `;
-  }
-  return `
-    <div class="footer-trust-seals">
-      <div class="trust-seal-item" title="${pick('ضمانت ۳۰ روزه کیفیت خدمات', '30-Day Quality Guarantee')}">
-        <span class="icon seal-icon">${icons.shield}</span>
-        <div class="seal-meta">
-          <strong>${pick('ضمانت کتبی ۳۰ روزه', '30-Day Warranty')}</strong>
-          <span>${pick('کیفیت کار و قطعات', 'Quality & Parts')}</span>
-        </div>
-      </div>
-      <div class="trust-seal-item" title="${pick('تکنسین‌های احراز صلاحیت شده', 'Verified Master Technicians')}">
-        <span class="icon seal-icon">${icons.badge}</span>
-        <div class="seal-meta">
-          <strong>${pick('تأیید صلاحیت فنی', 'Certified Pros')}</strong>
-          <span>${pick('عدم سوءپیشینه و مهارت', 'Skill & Record Cleared')}</span>
-        </div>
-      </div>
-      <div class="trust-seal-item" title="${pick('نرخ مصوب و بدون هزینه مخفی', 'Union Approved Transparent Rates')}">
-        <span class="icon seal-icon">${icons.fileText}</span>
-        <div class="seal-meta">
-          <strong>${pick('فاکتور رسمی تفکیکی', 'Official Invoice')}</strong>
-          <span>${pick('شفافیت ۱۰۰٪ نرخ‌ها', '100% Fair Pricing')}</span>
-        </div>
-      </div>
-      <div class="trust-seal-item" title="${pick('پوشش بیمه جبران خسارت', 'Insurance & Compensation')}">
-        <span class="icon seal-icon">${icons.checkCircle}</span>
-        <div class="seal-meta">
-          <strong>${pick('بیمه مسئولیت مدنی', 'Liability Insurance')}</strong>
-          <span>${pick('تا ۵۰۰ میلیون تومان', 'Up to 500M Toman')}</span>
-        </div>
-      </div>
-    </div>
-  `;
-}
 
 const DEFAULT_BEHDOON_SEO_PARAGRAPHS = [
   {
-    fa: 'سامانه خدمات هوشمند ساختمان بهدون (Behdoon) جامع‌ترین و مطمئن‌ترین پلتفرم آنلاین ارائه خدمات فنی، تأسیساتی و ساختمانی در کلیه مناطق ۲۲ گانه شهر تهران است. رسالت اصلی بهدون رفع دغدغه‌های همیشگی شهروندان در زمینه یافتن استادکاران قابل اعتماد، تعیین نرخ‌های شفاف بر مبنای مصوبات اتحادیه، اعزام فوق‌سریع در زمان‌های اضطراری و ارائه ضمانت کتبی ۳۰ روزه برای کلیه سفارش‌های انجام‌شده می‌باشد.',
+    fa: 'سامانه خدمات هوشمند ساختمان بهدون (Behdoon) جامع‌ترین و مطمئن‌ترین پلتفرم آنلاین ارائه خدمات فنی، تأسیساتی و ساختمانی در کلیه مناطق ۲۲ گانه شهر تهران است. رسالت اصلی بهدون رفع دغدغه‌های همیشگی شهروندان در زمینه یافتن استادکاران قابل اعتماد، تعیین نرخ‌های شفاف بر مبنای مصوبات منصفانه، اعزام فوق‌سریع در زمان‌های اضطراری و ارائه ضمانت کتبی ۳۰ روزه برای کلیه سفارش‌های انجام‌شده می‌باشد.',
     en: 'Behdoon Smart Building Services Platform is Tehran leading online destination for specialized building maintenance, HVAC servicing, sanitary plumbing, professional electrical contracting, and turn-key interior renovation. Backed by certified technicians and written warranties.',
   },
   {
@@ -242,7 +193,7 @@ export function renderFooter(settings?: SiteSettings): string {
           <div class="promise-item">
             <span class="icon promise-icon">${icons.clock}</span>
             <div class="promise-text">
-              <strong>${pick('اعزام سریع در کمتر از ۴۵ دقیقه', 'Fast Dispatch Under 45 Mins')}</strong>
+              <strong>${pick('اعزام سریع در کمتر از سریع‌ترین زمان', 'Fast Dispatch Under 45 Mins')}</strong>
               <span>${pick('پوشش سراسری کلیه مناطق ۲۲ گانه تهران', 'Full coverage across all 22 Tehran districts')}</span>
             </div>
           </div>
@@ -263,8 +214,38 @@ export function renderFooter(settings?: SiteSettings): string {
           <div class="promise-item">
             <span class="icon promise-icon">${icons.fileText}</span>
             <div class="promise-text">
-              <strong>${pick('قیمت‌گذاری شفاف و مصوب اتحادیه', 'Union Approved Transparent Rates')}</strong>
+              <strong>${pick('قیمت‌گذاری شفاف و منصفانه', 'Union Approved Transparent Rates')}</strong>
               <span>${pick('صدور آنی فاکتور رسمی تفکیکی بدون هزینه مخفی', 'Instant itemized official invoice with zero hidden fee')}</span>
+            </div>
+          </div>
+        </div>
+      <!-- بنر ویژه جذب تکنسین و متخصصان: اگر تخصص دارید به بهدون بپیوندید -->
+      <div class="container footer-recruitment-container">
+        <div class="footer-recruitment-card">
+          <div class="recruitment-badge-row">
+            <span class="recruitment-chip">
+              <span class="icon">${icons.briefcase}</span>
+              <span>${pick('فرصت ویژه همکاری و اشتغال تکنسین‌ها', 'Technician Career Opportunity')}</span>
+            </span>
+            <span class="recruitment-perk-pill">${pick('تسویه روزانه + بیمه مسئولیت مدنی', 'Daily Payout + Liability Insurance')}</span>
+          </div>
+          <div class="recruitment-body-row">
+            <div class="recruitment-text-col">
+              <h3 class="recruitment-title">
+                ${pick('اگر تخصص فنی یا ساختمانی دارید، به جمع متخصصین بهدون بپیوندید', 'Join Behdoon Network of Certified Home Technicians')}
+              </h3>
+              <p class="recruitment-desc">
+                ${pick(
+                  'کسب درآمد بالا تا بیش از ۵۰ میلیون تومان در ماه، تسویه حساب منظم و روزانه، ساعات کاری منعطف و دریافت سفارشات مستمر در محله و مناطق انتخابی شما در تهران.',
+                  'High monthly earnings up to 50M+ Tomans, flexible working hours, zero middleman fees, and steady client requests across your preferred Tehran districts.'
+                )}
+              </p>
+            </div>
+            <div class="recruitment-btn-col">
+              <a href="/careers" class="btn btn-primary recruitment-cta-btn">
+                <span>${pick('ثبت‌نام و تکمیل فرم همکاری تکنسین', 'Apply as a Specialist')}</span>
+                <span class="icon">${icons.chevronLeft}</span>
+              </a>
             </div>
           </div>
         </div>
@@ -285,7 +266,7 @@ export function renderFooter(settings?: SiteSettings): string {
 
             <p class="footer-brand-mission">
               ${pick(
-                `سامانه تخصصی اعزام فوری تکنسین و استادکاران مجرب در تمامی مناطق ۲۲ گانه تهران؛ تضمین کتبی کیفیت، اعزام زیر ۴۵ دقیقه و تعرفه‌های مصوب و شفاف.`,
+                `سامانه تخصصی اعزام فوری تکنسین و استادکاران مجرب در تمامی مناطق ۲۲ گانه تهران؛ تضمین کتبی کیفیت، اعزام زیر سریع‌ترین زمان و تعرفه‌های مصوب و شفاف.`,
                 `Tehran specialized platform for reliable home and building maintenance, certified plumbing, HVAC diagnostics, and professional renovation with written warranties.`,
               )}
             </p>
@@ -361,17 +342,12 @@ export function renderFooter(settings?: SiteSettings): string {
             </ul>
           </div>
 
-          <!-- ستون ۴: ضمانت اعتبار، پوشش تهران و دانلود اپ -->
+          <!-- ستون ۴: پوشش تهران و دریافت اپلیکیشن -->
           <div class="footer-col footer-col-trust">
             <h4 class="footer-col-title">
-              <span class="icon col-title-icon">${icons.shield}</span>
-              <span>${pick('ضمانت اعتبار و اپلیکیشن', 'Guarantees & Mobile App')}</span>
+              <span class="icon col-title-icon">${icons.pin}</span>
+              <span>${pick('اپلیکیشن و پوشش تهران', 'App & Tehran Coverage')}</span>
             </h4>
-
-            <!-- نمادهای اعتماد و ضمانت کیفیت کتبی -->
-            <div class="footer-trust-seals-section">
-              ${renderTrustBadges(settings?.certifications)}
-            </div>
 
             <!-- دانلود اپلیکیشن موبایل بهدون -->
             <div class="footer-app-download-section">

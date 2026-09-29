@@ -3,6 +3,7 @@ import { renderLangToggle } from './LangToggle.ts';
 import { renderThemeToggle, initThemeToggle } from './ThemeToggle.ts';
 import { pick } from '../i18n/lang.ts';
 import type { SiteSettings } from '../utils/dynamicContent.ts';
+import { getCustomerToken, getLocalCustomerInfo } from '../utils/customerAuth.ts';
 
 export interface HeaderExtraLink {
   href: string;
@@ -96,6 +97,27 @@ export function renderHeader(settings?: SiteSettings): string {
   const brandName = getSiteName(settings);
 
   return `
+    
+    <!-- Top Mobile Header Bar (Phone - Brand/Logo - Support) -->
+    <div class="mobile-top-contact-bar header-mobile-only">
+      <a class="top-bar-link top-bar-call-btn" href="${settings?.contact?.phoneTelHref || 'tel:09333256885'}" aria-label="${pick('تماس با بهدون', 'Call Behdoon')}">
+        <span class="icon">${icons.phone}</span>
+        <span class="top-bar-phone-text" dir="ltr">${settings?.contact?.phoneDisplay || '۰۹۳۳-۳۲۵-۶۸۸۵'}</span>
+      </a>
+
+      <a class="top-bar-brand" href="/" aria-label="${pick('صفحه اصلی', 'Home')}">
+        <img src="/favicon.svg" alt="${brandName}" class="top-bar-logo" />
+        <span class="top-bar-brand-title">${brandName}</span>
+      </a>
+
+      ${settings?.contact?.chatDisplayMode !== 'hidden' ? `
+      <button type="button" class="top-bar-link chat-widget-toggle" aria-label="${pick('پشتیبانی آنلاین', 'Online Support')}">
+        <span class="icon">${icons.chat}</span>
+        <span class="top-bar-support-text">${pick('پشتیبانی', 'Support')}</span>
+      </button>
+      ` : ''}
+    </div>
+
     <header class="site-header">
       <div class="header-group">
         <a class="header-brand" href="/" aria-label="${pick('خانه', 'Home')}">
@@ -129,20 +151,10 @@ export function renderHeader(settings?: SiteSettings): string {
           <span class="header-label">${pick('ثبت درخواست', 'Submit request')}</span>
         </a>
 
-        <!-- Desktop Support Icons -->
-        ${settings?.contact?.headerPhoneEnabled === false ? '' : `<a class="header-support-btn header-desktop-only" href="${settings?.contact?.phoneTelHref || 'tel:02122345678'}" aria-label="${pick('تماس با پشتیبانی', 'Support Call')}">
-          <span class="icon">${icons.phone}</span>
-          <span class="header-label" dir="ltr">${settings?.contact?.phoneDisplay || '۰۲۱-۲۲۳۴۵۶۷۸'}</span>
-        </a>`}
-        
-        ${settings?.contact?.headerSupportEnabled === false ? '' : `<button type="button" class="header-support-icon-btn header-desktop-only" aria-label="${pick('پشتیبانی', 'Support')}">
-          <span class="icon">${icons.chat}</span>
-        </button>`}
 
         ${renderThemeToggle('header-desktop-only')}
         ${renderLangToggle()}
-
-        <a class="header-profile" href="/profile">
+          <a class="header-profile" href="/profile">
           <span class="icon">${icons.user}</span>
           <span class="header-label">${pick('ورود', 'Log in')}</span>
         </a>
@@ -157,6 +169,24 @@ export function renderHeader(settings?: SiteSettings): string {
           <span class="icon">${icons.menu}</span>
         </button>
       </div>
+      
+            <!-- Desktop Contact Islands -->
+      ${settings?.contact?.headerPhoneEnabled !== false ? `
+      <div class="header-contact-island header-desktop-only phone-island">
+        <a class="header-support-btn header-call-btn" href="${settings?.contact?.phoneTelHref || 'tel:02122345678'}" aria-label="${pick('تماس با پشتیبانی', 'Support Call')}">
+          <span class="icon">${icons.phone}</span>
+          <span class="header-label" dir="ltr">${settings?.contact?.phoneDisplay || '۰۲۱-۲۲۳۴۵۶۷۸'}</span>
+        </a>
+      </div>
+      ` : ''}
+      ${settings?.contact?.chatDisplayMode !== 'hidden' ? `
+      <div class="header-contact-island header-desktop-only chat-island">
+        <button type="button" class="header-support-btn header-chat-btn chat-widget-toggle" aria-label="${pick('پشتیبانی آنلاین', 'Online Support')}">
+            <span class="icon">${icons.chat}</span>
+            <span class="header-label">${pick('پشتیبانی آنلاین', 'Online Support')}</span>
+        </button>
+      </div>
+      ` : ''}
     </header>
     ${floatingSocialHtml}
 
@@ -221,10 +251,36 @@ export function renderHeader(settings?: SiteSettings): string {
           <span class="icon">${icons.user}</span>
           <span class="link-text">${pick('درباره ما، گواهینامه‌ها و تماس', 'About Us & Contact')}</span>
         </a>
-        <a class="mobile-nav-link mobile-nav-profile-link" href="/profile">
-          <span class="icon">${icons.user}</span>
-          <span class="link-text">${pick('ورود به حساب کاربری من', 'Log in / My Profile')}</span>
-        </a>
+        ${settings?.contact?.chatDisplayMode !== 'hidden' ? `
+        <button type="button" class="mobile-nav-link chat-widget-toggle" style="background: none; border: none; width: 100%; text-align: inherit; font: inherit; cursor: pointer; display: flex; align-items: center; gap: var(--space-3); color: inherit; padding: var(--space-3) var(--space-4);">
+          <span class="icon" style="color: var(--primary);">${icons.chat}</span>
+          <span class="link-text" style="font-weight: 600;">${pick('گفتگو با پشتیبانی برخط بهدون', 'Chat with Online Support')}</span>
+        </button>
+        ` : ''}
+        <div class="mobile-nav-profile-group">
+          <a class="mobile-nav-link mobile-nav-profile-link" href="/profile">
+            <span class="icon">${icons.user}</span>
+            <span class="link-text">${pick('ورود به حساب کاربری من', 'Log in / My Profile')}</span>
+          </a>
+          <div class="mobile-nav-profile-sublinks" id="mobile-nav-profile-sublinks">
+            <a class="mobile-nav-sublink" href="/profile#history">
+              <span class="icon">${icons.box}</span>
+              <span>${pick('سوابق', 'History')}</span>
+            </a>
+            <a class="mobile-nav-sublink" href="/profile#addresses">
+              <span class="icon">${icons.pin}</span>
+              <span>${pick('آدرس‌ها', 'Addresses')}</span>
+            </a>
+            <a class="mobile-nav-sublink" href="/profile#edit">
+              <span class="icon">${icons.user}</span>
+              <span>${pick('ویرایش مشخصات', 'Edit Profile')}</span>
+            </a>
+            <a class="mobile-nav-sublink" href="/profile#settings">
+              <span class="icon">${icons.shield || icons.layers}</span>
+              <span>${pick('تنظیمات', 'Settings')}</span>
+            </a>
+          </div>
+        </div>
       </div>
 
       <div class="mobile-nav-footer">
@@ -329,4 +385,27 @@ export function initHeader(settings?: SiteSettings): void {
 
   scrollHandler();
   window.addEventListener('scroll', scrollHandler, { passive: true });
+
+  // Update profile status if logged in
+  const token = getCustomerToken();
+  const customer = getLocalCustomerInfo();
+  if (token && customer) {
+    const profileBtn = header.querySelector<HTMLAnchorElement>('.header-profile');
+    if (profileBtn) {
+      profileBtn.classList.add('is-logged-in');
+      const label = profileBtn.querySelector('.header-label');
+      if (label) {
+        label.textContent = customer.fullName ? customer.fullName.split(' ')[0] : pick('حساب من', 'My Profile');
+      }
+      profileBtn.title = customer.fullName || pick('حساب کاربری', 'My Profile');
+    }
+
+    const drawerProfileLink = drawer?.querySelector<HTMLAnchorElement>('.mobile-nav-profile-link');
+    if (drawerProfileLink) {
+      const linkText = drawerProfileLink.querySelector('.link-text');
+      if (linkText) {
+        linkText.textContent = customer.fullName ? `${customer.fullName} (${pick('پروفایل من', 'My Profile')})` : pick('پروفایل من', 'My Profile');
+      }
+    }
+  }
 }

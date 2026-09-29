@@ -92,3 +92,7 @@
     padding: var(--space-4);
   }
 }
+
+@media (max-width: 768px) {
+  .legal-page { padding-top: 8.5rem; }
+}

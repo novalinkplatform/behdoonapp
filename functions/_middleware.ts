@@ -66,7 +66,7 @@ function renderHomeSnapshot(settings, testimonials) {
     if (section.type !== 'hero' && section.visible === false) continue;
 
     if (section.type === 'hero') {
-      const heading = escapeHtml(section.heading || 'حمل و جابه‌جایی، ساده‌تر از همیشه');
+      const heading = escapeHtml(section.heading || 'خدمات حرفه‌ای و تخصصی ساختمان در تهران');
       const body = section.body ? escapeHtml(section.body) : '';
       html += `<h1>${heading}</h1>${body ? `<p>${body}</p>` : ''}`;
       continue;

@@ -15,6 +15,7 @@ import { renderBottomNav, initBottomNav } from './components/BottomNav.ts';
 import { renderDemoBadges } from './components/DemoBadges.ts';
 import { renderStoriesStrip, initStoriesStrip } from './components/StoriesStrip.ts';
 import { renderHeroSlider, initHeroSlider } from './components/HeroSlider.ts';
+import { renderSpecialistsSlider, initSpecialistsSlider } from './components/SpecialistsSlider.ts';
 import { initLangToggle } from './components/LangToggle.ts';
 import { bootstrapI18n } from './i18n/bootstrap.ts';
 import { initBehaviorTracking } from './utils/analytics.ts';
@@ -65,7 +66,7 @@ const DEFAULT_HOMEPAGE_SECTIONS: HomepageSection[] = [
         id: 'step-3',
         title: '۳. اجرای تخصصی با ضمانت کتبی',
         titleEn: '3. Professional Execution & Warranty',
-        text: 'تکنسین مجرب در کمتر از ۴۵ دقیقه در محل حاضر شده و خدمات را با نرخ مصوب و ضمانت کتبی انجام می‌دهد.',
+        text: 'تکنسین مجرب در کمتر از سریع‌ترین زمان در محل حاضر شده و خدمات را با نرخ مصوب و ضمانت کتبی انجام می‌دهد.',
         textEn: 'Certified technician arrives in under 45 minutes with written warranty and union rates.',
       },
     ],
@@ -106,6 +107,7 @@ function renderApp(settings: Awaited<ReturnType<typeof loadSettings>>, testimoni
     <main id="main-content">
       ${body}
     </main>
+    ${renderSpecialistsSlider()}
     ${renderFooter(settings)}
     ${renderBottomNav()}
     ${renderQuickActions(settings)}
@@ -146,6 +148,7 @@ async function init(): Promise<void> {
   initQuickActions(settings);
   initStoriesStrip(settings.homepage_layout?.storiesEnabled === false ? [] : stories);
   initHeroSlider(settings);
+  initSpecialistsSlider();
 
   scrollToHashIfPresent();
 

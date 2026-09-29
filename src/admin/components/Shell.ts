@@ -1,7 +1,7 @@
 import { icons } from './icons.ts';
 import type { StaffInfo } from '../utils/auth.ts';
-import { hasPermission } from '../utils/auth.ts';
-import { renderAiWidget } from './AiWidget.ts';
+
+
 import { renderLicenseLockBanner } from './LicenseLockBanner.ts';
 import { renderDemoAccountBanner } from './DemoAccountBanner.ts';
 
@@ -37,7 +37,7 @@ export function renderShell(staff: StaffInfo): string {
       <main class="admin-main">
         <div id="view-container"></div>
       </main>
-      ${hasPermission(staff, 'ai') ? renderAiWidget() : ''}
+      
     </div>
   `;
 }

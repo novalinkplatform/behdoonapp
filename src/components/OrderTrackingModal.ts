@@ -13,6 +13,9 @@ import {
   cancelOrder,
   type CustomerOrderDetail
 } from '../utils/api.ts';
+import { printCustomerOrderSheet, downloadCustomerOrderHtml } from '../utils/orderPrint.ts';
+import { openCustomerInvoiceModal } from './InvoiceModal.ts';
+import { resolveOrderInvoice } from '../data/pricing.ts';
 
 const STEPPER_STAGES = [
   { id: 'submitted', label: 'ثبت اولیه', statuses: ['requested', 'submitted'] },
@@ -41,14 +44,20 @@ export function openCustomerTrackingModal(
   backdrop.className = 'customer-tracking-modal-backdrop';
   backdrop.innerHTML = `
     <div class="customer-tracking-modal" role="dialog" aria-modal="true">
-      <div class="customer-tracking-header">
+      <div class="customer-tracking-header" style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
         <h2>
           <span class="icon" style="width: 20px; height: 20px; color: var(--primary);">${icons.clock}</span>
           <span>${pick('رهگیری و اطلاعات پرونده سفارش', 'Order Tracking & Details')}</span>
         </h2>
-        <button type="button" class="btn btn-ghost btn-sm btn-icon" id="tracking-close-btn" aria-label="${pick('بستن', 'Close')}">
-          <span class="icon" style="width: 18px; height: 18px;">${icons.close}</span>
-        </button>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button type="button" class="btn btn-secondary btn-sm" id="tracking-print-top-btn" style="display: none; align-items: center; gap: 6px; font-weight: 600; font-size: 0.8rem; padding: 5px 10px;" title="${pick('چاپ و ذخیره برگه رسمی درخواست به صورت PDF', 'Print / Save PDF Request')}">
+            <span class="icon" style="width: 15px; height: 15px;">${icons.printer}</span>
+            <span>${pick('چاپ برگه درخواست', 'Print Request')}</span>
+          </button>
+          <button type="button" class="btn btn-ghost btn-sm btn-icon" id="tracking-close-btn" aria-label="${pick('بستن', 'Close')}">
+            <span class="icon" style="width: 18px; height: 18px;">${icons.close}</span>
+          </button>
+        </div>
       </div>
       <div class="customer-tracking-body" id="tracking-modal-body">
         <div class="orders-loading" style="padding: 40px 0; text-align: center;">
@@ -198,15 +207,19 @@ export function openCustomerTrackingModal(
             <span>${pick('مبلغ قابل پرداخت:', 'Payable Amount:')}</span>
             <span>${formatToman(invoice.totalAmount)}</span>
           </div>
-          ${
-            !isPaid && permissions.canPay
-              ? `<div style="margin-top: 10px;">
-                  <button type="button" class="btn btn-primary btn-sm" id="pay-invoice-btn" data-req-id="${order.id}" data-amount="${invoice.totalAmount}" data-inv-id="${invoice.id}">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
+            ${
+              !isPaid && permissions.canPay
+                ? `<button type="button" class="btn btn-primary btn-sm" id="pay-invoice-btn" data-req-id="${order.id}" data-amount="${invoice.totalAmount}" data-inv-id="${invoice.id}">
                     ${pick('پرداخت آنلاین امن با شتاب', 'Pay Securely Online')}
-                  </button>
-                 </div>`
-              : ''
-          }
+                  </button>`
+                : ''
+            }
+            <button type="button" class="btn btn-secondary btn-sm" id="tracking-view-invoice-card-btn" style="display: inline-flex; align-items: center; gap: 6px;">
+              <span class="icon" style="width: 14px; height: 14px; color: #059669;">${icons.fileText}</span>
+              <span>${pick('مشاهده و چاپ فاکتور رسمی', 'View & Print Invoice')}</span>
+            </button>
+          </div>
         </div>
       `;
     }
@@ -301,6 +314,12 @@ export function openCustomerTrackingModal(
       `;
     }
 
+    const topPrintBtn = backdrop.querySelector('#tracking-print-top-btn') as HTMLButtonElement | null;
+    if (topPrintBtn) {
+      topPrintBtn.style.display = 'inline-flex';
+      topPrintBtn.onclick = () => printCustomerOrderSheet(detail);
+    }
+
     bodyEl.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
         <div>
@@ -316,6 +335,22 @@ export function openCustomerTrackingModal(
         </div>
       </div>
 
+      <!-- Quick Document Actions Toolbar -->
+      <div class="tracking-docs-bar" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; margin-bottom: 12px; padding: 10px 12px; background: var(--surface-secondary, #f8fafc); border-radius: 8px; border: 1px solid var(--border);">
+        <button type="button" class="btn btn-secondary btn-sm" id="tracking-action-print-order" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 600;">
+          <span class="icon" style="width: 15px; height: 15px; color: var(--primary);">${icons.printer}</span>
+          <span>${pick('چاپ و ذخیره PDF برگه درخواست', 'Print / PDF Request')}</span>
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" id="tracking-action-view-invoice" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 600;">
+          <span class="icon" style="width: 15px; height: 15px; color: #059669;">${icons.fileText}</span>
+          <span>${pick('مشاهده و چاپ فاکتور رسمی', 'View & Print Invoice')}</span>
+        </button>
+        <button type="button" class="btn btn-ghost btn-sm" id="tracking-action-dl-order" style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.8rem;" title="${pick('دریافت فایل آفلاین برگه درخواست', 'Download Offline Request File')}">
+          <span class="icon" style="width: 14px; height: 14px;">${icons.download}</span>
+          <span>${pick('دانلود برگه آفلاین', 'Download')}</span>
+        </button>
+      </div>
+
       ${stepperHtml}
       ${providerHtml}
       ${quotesHtml}
@@ -327,6 +362,36 @@ export function openCustomerTrackingModal(
     `;
 
     // Wire action listeners
+    const openInvoice = () => {
+      const invoiceData = resolveOrderInvoice(order);
+      openCustomerInvoiceModal({
+        trackingCode: order.trackingCode,
+        customerName: order.customerName,
+        phone: order.phone,
+        serviceLabel: order.serviceLabel,
+        originProvince: order.originProvince,
+        originCity: order.originCity,
+        destinationProvince: order.destinationProvince,
+        destinationCity: order.destinationCity,
+        scheduledDate: order.scheduledDate,
+        scheduledTime: order.scheduledTime,
+        createdAt: order.createdAt,
+        statusLabel: statusLabel(order.status),
+        invoice: invoiceData,
+      });
+    };
+
+    bodyEl.querySelector('#tracking-action-print-order')?.addEventListener('click', () => {
+      printCustomerOrderSheet(detail);
+    });
+
+    bodyEl.querySelector('#tracking-action-dl-order')?.addEventListener('click', () => {
+      downloadCustomerOrderHtml(detail);
+    });
+
+    bodyEl.querySelector('#tracking-action-view-invoice')?.addEventListener('click', openInvoice);
+    bodyEl.querySelector('#tracking-view-invoice-card-btn')?.addEventListener('click', openInvoice);
+
     const acceptQuoteBtn = bodyEl.querySelector('#accept-quote-btn') as HTMLButtonElement | null;
     acceptQuoteBtn?.addEventListener('click', () => {
       const qId = Number(acceptQuoteBtn.dataset.quoteId);

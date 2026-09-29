@@ -11,13 +11,13 @@
   --secondary: #8b5cf6;
   --secondary-light: #ede9fe;
 
-  /* Neutrals */
-  --background: #fdfcfa;
-  --surface: #f6f5f1;
-  --surface-alt: #eeece5;
-  --text: #1c1b18;
-  --muted: #78766f;
-  --border: #e3e1d9;
+  /* Neutrals — Soft Eye-Friendly White (eliminates blue glare while staying clean white) */
+  --background: #f8f7f4;
+  --surface: #ffffff;
+  --surface-alt: #f1efe9;
+  --text: #22201d;
+  --muted: #68645e;
+  --border: #e6e2d8;
 
   /* Status */
   --success: #4a5940;

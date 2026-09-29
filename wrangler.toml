@@ -16,3 +16,7 @@ html_handling = "none"
 binding = "DB"
 database_name = "behdoon_db"
 database_id = "553f417c-4154-48c5-8bf7-04920092ac05"
+
+[vars]
+ENVIRONMENT = "production"
+

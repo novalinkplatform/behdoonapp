@@ -11,7 +11,7 @@
         window.location.replace('/management' + window.location.search + window.location.hash);
       }
       (function() {
-        var t = localStorage.getItem('behdoon_admin_theme') || localStorage.getItem('behdoon_theme') || localStorage.getItem('behbar_admin_theme');
+        var t = localStorage.getItem('behdoon_admin_theme') || localStorage.getItem('behdoon_theme');
         if (t === 'dark' || (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
           document.documentElement.setAttribute('data-theme', 'dark');
         }

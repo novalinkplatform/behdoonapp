@@ -9,6 +9,7 @@ import './styles/services.css';
 import { renderHeader, initHeader } from './components/Header.ts';
 import { renderFooter, initFooter } from './components/Footer.ts';
 import { renderBottomNav, initBottomNav } from './components/BottomNav.ts';
+import { renderSpecialistsSlider, initSpecialistsSlider } from './components/SpecialistsSlider.ts';
 import { initRequestWizard, renderRequestWizardModal } from './sections/RequestWizard.ts';
 import {
   renderServicesDirectoryView,
@@ -150,6 +151,7 @@ async function init(): Promise<void> {
     <main id="main-content">
       ${mainHtml}
     </main>
+    ${renderSpecialistsSlider()}
     ${renderFooter(settings)}
     ${renderBottomNav()}
     ${renderQuickActions(settings)}
@@ -163,6 +165,7 @@ async function init(): Promise<void> {
 
   initHeader(settings);
   initFooter(settings);
+  initSpecialistsSlider();
   initBottomNav();
   initQuickActions(settings);
 
@@ -198,24 +201,107 @@ async function init(): Promise<void> {
     wizardController.openModal(catId, subId);
   });
 
-  // فیلتر جستجوی زنده در صفحه دایرکتوری
+  // فیلتر دسته‌بندی با کلیک روی قرص‌های ناوبری (Pills)
+  const filterPills = document.querySelectorAll<HTMLButtonElement>('.services-filter-pill');
+  const categoryCards = document.querySelectorAll<HTMLElement>('.directory-category-card');
   const searchInput = document.getElementById('services-live-search') as HTMLInputElement | null;
-  if (searchInput) {
-    searchInput.addEventListener('input', () => {
-      const q = searchInput.value.trim().toLowerCase();
-      const cards = document.querySelectorAll<HTMLElement>('.subservice-card');
-      const categoryCards = document.querySelectorAll<HTMLElement>('.directory-category-card');
+  const searchClearBtn = document.getElementById('services-search-clear') as HTMLButtonElement | null;
+  const searchStatus = document.getElementById('services-search-status');
+  const emptyState = document.getElementById('services-empty-state');
+  const resetSearchBtn = document.getElementById('btn-reset-search');
+
+  function applyFilters() {
+    const q = (searchInput?.value || '').trim().toLowerCase();
+    const activePill = document.querySelector<HTMLButtonElement>('.services-filter-pill.active');
+    const selectedCat = activePill?.getAttribute('data-filter-cat') || 'all';
+
+    let totalVisible = 0;
+
+    categoryCards.forEach((catCard) => {
+      const catId = catCard.getAttribute('data-category-section');
+      const matchesCat = selectedCat === 'all' || selectedCat === catId;
+
+      if (!matchesCat) {
+        catCard.style.display = 'none';
+        return;
+      }
+
+      const cards = catCard.querySelectorAll<HTMLElement>('.subservice-card');
+      let catVisibleCount = 0;
 
       cards.forEach((card) => {
         const text = card.getAttribute('data-search-text')?.toLowerCase() || '';
-        const isMatch = text.includes(q);
+        const isMatch = !q || text.includes(q);
         card.style.display = isMatch ? '' : 'none';
+        if (isMatch) catVisibleCount++;
       });
 
-      categoryCards.forEach((catCard) => {
-        const visibleCards = catCard.querySelectorAll<HTMLElement>('.subservice-card:not([style*="display: none"])');
-        catCard.style.display = visibleCards.length > 0 ? '' : 'none';
+      catCard.style.display = catVisibleCount > 0 ? '' : 'none';
+      totalVisible += catVisibleCount;
+    });
+
+    if (searchClearBtn) {
+      searchClearBtn.style.display = q ? 'flex' : 'none';
+    }
+
+    if (searchStatus) {
+      if (q) {
+        searchStatus.textContent = `${totalVisible} خدمت مرتبط با «${q}» یافت شد`;
+      } else {
+        searchStatus.textContent = '';
+      }
+    }
+
+    if (emptyState) {
+      emptyState.style.display = totalVisible === 0 ? 'block' : 'none';
+    }
+  }
+
+  filterPills.forEach((pill) => {
+    pill.addEventListener('click', () => {
+      filterPills.forEach((p) => p.classList.remove('active'));
+      pill.classList.add('active');
+      applyFilters();
+
+      const catId = pill.getAttribute('data-filter-cat');
+      if (catId && catId !== 'all') {
+        const targetCard = document.querySelector<HTMLElement>(`[data-category-section="${catId}"]`);
+        if (targetCard) {
+          const headerOffset = 130;
+          const elementPosition = targetCard.getBoundingClientRect().top + window.pageYOffset;
+          window.scrollTo({
+            top: elementPosition - headerOffset,
+            behavior: 'smooth'
+          });
+        }
+      }
+    });
+  });
+
+  if (searchInput) {
+    searchInput.addEventListener('input', applyFilters);
+  }
+
+  if (searchClearBtn) {
+    searchClearBtn.addEventListener('click', () => {
+      if (searchInput) {
+        searchInput.value = '';
+        searchInput.focus();
+      }
+      applyFilters();
+    });
+  }
+
+  if (resetSearchBtn) {
+    resetSearchBtn.addEventListener('click', () => {
+      if (searchInput) {
+        searchInput.value = '';
+      }
+      filterPills.forEach((p) => {
+        if (p.getAttribute('data-filter-cat') === 'all') p.classList.add('active');
+        else p.classList.remove('active');
       });
+      applyFilters();
     });
   }
 }

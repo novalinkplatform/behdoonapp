@@ -260,7 +260,7 @@ export function renderServiceCategoriesAccordion(): string {
           </div>
           <div class="trust-pill">
             <span class="icon">${icons.clock}</span>
-            <span>${pick('اعزام تکنسین در کمتر از ۴۵ دقیقه', 'Technician Dispatch Under 45 Mins')}</span>
+            <span>${pick('اعزام تکنسین در کمتر از سریع‌ترین زمان', 'Technician Dispatch Under 45 Mins')}</span>
           </div>
           <div class="trust-pill">
             <span class="icon">${icons.fileText}</span>
@@ -268,7 +268,7 @@ export function renderServiceCategoriesAccordion(): string {
           </div>
           <div class="trust-pill">
             <span class="icon">${icons.checkCircle}</span>
-            <span>${pick('قیمت مصوب اتحادیه و بدون هزینه مخفی', 'Union Approved Rates & No Hidden Fees')}</span>
+            <span>${pick('قیمت منصفانه و بدون هزینه مخفی', 'Union Approved Rates & No Hidden Fees')}</span>
           </div>
         </div>
       </div>

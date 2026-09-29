@@ -30,3 +30,9 @@
 @import './lang-toggle.css';
 @import './theme-dark-emerald.css';
 @import './invoice.css';
+@import './specialists-slider.css';
+
+/* Ensure footer clears anything above it */
+.site-footer {
+  clear: both;
+}

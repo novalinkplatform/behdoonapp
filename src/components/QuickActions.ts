@@ -1,7 +1,7 @@
 import { icons } from './icons.ts';
 import { renderFloatingCallButton } from './FloatingCallButton.ts';
 import { renderFloatingWhatsAppButton } from './FloatingWhatsAppButton.ts';
-import { renderChatWidget, initChatWidget } from './ChatWidget.ts';
+import { renderChatPanel, initChatWidget } from './ChatWidget.ts';
 import { pick } from '../i18n/lang.ts';
 import type { SiteSettings } from '../utils/dynamicContent.ts';
 
@@ -26,12 +26,11 @@ export function setQuickActionsSide(side: 'left' | 'right'): void {
 
 export function renderQuickActions(settings?: SiteSettings): string {
   const theme = settings?.theme as Record<string, any> | undefined;
-  if (theme && theme.quickActionsEnabled === false) {
-    return '';
-  }
+  const quickActionsEnabled = theme?.quickActionsEnabled !== false;
 
   return `
     <div class="header-quick-actions" id="header-quick-actions">
+      ${quickActionsEnabled ? `
       <button
         type="button"
         class="quick-actions-side-toggle"
@@ -43,8 +42,9 @@ export function renderQuickActions(settings?: SiteSettings): string {
       </button>
       ${renderFloatingCallButton(settings)}
       ${renderFloatingWhatsAppButton(settings)}
-      ${renderChatWidget()}
+      ` : ''}
     </div>
+    ${renderChatPanel()}
   `;
 }
 

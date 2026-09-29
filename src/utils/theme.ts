@@ -129,7 +129,7 @@ export function applyTheme(theme?: ThemeSettings, typography?: TypographySetting
     }
 
     if (theme.surface && !theme.surfaceAlt) {
-      root.setProperty('--surface-alt', theme.background ? (isDarkColor(theme.background) ? adjustBrightness(theme.surface, 8) : adjustBrightness(theme.surface, -4)) : '#f1f5f9');
+      root.setProperty('--surface-alt', theme.background ? (isDarkColor(theme.background) ? adjustBrightness(theme.surface, 8) : adjustBrightness(theme.surface, -4)) : '#f1efe9');
     }
 
     // Dynamic color-scheme based on theme background

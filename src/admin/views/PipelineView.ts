@@ -164,6 +164,10 @@ export function renderPipelineView(): string {
   return `
     <div class="view-header">
       <h1>مراحل درخواست‌ها</h1>
+        <button type="button" class="btn btn-secondary btn-icon" id="pipeline-map-btn" title="نقشه درخواست‌ها" style="margin-right: auto; margin-left: 0.5rem; display: flex; align-items: center; gap: 0.5rem; background: var(--surface); color: var(--text);">
+          <span class="icon">${icons.map}</span>
+          <span class="desktop-only">نقشه</span>
+        </button>
       <div class="pipeline-toolbar">
         <input type="text" class="pipeline-search" id="pipeline-search" placeholder="جست‌وجو: کد رهگیری، شماره، شهر، نام..." />
         <span class="pipeline-live" id="pipeline-live" title="هر ۳۰ ثانیه به‌روزرسانی می‌شود">
@@ -195,13 +199,17 @@ export function renderPipelineView(): string {
   `;
 }
 
-export function initPipelineView(): void {
+export function initPipelineView(onNavigate?: (screen: string) => void): void {
   const list = document.getElementById('pipeline-list');
   const tabs = document.getElementById('pipeline-tabs');
   const errorEl = document.getElementById('pipeline-error');
   const refreshBtn = document.getElementById('pipeline-refresh');
   const searchInput = document.getElementById('pipeline-search') as HTMLInputElement | null;
   if (!list || !tabs || !errorEl || !refreshBtn || !searchInput) return;
+  const mapBtn = document.getElementById('pipeline-map-btn');
+  mapBtn?.addEventListener('click', () => {
+    if (onNavigate) onNavigate('map');
+  });
 
   let latestOrders: OrderRecord[] = [];
   let latestAssignable: StaffRecord[] = [];

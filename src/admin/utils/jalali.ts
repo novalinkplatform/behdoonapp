@@ -26,8 +26,8 @@ function jalCal(jy: number): { leap: number; gy: number; march: number } {
   let leapJ = -14;
   let jp = BREAKS[0];
 
-  if (jy < jp || jy >= BREAKS[breaksLength - 1]) {
-    throw new Error(`Invalid Jalaali year ${jy}`);
+  if (isNaN(jy) || jy < jp || jy >= BREAKS[breaksLength - 1]) {
+    return { leap: 0, gy: 2026, march: 20 };
   }
 
   let jump = 0;
@@ -108,7 +108,10 @@ function d2j(jdn: number): JalaaliDate {
   return { jy, jm, jd };
 }
 
-export function gregorianToJalaali(date: Date): JalaaliDate {
+export function gregorianToJalaali(date?: Date | null): JalaaliDate {
+  if (!date || isNaN(date.getTime())) {
+    date = new Date();
+  }
   return d2j(g2d(date.getFullYear(), date.getMonth() + 1, date.getDate()));
 }
 
@@ -180,25 +183,113 @@ export function formatIranianDateFull(input?: string | Date | null): string {
 }
 
 /**
- * SQLite `datetime('now')` رشته‌هایی مثل "2026-08-27 14:46:40" (بدون منطقه‌ی زمانی، UTC) برمی‌گرداند.
- * برای مقایسه با «امروز» باید همان‌طور بدون Z تفسیر شود، نه با تبدیل ضمنی به زمان محلی مرورگر.
+ * پارس کاملاً امن و ضدخطا برای انواع فرمت‌های زمانی (ISO، SQLite، میلی‌ثانیه یا مقادیر نامعتبر)
  */
-function parseSqliteDatetime(value: string): Date {
-  return new Date(value.replace(' ', 'T') + 'Z');
+export function safeParseDate(input?: string | number | Date | null): Date {
+  if (!input) return new Date();
+  if (input instanceof Date) {
+    return isNaN(input.getTime()) ? new Date() : input;
+  }
+  if (typeof input === 'number') {
+    const d = new Date(input);
+    return isNaN(d.getTime()) ? new Date() : d;
+  }
+  const str = String(input).trim();
+  if (!str) return new Date();
+
+  // در صورت ارسال عدد رشته‌ای یونیکس (۱۰ یا ۱۳ رقمی)
+  if (/^\d{10,13}$/.test(str)) {
+    const num = Number(str);
+    const d = new Date(str.length === 10 ? num * 1000 : num);
+    if (!isNaN(d.getTime())) return d;
+  }
+
+  // در صورت داشتن پسوند Z یا منطقه زمانی صریح
+  if (str.endsWith('Z') || /[+-]\d{2}:?\d{2}$/.test(str)) {
+    const d = new Date(str);
+    if (!isNaN(d.getTime())) return d;
+  }
+
+  // فرمت SQLite مانند "2026-09-27 17:55:26" -> تبدیل به UTC استاندارد
+  if (/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}/.test(str)) {
+    const normalized = str.replace(' ', 'T');
+    const d = new Date(normalized.endsWith('Z') ? normalized : normalized + 'Z');
+    if (!isNaN(d.getTime())) return d;
+  }
+
+  const fallback = new Date(str);
+  return isNaN(fallback.getTime()) ? new Date() : fallback;
 }
 
-export function formatMessageTimestamp(sqliteDatetime: string): string {
-  // پارس به‌عنوان UTC (چون SQLite همین‌طور ذخیره می‌کند)، اما نمایش با ساعت/تاریخ محلی مرورگر —
-  // هم برای زمان و هم برای «امروز بودن» باید یک مرجع زمانی استفاده شود، نه ترکیبی از UTC و محلی.
-  const date = parseSqliteDatetime(sqliteDatetime);
+/**
+ * نمایش تاریخ شمسی و ساعت دقیق پیام در هر دو بخش لیست گفتگوها و حباب‌های پیام چت
+ */
+export function formatMessageTimestamp(sqliteDatetime?: string | number | Date | null): string {
+  const date = safeParseDate(sqliteDatetime);
   const now = new Date();
   const jToday = gregorianToJalaali(now);
   const jDate = gregorianToJalaali(date);
   const hh = toPersianDigits(String(date.getHours()).padStart(2, '0'));
   const mm = toPersianDigits(String(date.getMinutes()).padStart(2, '0'));
-  const time = `${hh}:${mm}`;
-  if (jToday.jy === jDate.jy && jToday.jm === jDate.jm && jToday.jd === jDate.jd) {
-    return `امروز، ${time}`;
+  const dateStr = `${toPersianDigits(jDate.jy)}/${toPersianDigits(String(jDate.jm).padStart(2, '0'))}/${toPersianDigits(String(jDate.jd).padStart(2, '0'))}`;
+  const timeStr = `${hh}:${mm}`;
+  const isToday = jToday.jy === jDate.jy && jToday.jm === jDate.jm && jToday.jd === jDate.jd;
+
+  if (isToday) {
+    return `امروز (${dateStr}) - ${timeStr}`;
   }
-  return `${formatJalaaliDate(jDate)}، ${time}`;
+  return `${dateStr} - ${timeStr}`;
 }
+
+export function formatChatDate(input?: string | number | Date | null): string {
+  const date = safeParseDate(input);
+  const jDate = gregorianToJalaali(date);
+  return `${toPersianDigits(jDate.jy)}/${toPersianDigits(String(jDate.jm).padStart(2, '0'))}/${toPersianDigits(String(jDate.jd).padStart(2, '0'))}`;
+}
+
+export function formatChatTime(input?: string | number | Date | null): string {
+  const date = safeParseDate(input);
+  const hh = toPersianDigits(String(date.getHours()).padStart(2, '0'));
+  const mm = toPersianDigits(String(date.getMinutes()).padStart(2, '0'));
+  return `${hh}:${mm}`;
+}
+
+export function formatTelegramTime(sqliteDatetime?: string | number | Date | null): string {
+  return formatChatTime(sqliteDatetime);
+}
+
+export function formatTelegramDatePill(sqliteDatetime?: string | number | Date | null): string {
+  const date = safeParseDate(sqliteDatetime);
+  const now = new Date();
+  const jToday = gregorianToJalaali(now);
+  const jDate = gregorianToJalaali(date);
+
+  if (jToday.jy === jDate.jy && jToday.jm === jDate.jm && jToday.jd === jDate.jd) {
+    return 'امروز';
+  }
+  const yesterday = new Date(now.getTime() - 86400000);
+  const jYesterday = gregorianToJalaali(yesterday);
+  if (jYesterday.jy === jDate.jy && jYesterday.jm === jDate.jm && jYesterday.jd === jDate.jd) {
+    return 'دیروز';
+  }
+  const monthName = PERSIAN_MONTH_NAMES[jDate.jm - 1] || '';
+  return `${toPersianDigits(jDate.jd)} ${monthName} ${toPersianDigits(jDate.jy)}`;
+}
+
+export function formatTelegramConversationDate(sqliteDatetime?: string | number | Date | null): string {
+  const date = safeParseDate(sqliteDatetime);
+  const now = new Date();
+  const jToday = gregorianToJalaali(now);
+  const jDate = gregorianToJalaali(date);
+
+  if (jToday.jy === jDate.jy && jToday.jm === jDate.jm && jToday.jd === jDate.jd) {
+    return formatChatTime(date);
+  }
+  const yesterday = new Date(now.getTime() - 86400000);
+  const jYesterday = gregorianToJalaali(yesterday);
+  if (jYesterday.jy === jDate.jy && jYesterday.jm === jDate.jm && jYesterday.jd === jDate.jd) {
+    return 'دیروز';
+  }
+  return `${toPersianDigits(jDate.jy)}/${toPersianDigits(String(jDate.jm).padStart(2, '0'))}/${toPersianDigits(String(jDate.jd).padStart(2, '0'))}`;
+}
+

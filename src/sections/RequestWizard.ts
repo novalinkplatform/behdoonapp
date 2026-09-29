@@ -218,16 +218,6 @@ export function renderRequestWizard(
         <span class="wizard-progress-text" id="wizard-progress-text"></span>
       </div>
 
-      <!-- Step Heading Card -->
-      <div class="wizard-header-card">
-        <div class="wizard-header-top">
-          <span class="wizard-step-tag" id="wizard-step-tag">${pick('مرحله ۱ از ۷', 'Step 1 of 7')}</span>
-          <span class="wizard-step-hint-badge" id="wizard-step-hint-badge">${pick('انتخاب اولیه خدمت', 'Select Service')}</span>
-        </div>
-        <h2 class="wizard-question" id="wizard-question"></h2>
-        <p class="wizard-step-subdesc" id="wizard-step-subdesc"></p>
-      </div>
-
       <div class="wizard-body">
         <!-- گام ۱: اول دسته اصلی -->
         <section class="request-panel" data-panel="1">
@@ -1069,18 +1059,13 @@ export function initRequestWizard(
     nextBtn!.textContent = pick('در حال ارسال کد...', 'Sending code...');
 
     try {
-      const res = await sendCustomerOtp(phoneVal);
+      await sendCustomerOtp(phoneVal);
       startOtpCountdown();
       clearOtpDigits();
 
-      // If devCode is returned, auto-fill for testing ease
-      if (res?.devCode && res.devCode.length === 5) {
-        res.devCode.split('').forEach((ch, i) => {
-          if (otpDigits[i]) otpDigits[i].value = ch;
-        });
-        setTimeout(() => {
-          void verifyAndSubmit();
-        }, 150);
+      // Focus on first OTP input digit for user entry
+      if (otpDigits[0]) {
+        setTimeout(() => otpDigits[0].focus(), 100);
       }
     } catch (err: any) {
       if (otpErrorEl) {

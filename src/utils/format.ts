@@ -1,3 +1,4 @@
+export { toPersianDigits } from './jalali.ts';
 import { toPersianDigits } from './jalali.ts';
 import { pick } from '../i18n/lang.ts';
 

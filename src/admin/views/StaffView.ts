@@ -25,7 +25,11 @@ function renderRow(staff: StaffRecord): string {
         ${staff.onActiveService ? `<span class="article-status-badge article-status-busy">در حال سرویس</span>` : ''}
       </td>
       <td dir="ltr">${staff.username}</td>
-      <td>${staff.roleLabel}</td>
+      <td>
+        <div>${staff.roleLabel}</div>
+        ${staff.specialty ? `<div style="font-size:0.75rem;color:#059669;font-weight:600;">${staff.specialty}${staff.yearsExperience ? ` (${staff.yearsExperience} سال سابقه)` : ''}</div>` : ''}
+        ${staff.showInSlider ? `<span class="article-status-badge article-status-published" style="background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;font-size:0.68rem;padding:1px 6px;margin-top:3px;display:inline-block;">اسلایدر متخصصان</span>` : ''}
+      </td>
       <td dir="ltr">${staff.phone ?? '—'}</td>
       <td>
         <span class="article-status-badge article-status-${staff.isActive ? 'published' : 'draft'}">
@@ -149,6 +153,32 @@ function renderForm(): string {
         </div>
       </div>
 
+      <h4 class="staff-form-section-title">معرفی در اسلایدر متخصصان سایت</h4>
+      <div class="staff-form-grid">
+        <div class="form-field">
+          <label for="staff-specialty">عنوان تخصص نمایشی (برای کاربران)</label>
+          <input type="text" id="staff-specialty" placeholder="مثال: تکنسین ارشد سرمایش و گرمایش" />
+        </div>
+        <div class="form-field">
+          <label for="staff-years-experience">سال‌های سابقه کار تخصصی</label>
+          <input type="number" id="staff-years-experience" min="0" max="60" placeholder="مثال: ۱۲" />
+        </div>
+        <div class="form-field">
+          <label for="staff-rating">امتیاز رضایت مشتریان (از ۵)</label>
+          <input type="number" id="staff-rating" min="1" max="5" step="0.1" placeholder="مثال: ۴.۹" />
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="staff-bio">خلاصه سوابق و معرفی (نمایش در کارت اسلایدر)</label>
+        <textarea id="staff-bio" rows="2" placeholder="مثال: کارشناس ارشد تأسیسات، مسلط به کلیه پکیج‌های ایرانی و خارجی با بیش از ۱۲ سال تجربه و ۳۴۰+ پروژه موفق"></textarea>
+      </div>
+
+      <label class="settings-inline-toggle" style="margin-bottom: 16px;">
+        <input type="checkbox" id="staff-show-in-slider" checked />
+        <strong>نمایش این متخصص در اسلایدر برتر بالای فوتر سایت</strong>
+      </label>
+
       <div class="form-field">
         <label for="staff-notes">یادداشت مدیریتی</label>
         <textarea id="staff-notes" rows="3" placeholder="نکات، مهارت‌ها یا سوابق مهم برای مدیریت..."></textarea>
@@ -221,6 +251,11 @@ export function initStaffView(onViewHistory: (staff: StaffRecord) => void = () =
   const addressInput = document.getElementById('staff-address') as HTMLInputElement | null;
   const emergencyNameInput = document.getElementById('staff-emergency-name') as HTMLInputElement | null;
   const emergencyPhoneInput = document.getElementById('staff-emergency-phone') as HTMLInputElement | null;
+  const specialtyInput = document.getElementById('staff-specialty') as HTMLInputElement | null;
+  const yearsExperienceInput = document.getElementById('staff-years-experience') as HTMLInputElement | null;
+  const ratingInput = document.getElementById('staff-rating') as HTMLInputElement | null;
+  const bioInput = document.getElementById('staff-bio') as HTMLTextAreaElement | null;
+  const showInSliderCheckbox = document.getElementById('staff-show-in-slider') as HTMLInputElement | null;
   const notesInput = document.getElementById('staff-notes') as HTMLTextAreaElement | null;
   const errorEl = document.getElementById('staff-error');
   const tableBody = document.getElementById('staff-table-body');
@@ -300,6 +335,11 @@ export function initStaffView(onViewHistory: (staff: StaffRecord) => void = () =
     addressInput!.value = staff?.address ?? '';
     emergencyNameInput!.value = staff?.emergencyContactName ?? '';
     emergencyPhoneInput!.value = staff?.emergencyContactPhone ?? '';
+    specialtyInput!.value = staff?.specialty ?? '';
+    yearsExperienceInput!.value = staff?.yearsExperience != null ? String(staff.yearsExperience) : '';
+    ratingInput!.value = staff?.rating != null ? String(staff.rating) : '4.9';
+    bioInput!.value = staff?.bio ?? '';
+    showInSliderCheckbox!.checked = staff?.showInSlider !== false;
     notesInput!.value = staff?.notes ?? '';
     // بخش کیف پول فقط برای ویرایش یک کارمند موجود معنا دارد (تا شناسه‌اش برای فراخوانی جدای
     // rate-override موجود باشد) و فقط اگر خودِ ادمین لاگین‌شده مجوز wallet را داشته باشد.
@@ -440,6 +480,11 @@ export function initStaffView(onViewHistory: (staff: StaffRecord) => void = () =
       emergencyContactPhone: emergencyPhoneInput!.value.trim(),
       notes: notesInput!.value.trim(),
       isReadOnly: readOnlyCheckbox!.checked,
+      specialty: specialtyInput!.value.trim(),
+      yearsExperience: yearsExperienceInput!.value.trim() ? Number(yearsExperienceInput!.value) : null,
+      rating: ratingInput!.value.trim() ? Number(ratingInput!.value) : null,
+      bio: bioInput!.value.trim(),
+      showInSlider: showInSliderCheckbox!.checked,
     };
 
     submitBtn!.disabled = true;

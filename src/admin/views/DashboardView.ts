@@ -183,7 +183,7 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
               <span class="dash-kpi-badge badge-neutral">تهران</span>
             </div>
             <div class="dash-kpi-value">۲۲ <span class="dash-kpi-unit">منطقه</span></div>
-            <div class="dash-kpi-sub">اعزام فوری تکنسین زیر ۴۵ دقیقه</div>
+            <div class="dash-kpi-sub">اعزام فوری تکنسین زیر سریع‌ترین زمان</div>
           </div>
 
           <div class="dash-kpi-card">

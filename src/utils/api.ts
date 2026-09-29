@@ -58,15 +58,22 @@ export interface OrderRecord {
   providerId?: number | null;
   providerName?: string | null;
   finalPrice?: number | null;
+  paymentStatus?: string;
+  wantsPacking?: boolean;
   createdAt: string;
 }
 
 export const EDITABLE_ORDER_STATUSES = ['pending', 'contacted', 'scheduled'];
 
 export async function submitRequest(payload: CreateRequestPayload): Promise<{ trackingCode: string }> {
+  const token = getCustomerToken();
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
   const res = await fetch(`${API_BASE_URL}/api/requests`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify(payload),
   });
   const body = await res.json().catch(() => ({}));

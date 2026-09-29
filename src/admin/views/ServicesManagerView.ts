@@ -41,9 +41,9 @@ function getDefaultCategories(): ManagedServiceCategory[] {
       article: {
         title: catalogItem?.title ? `راهنمای تخصصی و جامع ${catalogItem.title}` : `راهنمای جامع ${cat.label}`,
         excerpt: catalogItem?.metaDesc || cat.subtitle || '',
-        contentHtml: catalogItem?.comprehensiveGuide || `<p>تکنسین‌های مجرب و دارای تاییدیه صلاحیت بهدون، خدمات تخصصی <strong>${cat.label}</strong> را با ابزارهای کالیبره، نرخ مصوب اتحادیه و ضمانت ۳۰ روزه انجام می‌دهند.</p>`,
+        contentHtml: catalogItem?.comprehensiveGuide || `<p>تکنسین‌های مجرب و دارای تاییدیه صلاحیت بهدون، خدمات تخصصی <strong>${cat.label}</strong> را با ابزارهای کالیبره، قیمت منصفانه و ضمانت ۳۰ روزه انجام می‌دهند.</p>`,
         metaTitle: `${cat.label} در تهران | خدمات فوری و تضمینی بهدون`,
-        metaDescription: catalogItem?.metaDesc || `خدمات فوری و تخصصی ${cat.label} در تهران با ضمانت کتبی ۳۰ روزه و اعزام کمتر از ۴۵ دقیقه.`,
+        metaDescription: catalogItem?.metaDesc || `خدمات فوری و تخصصی ${cat.label} در تهران با ضمانت کتبی ۳۰ روزه و اعزام کمتر از سریع‌ترین زمان.`,
         readingTimeMinutes: 5,
       },
       subServices,
