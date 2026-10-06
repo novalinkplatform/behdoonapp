@@ -46,10 +46,10 @@ export function renderAiView(): string {
               class="chat-thread-input"
               id="ai-widget-input"
               rows="1"
-              placeholder="Ø¯Ø³ØªÙˆØ± ÛŒØ§ Ø³Ø¤Ø§Ù„ Ø®ÙˆØ¯ Ø±Ø§ Ø¨Ù†ÙˆÛŒØ³ÛŒØ¯..."
+              placeholder="دستور یا سؤال خود را بنویسید..."
               dir="auto"
             ></textarea>
-            <button type="submit" class="chat-thread-send-btn" id="ai-widget-send-btn" aria-label="Ø§Ø±Ø³Ø§Ù„" disabled>
+            <button type="submit" class="chat-thread-send-btn" id="ai-widget-send-btn" aria-label="ارسال" disabled>
               <span class="icon">ارسال</span>
             </button>
           </form>

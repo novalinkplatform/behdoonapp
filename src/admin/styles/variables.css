@@ -31,8 +31,8 @@
   --danger: #ef4444;
   --danger-bg: #fef2f2;
 
-  /* Typography — Behbar Vazirmatn Primary Font */
-  --font-family: 'Vazirmatn', 'Yekan Bakh', 'IRANSans', 'Yekan', 'Tahoma', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Typography — IRAN Yekan Primary Font */
+  --font-family: 'IRANYekanX', 'IRANYekan', 'Vazirmatn', 'Yekan Bakh', 'IRANSans', 'Yekan', 'Tahoma', -apple-system, BlinkMacSystemFont, sans-serif;
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;

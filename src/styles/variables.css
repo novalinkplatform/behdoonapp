@@ -38,8 +38,8 @@
   --goose-green: #008080;
   --goose-green-light: #d9efee;
 
-  /* Typography — Yekan Bakh Primary Font */
-  --font-family: 'Yekan Bakh', 'IRANSans', 'Yekan', 'Tahoma', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Typography — IRAN Yekan Primary Font */
+  --font-family: 'IRANYekanX', 'IRANYekan', 'Yekan Bakh', 'IRANSans', 'Yekan', 'Tahoma', -apple-system, BlinkMacSystemFont, sans-serif;
 
   /* Spacing scale */
   --space-1: 0.25rem;

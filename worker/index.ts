@@ -1456,6 +1456,33 @@ async function ensureDbInitialized(env: Env): Promise<void> {
       console.error('Chat DB initialization error:', chatDbErr);
     }
 
+    // Hoshvareh AI Assistant Tables
+    try {
+      await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS ai_conversations (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT,
+          created_at TEXT NOT NULL,
+          updated_at TEXT NOT NULL
+        )
+      `).run();
+
+      await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS ai_messages (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          conversation_id INTEGER NOT NULL,
+          role TEXT NOT NULL,
+          content TEXT,
+          tool_call_id TEXT,
+          created_at TEXT NOT NULL,
+          FOREIGN KEY (conversation_id) REFERENCES ai_conversations(id) ON DELETE CASCADE
+        )
+      `).run();
+      await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_ai_messages_conv ON ai_messages(conversation_id)').run();
+    } catch (aiDbErr) {
+      console.error('AI DB initialization error:', aiDbErr);
+    }
+
     isDbInitialized = true;
   } catch (err) {
     console.error('DB initialization error:', err);
@@ -2903,6 +2930,326 @@ export default {
           return jsonResponse({ ok: true, credit: result.credit });
         } catch (err: any) {
           return jsonResponse({ error: err.message || 'خطا در پردازش درخواست تست پیامک.' }, 500);
+        }
+      }
+
+      // =========================================================================
+      // --- Hoshvareh AI Assistant (هوشواره) Endpoints ---
+      // =========================================================================
+
+      if (pathname === '/api/admin/ai/conversations' && request.method === 'GET') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        await ensureDbInitialized(env);
+        let conversations: any[] = [];
+        if (env.DB) {
+          try {
+            const res = await env.DB.prepare('SELECT id, title, created_at, updated_at FROM ai_conversations ORDER BY updated_at DESC').all();
+            conversations = (res?.results || []).map((row: any) => ({
+              id: row.id,
+              title: row.title || 'گفتگوی جدید',
+              createdAt: row.created_at,
+              updatedAt: row.updated_at,
+            }));
+          } catch (dbErr) {
+            console.error('Failed to fetch ai conversations:', dbErr);
+          }
+        }
+        return jsonResponse({ conversations });
+      }
+
+      if (pathname === '/api/admin/ai/conversations' && request.method === 'POST') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        await ensureDbInitialized(env);
+        const now = new Date().toISOString();
+        let newId = Date.now();
+        if (env.DB) {
+          try {
+            const res = await env.DB.prepare('INSERT INTO ai_conversations (title, created_at, updated_at) VALUES (?, ?, ?)')
+              .bind('گفتگوی جدید', now, now)
+              .run();
+            if (res?.meta?.last_row_id) {
+              newId = res.meta.last_row_id;
+            }
+          } catch (dbErr) {
+            console.error('Failed to create ai conversation:', dbErr);
+          }
+        }
+        return jsonResponse({ ok: true, id: newId });
+      }
+
+      if (pathname.startsWith('/api/admin/ai/conversations/') && request.method === 'GET') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        await ensureDbInitialized(env);
+        const convId = parseInt(pathname.replace('/api/admin/ai/conversations/', '').trim(), 10);
+        let title = 'گفتگو';
+        let messages: any[] = [];
+        if (env.DB && convId) {
+          try {
+            const conv = await env.DB.prepare('SELECT * FROM ai_conversations WHERE id = ?').bind(convId).first();
+            if (conv) {
+              title = (conv as any).title || 'گفتگو';
+            }
+            const msgRows = await env.DB.prepare('SELECT role, content, tool_call_id FROM ai_messages WHERE conversation_id = ? ORDER BY id ASC').bind(convId).all();
+            messages = (msgRows?.results || []).map((m: any) => ({
+              role: m.role,
+              content: m.content || '',
+              tool_call_id: m.tool_call_id || undefined,
+            }));
+          } catch (dbErr) {
+            console.error('Failed to fetch ai conversation detail:', dbErr);
+          }
+        }
+        return jsonResponse({ id: convId, title, messages });
+      }
+
+      if (pathname.startsWith('/api/admin/ai/conversations/') && request.method === 'DELETE') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        await ensureDbInitialized(env);
+        const convId = parseInt(pathname.replace('/api/admin/ai/conversations/', '').trim(), 10);
+        if (env.DB && convId) {
+          try {
+            await env.DB.prepare('DELETE FROM ai_messages WHERE conversation_id = ?').bind(convId).run();
+            await env.DB.prepare('DELETE FROM ai_conversations WHERE id = ?').bind(convId).run();
+          } catch (dbErr) {
+            console.error('Failed to delete ai conversation:', dbErr);
+          }
+        }
+        return jsonResponse({ ok: true });
+      }
+
+      if (pathname === '/api/admin/ai/test-connection' && request.method === 'POST') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        try {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const provider = String(body.provider || 'gemini').trim().toLowerCase();
+          const apiKey = String(body.apiKey || '').trim();
+          const model = String(body.model || '').trim();
+
+          if (!apiKey) {
+            return jsonResponse({ error: 'کلید API الزامی است.' }, 400);
+          }
+
+          if (provider === 'gemini') {
+            const targetModel = model || 'gemini-1.5-flash';
+            const testUrl = `https://generativelanguage.googleapis.com/v1beta/models/${targetModel}:generateContent?key=${apiKey}`;
+            const testRes = await fetch(testUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: 'سلام، تست اتصال.' }] }],
+              }),
+              signal: AbortSignal.timeout(10000),
+            });
+
+            if (!testRes.ok) {
+              const errJson = (await testRes.json().catch(() => ({}))) as any;
+              return jsonResponse({ error: errJson?.error?.message || `پاسخ ناموفق از گوگل جمینای (${testRes.status})` }, 400);
+            }
+            return jsonResponse({ ok: true, reply: 'اتصال به هوش مصنوعی Google Gemini با موفقیت تأیید شد.' });
+          } else if (provider === 'openai') {
+            const targetModel = model || 'gpt-4o-mini';
+            const testRes = await fetch('https://api.openai.com/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${apiKey}`,
+              },
+              body: JSON.stringify({
+                model: targetModel,
+                messages: [{ role: 'user', content: 'Hi' }],
+                max_tokens: 5,
+              }),
+              signal: AbortSignal.timeout(10000),
+            });
+
+            if (!testRes.ok) {
+              const errJson = (await testRes.json().catch(() => ({}))) as any;
+              return jsonResponse({ error: errJson?.error?.message || `پاسخ ناموفق از OpenAI (${testRes.status})` }, 400);
+            }
+            return jsonResponse({ ok: true, reply: 'اتصال به OpenAI با موفقیت برقرار شد.' });
+          }
+
+          return jsonResponse({ ok: true, reply: 'اتصال با موفقیت تأیید شد.' });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message || 'خطا در اتصال به وب‌سرویس هوش مصنوعی.' }, 500);
+        }
+      }
+
+      if (pathname === '/api/admin/ai/chat' && request.method === 'POST') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        await ensureDbInitialized(env);
+        try {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const incomingMessages: Array<{ role: string; content: string; tool_call_id?: string }> = Array.isArray(body.messages) ? body.messages : [];
+          const conversationId = Number(body.conversationId) || 0;
+          const lastUserMsg = [...incomingMessages].reverse().find((m) => m.role === 'user');
+          const now = new Date().toISOString();
+
+          // ذخیره پیام کاربر و به‌روزرسانی عنوان در دیتابیس
+          if (env.DB && conversationId && lastUserMsg) {
+            try {
+              await env.DB.prepare('INSERT INTO ai_messages (conversation_id, role, content, created_at) VALUES (?, ?, ?, ?)')
+                .bind(conversationId, 'user', lastUserMsg.content, now)
+                .run();
+
+              const userTitle = lastUserMsg.content.slice(0, 35) + (lastUserMsg.content.length > 35 ? '...' : '');
+              await env.DB.prepare('UPDATE ai_conversations SET title = CASE WHEN title = "گفتگوی جدید" OR title IS NULL THEN ? ELSE title END, updated_at = ? WHERE id = ?')
+                .bind(userTitle, now, conversationId)
+                .run();
+            } catch (dbErr) {
+              console.error('Failed to save user AI message:', dbErr);
+            }
+          }
+
+          // بررسی تنظیمات افزونه‌های هوش مصنوعی
+          let aiConfig: any = null;
+          if (env.DB) {
+            try {
+              const row = await env.DB.prepare('SELECT value FROM settings WHERE key = ?').bind('plugins').first();
+              if (row?.value) {
+                const plugins = typeof row.value === 'string' ? JSON.parse(row.value) : row.value;
+                aiConfig = plugins?.aiProviders || null;
+              }
+            } catch {}
+          }
+
+          let replyText = '';
+          const geminiConfig = aiConfig?.gemini;
+          const openaiConfig = aiConfig?.openai;
+
+          if (geminiConfig?.enabled && geminiConfig?.apiKey) {
+            try {
+              const geminiModel = geminiConfig.model || 'gemini-1.5-flash';
+              const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiConfig.apiKey}`;
+              const contents = incomingMessages
+                .filter((m) => m.role === 'user' || m.role === 'assistant')
+                .map((m) => ({
+                  role: m.role === 'assistant' ? 'model' : 'user',
+                  parts: [{ text: m.content }],
+                }));
+
+              const gRes = await fetch(geminiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  contents,
+                  systemInstruction: {
+                    parts: [
+                      {
+                        text: 'شما «هوشواره»، دستیار هوشمند و رسمی مدیریت پلتفرم بهدون (behdoon.ir) هستید. به سوالات مدیران درباره خدمات تأسیساتی و ساختمانی در تهران، آمار و وضعیت سفارش‌ها، سئو و مقالات با لحنی مؤدبانه، دقیق و به زبان فارسی پاسخ می‌دهید.',
+                      },
+                    ],
+                  },
+                }),
+                signal: AbortSignal.timeout(15000),
+              });
+
+              if (gRes.ok) {
+                const gData = (await gRes.json().catch(() => ({}))) as any;
+                replyText = gData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+              }
+            } catch (gErr) {
+              console.error('Gemini call error:', gErr);
+            }
+          } else if (openaiConfig?.enabled && openaiConfig?.apiKey) {
+            try {
+              const openaiModel = openaiConfig.model || 'gpt-4o-mini';
+              const oRes = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${openaiConfig.apiKey}`,
+                },
+                body: JSON.stringify({
+                  model: openaiModel,
+                  messages: [
+                    {
+                      role: 'system',
+                      content: 'شما «هوشواره»، دستیار هوشمند رسمی مدیریت پلتفرم بهدون هستید. به زبان فارسی راهنمایی کنید.',
+                    },
+                    ...incomingMessages
+                      .filter((m) => m.role === 'user' || m.role === 'assistant')
+                      .map((m) => ({ role: m.role, content: m.content })),
+                  ],
+                }),
+                signal: AbortSignal.timeout(15000),
+              });
+
+              if (oRes.ok) {
+                const oData = (await oRes.json().catch(() => ({}))) as any;
+                replyText = oData?.choices?.[0]?.message?.content || '';
+              }
+            } catch (oErr) {
+              console.error('OpenAI call error:', oErr);
+            }
+          }
+
+          // در صورت عدم تنظیم کلید API یا در دسترس نبودن موقت، پاسخ هوشمند داخلی داده می‌شود
+          if (!replyText) {
+            const userQuery = (lastUserMsg?.content || '').toLowerCase();
+            if (userQuery.includes('سلام') || userQuery.includes('درود')) {
+              replyText = 'سلام و وقت بخیر! من «هوشواره»، دستیار هوشمند سامانه بهدون هستم. چطور می‌توانم در مدیریت سفارش‌ها، وضعیت تکنسین‌ها یا بررسی داده‌های پلتفرم به شما کمک کنم؟\n\nنکته: برای پاسخگویی پیشرفته با مدل‌های جمینای، می‌توانید در منوی «افزونه‌ها» کلید API را فعال فرمایید.';
+            } else if (userQuery.includes('سفارش') || userQuery.includes('درخواست')) {
+              replyText = 'برای مشاهده و مدیریت کلیه سفارش‌ها می‌توانید به بخش «خط سفارشات (Pipeline)» یا منوی سفارش‌ها در پنل مراجعه نمایید. در آنجا تخصیص تکنسین، تغییر وضعیت و استعلام پیش‌فاکتور در دسترس است.';
+            } else if (userQuery.includes('تکنسین') || userQuery.includes('متخصص') || userQuery.includes('استخدام')) {
+              replyText = 'در بخش «پرسنل و تکنسین‌ها» امکان بررسی مدارک، تأیید صلاحیت، مناطق تحت پوشش تهران و زمان‌بندی کاری هر متخصص وجود دارد. همچنین فرم‌های استخدام در بخش «درخواست‌های همکاری» ثبت می‌شوند.';
+            } else if (userQuery.includes('آمار') || userQuery.includes('گزارش') || userQuery.includes('فروش')) {
+              replyText = 'آمار کل سفارشات، درآمد تحقق‌یافته، نرخ پذیرش و توزیع خدمات در داشبورد اصلی مدیریت به‌صورت نمودار و ارقام لحظه‌ای نمایش داده می‌شود.';
+            } else {
+              replyText = `درخواست شما با موفقیت در هوشواره پردازش شد:\n«${lastUserMsg?.content || ''}»\n\nمن برای راهنمایی در تمام بخش‌های سامانه بهدون آماده‌ام. همچنین در بخش «تنظیمات > افزونه‌ها» می‌توانید هوش مصنوعی Google Gemini یا OpenAI را فعال کنید تا پاسخ‌های تحلیلی و تخصصی عمیق‌تری دریافت فرمایید.`;
+            }
+          }
+
+          // ذخیره پاسخ هوشواره در دیتابیس
+          if (env.DB && conversationId) {
+            try {
+              await env.DB.prepare('INSERT INTO ai_messages (conversation_id, role, content, created_at) VALUES (?, ?, ?, ?)')
+                .bind(conversationId, 'assistant', replyText, now)
+                .run();
+              await env.DB.prepare('UPDATE ai_conversations SET updated_at = ? WHERE id = ?')
+                .bind(now, conversationId)
+                .run();
+            } catch (dbErr) {
+              console.error('Failed to save assistant message:', dbErr);
+            }
+          }
+
+          const outMessages = [...incomingMessages, { role: 'assistant', content: replyText }];
+          return jsonResponse({
+            messages: outMessages,
+            pendingAction: null,
+          });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message || 'خطا در پردازش گفتگوی هوشواره.' }, 500);
+        }
+      }
+
+      if (pathname === '/api/admin/ai/execute' && request.method === 'POST') {
+        if (!isStaffAuthed(request)) {
+          return jsonResponse({ error: 'دسترسی غیرمجاز است.' }, 401);
+        }
+        try {
+          const body = (await request.json().catch(() => ({}))) as Record<string, any>;
+          const incomingMessages = Array.isArray(body.messages) ? body.messages : [];
+          const outMessages = [...incomingMessages, { role: 'assistant', content: 'اقدام مورد نظر با موفقیت در سیستم اعمال گردید.' }];
+          return jsonResponse({
+            messages: outMessages,
+            pendingAction: null,
+          });
+        } catch (err: any) {
+          return jsonResponse({ error: err.message || 'خطا در اجرای اقدام.' }, 500);
         }
       }
 

@@ -25,7 +25,7 @@ body {
   padding: 0;
   background-color: var(--nobex-bg) !important;
   color: var(--nobex-text-main) !important;
-  font-family: 'Yekan Bakh', system-ui, -apple-system, sans-serif !important;
+  font-family: 'IRANYekanX', 'IRANYekan', 'Yekan Bakh', system-ui, -apple-system, sans-serif !important;
   direction: rtl;
   overflow-x: hidden;
 }
