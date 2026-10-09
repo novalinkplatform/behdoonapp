@@ -196,7 +196,7 @@
 }
 
 .article-container {
-  max-width: 760px;
+  max-width: 1200px;
 }
 
 .article-card {
@@ -460,7 +460,855 @@
   }
 }
 
+/* =====================================================================
+   مجله و مقالات تخصصی بهدون - استایل‌های چیدمان دو ستونه و المان‌های تعاملی
+   ===================================================================== */
+
+/* هدر بنر و مشخصات مقاله */
+.article-header-banner {
+  background-color: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6) var(--space-7);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-6);
+}
+
+.article-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+}
+
+.article-category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background-color: var(--secondary-light);
+  color: var(--primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.35rem 0.9rem;
+  border-radius: var(--radius-full);
+}
+
+.article-category-badge .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.article-expert-verified-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.3rem 0.85rem;
+  border-radius: var(--radius-full);
+}
+
+.article-expert-verified-pill .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.article-main-title {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.45;
+  color: var(--text);
+  margin-bottom: var(--space-3);
+}
+
+.article-main-excerpt {
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: var(--muted);
+  margin-bottom: var(--space-5);
+}
+
+.article-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.article-meta-items {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.article-meta-items .meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.article-meta-items .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.article-share-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.share-label {
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.share-pill {
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-family: inherit;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: #f8fafc;
+  color: var(--text);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.share-whatsapp:hover {
+  background-color: #25d366;
+  color: #ffffff;
+  border-color: #25d366;
+}
+
+.share-telegram:hover {
+  background-color: #229ed9;
+  color: #ffffff;
+  border-color: #229ed9;
+}
+
+.share-copy:hover {
+  background-color: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+
+.article-cover-figure {
+  margin: var(--space-5) 0 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  max-height: 440px;
+}
+
+.article-main-cover {
+  width: 100%;
+  height: 100%;
+  max-height: 440px;
+  object-fit: cover;
+  display: block;
+}
+
+/* چیدمان ۲ ستونه مقاله و سایدبار چسبان */
+.article-layout-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.article-content-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+.article-body-wrapper {
+  background-color: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6) var(--space-7);
+  box-shadow: var(--shadow-sm);
+  font-size: 1.05rem;
+  line-height: 2;
+  color: var(--text);
+}
+
+.article-heading-anchor {
+  scroll-margin-top: 110px;
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-3);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.article-inline-booking-box {
+  background: linear-gradient(135deg, rgba(14, 116, 144, 0.05) 0%, rgba(10, 80, 160, 0.08) 100%);
+  border: 1.5px solid rgba(14, 116, 144, 0.25);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+
+.booking-box-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background-color: rgba(14, 116, 144, 0.12);
+  color: var(--primary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-3);
+}
+
+.booking-box-badge .icon {
+  width: 15px;
+  height: 15px;
+}
+
+.booking-box-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: var(--space-2);
+}
+
+.booking-box-desc {
+  font-size: 0.92rem;
+  line-height: 1.8;
+  color: var(--muted);
+  margin-bottom: var(--space-5);
+}
+
+.booking-box-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.booking-box-btn, .booking-box-call {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.65rem 1.25rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.booking-box-btn .icon, .booking-box-call .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.article-author-card {
+  display: flex;
+  gap: var(--space-4);
+  background-color: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+}
+
+.author-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--secondary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.author-avatar .icon {
+  width: 24px;
+  height: 24px;
+}
+
+.author-info {
+  flex: 1;
+}
+
+.author-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: var(--space-1);
+}
+
+.author-bio {
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: var(--muted);
+  margin-bottom: var(--space-3);
+}
+
+.author-badges {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.author-badge {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  background: #f1f5f9;
+  color: var(--text);
+  border-radius: var(--radius-full);
+}
+
+/* سایدبار چسبان و ابزارک‌ها */
+.article-sidebar-sticky {
+  position: sticky;
+  top: 95px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.sidebar-widget {
+  background-color: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+}
+
+.widget-title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.widget-title-row .icon {
+  width: 18px;
+  height: 18px;
+  color: var(--primary);
+}
+
+.widget-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.article-toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.toc-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.88rem;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+.toc-link:hover {
+  color: var(--primary);
+  background-color: var(--secondary-light);
+}
+
+.toc-bullet {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--border);
+  flex-shrink: 0;
+}
+
+.toc-link:hover .toc-bullet {
+  background-color: var(--primary);
+}
+
+.toc-level-3 {
+  padding-inline-start: var(--space-4);
+  font-size: 0.82rem;
+}
+
+.article-booking-widget {
+  border: 1.5px solid rgba(14, 116, 144, 0.25);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.widget-highlight-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #059669;
+  background-color: #ecfdf5;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-3);
+}
+
+.widget-highlight-badge .icon {
+  width: 14px;
+  height: 14px;
+}
+
+.booking-widget-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: var(--space-2);
+}
+
+.booking-widget-desc {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--muted);
+  margin-bottom: var(--space-4);
+}
+
+.booking-widget-features {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.booking-feature-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.82rem;
+  color: var(--text);
+}
+
+.booking-widget-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.booking-widget-buttons .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0.65rem 1rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.booking-widget-buttons .btn .icon {
+  width: 17px;
+  height: 17px;
+}
+
+.widget-mini-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+}
+
+.article-cat-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.cat-tag-pill {
+  font-size: 0.8rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-full);
+  background-color: #f1f5f9;
+  color: var(--text);
+  text-decoration: none;
+  transition: all var(--transition-base);
+}
+
+.cat-tag-pill:hover {
+  background-color: var(--primary);
+  color: #ffffff;
+}
+
+/* صفحه اصلی مجله: هدر مدرن، جستجو و فیلتر دسته‌بندی */
+.magazine-hero-banner {
+  text-align: center;
+  margin-bottom: var(--space-6);
+  padding: var(--space-6) var(--space-4);
+}
+
+.magazine-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background-color: var(--secondary-light);
+  color: var(--primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.35rem 1rem;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-3);
+}
+
+.magazine-hero-badge .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.magazine-hero-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--text);
+  margin-bottom: var(--space-3);
+}
+
+.magazine-hero-subtitle {
+  max-width: 720px;
+  margin: 0 auto var(--space-5);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--muted);
+}
+
+.magazine-search-bar-wrap {
+  max-width: 620px;
+  margin: 0 auto var(--space-5);
+}
+
+.magazine-search-input-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.magazine-search-input-box .search-icon {
+  position: absolute;
+  inset-inline-start: 1.25rem;
+  width: 20px;
+  height: 20px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.magazine-search-input-box input {
+  width: 100%;
+  padding-block: 0.85rem;
+  padding-inline-start: 3.25rem;
+  padding-inline-end: 2.75rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-full);
+  background-color: #ffffff;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+}
+
+.magazine-search-input-box input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(10, 80, 160, 0.15);
+}
+
+.magazine-search-input-box .search-clear-btn {
+  position: absolute;
+  inset-inline-end: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+}
+
+.magazine-search-input-box .search-clear-btn .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.magazine-category-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.magazine-cat-pill {
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-family: inherit;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  background-color: #ffffff;
+  color: var(--text);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.magazine-cat-pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background-color: var(--secondary-light);
+}
+
+.magazine-cat-pill.is-active {
+  background-color: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(10, 80, 160, 0.25);
+}
+
+/* نوار ثبت فوری درخواست در بالای مقالات */
+.magazine-urgent-cta-strip {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(249, 115, 22, 0.08));
+  border: 1.5px solid rgba(239, 68, 68, 0.25);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.urgent-cta-info {
+  flex: 1;
+  min-width: 260px;
+}
+
+.urgent-cta-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 700;
+  color: #dc2626;
+  font-size: 0.95rem;
+  margin-bottom: var(--space-1);
+}
+
+.urgent-pulse {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #dc2626;
+  animation: pulse-ring 1.8s infinite;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.5; }
+  100% { transform: scale(0.95); opacity: 1; }
+}
+
+.urgent-cta-text {
+  font-size: 0.88rem;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.urgent-cta-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.urgent-cta-btn {
+  background-color: #dc2626;
+  border-color: #dc2626;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.55rem 1.15rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.urgent-cta-btn:hover {
+  background-color: #b91c1c;
+  border-color: #b91c1c;
+}
+
+.urgent-cta-btn .icon, .urgent-cta-call .icon {
+  width: 17px;
+  height: 17px;
+}
+
+.urgent-cta-call {
+  border-color: #dc2626;
+  color: #dc2626;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.55rem 1.15rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.urgent-cta-call:hover {
+  background-color: rgba(239, 68, 68, 0.08);
+}
+
+/* کارت‌های مقالات */
+.magazine-card-link {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.magazine-card-category-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+}
+
+.magazine-card-meta-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.magazine-card-meta-top span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.magazine-card-meta-top .icon {
+  width: 14px;
+  height: 14px;
+}
+
+.magazine-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-3);
+  margin-top: auto;
+  border-top: 1px solid var(--border);
+}
+
+.magazine-expert-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #059669;
+}
+
+.expert-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #059669;
+}
+
+/* وضعیت خالی بودن نتایج جستجو */
+.magazine-empty-state {
+  text-align: center;
+  padding: var(--space-8) var(--space-4);
+  background-color: #ffffff;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-lg);
+  margin-top: var(--space-6);
+}
+
+.empty-state-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--secondary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-3);
+}
+
+.empty-state-icon .icon {
+  width: 24px;
+  height: 24px;
+}
+
+.empty-state-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+.empty-state-desc {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: var(--space-4);
+}
+
+@media (max-width: 1024px) {
+  .article-layout-grid {
+    grid-template-columns: 1fr;
+  }
+  .article-sidebar-sticky {
+    position: static;
+  }
+}
+
 @media (max-width: 768px) {
-  .magazine-page { padding-top: 8.5rem; }
-  .article-page { padding-top: 8.5rem; }
+  .article-header-banner,
+  .article-body-wrapper {
+    padding: var(--space-5);
+  }
+  .article-main-title {
+    font-size: 1.5rem;
+  }
+  .magazine-hero-title {
+    font-size: 1.7rem;
+  }
 }

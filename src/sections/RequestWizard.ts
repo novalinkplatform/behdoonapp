@@ -1,5 +1,6 @@
 import { serviceCategories, DEFAULT_VEHICLE_TYPES, CATEGORY_VEHICLE_IDS } from '../data/services.ts';
 import { SUBCATEGORY_DETAILS_MAP } from '../components/ServiceCategoriesAccordion.ts';
+import { findSubServiceByAnySlug, findCategory } from '../data/allServicesData.ts';
 import type { VehicleTypeSetting, ServiceCitiesSettings, ServiceCategoriesSettings } from '../utils/dynamicContent.ts';
 import { icons } from '../components/icons.ts';
 import { renderLocationMap, initLocationMap, type LocationMapController, TEHRAN_KEY_AREAS } from '../components/LocationMap.ts';
@@ -219,6 +220,28 @@ export function renderRequestWizard(
       </div>
 
       <div class="wizard-body">
+        <!-- نوار خدمت انتخابی (در گام‌های ۳ تا ۷ نمایش داده می‌شود تا کاربر دقیقاً بداند کدام خدمت را سفارش می‌دهد) -->
+        <div class="wizard-active-service-banner" id="wizard-active-service-banner" hidden>
+          <div class="wizard-active-service-info">
+            <span class="icon wizard-active-service-icon">${icons.shield || icons.checkCircle}</span>
+            <div class="wizard-active-service-texts">
+              <div class="wizard-active-service-path">
+                <span class="wizard-active-cat-tag" id="wizard-active-pill-cat"></span>
+                <span class="wizard-active-sep">›</span>
+                <strong class="wizard-active-sub-tag" id="wizard-active-pill-sub"></strong>
+              </div>
+              <div class="wizard-active-service-pricing">
+                <span class="wizard-active-price-label">${pick('تعرفه پایه مصوب:', 'Base Rate:')}</span>
+                <strong class="wizard-active-price-val" id="wizard-active-pill-price"></strong>
+                <span class="wizard-active-guarantee-badge">✓ ${pick('تضمین کتبی و بیمه کیفیت بهدون', 'Behdoon Warranty')}</span>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm wizard-change-service-action" id="wizard-change-service-btn" title="${pick('تغییر خدمت یا دسته‌بندی', 'Change service or category')}">
+            ${pick('تغییر خدمت', 'Change Service')}
+          </button>
+        </div>
+
         <!-- گام ۱: اول دسته اصلی -->
         <section class="request-panel" data-panel="1">
           <p class="wizard-panel-hint" style="font-size: 0.88rem; color: #64748b; margin-bottom: 14px;">
@@ -1229,6 +1252,45 @@ export function initRequestWizard(
       stepSubdesc.textContent = pick(step.hint, step.hintEn);
     }
 
+    // 3.5. Active Service Banner Sync (steps 3 to 7)
+    const activeServiceBanner = document.getElementById('wizard-active-service-banner');
+    if (activeServiceBanner) {
+      if (currentStep >= 3 && state.vehicleId) {
+        activeServiceBanner.hidden = false;
+        const catEl = document.getElementById('wizard-active-pill-cat');
+        const subEl = document.getElementById('wizard-active-pill-sub');
+        const priceEl = document.getElementById('wizard-active-pill-price');
+        if (catEl) catEl.textContent = categoryLabel();
+        if (subEl) subEl.textContent = vehicleLabel();
+        if (priceEl) {
+          const pricing = resolveVehiclePricing(state.vehicleId);
+          priceEl.textContent = formatToman(pricing.basePrice);
+        }
+      } else {
+        activeServiceBanner.hidden = true;
+      }
+    }
+
+    // Contextual Questions & Hints
+    if (state.vehicleId && currentStep === 3) {
+      questionEl!.textContent = pick(
+        `آیا برای «${vehicleLabel()}» نیاز به تأمین قطعات و لوازم دارید؟`,
+        `Do you need parts provided for ${vehicleLabel()}?`,
+      );
+    } else if (state.vehicleId && currentStep === 5) {
+      questionEl!.textContent = pick(
+        `نشانی و شرح مشکل جهت انجام «${vehicleLabel()}»`,
+        `Address and details for ${vehicleLabel()}`,
+      );
+      const notesInput = document.getElementById('wizard-location-notes') as HTMLTextAreaElement | null;
+      if (notesInput && !notesInput.value) {
+        notesInput.placeholder = pick(
+          `شرح مشکل یا جزئیات مربوط به «${vehicleLabel()}» (مثلاً: طبقه، واحد، محل دقیق در ساختمان...)`,
+          `Describe details for ${vehicleLabel()}...`,
+        );
+      }
+    }
+
     // 4. Footer Hint
     const footerHint = document.getElementById('wizard-footer-hint');
     if (footerHint) {
@@ -1528,6 +1590,11 @@ export function initRequestWizard(
     resetWizard();
   });
 
+  document.getElementById('wizard-change-service-btn')?.addEventListener('click', () => {
+    currentStep = 2; // Return to Subcategory selection
+    updateStepUI();
+  });
+
   function resetWizard(): void {
     currentStep = 1;
     state.serviceId = null;
@@ -1537,6 +1604,9 @@ export function initRequestWizard(
     card.querySelectorAll('[data-wizard-select-cat]').forEach((el) => el.classList.remove('is-selected'));
     const subContainer = document.getElementById('wizard-subcategories-container');
     if (subContainer) subContainer.innerHTML = '';
+
+    const activeBanner = document.getElementById('wizard-active-service-banner');
+    if (activeBanner) activeBanner.hidden = true;
 
     const panel7 = card.querySelector<HTMLElement>('.request-panel[data-panel="7"]');
     if (panel7) {
@@ -1550,7 +1620,80 @@ export function initRequestWizard(
     updateStepUI();
   }
 
-  function openModal(serviceId?: string, vehicleId?: string): void {
+  function resolveServiceParams(param1?: string, param2?: string): { catId?: string; subId?: string } {
+    if (!param1 && !param2) return {};
+
+    const clean1 = (param1 || '').trim();
+    const clean2 = (param2 || '').trim();
+
+    // 1. Both parameters provided
+    if (clean1 && clean2) {
+      const cat = serviceCategories.find((c) => c.id === clean1 || c.label === clean1);
+      if (cat) {
+        const veh = DEFAULT_VEHICLE_TYPES.find((v) => v.id === clean2 || v.label === clean2);
+        return { catId: cat.id, subId: veh ? veh.id : clean2 };
+      }
+      const cat2 = serviceCategories.find((c) => c.id === clean2 || c.label === clean2);
+      if (cat2) {
+        const veh = DEFAULT_VEHICLE_TYPES.find((v) => v.id === clean1 || v.label === clean1);
+        return { catId: cat2.id, subId: veh ? veh.id : clean1 };
+      }
+      return { catId: clean1, subId: clean2 };
+    }
+
+    // 2. Single parameter provided (could be subservice name/slug or category)
+    const single = clean1 || clean2;
+    if (!single) return {};
+
+    // Check direct category ID or label
+    const directCat = serviceCategories.find(
+      (c) => c.id === single || c.label.toLowerCase() === single.toLowerCase(),
+    );
+    if (directCat) {
+      return { catId: directCat.id };
+    }
+
+    // Check direct vehicle type in DEFAULT_VEHICLE_TYPES
+    const directVehicle = DEFAULT_VEHICLE_TYPES.find(
+      (v) => v.id === single || v.label.toLowerCase() === single.toLowerCase(),
+    );
+    if (directVehicle) {
+      for (const [cId, vIds] of Object.entries(CATEGORY_VEHICLE_IDS)) {
+        if (vIds.includes(directVehicle.id)) {
+          return { catId: cId, subId: directVehicle.id };
+        }
+      }
+      return { catId: directVehicle.icon || 'plumbing', subId: directVehicle.id };
+    }
+
+    // Search catalog via findSubServiceByAnySlug
+    const catalogMatch = findSubServiceByAnySlug(single);
+    if (catalogMatch) {
+      return { catId: catalogMatch.category.id, subId: catalogMatch.subService.id };
+    }
+
+    // Search catalog category
+    const catMatch = findCategory(single);
+    if (catMatch) {
+      return { catId: catMatch.id };
+    }
+
+    // Partial/fuzzy match on subservice label
+    const fuzzyVehicle = DEFAULT_VEHICLE_TYPES.find(
+      (v) => v.label.includes(single) || single.includes(v.label),
+    );
+    if (fuzzyVehicle) {
+      for (const [cId, vIds] of Object.entries(CATEGORY_VEHICLE_IDS)) {
+        if (vIds.includes(fuzzyVehicle.id)) {
+          return { catId: cId, subId: fuzzyVehicle.id };
+        }
+      }
+    }
+
+    return {};
+  }
+
+  function openModal(param1?: string, param2?: string): void {
     const modalEl = document.getElementById('request-wizard-modal');
     if (modalEl) {
       if (modalEl.parentElement !== document.body) {
@@ -1561,22 +1704,24 @@ export function initRequestWizard(
       document.body.classList.add('modal-open');
     }
 
-    if (serviceId && vehicleId) {
-      state.serviceId = serviceId;
-      state.vehicleId = vehicleId;
+    const { catId, subId } = resolveServiceParams(param1, param2);
+
+    if (catId && subId) {
+      state.serviceId = catId;
+      state.vehicleId = subId;
       card.querySelectorAll('[data-wizard-select-cat]').forEach((el) => {
-        el.classList.toggle('is-selected', (el as HTMLElement).dataset.wizardSelectCat === serviceId);
+        el.classList.toggle('is-selected', (el as HTMLElement).dataset.wizardSelectCat === catId);
       });
       renderSubcategoriesForSelectedCat();
       card.querySelectorAll('[data-wizard-subcat]').forEach((el) => {
-        el.classList.toggle('is-selected', (el as HTMLElement).dataset.wizardSubcat === vehicleId);
+        el.classList.toggle('is-selected', (el as HTMLElement).dataset.wizardSubcat === subId);
       });
-      currentStep = 3; // Direct jump to Materials
-    } else if (serviceId) {
-      state.serviceId = serviceId;
+      currentStep = 3; // Direct jump to Materials & Details
+    } else if (catId) {
+      state.serviceId = catId;
       state.vehicleId = null;
       card.querySelectorAll('[data-wizard-select-cat]').forEach((el) => {
-        el.classList.toggle('is-selected', (el as HTMLElement).dataset.wizardSelectCat === serviceId);
+        el.classList.toggle('is-selected', (el as HTMLElement).dataset.wizardSelectCat === catId);
       });
       renderSubcategoriesForSelectedCat();
       currentStep = 2; // Direct jump to Subcategories

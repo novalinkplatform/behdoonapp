@@ -33,6 +33,12 @@ import { fetchOrdersByPhone } from './utils/api.ts';
 import { extractSavedAddresses } from './utils/addresses.ts';
 import { setGeocodeMapConfig } from './utils/geocode.ts';
 
+declare global {
+  interface Window {
+    openRequestModal?: (param1?: string, param2?: string) => void;
+  }
+}
+
 // وقتی خریدار هنوز چیدمان صفحه اصلی را شخصی‌سازی نکرده، این چیدمان نمونه (نه ثابت و نه اجباری) نمایش داده
 // می‌شود تا صفحه از همان اول خالی به نظر نرسد — ولی از دید سیستم، این‌ها هم فقط چند بلوک عادی‌اند که از تنظیمات
 // سایت کاملاً قابل ویرایش، جابه‌جایی یا حذف‌اند، نه نوع بخش ثابت و مخصوص.
@@ -139,6 +145,28 @@ async function init(): Promise<void> {
   initFooter(settings);
   setGeocodeMapConfig(settings.map);
   const wizardController = initRequestWizard(vehicleTypes, settings.service_cities, settings.map, settings.site_name);
+  
+  // تعریف متد سراسری باز کردن مودال ثبت درخواست
+  window.openRequestModal = (param1?: string, param2?: string) => {
+    wizardController.openModal(param1, param2);
+  };
+
+  // اتصال سراسری کلیک روی تمامی دکمه‌های ثبت درخواست در سراسر صفحه اصلی
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement | null;
+    if (!target) return;
+
+    const btn = target.closest<HTMLElement>(
+      '[data-service-cat], [data-service-sub], [data-open-wizard], [data-order-service], .btn-order, .service-order-trigger, .header-cta, .btn-hero-primary, .request-wizard-open-trigger, a[href="#request"], a[href="/#request"]'
+    );
+    if (!btn || btn.closest('#request-wizard-modal')) return;
+
+    e.preventDefault();
+    const catId = btn.getAttribute('data-service-cat') || btn.getAttribute('data-service-id') || undefined;
+    const subId = btn.getAttribute('data-service-sub') || btn.getAttribute('data-order-service') || btn.getAttribute('data-vehicle-id') || undefined;
+    wizardController.openModal(catId, subId);
+  });
+
   initServiceCategoriesAccordion((catId, vehicleId) => {
     wizardController.openModal(catId, vehicleId);
   });

@@ -35,7 +35,7 @@ import { initBehaviorTracking } from './utils/analytics.ts';
 
 declare global {
   interface Window {
-    openRequestModal?: (serviceName?: string) => void;
+    openRequestModal?: (param1?: string, param2?: string) => void;
   }
 }
 
@@ -327,18 +327,9 @@ async function init(): Promise<void> {
   setGeocodeMapConfig(settings.map);
   const wizardController = initRequestWizard(vehicleTypes, settings.service_cities, settings.map, settings.site_name);
 
-  // تعریف متد سراسری openRequestModal جهت سازگاری با کدهای قبلی
-  window.openRequestModal = (serviceName?: string) => {
-    if (!serviceName) {
-      wizardController.openModal();
-      return;
-    }
-    const match = findSubServiceByAnySlug(serviceName);
-    if (match) {
-      wizardController.openModal(match.category.id, match.subService.id);
-    } else {
-      wizardController.openModal();
-    }
+  // تعریف متد سراسری openRequestModal جهت سازگاری کامل
+  window.openRequestModal = (param1?: string, param2?: string) => {
+    wizardController.openModal(param1, param2);
   };
 
   // اتصال دکمه‌های ثبت درخواست در سراسر صفحات خدمات
@@ -346,12 +337,14 @@ async function init(): Promise<void> {
     const target = e.target as HTMLElement | null;
     if (!target) return;
 
-    const btn = target.closest<HTMLElement>('[data-service-cat], [data-service-sub], [data-open-wizard], [data-order-service]');
-    if (!btn) return;
+    const btn = target.closest<HTMLElement>(
+      '[data-service-cat], [data-service-sub], [data-open-wizard], [data-order-service], .btn-order, .service-order-trigger, .btn-hero-primary, .header-cta, .request-wizard-open-trigger, a[href="#request"], a[href="/#request"]'
+    );
+    if (!btn || btn.closest('#request-wizard-modal')) return;
 
     e.preventDefault();
-    const catId = btn.getAttribute('data-service-cat') || (route.category ? route.category.id : undefined);
-    const subId = btn.getAttribute('data-service-sub') || btn.getAttribute('data-order-service') || (route.subService ? route.subService.id : undefined);
+    const catId = btn.getAttribute('data-service-cat') || btn.getAttribute('data-service-id') || (route.category ? route.category.id : undefined);
+    const subId = btn.getAttribute('data-service-sub') || btn.getAttribute('data-order-service') || btn.getAttribute('data-vehicle-id') || (route.subService ? route.subService.id : undefined);
 
     wizardController.openModal(catId, subId);
   });

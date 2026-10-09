@@ -3677,3 +3677,144 @@ body.modal-open {
   max-width: 520px;
   box-shadow: 0 2px 8px rgba(22, 101, 52, 0.06);
 }
+
+/* ==========================================================================
+   Active Selected Service Banner in Request Wizard (Steps 3-7)
+   ========================================================================== */
+.wizard-active-service-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #f5f3ff 0%, #faf5ff 100%);
+  border: 1.5px solid #ddd6fe;
+  border-radius: 14px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 10px rgba(124, 58, 237, 0.08);
+  transition: all 0.25s ease;
+}
+
+.wizard-active-service-banner[hidden] {
+  display: none !important;
+}
+
+.wizard-active-service-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.wizard-active-service-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #7c3aed, #9333ea);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+}
+
+.wizard-active-service-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.wizard-active-service-texts {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.wizard-active-service-path {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.84rem;
+  color: #6d28d9;
+  flex-wrap: wrap;
+}
+
+.wizard-active-cat-tag {
+  font-weight: 700;
+  color: #7c3aed;
+}
+
+.wizard-active-sep {
+  color: #c4b5fd;
+  font-weight: 800;
+}
+
+.wizard-active-sub-tag {
+  font-weight: 900;
+  color: #3b0764;
+  font-size: 0.98rem;
+}
+
+.wizard-active-service-pricing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #64748b;
+  flex-wrap: wrap;
+}
+
+.wizard-active-price-val {
+  color: #15803d;
+  font-weight: 800;
+}
+
+.wizard-active-guarantee-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.wizard-change-service-action {
+  font-size: 0.8rem;
+  padding: 6px 14px;
+  border: 1.5px solid #c4b5fd;
+  color: #6d28d9;
+  background: #ffffff;
+  border-radius: 10px;
+  white-space: nowrap;
+  font-weight: 800;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.wizard-change-service-action:hover {
+  background: #f5f3ff;
+  border-color: #7c3aed;
+  color: #5b21b6;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+  .wizard-active-service-banner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+  .wizard-change-service-action {
+    width: 100%;
+    text-align: center;
+  }
+}
