@@ -94,4 +94,10 @@ export const icons = {
   paperclip: `<svg ${ICON_ATTRS}><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>`,
   doubleCheck: `<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m1.5 8.5 3.5 3.5 8-8"/><path d="m5.5 8.5 3.5 3.5 7-7"/></svg>`,
   singleCheck: `<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2.5 8.5 4 4 8-8"/></svg>`,
+  sendArrow: `<svg ${ICON_ATTRS}><path d="M12 19V5M5 12l7-7 7 7"/></svg>`,
+  copy: `<svg ${ICON_ATTRS}><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`,
+  sparkles: `<svg ${ICON_ATTRS}><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>`,
+  sidebarToggle: `<svg ${ICON_ATTRS}><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>`,
+  check: `<svg ${ICON_ATTRS}><polyline points="20 6 9 17 4 12"/></svg>`,
 };
+

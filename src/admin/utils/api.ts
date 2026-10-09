@@ -1779,25 +1779,15 @@ export async function disconnectDrive(): Promise<void> {
   if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'قطع اتصال ناموفق بود.');
 }
 
-// ===== AI assistant =====
+// ===== AI assistant (ChatGPT-like Hoshvareh) =====
 
 export interface AiMessage {
-  role: 'system' | 'user' | 'assistant' | 'tool';
-  content: string | null;
-  tool_calls?: { id: string; type: 'function'; function: { name: string; arguments: string } }[];
-  tool_call_id?: string;
-}
-
-export interface AiPendingAction {
-  toolCallId: string;
-  tool: string;
-  args: Record<string, unknown>;
-  summary: string;
+  role: 'system' | 'user' | 'assistant';
+  content: string;
 }
 
 export interface AiChatResponse {
   messages: AiMessage[];
-  pendingAction: AiPendingAction | null;
 }
 
 export async function sendAiChatMessage(messages: AiMessage[], conversationId: number): Promise<AiChatResponse> {
@@ -1808,17 +1798,6 @@ export async function sendAiChatMessage(messages: AiMessage[], conversationId: n
   });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'ارتباط با دستیار هوش مصنوعی ناموفق بود.');
-  return body as AiChatResponse;
-}
-
-export async function executeAiAction(messages: AiMessage[], action: AiPendingAction, conversationId: number): Promise<AiChatResponse> {
-  const res = await authedFetch('/api/admin/ai/execute', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages, toolCallId: action.toolCallId, tool: action.tool, args: action.args, conversationId }),
-  });
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(typeof body?.error === 'string' ? body.error : 'اجرای اقدام ناموفق بود.');
   return body as AiChatResponse;
 }
 
