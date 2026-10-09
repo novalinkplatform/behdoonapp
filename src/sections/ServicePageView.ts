@@ -181,10 +181,11 @@ export function renderServicesDirectoryView(_settings: any): string {
                       data-service-sub="${sub.id}"
                     >
                       <span class="icon">${icons.plusCircle}</span>
-                      <span>${pick('ثبت درخواست', 'Order')}</span>
+                      <span>${pick('ثبت درخواست آنلاین', 'Order Online')}</span>
                     </button>
                     <a href="/services/${cat.slug}/${sub.slug}" class="btn-details">
-                      <span>${pick('جزئیات و تعرفه', 'Details')}</span>
+                      <span>${pick('توضیحات و تعرفه', 'Details & Pricing')}</span>
+                      <span class="icon">${icons.chevronLeft}</span>
                     </a>
                   </div>
                 </div>
@@ -317,10 +318,11 @@ export function renderCategoryPageView(category: ServiceCategoryDetail, _setting
                   data-service-sub="${sub.id}"
                 >
                   <span class="icon">${icons.plusCircle}</span>
-                  <span>${pick('ثبت درخواست آنلاین', 'Order')}</span>
+                  <span>${pick('ثبت درخواست آنلاین', 'Order Online')}</span>
                 </button>
                 <a href="/services/${category.slug}/${sub.slug}" class="btn-details">
-                  <span>${pick('توضیحات و تعرفه', 'Details')}</span>
+                  <span>${pick('توضیحات و تعرفه', 'Details & Pricing')}</span>
+                  <span class="icon">${icons.chevronLeft}</span>
                 </a>
               </div>
             </div>
