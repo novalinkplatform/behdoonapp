@@ -35,7 +35,7 @@ function getActiveStageIndex(status: string): number {
 
 export function openCustomerTrackingModal(
   orderId: number | string,
-  options?: { onUpdate?: () => void }
+  options?: { trackingCode?: string; phone?: string; onUpdate?: () => void }
 ): void {
   const existing = document.querySelector('.customer-tracking-modal-backdrop');
   if (existing) existing.remove();
@@ -79,7 +79,7 @@ export function openCustomerTrackingModal(
   const bodyEl = backdrop.querySelector('#tracking-modal-body') as HTMLElement;
 
   function loadDetails(): void {
-    fetchCustomerOrderDetail(orderId)
+    fetchCustomerOrderDetail(orderId, options?.trackingCode, options?.phone)
       .then((detail) => {
         renderModalContent(detail);
       })

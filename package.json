@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && node scripts/inject-site-origin.mjs",
+    "build": "node scripts/generate-sitemap.mjs && tsc && vite build && node scripts/inject-site-origin.mjs",
     "build:demo": "cross-env SITE_ORIGIN=https://behbarapp.ir VITE_API_BASE_URL=https://api.behbarapp.ir VITE_DEMO_SALE_URL=https://behbarapp.ir/sale VITE_DEMO_PROMO_URL=https://zhaket.com npm run build",
     "preview": "vite preview",
     "deploy": "npm run build && wrangler pages deploy"

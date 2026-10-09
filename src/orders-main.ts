@@ -421,7 +421,7 @@ async function init(): Promise<void> {
         btn.innerHTML = `<span class="orders-spinner" style="width: 14px; height: 14px;" aria-hidden="true"></span><span>${pick('آماده‌سازی سند...', 'Preparing...')}</span>`;
 
         try {
-          const detail = await fetchCustomerOrderDetail(id);
+          const detail = await fetchCustomerOrderDetail(id, order.trackingCode, currentPhone);
           printCustomerOrderSheet(detail);
         } catch {
           printCustomerOrderSheet(order);
@@ -452,8 +452,11 @@ async function init(): Promise<void> {
     document.querySelectorAll<HTMLButtonElement>('[data-track-order]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const id = Number(btn.dataset.trackOrder);
+        const order = allOrders.find((o) => o.id === id);
         if (id) {
           openCustomerTrackingModal(id, {
+            trackingCode: order?.trackingCode,
+            phone: currentPhone,
             onUpdate: () => {
               if (currentPhone) search(currentPhone);
             },

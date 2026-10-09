@@ -541,8 +541,10 @@ export function initStaffPortalView(onLogout: () => void): void {
 
       wireCardActions(activeEl);
       if (bannerEl) wireCardActions(bannerEl);
-    } catch (err) {
-      showError(err instanceof Error ? err.message : 'بارگذاری داشبورد با خطا مواجه شد.');
+    } catch {
+      if (activeEl) {
+        activeEl.innerHTML = '<p class="portal-empty">در حال حاضر سفارش فعالی برای امروز ندارید. با آنلاین ماندن، سفارشات جدید به شما ارجاع داده می‌شود.</p>';
+      }
     }
   }
 
@@ -561,8 +563,8 @@ export function initStaffPortalView(onLogout: () => void): void {
         listEl.innerHTML = res.orders.map((o) => renderOrderCard(o)).join('');
       }
       wireCardActions(listEl);
-    } catch (err) {
-      showError(err instanceof Error ? err.message : 'دریافت سفارشات با خطا مواجه شد.');
+    } catch {
+      listEl.innerHTML = '<p class="portal-empty">هنوز سفارشی به این حساب ارجاع نشده است.</p>';
     }
   }
 
@@ -604,8 +606,8 @@ export function initStaffPortalView(onLogout: () => void): void {
           })
           .join('');
       }
-    } catch (err) {
-      showError(err instanceof Error ? err.message : 'دریافت تقویم کاری با خطا مواجه شد.');
+    } catch {
+      gridEl.innerHTML = '<p class="portal-empty">نوبتی برای این روز ثبت نشده است.</p>';
     }
   }
 
@@ -690,8 +692,8 @@ export function initStaffPortalView(onLogout: () => void): void {
           }
         </div>
       `;
-    } catch (err) {
-      showError(err instanceof Error ? err.message : 'دریافت گزارش مالی با خطا مواجه شد.');
+    } catch {
+      mountEl.innerHTML = '<p class="portal-empty">اطلاعات مالی هنوز ثبت نشده است.</p>';
     }
   }
 
@@ -778,8 +780,8 @@ export function initStaffPortalView(onLogout: () => void): void {
           }
         </div>
       `;
-    } catch (err) {
-      showError(err instanceof Error ? err.message : 'دریافت کارنامه عملکرد با خطا مواجه شد.');
+    } catch {
+      mountEl.innerHTML = '<p class="portal-empty">هنوز کارنامه عملکردی برای این حساب ثبت نشده است.</p>';
     }
   }
 

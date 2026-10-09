@@ -104,18 +104,173 @@ function resolveCurrentRoute(): {
   return { type: 'directory' };
 }
 
+function ensureMeta(name: string, attr: 'name' | 'property' = 'name'): HTMLMetaElement {
+  let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${name}"]`);
+  if (!el) {
+    el = document.createElement('meta');
+    el.setAttribute(attr, name);
+    document.head.appendChild(el);
+  }
+  return el;
+}
+
 function updateSeoMeta(route: ReturnType<typeof resolveCurrentRoute>, siteName: string) {
   const brand = siteName || 'بهدون';
-  if (route.type === 'subservice' && route.subService) {
-    document.title = `${route.subService.name} در تهران | ${brand}`;
-    const desc = document.querySelector('meta[name="description"]');
-    if (desc) desc.setAttribute('content', route.subService.shortDesc || '');
+  const origin = location.origin.replace(/\/$/, '');
+
+  let title = `کاتالوگ خدمات تخصصی ساختمان در تهران | ${brand}`;
+  let description = `کاتالوگ جامع ۵۳ خدمت تخصصی ساختمانی در تهران شامل لوله‌کشی، تأسیسات، سرمایش و گرمایش، برقکاری و بازسازی با ضمانت کتبی کیفیت و فاکتور رسمی بهدون.`;
+  let canonicalUrl = `${origin}/services`;
+  const jsonLdObjects: any[] = [];
+
+  if (route.type === 'subservice' && route.subService && route.category) {
+    const sub = route.subService;
+    const cat = route.category;
+    title = `${sub.name} در تهران | قیمت اتحادیه و اعزام فوری | ${brand}`;
+    description = `${sub.shortDesc || ''} اعزام فوری تکنسین احراز صلاحیت‌شده در تهران با نرخ اتحادیه، فاکتور رسمی و ضمانت کتبی کیفیت بهدون. پشتیبانی: ۰۹۳۳۳۲۵۶۸۸۵.`;
+    canonicalUrl = `${origin}/services/${cat.slug}/${sub.slug}`;
+
+    // BreadcrumbList Schema
+    jsonLdObjects.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'صفحه اصلی', item: `${origin}/` },
+        { '@type': 'ListItem', position: 2, name: 'خدمات', item: `${origin}/services` },
+        { '@type': 'ListItem', position: 3, name: cat.title, item: `${origin}/services/${cat.slug}` },
+        { '@type': 'ListItem', position: 4, name: sub.name, item: canonicalUrl },
+      ],
+    });
+
+    // Service Schema
+    jsonLdObjects.push({
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      name: `${sub.name} در تهران`,
+      serviceType: cat.title,
+      description,
+      provider: {
+        '@type': 'HomeAndConstructionBusiness',
+        name: brand,
+        url: origin,
+        telephone: '+989333256885',
+        image: `${origin}/og-image.png`,
+      },
+      areaServed: {
+        '@type': 'City',
+        name: 'Tehran',
+      },
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: cat.title,
+        itemListElement: [
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: sub.name,
+            },
+            priceCurrency: 'IRR',
+            price: (sub.basePrice || 1500000) * 10,
+            availability: 'https://schema.org/InStock',
+          },
+        ],
+      },
+    });
+
+    // FAQPage Schema if category has FAQ
+    if (cat.faq && cat.faq.length > 0) {
+      jsonLdObjects.push({
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: cat.faq.map((item: { q: string; a: string }) => ({
+          '@type': 'Question',
+          name: item.q,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: item.a,
+          },
+        })),
+      });
+    }
   } else if (route.type === 'category' && route.category) {
-    document.title = `${route.category.title} | ${brand}`;
-    const desc = document.querySelector('meta[name="description"]');
-    if (desc) desc.setAttribute('content', route.category.metaDesc || '');
-  } else if (route.type === 'directory') {
-    document.title = `کاتالوگ کلیه خدمات تخصصی ساختمان در تهران | ${brand}`;
+    const cat = route.category;
+    title = `${cat.title} در تهران | خدمات تخصصی با ضمانت کتبی | ${brand}`;
+    description = `${cat.metaDesc || cat.subtitle || ''} اعزام فوری متخصصین تأسیسات در کلیه مناطق تهران با نرخ مصوب، فاکتور رسمی و ضمانت کتبی کیفیت بهدون.`;
+    canonicalUrl = `${origin}/services/${cat.slug}`;
+
+    // BreadcrumbList Schema
+    jsonLdObjects.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'صفحه اصلی', item: `${origin}/` },
+        { '@type': 'ListItem', position: 2, name: 'خدمات', item: `${origin}/services` },
+        { '@type': 'ListItem', position: 3, name: cat.title, item: canonicalUrl },
+      ],
+    });
+
+    // Service Schema for Category
+    jsonLdObjects.push({
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      name: `${cat.title} در تهران`,
+      description,
+      provider: {
+        '@type': 'HomeAndConstructionBusiness',
+        name: brand,
+        url: origin,
+        telephone: '+989333256885',
+      },
+      areaServed: {
+        '@type': 'City',
+        name: 'Tehran',
+      },
+    });
+
+    // FAQPage Schema
+    if (cat.faq && cat.faq.length > 0) {
+      jsonLdObjects.push({
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: cat.faq.map((item: { q: string; a: string }) => ({
+          '@type': 'Question',
+          name: item.q,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: item.a,
+          },
+        })),
+      });
+    }
+  }
+
+  document.title = title;
+  ensureMeta('description').setAttribute('content', description);
+  ensureMeta('og:title', 'property').setAttribute('content', title);
+  ensureMeta('og:description', 'property').setAttribute('content', description);
+  ensureMeta('og:url', 'property').setAttribute('content', canonicalUrl);
+  ensureMeta('twitter:title').setAttribute('content', title);
+  ensureMeta('twitter:description').setAttribute('content', description);
+
+  let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+  if (!canonical) {
+    canonical = document.createElement('link');
+    canonical.rel = 'canonical';
+    document.head.appendChild(canonical);
+  }
+  canonical.href = canonicalUrl;
+
+  // Inject Dynamic Schema.org JSON-LD
+  if (jsonLdObjects.length > 0) {
+    document.querySelectorAll<HTMLScriptElement>('script[data-dynamic-seo="true"]').forEach((s) => s.remove());
+    jsonLdObjects.forEach((obj) => {
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.dataset.dynamicSeo = 'true';
+      script.textContent = JSON.stringify(obj);
+      document.head.appendChild(script);
+    });
   }
 }
 

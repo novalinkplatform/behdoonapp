@@ -105,6 +105,7 @@ export function applyArticleSeo(article: DynamicArticle): void {
     ensureMeta('twitter:image').setAttribute('content', article.coverImageUrl);
   }
 
+  const origin = location.origin.replace(/\/$/, '');
   const jsonLd = document.createElement('script');
   jsonLd.type = 'application/ld+json';
   jsonLd.textContent = JSON.stringify({
@@ -112,11 +113,43 @@ export function applyArticleSeo(article: DynamicArticle): void {
     '@type': 'Article',
     headline: title,
     description,
-    ...(article.coverImageUrl ? { image: article.coverImageUrl } : {}),
-    ...(article.publishedAt ? { datePublished: article.publishedAt } : {}),
-    mainEntityOfPage: canonicalUrl,
+    inLanguage: 'fa',
+    ...(article.coverImageUrl ? { image: article.coverImageUrl.startsWith('http') ? article.coverImageUrl : `${origin}${article.coverImageUrl}` } : { image: `${origin}/og-image.png` }),
+    datePublished: article.publishedAt || new Date().toISOString(),
+    dateModified: article.publishedAt || new Date().toISOString(),
+    author: {
+      '@type': 'Organization',
+      name: 'تحریریه تخصصی بهدون',
+      url: origin,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'بهدون',
+      url: origin,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${origin}/icon-512.png`,
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': canonicalUrl,
+    },
   });
   document.head.appendChild(jsonLd);
+
+  const breadcrumbLd = document.createElement('script');
+  breadcrumbLd.type = 'application/ld+json';
+  breadcrumbLd.textContent = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'صفحه اصلی', item: `${origin}/` },
+      { '@type': 'ListItem', position: 2, name: 'مجله تخصصی بهدون', item: `${origin}/magazine` },
+      { '@type': 'ListItem', position: 3, name: title, item: canonicalUrl },
+    ],
+  });
+  document.head.appendChild(breadcrumbLd);
 }
 
 export function applyPageSeo(page: DynamicCustomPage): void {

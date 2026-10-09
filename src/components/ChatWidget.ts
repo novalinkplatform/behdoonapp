@@ -138,7 +138,7 @@ export function renderChatPanel(): string {
         <form class="chat-onboarding-form" id="chat-onboarding-form">
           <div class="chat-onboarding-field">
             <label for="chat-onboarding-name">${pick('نام و نام خانوادگی', 'Full Name')}</label>
-            <input type="text" id="chat-onboarding-name" required placeholder="${pick('مثلاً علی رضایی', 'e.g. Ali Rezaei')}" autocomplete="name" />
+            <input type="text" id="chat-onboarding-name" required placeholder="${pick('نام و نام خانوادگی شما', 'Your full name')}" autocomplete="name" />
           </div>
           <div class="chat-onboarding-field">
             <label for="chat-onboarding-phone">${pick('شماره همراه (الزامی)', 'Mobile Phone (Required)')}</label>

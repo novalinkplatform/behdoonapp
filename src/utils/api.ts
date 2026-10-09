@@ -171,13 +171,21 @@ export interface CustomerOrderDetail {
   };
 }
 
-export async function fetchCustomerOrderDetail(id: number | string): Promise<CustomerOrderDetail> {
+export async function fetchCustomerOrderDetail(
+  id: number | string,
+  trackingCode?: string,
+  phone?: string
+): Promise<CustomerOrderDetail> {
   const token = getCustomerToken();
   const headers: Record<string, string> = {};
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
-  const res = await fetch(`${API_BASE_URL}/api/customer/orders/${id}`, { headers });
+  const params = new URLSearchParams();
+  if (trackingCode) params.set('code', trackingCode);
+  if (phone) params.set('phone', phone);
+  const qs = params.toString() ? `?${params.toString()}` : '';
+  const res = await fetch(`${API_BASE_URL}/api/customer/orders/${id}${qs}`, { headers });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
     throw new Error(typeof body?.error === 'string' ? body.error : pick('دریافت اطلاعات سفارش ناموفق بود.', 'Failed to fetch order detail.'));

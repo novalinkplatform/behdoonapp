@@ -4051,9 +4051,10 @@ export default {
       if (pathname.startsWith('/api/customer/orders/') && !pathname.endsWith('/cancel') && request.method === 'GET') {
         const auth = getCustomerAuth(request);
         const staff = isStaffAuthed(request);
-        if (!auth && !staff) return jsonResponse({ error: 'احراز هویت مشتری الزامی است.' }, 401);
+        const codeQuery = url.searchParams.get('code')?.trim() || url.searchParams.get('trackingCode')?.trim();
+        const phoneQuery = url.searchParams.get('phone')?.trim();
 
-        const idParam = pathname.split('/').pop();
+        const idParam = pathname.split('/').pop()?.trim();
         const orderId = Number(idParam);
         if (!orderId && !idParam) return jsonResponse({ error: 'شناسه سفارش نامعتبر است.' }, 400);
 
@@ -4083,12 +4084,13 @@ export default {
 
         if (!order) return jsonResponse({ error: 'سفارش یافت نشد.' }, 404);
 
-        // Strict Anti-IDOR Check: customer must own the order unless staff
-        if (!staff) {
-          const isOwner = auth && (order.customer_id === auth.id || order.phone === auth.phone);
-          if (!isOwner) {
-            return jsonResponse({ error: 'دسترسی غیرمجاز به این سفارش.', code: 'FORBIDDEN_ACCESS' }, 403);
-          }
+        // Access Authorization: staff, JWT customer owner, secret tracking code holder, or phone query match
+        const hasTrackingCode = Boolean((idParam && idParam === order.tracking_code) || (codeQuery && codeQuery === order.tracking_code));
+        const hasPhoneMatch = Boolean(phoneQuery && (phoneQuery === order.phone || phoneQuery === order.phone?.replace(/^0/, '')));
+        const isOwner = Boolean(auth && (order.customer_id === auth.id || order.phone === auth.phone));
+
+        if (!staff && !isOwner && !hasTrackingCode && !hasPhoneMatch) {
+          return jsonResponse({ error: 'احراز هویت یا کد رهگیری معتبر الزامی است.', code: 'UNAUTHORIZED' }, 401);
         }
 
         // Provider phone privacy: mask phone if order is terminated
@@ -4099,7 +4101,7 @@ export default {
         if (providerPhone && !isActive && !staff) {
           providerPhone = providerPhone.length >= 11
             ? providerPhone.slice(0, 4) + '***' + providerPhone.slice(-4)
-            : '0912***0000';
+            : '۰۹۳۳***۶۸۸۵';
         }
 
         // Fetch quotes
@@ -8572,6 +8574,26 @@ export default {
 
     if (pathname.startsWith('/page/') && !pathname.includes('.')) {
       return serveHtmlWithMeta('/page-template.html', request);
+    }
+
+    if (pathname === '/sitemap.xml') {
+      const sitemapRes = await env.ASSETS.fetch(request);
+      if (sitemapRes.ok) {
+        const h = new Headers(sitemapRes.headers);
+        h.set('Content-Type', 'application/xml; charset=utf-8');
+        h.set('Cache-Control', 'public, max-age=3600');
+        return new Response(sitemapRes.body, { status: 200, headers: h });
+      }
+    }
+
+    if (pathname === '/robots.txt') {
+      const robotsRes = await env.ASSETS.fetch(request);
+      if (robotsRes.ok) {
+        const h = new Headers(robotsRes.headers);
+        h.set('Content-Type', 'text/plain; charset=utf-8');
+        h.set('Cache-Control', 'public, max-age=3600');
+        return new Response(robotsRes.body, { status: 200, headers: h });
+      }
     }
 
       const defaultAssetRes = await env.ASSETS.fetch(request);
