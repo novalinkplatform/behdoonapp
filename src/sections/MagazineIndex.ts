@@ -160,7 +160,7 @@ export function renderMagazineIndex(articles: DynamicArticle[]): string {
           <div class="urgent-cta-actions">
             <button
               type="button"
-              class="btn btn-primary urgent-cta-btn"
+              class="btn btn-primary urgent-cta-btn request-wizard-open-trigger"
               onclick="if(window.openRequestModal){ window.openRequestModal(); } else { location.href='/#request'; }"
             >
               <span class="icon">${icons.plusCircle}</span>

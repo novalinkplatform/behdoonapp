@@ -205,7 +205,9 @@ export function renderArticleView(article: DynamicArticle): string {
               <div class="booking-box-actions">
                 <button
                   type="button"
-                  class="btn btn-primary booking-box-btn"
+                  class="btn btn-primary booking-box-btn request-wizard-open-trigger"
+                  data-service-cat="${bookingCategoryId}"
+                  ${bookingSubId ? `data-service-sub="${bookingSubId}"` : ''}
                   onclick="if(window.openRequestModal){ window.openRequestModal('${bookingCategoryId}'${bookingSubId ? `, '${bookingSubId}'` : ''}); } else { location.href='/#request'; }"
                 >
                   <span class="icon">${icons.plusCircle}</span>
@@ -304,7 +306,9 @@ export function renderArticleView(article: DynamicArticle): string {
                 <div class="booking-widget-buttons">
                   <button
                     type="button"
-                    class="btn btn-primary w-full booking-widget-submit"
+                    class="btn btn-primary w-full booking-widget-submit request-wizard-open-trigger"
+                    data-service-cat="${bookingCategoryId}"
+                    ${bookingSubId ? `data-service-sub="${bookingSubId}"` : ''}
                     onclick="if(window.openRequestModal){ window.openRequestModal('${bookingCategoryId}'${bookingSubId ? `, '${bookingSubId}'` : ''}); } else { location.href='/#request'; }"
                   >
                     <span class="icon">${icons.plusCircle}</span>

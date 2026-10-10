@@ -218,6 +218,7 @@ export function renderRequestWizard(
         <div class="wizard-progress-bar"><div class="wizard-progress-fill" id="wizard-progress-fill"></div></div>
         <span class="wizard-progress-text" id="wizard-progress-text"></span>
       </div>
+      <h3 class="wizard-step-question" id="wizard-question" style="display: none !important;"></h3>
 
       <div class="wizard-body">
         <!-- نوار خدمت انتخابی (در گام‌های ۳ تا ۷ نمایش داده می‌شود تا کاربر دقیقاً بداند کدام خدمت را سفارش می‌دهد) -->
@@ -677,22 +678,13 @@ export function initRequestWizard(
     resetWizard: () => {},
   };
 
-  if (
-    !cardEl ||
-    !questionEl ||
-    !progressFill ||
-    !progressText ||
-    !backBtn ||
-    !nextBtn ||
-    !footer ||
-    !nameInput ||
-    !nameError ||
-    !phoneInput ||
-    !phoneError ||
-    !submitError ||
-    !trackingCodeEl ||
-    !finalSummaryEl
-  ) {
+  if (!cardEl || !backBtn || !nextBtn || !footer) {
+    console.error('[RequestWizard] Critical elements missing in DOM:', {
+      cardEl: !!cardEl,
+      backBtn: !!backBtn,
+      nextBtn: !!nextBtn,
+      footer: !!footer,
+    });
     return noop;
   }
   const card = cardEl;
@@ -700,8 +692,8 @@ export function initRequestWizard(
   // Cached name and phone from local storage
   const cachedName = getLastName();
   const cachedPhone = getLastPhone();
-  if (cachedName) nameInput.value = cachedName;
-  if (cachedPhone) phoneInput.value = cachedPhone;
+  if (cachedName && nameInput) nameInput.value = cachedName;
+  if (cachedPhone && phoneInput) phoneInput.value = cachedPhone;
 
   let locationMap: ReturnType<typeof initLocationMap> = null;
 
@@ -1198,12 +1190,18 @@ export function initRequestWizard(
 
   function updateStepUI(): void {
     const step = STEPS[currentStep - 1];
-    questionEl!.textContent = pick(step.question, step.questionEn);
-    progressText!.textContent = pick(
-      `مرحله ${toPersianDigits(currentStep)} از ${toPersianDigits(TOTAL_STEPS)}`,
-      `Step ${toPersianDigits(currentStep)} of ${toPersianDigits(TOTAL_STEPS)}`,
-    );
-    progressFill!.style.width = `${(currentStep / TOTAL_STEPS) * 100}%`;
+    if (questionEl) {
+      questionEl.textContent = pick(step.question, step.questionEn);
+    }
+    if (progressText) {
+      progressText.textContent = pick(
+        `مرحله ${toPersianDigits(currentStep)} از ${toPersianDigits(TOTAL_STEPS)}`,
+        `Step ${toPersianDigits(currentStep)} of ${toPersianDigits(TOTAL_STEPS)}`,
+      );
+    }
+    if (progressFill) {
+      progressFill.style.width = `${(currentStep / TOTAL_STEPS) * 100}%`;
+    }
 
     // 1. Desktop Stepper Sync
     const trackFill = document.getElementById('wizard-stepper-track-fill');
@@ -1273,12 +1271,12 @@ export function initRequestWizard(
 
     // Contextual Questions & Hints
     if (state.vehicleId && currentStep === 3) {
-      questionEl!.textContent = pick(
+      if (questionEl) questionEl.textContent = pick(
         `آیا برای «${vehicleLabel()}» نیاز به تأمین قطعات و لوازم دارید؟`,
         `Do you need parts provided for ${vehicleLabel()}?`,
       );
     } else if (state.vehicleId && currentStep === 5) {
-      questionEl!.textContent = pick(
+      if (questionEl) questionEl.textContent = pick(
         `نشانی و شرح مشکل جهت انجام «${vehicleLabel()}»`,
         `Address and details for ${vehicleLabel()}`,
       );
@@ -1538,7 +1536,7 @@ export function initRequestWizard(
       submitError!.hidden = true;
       document.getElementById('wizard-success-state')!.hidden = false;
       footer!.hidden = true;
-      questionEl!.textContent = pick('سفارش شما با موفقیت ثبت شد', 'Request Submitted Successfully');
+      if (questionEl) questionEl.textContent = pick('سفارش شما با موفقیت ثبت شد', 'Request Submitted Successfully');
       trackEvent('request_submitted', { trackingCode, serviceId: state.serviceId, vehicleId: state.vehicleId });
     } catch (err: any) {
       submitError!.hidden = false;
@@ -1699,8 +1697,13 @@ export function initRequestWizard(
       if (modalEl.parentElement !== document.body) {
         document.body.appendChild(modalEl);
       }
-      modalEl.classList.add('is-open');
+      modalEl.removeAttribute('hidden');
       modalEl.hidden = false;
+      modalEl.classList.add('is-open');
+      modalEl.style.display = 'flex';
+      modalEl.style.opacity = '1';
+      modalEl.style.visibility = 'visible';
+      modalEl.setAttribute('aria-hidden', 'false');
       document.body.classList.add('modal-open');
     }
 
@@ -1729,13 +1732,20 @@ export function initRequestWizard(
       currentStep = 1;
     }
     updateStepUI();
+    const modalBody = card.closest('.request-wizard-modal-body');
+    if (modalBody) modalBody.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function closeModal(): void {
     const modalEl = document.getElementById('request-wizard-modal');
     if (modalEl) {
-      modalEl.classList.remove('is-open');
+      modalEl.setAttribute('hidden', '');
       modalEl.hidden = true;
+      modalEl.classList.remove('is-open');
+      modalEl.style.display = 'none';
+      modalEl.style.opacity = '0';
+      modalEl.style.visibility = 'hidden';
+      modalEl.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('modal-open');
     }
   }

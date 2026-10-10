@@ -150,6 +150,7 @@ async function init(): Promise<void> {
   window.openRequestModal = (param1?: string, param2?: string) => {
     wizardController.openModal(param1, param2);
   };
+  (window as any).openRequestModal = window.openRequestModal;
 
   // اتصال سراسری کلیک روی تمامی دکمه‌های ثبت درخواست در سراسر صفحه اصلی
   document.addEventListener('click', (e) => {
@@ -157,13 +158,23 @@ async function init(): Promise<void> {
     if (!target) return;
 
     const btn = target.closest<HTMLElement>(
-      '[data-service-cat], [data-service-sub], [data-open-wizard], [data-order-service], .btn-order, .service-order-trigger, .header-cta, .btn-hero-primary, .request-wizard-open-trigger, a[href="#request"], a[href="/#request"]'
+      '[data-service-cat], [data-service-sub], [data-open-wizard], [data-order-service], .btn-order, .service-order-trigger, .header-cta, .btn-hero-primary, .request-wizard-open-trigger, .booking-box-btn, .booking-widget-submit, .urgent-cta-btn, button[onclick*="openRequestModal"], a[href="#request"], a[href="/#request"]'
     );
     if (!btn || btn.closest('#request-wizard-modal')) return;
 
     e.preventDefault();
-    const catId = btn.getAttribute('data-service-cat') || btn.getAttribute('data-service-id') || undefined;
-    const subId = btn.getAttribute('data-service-sub') || btn.getAttribute('data-order-service') || btn.getAttribute('data-vehicle-id') || undefined;
+    let catId = btn.getAttribute('data-service-cat') || btn.getAttribute('data-service-id') || undefined;
+    let subId = btn.getAttribute('data-service-sub') || btn.getAttribute('data-order-service') || btn.getAttribute('data-vehicle-id') || undefined;
+
+    if (!catId && !subId) {
+      const onclickAttr = btn.getAttribute('onclick') || '';
+      const match = onclickAttr.match(/openRequestModal\s*\(\s*['"]([^'"]+)['"](?:\s*,\s*['"]([^'"]+)['"])?\s*\)/);
+      if (match) {
+        catId = match[1];
+        subId = match[2];
+      }
+    }
+
     wizardController.openModal(catId, subId);
   });
 
