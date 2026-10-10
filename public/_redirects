@@ -1,6 +1,6 @@
-/demo  /sale  301
-/demo/  /sale  301
-/preview  /sale  301
+/demo  /  301
+/demo/  /  301
+/preview  /  301
 /track  /orders  301
 /services  /services.html  200
 /services/*  /services.html  200
@@ -8,6 +8,9 @@
 /management/*  /management.html  200
 /admin  /management  301
 /admin/*  /management  301
-/magazine/:slug  /article-template  200
-/p/:slug  /page-template  200
-/page/:slug  /page-template  200
+/magazine/:slug  /article-template.html  200
+/magazine/*  /article-template.html  200
+/p/:slug  /page-template.html  200
+/p/*  /page-template.html  200
+/page/:slug  /page-template.html  200
+/page/*  /page-template.html  200

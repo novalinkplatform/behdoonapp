@@ -8535,15 +8535,35 @@ export default {
       return Response.redirect(targetUrl.toString(), 301);
     }
 
+    const normalizedPath = pathname.replace(/\/+$/, '') || '/';
+
+    if (normalizedPath === '/track') {
+      const targetUrl = new URL('/orders' + url.search, url.origin);
+      return Response.redirect(targetUrl.toString(), 301);
+    }
+
     async function serveHtmlWithMeta(assetPath: string, req: Request): Promise<Response> {
-      const assetUrl = new URL(assetPath + url.search, url.origin);
-      const res = await env.ASSETS.fetch(new Request(assetUrl, req));
+      const assetUrl = new URL(assetPath, url.origin);
+      const assetReq = new Request(assetUrl.toString(), {
+        method: 'GET',
+        headers: {
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        },
+      });
+      const res = await env.ASSETS.fetch(assetReq);
       if (!res.ok) return res;
 
       const headers = new Headers(res.headers);
       headers.set('Content-Type', 'text/html; charset=utf-8');
       headers.set('Link', '<https://behdoon.ir/og-image.jpg>; rel="image_src"');
       headers.set('Vary', 'Accept-Encoding');
+      if (req.method === 'HEAD') {
+        return new Response(null, {
+          status: res.status,
+          statusText: res.statusText,
+          headers,
+        });
+      }
       return new Response(res.body, {
         status: res.status,
         statusText: res.statusText,
@@ -8551,28 +8571,28 @@ export default {
       });
     }
 
-    if (pathname === '/management' || pathname.startsWith('/management/')) {
+    if (normalizedPath === '/management' || normalizedPath.startsWith('/management/')) {
       return serveHtmlWithMeta('/management.html', request);
     }
 
-    if (pathname === '/' || pathname === '') {
+    if (normalizedPath === '/' || normalizedPath === '') {
       return serveHtmlWithMeta('/index.html', request);
     }
 
     const cleanPages = ['/orders', '/profile', '/careers', '/magazine', '/about', '/privacy', '/terms'];
-    if (cleanPages.includes(pathname)) {
-      return serveHtmlWithMeta(`${pathname}.html`, request);
+    if (cleanPages.includes(normalizedPath)) {
+      return serveHtmlWithMeta(`${normalizedPath}.html`, request);
     }
 
-    if (pathname === '/services' || pathname.startsWith('/services/')) {
+    if (normalizedPath === '/services' || normalizedPath.startsWith('/services/')) {
       return serveHtmlWithMeta('/services.html', request);
     }
 
-    if (pathname.startsWith('/magazine/') && !pathname.includes('.')) {
+    if (normalizedPath.startsWith('/magazine/') && !normalizedPath.match(/\.(css|js|png|jpg|jpeg|svg|webp|ico|json|txt|xml)$/i)) {
       return serveHtmlWithMeta('/article-template.html', request);
     }
 
-    if (pathname.startsWith('/page/') && !pathname.includes('.')) {
+    if (normalizedPath.startsWith('/page/') && !normalizedPath.match(/\.(css|js|png|jpg|jpeg|svg|webp|ico|json|txt|xml)$/i)) {
       return serveHtmlWithMeta('/page-template.html', request);
     }
 
