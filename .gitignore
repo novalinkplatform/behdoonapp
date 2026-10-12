@@ -25,3 +25,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Android Release Binaries & Keystores
+android-release/
+*.apk
+*.aab
+*.keystore

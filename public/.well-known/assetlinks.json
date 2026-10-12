@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "ir.behdoon.app",
+        "sha256_cert_fingerprints": ["35:FA:32:61:19:1A:62:9B:2E:C6:BF:99:87:F7:44:B6:BB:50:5E:4E:98:29:72:1F:4A:79:B2:59:DD:EC:39:7B"]
+      }
+    }]

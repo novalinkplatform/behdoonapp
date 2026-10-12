@@ -8648,6 +8648,16 @@ export default {
       }
     }
 
+    if (pathname === '/.well-known/assetlinks.json') {
+      const assetlinksRes = await env.ASSETS.fetch(request);
+      if (assetlinksRes.ok) {
+        const h = new Headers(assetlinksRes.headers);
+        h.set('Content-Type', 'application/json; charset=utf-8');
+        h.set('Cache-Control', 'public, max-age=86400');
+        return new Response(assetlinksRes.body, { status: 200, headers: h });
+      }
+    }
+
       const defaultAssetRes = await env.ASSETS.fetch(request);
       const defaultCt = defaultAssetRes.headers.get('content-type') || '';
       if (defaultCt.includes('text/html') && !defaultCt.includes('charset=')) {
