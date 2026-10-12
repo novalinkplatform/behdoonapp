@@ -23,6 +23,8 @@ import { applySiteSeoSettings } from './utils/seo.ts';
 import { applyBranding, applySiteNameEverywhere } from './utils/branding.ts';
 import { forceSiteLanguageIfSingleMode, hideLanguageToggleIfSingleMode } from './i18n/languageMode.ts';
 import { markAppReady } from './utils/appReady.ts';
+import { initPwa } from './utils/pwa.ts';
+import { renderPwaInstallModal, initPwaInstallPrompt } from './components/PwaInstallPrompt.ts';
 
 declare global {
   interface Window {
@@ -48,6 +50,7 @@ function renderApp(
     ${renderBottomNav()}
     ${renderQuickActions(settings)}
     ${renderRequestWizardModal(vehicleTypes, settings.service_cities, settings.service_categories, settings.site_name)}
+    ${renderPwaInstallModal()}
   `;
 }
 
@@ -71,6 +74,8 @@ async function init(): Promise<void> {
   initLangToggle();
   initQuickActions(settings);
   initMagazineIndex();
+  initPwa();
+  initPwaInstallPrompt();
 
   setGeocodeMapConfig(settings.map);
   const wizardController = initRequestWizard(vehicleTypes, settings.service_cities, settings.map, settings.site_name);

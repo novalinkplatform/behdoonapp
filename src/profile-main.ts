@@ -44,6 +44,8 @@ import type { CustomerInfo, CustomerIdentityType, CustomerAddress } from './util
 import { markAppReady } from './utils/appReady.ts';
 import { initOtpInput } from './components/OtpInput.ts';
 import type { OtpInputHandle } from './components/OtpInput.ts';
+import { initPwa } from './utils/pwa.ts';
+import { renderPwaInstallModal, initPwaInstallPrompt } from './components/PwaInstallPrompt.ts';
 
 let cachedSettings: Awaited<ReturnType<typeof loadSettings>> = {};
 
@@ -74,6 +76,7 @@ function renderApp(): void {
     ${renderFooter(cachedSettings)}
     ${renderBottomNav()}
     ${renderQuickActions(cachedSettings)}
+    ${renderPwaInstallModal()}
   `;
 }
 
@@ -106,6 +109,8 @@ async function init(): Promise<void> {
   initLangToggle();
   initThemeToggle();
   initQuickActions(cachedSettings);
+  initPwa();
+  initPwaInstallPrompt();
 
   const authSection = document.getElementById('profile-auth-section');
   const dashboardEl = document.getElementById('profile-page-content');

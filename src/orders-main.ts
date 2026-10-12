@@ -33,6 +33,8 @@ import { forceSiteLanguageIfSingleMode, hideLanguageToggleIfSingleMode } from '.
 import { markAppReady } from './utils/appReady.ts';
 import { fetchCurrentCustomer, getCustomerToken, getLocalCustomerInfo, logoutCustomer } from './utils/customerAuth.ts';
 import { getLastPhone, saveLastPhone } from './utils/localOrders.ts';
+import { initPwa } from './utils/pwa.ts';
+import { renderPwaInstallModal, initPwaInstallPrompt } from './components/PwaInstallPrompt.ts';
 
 let cachedSettings: Awaited<ReturnType<typeof loadSettings>> = {};
 
@@ -49,6 +51,7 @@ function renderApp(): void {
     ${renderFooter(cachedSettings)}
     ${renderBottomNav()}
     ${renderQuickActions(cachedSettings)}
+    ${renderPwaInstallModal()}
   `;
 }
 
@@ -192,6 +195,8 @@ async function init(): Promise<void> {
   initBottomNav();
   initLangToggle();
   initQuickActions(cachedSettings);
+  initPwa();
+  initPwaInstallPrompt();
 
   const loadingEl = document.getElementById('orders-loading');
   const loginPrompt = document.getElementById('orders-login-prompt');

@@ -1,15 +1,163 @@
 {
-  "name": "بهدون | خدمات حرفه‌ای ساختمان در تهران",
+  "id": "https://behdoon.ir/",
+  "name": "بهدون | سامانه هوشمند خدمات فنی و تأسیسات ساختمان",
   "short_name": "بهدون",
-  "description": "ثبت آنلاین خدمات تأسیسات، سرمایش، گرمایش، لوله‌کشی و بازسازی ساختمان در تهران",
-  "lang": "fa",
+  "description": "ثبت آنلاین و اعزام فوری تکنسین‌های تأسیسات، سرمایش و گرمایش، لوله‌کشی، برقکاری و بازسازی ساختمان در کلیه مناطق ۲۲‌گانه تهران با ضمانت کتبی کیفیت و فاکتور رسمی.",
+  "lang": "fa-IR",
   "dir": "rtl",
-  "start_url": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#fdfcfa",
-  "theme_color": "#8B1C31",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait-primary",
+  "background_color": "#F8FAFC",
+  "theme_color": "#133458",
+  "categories": [
+    "lifestyle",
+    "utilities",
+    "business",
+    "home"
+  ],
+  "prefer_related_applications": false,
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    {
+      "src": "/icon-48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "ثبت فوری درخواست",
+      "short_name": "ثبت درخواست",
+      "description": "ثبت آنلاین درخواست اعزام فوری متخصص به محل",
+      "url": "/?action=request&source=pwa_shortcut",
+      "icons": [
+        {
+          "src": "/icon-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "پیگیری آنلاین سفارش‌ها",
+      "short_name": "پیگیری سفارش",
+      "description": "مشاهده وضعیت، زمان حضور و اطلاعات تکنسین اعزامی",
+      "url": "/orders?source=pwa_shortcut",
+      "icons": [
+        {
+          "src": "/icon-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "لیست خدمات و تعرفه‌ها",
+      "short_name": "خدمات بهدون",
+      "description": "مشاهده تعرفه شفاف خدمات تأسیسات و ساختمان در تهران",
+      "url": "/services/hvac?source=pwa_shortcut",
+      "icons": [
+        {
+          "src": "/icon-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "پشتیبانی و تماس مستقیم",
+      "short_name": "تماس با بهدون",
+      "description": "ارتباط مستقیم با کارشناسان و پشتیبانی بهدون (۰۹۳۳۳۲۵۶۸۸۵)",
+      "url": "tel:09333256885",
+      "icons": [
+        {
+          "src": "/icon-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/client_showcase.png",
+      "sizes": "1440x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "سامانه هوشمند ثبت آنلاین خدمات ساختمان بهدون در تهران"
+    },
+    {
+      "src": "/client_showcase.png",
+      "sizes": "1440x900",
+      "type": "image/png",
+      "label": "صفحه اصلی پلتفرم بهدون"
+    }
   ]
 }

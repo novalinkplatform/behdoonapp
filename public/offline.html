@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>قطع اتصال اینترنت | بهدون</title>
+  <meta name="theme-color" content="#133458">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Vazirmatn', Tahoma, sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      color: #F8FAFC;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+      text-align: center;
+    }
+    .offline-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 28px;
+      padding: 40px 28px;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    .logo-badge {
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 24px;
+      border-radius: 24px;
+      background: #133458;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px -5px rgba(19, 52, 88, 0.6);
+      padding: 12px;
+    }
+    .logo-badge img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .offline-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 16px;
+      color: #F59E0B;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: #FFFFFF;
+    }
+    p {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #94A3B8;
+      margin-bottom: 28px;
+    }
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 20px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+    .btn-primary {
+      background: #8B1C31;
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(139, 28, 49, 0.4);
+    }
+    .btn-primary:hover {
+      background: #A3243C;
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #E2E8F0;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-card">
+    <div class="logo-badge">
+      <img src="/favicon.svg" alt="بهدون" />
+    </div>
+
+    <svg class="offline-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 4.243a9 9 0 01-12.728 0m0 0l2.829-2.829m-2.829 2.829L3 21m2.828-12.536a5 5 0 017.072 0m0 0l-2.829 2.829M1 1l22 22" />
+    </svg>
+
+    <h1>عدم دسترسی به اینترنت</h1>
+    <p>
+      ارتباط دستگاه شما با اینترنت قطع شده است. برای ثبت آنلاین یا پیگیری سفارش، لطفاً اتصال خود را بررسی کنید یا با پشتیبانی تلفنی بهدون تماس بگیرید.
+    </p>
+
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="window.location.reload()">
+        <span>تلاش مجدد برای اتصال</span>
+      </button>
+      <a class="btn btn-secondary" href="tel:09333256885">
+        <span>تماس با پشتیبانی (۰۹۳۳۳۲۵۶۸۸۵)</span>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

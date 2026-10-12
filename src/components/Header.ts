@@ -216,6 +216,10 @@ export function renderHeader(settings?: SiteSettings): string {
           <span class="icon">${icons.phone}</span>
           <span>${pick('تماس مستقیم: ۰۹۳۳۳۲۵۶۸۸۵', 'Direct Call: 09333256885')}</span>
         </a>
+        <button type="button" class="btn btn-secondary mobile-nav-pwa-btn" data-action="pwa-install" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; border: 1px solid rgba(19, 52, 88, 0.2); background: rgba(19, 52, 88, 0.06); color: #133458; font-weight: 800; font-size: 12px; border-radius: 12px; padding: 10px; margin-top: 4px;">
+          <svg style="width: 16px; height: 16px; color: #8B1C31;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span>${pick('نصب وب‌اپلیکیشن بهدون (PWA اندروید)', 'Install Behdoon App (Android PWA)')}</span>
+        </button>
       </div>
       
       <div class="mobile-nav-settings" style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">

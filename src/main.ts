@@ -32,6 +32,8 @@ import { fetchCurrentCustomer } from './utils/customerAuth.ts';
 import { fetchOrdersByPhone } from './utils/api.ts';
 import { extractSavedAddresses } from './utils/addresses.ts';
 import { setGeocodeMapConfig } from './utils/geocode.ts';
+import { initPwa } from './utils/pwa.ts';
+import { renderPwaInstallModal, initPwaInstallPrompt } from './components/PwaInstallPrompt.ts';
 
 declare global {
   interface Window {
@@ -119,6 +121,7 @@ function renderApp(settings: Awaited<ReturnType<typeof loadSettings>>, testimoni
     ${renderQuickActions(settings)}
     ${renderDemoBadges()}
     ${renderRequestWizardModal(vehicleTypes, settings.service_cities, settings.service_categories, settings.site_name)}
+    ${renderPwaInstallModal()}
   `;
 }
 
@@ -188,6 +191,8 @@ async function init(): Promise<void> {
   initStoriesStrip(settings.homepage_layout?.storiesEnabled === false ? [] : stories);
   initHeroSlider(settings);
   initSpecialistsSlider();
+  initPwa();
+  initPwaInstallPrompt();
 
   scrollToHashIfPresent();
 

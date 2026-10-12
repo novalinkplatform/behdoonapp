@@ -8542,6 +8542,17 @@ export default {
       return Response.redirect(targetUrl.toString(), 301);
     }
 
+    if (normalizedPath === '/hvac') {
+      const targetUrl = new URL('/services/hvac' + url.search, url.origin);
+      return Response.redirect(targetUrl.toString(), 301);
+    }
+
+    if (normalizedPath.startsWith('/hvac/')) {
+      const sub = normalizedPath.slice('/hvac'.length);
+      const targetUrl = new URL('/services/hvac' + sub + url.search, url.origin);
+      return Response.redirect(targetUrl.toString(), 301);
+    }
+
     async function serveHtmlWithMeta(assetPath: string, req: Request): Promise<Response> {
       const assetUrl = new URL(assetPath, url.origin);
       const assetReq = new Request(assetUrl.toString(), {
@@ -8579,7 +8590,7 @@ export default {
       return serveHtmlWithMeta('/index.html', request);
     }
 
-    const cleanPages = ['/orders', '/profile', '/careers', '/magazine', '/about', '/privacy', '/terms'];
+    const cleanPages = ['/orders', '/profile', '/careers', '/magazine', '/about', '/privacy', '/terms', '/offline'];
     if (cleanPages.includes(normalizedPath)) {
       return serveHtmlWithMeta(`${normalizedPath}.html`, request);
     }
@@ -8594,6 +8605,27 @@ export default {
 
     if (normalizedPath.startsWith('/page/') && !normalizedPath.match(/\.(css|js|png|jpg|jpeg|svg|webp|ico|json|txt|xml)$/i)) {
       return serveHtmlWithMeta('/page-template.html', request);
+    }
+
+    if (pathname === '/sw.js') {
+      const swRes = await env.ASSETS.fetch(request);
+      if (swRes.ok) {
+        const h = new Headers(swRes.headers);
+        h.set('Content-Type', 'application/javascript; charset=utf-8');
+        h.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+        h.set('Service-Worker-Allowed', '/');
+        return new Response(swRes.body, { status: 200, headers: h });
+      }
+    }
+
+    if (pathname === '/site.webmanifest' || pathname === '/manifest.json') {
+      const manifestRes = await env.ASSETS.fetch(new Request(new URL('/site.webmanifest', url.origin), request));
+      if (manifestRes.ok) {
+        const h = new Headers(manifestRes.headers);
+        h.set('Content-Type', 'application/manifest+json; charset=utf-8');
+        h.set('Cache-Control', 'public, max-age=3600');
+        return new Response(manifestRes.body, { status: 200, headers: h });
+      }
     }
 
     if (pathname === '/sitemap.xml') {

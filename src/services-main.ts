@@ -30,6 +30,8 @@ import { applyBranding, applySiteNameEverywhere } from './utils/branding.ts';
 import { forceSiteLanguageIfSingleMode, hideLanguageToggleIfSingleMode } from './i18n/languageMode.ts';
 import { markAppReady } from './utils/appReady.ts';
 import { setGeocodeMapConfig } from './utils/geocode.ts';
+import { initPwa } from './utils/pwa.ts';
+import { renderPwaInstallModal, initPwaInstallPrompt } from './components/PwaInstallPrompt.ts';
 import { pick } from './i18n/lang.ts';
 import { initBehaviorTracking } from './utils/analytics.ts';
 
@@ -311,6 +313,7 @@ async function init(): Promise<void> {
     ${renderBottomNav()}
     ${renderQuickActions(settings)}
     ${renderRequestWizardModal(vehicleTypes, settings.service_cities, settings.service_categories, settings.site_name)}
+    ${renderPwaInstallModal()}
   `;
 
   markAppReady();
@@ -323,6 +326,8 @@ async function init(): Promise<void> {
   initSpecialistsSlider();
   initBottomNav();
   initQuickActions(settings);
+  initPwa();
+  initPwaInstallPrompt();
 
   setGeocodeMapConfig(settings.map);
   const wizardController = initRequestWizard(vehicleTypes, settings.service_cities, settings.map, settings.site_name);

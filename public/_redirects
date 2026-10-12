@@ -2,6 +2,8 @@
 /demo/  /  301
 /preview  /  301
 /track  /orders  301
+/hvac  /services/hvac  301
+/hvac/*  /services/hvac  301
 /services  /services.html  200
 /services/*  /services.html  200
 /management  /management.html  200
