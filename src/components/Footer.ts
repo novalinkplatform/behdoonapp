@@ -133,8 +133,8 @@ function renderAppLinks(appLinks?: SiteSettings['app_links']): string {
 
 const DEFAULT_BEHDOON_SEO_PARAGRAPHS = [
   {
-    fa: 'سامانه خدمات هوشمند ساختمان بهدون (Behdoon) جامع‌ترین و مطمئن‌ترین پلتفرم آنلاین ارائه خدمات فنی، تأسیساتی و ساختمانی در کلیه مناطق ۲۲ گانه شهر تهران و استان البرز است. رسالت اصلی بهدون رفع دغدغه‌های همیشگی شهروندان در زمینه یافتن استادکاران قابل اعتماد، تعیین نرخ‌های شفاف بر مبنای مصوبات منصفانه اتحادیه، اعزام فوق‌سریع در زمان‌های اضطراری (کمتر از ۴۵ دقیقه) و ارائه ضمانت کتبی ۳۰ روزه برای کلیه سفارش‌های انجام‌شده می‌باشد.',
-    en: 'Behdoon Smart Building Services Platform is Tehran and Karaj leading online destination for specialized building maintenance, HVAC servicing, sanitary plumbing, professional electrical contracting, and turn-key interior renovation. Backed by certified technicians and written warranties.',
+    fa: 'سامانه خدمات هوشمند ساختمان بهدون (Behdoon) جامع‌ترین و مطمئن‌ترین پلتفرم آنلاین ارائه خدمات فنی، تأسیساتی و ساختمانی در کلیه مناطق ۲۲ گانه شهر تهران است. رسالت اصلی بهدون رفع دغدغه‌های همیشگی شهروندان در زمینه یافتن استادکاران قابل اعتماد، تعیین نرخ‌های شفاف بر مبنای مصوبات منصفانه اتحادیه، اعزام فوق‌سریع در زمان‌های اضطراری (کمتر از ۴۵ دقیقه) و ارائه ضمانت کتبی ۳۰ روزه برای کلیه سفارش‌های انجام‌شده می‌باشد.',
+    en: "Behdoon Smart Building Services Platform is Tehran's leading online destination for specialized building maintenance, HVAC servicing, sanitary plumbing, professional electrical contracting, and turn-key interior renovation. Backed by certified technicians and written warranties.",
   },
   {
     fa: 'تخصص‌های مکانیکی و هیدرولیکی بهدون شامل تعمیر و سرویس دوره‌ای پکیج دیواری و زمینی تمامی برندها (ایران رادیاتور، بوتان، تاچی و...)، سرویس و راه‌اندازی کولر آبی، نصب و شارژ گاز کولر گازی و داکت اسپلیت، لوله‌کشی سرد و گرم پنج‌لایه، تشخیص ترکیدگی و نشت‌یابی لوله با پیشرفته‌ترین دستگاه‌های آکوستیک و تصویری بدون تخریب، رفع نم و رطوبت و لوله‌بازکنی شبانه‌روزی با فنر فولادی می‌باشد.',
@@ -159,7 +159,7 @@ export function renderFooter(settings?: SiteSettings): string {
   const footerData = settings?.footer;
   let copyrightFa = footerData?.copyright?.fa;
   if (!copyrightFa) {
-    copyrightFa = `تمامی حقوق مادی و معنوی برای ${brandFa} محفوظ است. سامانه هوشمند خدمات فنی و تأسیسات ساختمان در تهران و کرج.`;
+    copyrightFa = `تمامی حقوق مادی و معنوی برای ${brandFa} محفوظ است. سامانه هوشمند خدمات فنی و تأسیسات ساختمان در شهر تهران.`;
   } else if (brandFa && brandFa !== 'بهدون' && (copyrightFa.includes('بهدون') || copyrightFa.includes('بهبار'))) {
     copyrightFa = copyrightFa.replace(/به[بد]ون?|به‌بار|به بار|بهبار/g, brandFa);
   }
@@ -198,7 +198,7 @@ export function renderFooter(settings?: SiteSettings): string {
             <span class="icon promise-icon">${icons.clock}</span>
             <div class="promise-text">
               <strong>${pick('اعزام فوری در کمتر از ۴۵ دقیقه', 'Fast Dispatch Under 45 Mins')}</strong>
-              <span>${pick('پوشش سراسری کلیه مناطق ۲۲ گانه تهران و کرج', 'Full coverage across all Tehran & Karaj districts')}</span>
+              <span>${pick('پوشش سراسری کلیه مناطق ۲۲ گانه شهر تهران', 'Full coverage across all 22 Tehran districts')}</span>
             </div>
           </div>
           <div class="promise-item">
@@ -242,8 +242,8 @@ export function renderFooter(settings?: SiteSettings): string {
               </h3>
               <p class="recruitment-desc">
                 ${pick(
-                  'کسب درآمد پایدار و بالا، تسویه حساب منظم و روزانه، ساعات کاری منعطف و دریافت سفارشات مستمر در محله و مناطق انتخابی شما در تهران و کرج بدون کمیسیون‌های نامتعارف.',
-                  'High monthly earnings up to 50M+ Tomans, flexible working hours, zero unfair fees, and steady client requests across your preferred districts.'
+                  'کسب درآمد پایدار و بالا، تسویه حساب منظم و روزانه، ساعات کاری منعطف و دریافت سفارشات مستمر در محله و مناطق انتخابی شما در شهر تهران بدون کمیسیون‌های نامتعارف.',
+                  'High monthly earnings up to 50M+ Tomans, flexible working hours, zero unfair fees, and steady client requests across your preferred districts in Tehran.'
                 )}
               </p>
             </div>
@@ -267,13 +267,13 @@ export function renderFooter(settings?: SiteSettings): string {
                 <img src="/favicon.svg" alt="${brandFa}" class="footer-brand-logo" width="38" height="38" itemprop="image" />
                 <span class="footer-brand-title" itemprop="name">${brandFa}</span>
               </a>
-              <span class="footer-brand-badge">${pick('سامانه خدمات فنی تهران و کرج', 'Tehran & Karaj Building Services')}</span>
+              <span class="footer-brand-badge">${pick('سامانه خدمات فنی شهر تهران', 'Tehran Building Services')}</span>
             </div>
 
             <p class="footer-brand-mission" itemprop="description">
               ${pick(
-                `سامانه جامع و تخصصی ثبت آنلاین درخواست و اعزام فوری تکنسین‌های مجرب تأسیسات، سرمایش و گرمایش، لوله‌کشی، برقکاری و بازسازی ساختمان با ضمانت کتبی ۳۰ روزه و فاکتور رسمی معتبر در کلیه مناطق تهران و کرج.`,
-                `Tehran and Karaj specialized platform for reliable home and building maintenance, certified plumbing, HVAC diagnostics, and professional renovation with written warranties.`,
+                `سامانه جامع و تخصصی ثبت آنلاین درخواست و اعزام فوری تکنسین‌های مجرب تأسیسات، سرمایش و گرمایش، لوله‌کشی، برقکاری و بازسازی ساختمان با ضمانت کتبی ۳۰ روزه و فاکتور رسمی معتبر در کلیه مناطق ۲۲ گانه شهر تهران.`,
+                `Tehran specialized platform for reliable home and building maintenance, certified plumbing, HVAC diagnostics, and professional renovation with written warranties across all 22 districts.`,
               )}
             </p>
 
@@ -374,35 +374,35 @@ export function renderFooter(settings?: SiteSettings): string {
           </div>
         </div>
 
-        <!-- ۳. بلوک ویژه سئو محلی: مناطق تحت پوشش در تهران و کرج -->
+        <!-- ۳. بلوک ویژه سئو محلی: مناطق تحت پوشش در شهر تهران -->
         <div class="footer-regions-card">
           <div class="regions-header">
             <span class="icon regions-icon">${icons.pin}</span>
             <div class="regions-header-text">
-              <h4 class="regions-title">${pick('مناطق تحت پوشش خدمات فنی و تأسیساتی بهدون (اعزام فوری زیر ۴۵ دقیقه)', 'Service Areas in Tehran & Alborz (Fast Dispatch Under 45 Mins)')}</h4>
-              <p class="regions-desc">${pick('استقرار تیم‌های سیار متخصصین تأسیسات، لوله‌کشی، پکیج، کولر و برقکاری در کلیه مناطق و محلات:', 'Mobile teams of certified HVAC, plumbing & electrical specialists ready across all districts:')}</p>
+              <h4 class="regions-title">${pick('مناطق تحت پوشش خدمات فنی و تأسیساتی بهدون در شهر تهران (اعزام فوری زیر ۴۵ دقیقه)', 'Service Areas in Tehran City (Fast Dispatch Under 45 Mins)')}</h4>
+              <p class="regions-desc">${pick('استقرار تیم‌های سیار متخصصین تأسیسات، لوله‌کشی، پکیج، کولر و برقکاری در کلیه مناطق ۲۲‌گانه پایتخت:', 'Mobile teams of certified HVAC, plumbing & electrical specialists ready across all 22 Tehran districts:')}</p>
             </div>
           </div>
           <div class="regions-grid">
             <div class="region-box">
-              <strong class="region-box-title">${pick('شمال تهران:', 'North Tehran:')}</strong>
+              <strong class="region-box-title">${pick('شمال تهران (مناطق ۱ تا ۳):', 'North Tehran:')}</strong>
               <span class="region-box-list">${pick('تجریش، نیاوران، الهیه، ولنجک، زعفرانیه، قلهک، پاسداران، قیطریه، اندرزگو، دارآباد، فرمانیه، کامرانیه، ازگل', 'Tajrish, Niavaran, Elahiye, Velenjak, Zafaraniye, Pasdaran, Qeytariye')}</span>
             </div>
             <div class="region-box">
-              <strong class="region-box-title">${pick('غرب تهران:', 'West Tehran:')}</strong>
+              <strong class="region-box-title">${pick('غرب تهران (مناطق ۲، ۵، ۲۱، ۲۲):', 'West Tehran:')}</strong>
               <span class="region-box-list">${pick('سعادت‌آباد، شهرک غرب، پونک، صادقیه، مرزداران، جنت‌آباد، گیشا، چیتگر، طرشت، ستارخان، دهکده المپیک', 'Saadat Abad, Shahrak Gharb, Punak, Sadeghiye, Marzdaran, Jannat Abad, Chitgar')}</span>
             </div>
             <div class="region-box">
-              <strong class="region-box-title">${pick('شرق تهران:', 'East Tehran:')}</strong>
+              <strong class="region-box-title">${pick('شرق تهران (مناطق ۴، ۸، ۱۳، ۱۴):', 'East Tehran:')}</strong>
               <span class="region-box-list">${pick('تهرانپارس، نارمک، پیروزی، رسالت، افسریه، هنگام، تهران‌نو، نیروی هوایی، حکیمیه، مجیدیه، سرسبز', 'Tehranpars, Narmak, Piroozi, Resalat, Afsariye, Hengam, Tehran No')}</span>
             </div>
             <div class="region-box">
-              <strong class="region-box-title">${pick('مرکز و جنوب تهران:', 'Central & South Tehran:')}</strong>
-              <span class="region-box-list">${pick('یوسف‌آباد، امیرآباد، سهروردی، عباس‌آباد، فاطمی، میدان انقلاب، بازار، نازی‌آباد، شوش، خانی‌آباد، راه‌آهن، شهرری', 'Yousef Abad, Amir Abad, Sohrevardi, Fatemi, Enqelab, Nazi Abad, Rey')}</span>
+              <strong class="region-box-title">${pick('مرکز تهران (مناطق ۶، ۷، ۱۱، ۱۲):', 'Central Tehran:')}</strong>
+              <span class="region-box-list">${pick('یوسف‌آباد، امیرآباد، سهروردی، عباس‌آباد، فاطمی، میدان انقلاب، بازار، بهارستان، مطهری، میدان ولیعصر', 'Yousef Abad, Amir Abad, Sohrevardi, Abbas Abad, Fatemi, Enqelab, Grand Bazaar')}</span>
             </div>
             <div class="region-box">
-              <strong class="region-box-title">${pick('کرج و استان البرز:', 'Karaj & Alborz:')}</strong>
-              <span class="region-box-list">${pick('عظیمیه، گوهردشت، جهانشهر، مهرشهر، فردیس، مهرویلا، باغستان، گلشهر، شاهین‌ویلا، گرمدره، محمدشهر', 'Azimiyeh, Gohardasht, Jahanshar, Mehrshahr, Fardis, Golshahr')}</span>
+              <strong class="region-box-title">${pick('جنوب تهران (مناطق ۱۵ تا ۲۰):', 'South Tehran:')}</strong>
+              <span class="region-box-list">${pick('نازی‌آباد، شوش، خانی‌آباد، راه‌آهن، شهرری، جوادیه، عبدل‌آباد، فلاح، مشیریه، مسعودیه', 'Nazi Abad, Shoush, Khani Abad, Railway, Shahr-e-Rey, Javadiyeh, Fallah')}</span>
             </div>
           </div>
         </div>
@@ -412,7 +412,7 @@ export function renderFooter(settings?: SiteSettings): string {
           <div class="footer-seo-card" id="footer-seo-box">
             <div class="footer-seo-header">
               <span class="icon footer-seo-icon">${icons.building}</span>
-              <h3 class="footer-seo-title">${pick(`مرکز جامع و تخصصی خدمات فنی، تأسیسات و ساختمان ${brandFa} در تهران و البرز`, `Comprehensive Technical Building Services by ${brandEn}`)}</h3>
+              <h3 class="footer-seo-title">${pick(`مرکز جامع و تخصصی خدمات فنی، تأسیسات و ساختمان ${brandFa} در شهر تهران`, `Comprehensive Technical Building Services by ${brandEn} in Tehran`)}</h3>
             </div>
             <div class="footer-seo-content" id="footer-seo-text">
               ${seoParagraphs.map((p) => `<p>${pick(p.fa, p.en)}</p>`).join('')}
