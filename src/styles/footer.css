@@ -568,6 +568,90 @@
   height: 15px;
 }
 
+/* ۲.۵. بلوک سئو محلی مناطق تحت پوشش در تهران و کرج */
+.footer-regions-card {
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+  width: 100%;
+}
+
+.regions-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.regions-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--primary, #7c3aed);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.regions-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.regions-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.regions-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+}
+
+.regions-desc {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.regions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.65rem;
+  margin-top: 0.25rem;
+}
+
+.region-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.region-box-title {
+  color: var(--primary, #7c3aed);
+  font-weight: 800;
+  font-size: 0.8rem;
+}
+
+.region-box-list {
+  color: var(--text);
+  opacity: 0.88;
+  font-size: 0.75rem;
+  line-height: 1.65;
+}
+
 /* ۳. باکس سئو آکاردئونی شیک و خلوت */
 .footer-seo-container {
   width: 100%;

@@ -1,4 +1,25 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /management
+Disallow: /admin
+
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+Disallow: /management
+Disallow: /admin
+
+User-agent: Googlebot-Image
+Allow: /
+Allow: /assets/
+Allow: /og-image.jpg
+Allow: /og-image.png
+
+User-agent: Bingbot
+Allow: /
+Disallow: /api/
+Disallow: /management
+Disallow: /admin
 
 Sitemap: __SITE_ORIGIN__/sitemap.xml
