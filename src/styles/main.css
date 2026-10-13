@@ -31,6 +31,7 @@
 @import './theme-dark-emerald.css';
 @import './invoice.css';
 @import './specialists-slider.css';
+@import './pwa.css';
 
 /* Ensure footer clears anything above it */
 .site-footer {
