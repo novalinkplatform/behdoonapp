@@ -98,9 +98,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 88px;
+  height: 180px;
   background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
   overflow: hidden;
+  position: relative;
 }
 
 .magazine-card-cover img {
@@ -1301,14 +1302,160 @@
 }
 
 @media (max-width: 768px) {
+  .magazine-page {
+    padding-block: 4.75rem var(--space-6);
+  }
+
+  .magazine-hero-banner {
+    padding: var(--space-4) var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+
+  .magazine-hero-badge {
+    font-size: 0.76rem;
+    padding: 0.25rem 0.75rem;
+  }
+
+  .magazine-hero-title {
+    font-size: 1.4rem;
+    line-height: 1.35;
+  }
+
+  .magazine-hero-subtitle {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin-bottom: var(--space-4);
+  }
+
+  .magazine-search-bar-wrap {
+    margin-bottom: var(--space-4);
+  }
+
+  .magazine-search-input-box input {
+    font-size: 0.88rem;
+    padding-block: 0.65rem;
+    padding-inline-start: 2.75rem;
+    padding-inline-end: 2.25rem;
+  }
+
+  .magazine-search-input-box .search-icon {
+    width: 17px;
+    height: 17px;
+    inset-inline-start: 1rem;
+  }
+
+  /* اسکرول افقی نرم برای فیلتر دسته‌بندی‌ها به جای شکستن به چندین ردیف نامنظم */
+  .magazine-category-pills {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 4px 2px 8px;
+    gap: 8px;
+  }
+
+  .magazine-category-pills::-webkit-scrollbar {
+    display: none;
+  }
+
+  .magazine-cat-pill {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.85rem;
+  }
+
+  /* نوار ثبت فوری تماس/درخواست در بالای مقالات */
+  .magazine-urgent-cta-strip {
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--space-3) var(--space-4);
+    gap: var(--space-3);
+  }
+
+  .urgent-cta-info {
+    min-width: 0;
+  }
+
+  .urgent-cta-tag {
+    font-size: 0.85rem;
+  }
+
+  .urgent-cta-text {
+    font-size: 0.8rem;
+  }
+
+  .urgent-cta-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .urgent-cta-btn,
+  .urgent-cta-call {
+    width: 100%;
+    justify-content: center;
+    padding: 0.55rem 0.6rem;
+    font-size: 0.82rem;
+  }
+
   .article-header-banner,
   .article-body-wrapper {
     padding: var(--space-5);
   }
+
   .article-main-title {
     font-size: 1.5rem;
   }
-  .magazine-hero-title {
-    font-size: 1.7rem;
+}
+
+@media (max-width: 640px) {
+  .magazine-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .magazine-card-featured {
+    grid-column: span 1 !important;
+    grid-row: span 1 !important;
+  }
+
+  .magazine-card-cover {
+    height: 175px;
+  }
+
+  .magazine-card-content {
+    padding: 14px;
+    gap: 8px;
+  }
+
+  .magazine-card-title {
+    font-size: 1.05rem;
+    line-height: 1.45;
+  }
+
+  .magazine-card-excerpt {
+    font-size: 0.84rem;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .magazine-card-meta-top {
+    font-size: 0.72rem;
+  }
+
+  .magazine-card-footer {
+    padding-top: 10px;
+  }
+
+  .urgent-cta-actions {
+    grid-template-columns: 1fr;
   }
 }
