@@ -147,17 +147,18 @@
   ],
   "screenshots": [
     {
-      "src": "/client_showcase.png",
+      "src": "/screenshot_mobile.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "سامانه هوشمند ثبت آنلاین خدمات فنی و تأسیسات بهدون در تهران"
+    },
+    {
+      "src": "/screenshot_desktop.png",
       "sizes": "1440x900",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "سامانه هوشمند ثبت آنلاین خدمات ساختمان بهدون در تهران"
-    },
-    {
-      "src": "/client_showcase.png",
-      "sizes": "1440x900",
-      "type": "image/png",
-      "label": "صفحه اصلی پلتفرم بهدون"
+      "label": "پیش‌نمایش سامانه ثبت درخواست خدمات ساختمان بهدون"
     }
   ]
 }

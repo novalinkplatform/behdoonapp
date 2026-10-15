@@ -361,9 +361,6 @@ export function renderFooter(settings?: SiteSettings): string {
               <li><a href="/terms">${pick('قوانین، مقررات و ضمانت ۳۰ روزه', 'Terms & 30-Day Warranty')}</a></li>
               <li><a href="/about">${pick('درباره مرکز خدمات ساختمانی بهدون', 'About Behdoon Services')}</a></li>
               <li><a href="/privacy">${pick('حریم خصوصی و امنیت کاربران', 'Privacy Policy')}</a></li>
-              <li class="footer-mgmt-li">
-                <a href="/management" class="footer-management-link">${pick('ورود پرسنل و پنل مدیریت', 'Staff & Management Login')}</a>
-              </li>
             </ul>
 
             <!-- دانلود اپلیکیشن موبایل بهدون -->
