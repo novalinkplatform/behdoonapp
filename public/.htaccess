@@ -1,0 +1,84 @@
+# ==============================================================================
+# Behdoon High-Security .htaccess for Apache / LiteSpeed (cPanel / DirectAdmin)
+# ==============================================================================
+
+# 1. Disable Directory Browsing
+Options -Indexes
+
+# 2. Block Direct Access to Sensitive Files & Directories
+<FilesMatch "(^\.|\.(env|sqlite|db|sql|log|bak|config|toml|json|md|sh)$|package.*|tsconfig.*)">
+    Require all denied
+</FilesMatch>
+
+# Specifically protect database, git and environment files
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule (^|/)\.(git|env|wrangler) - [F,L]
+    RewriteRule \.(sqlite|db|sql)$ - [F,L]
+</IfModule>
+
+# 3. HTTP Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Permissions-Policy "geolocation=(self), microphone=(), camera=()"
+    Header set Access-Control-Allow-Origin "*"
+</IfModule>
+
+# 4. MIME Types Configuration (including PWA & Web Fonts)
+<IfModule mod_mime.c>
+    AddType application/manifest+json .webmanifest
+    AddType image/svg+xml .svg .svgz
+    AddType font/woff2 .woff2
+    AddType font/woff .woff
+    AddType font/ttf .ttf
+    AddType application/json .json
+    AddType text/javascript .js .mjs
+</IfModule>
+
+# 5. Gzip & Deflate Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript
+    AddOutputFilterByType DEFLATE application/javascript application/json application/manifest+json
+    AddOutputFilterByType DEFLATE image/svg+xml font/woff font/woff2
+</IfModule>
+
+# 6. Browser Caching Rules for PWA & Assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 month"
+    ExpiresByType text/html "access plus 0 seconds"
+    ExpiresByType application/manifest+json "access plus 0 seconds"
+    ExpiresByType application/json "access plus 0 seconds"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+# 7. Clean URL Rewriting for PWA & Single Page App
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Redirect /hvac to /services/hvac
+    RewriteRule ^hvac/?$ /services/hvac [R=301,L]
+
+    # Clean Routes for Magazine & Pages
+    RewriteRule ^magazine/[^/]+$ /article-template.html [L]
+    RewriteRule ^(?:page|p)/[^/]+$ /page-template.html [L]
+
+    # Clean HTML Pages without .html extension
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME}.html -f
+    RewriteRule ^([^/]+)/?$ $1.html [L]
+
+    # Root Fallback to index.html if not matching any static file
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.html [L]
+</IfModule>
