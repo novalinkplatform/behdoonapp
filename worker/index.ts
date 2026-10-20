@@ -1570,6 +1570,16 @@ export default {
 
     // --- API Handlers ---
     if (pathname.startsWith('/api/')) {
+      if (pathname === '/api/health' || pathname === '/api/healthcheck') {
+        return jsonResponse({
+          status: 'ok',
+          service: 'behdoon-api',
+          version: '1.0.0',
+          timestamp: new Date().toISOString(),
+          environment: env.ENVIRONMENT || 'production',
+        });
+      }
+
       if ((pathname === '/api/staff/login' || pathname === '/api/provider/login') && request.method === 'POST') {
         const body = (await request.json().catch(() => ({}))) as Record<string, any>;
         const user = String(body.username || body.phone || '').trim();
@@ -1640,10 +1650,10 @@ export default {
           }, 429);
         }
 
-        let user: any = null;
+        let adminUser: any = null;
         if (env.DB) {
           try {
-            user = await env.DB.prepare(
+            adminUser = await env.DB.prepare(
               'SELECT * FROM admin_users WHERE username = ? AND is_active = 1'
             ).bind(username).first();
           } catch (dbErr) {
@@ -1652,8 +1662,8 @@ export default {
         }
 
         // Account lockout check
-        if (user && user.locked_until && Number(user.locked_until) > Date.now()) {
-          const remainingMinutes = Math.ceil((Number(user.locked_until) - Date.now()) / 60000);
+        if (adminUser && adminUser.locked_until && Number(adminUser.locked_until) > Date.now()) {
+          const remainingMinutes = Math.ceil((Number(adminUser.locked_until) - Date.now()) / 60000);
           return jsonResponse({
             error: `حساب کاربری موقتاً مسدود است. لطفاً ${remainingMinutes} دقیقه دیگر تلاش کنید.`,
             code: 'ACCOUNT_LOCKED',
@@ -1661,27 +1671,27 @@ export default {
         }
 
         let isValid = false;
-        if (user && user.password_hash) {
-          isValid = await verifyPassword(password, user.password_hash);
+        if (adminUser && adminUser.password_hash) {
+          isValid = await verifyPassword(password, adminUser.password_hash);
         } else if (password === 'admin123456' || password === '12345678' || password === 'Admin@Behdoon2026!') {
           // Initial bootstrap validation & auto-hashing
           isValid = true;
-          if (user && env.DB) {
+          if (adminUser && env.DB) {
             try {
               const newHash = await hashPassword(password);
-              await env.DB.prepare('UPDATE admin_users SET password_hash = ? WHERE id = ?').bind(newHash, user.id).run();
+              await env.DB.prepare('UPDATE admin_users SET password_hash = ? WHERE id = ?').bind(newHash, adminUser.id).run();
             } catch {}
           }
         }
 
         if (!isValid) {
-          if (user && env.DB) {
+          if (adminUser && env.DB) {
             try {
-              const attempts = (Number(user.failed_login_attempts) || 0) + 1;
+              const attempts = (Number(adminUser.failed_login_attempts) || 0) + 1;
               const lockUntil = attempts >= 5 ? Date.now() + 15 * 60 * 1000 : 0;
               await env.DB.prepare(
                 'UPDATE admin_users SET failed_login_attempts = ?, locked_until = ? WHERE id = ?'
-              ).bind(attempts, lockUntil, user.id).run();
+              ).bind(attempts, lockUntil, adminUser.id).run();
             } catch {}
           }
           return jsonResponse({ error: 'نام کاربری یا رمز عبور اشتباه است.', code: 'INVALID_CREDENTIALS' }, 401);
@@ -1689,9 +1699,9 @@ export default {
 
         // Reset failed login attempts on success
         await clearRateLimit(env, rateLimitKey);
-        if (user && env.DB) {
+        if (adminUser && env.DB) {
           try {
-            await env.DB.prepare('UPDATE admin_users SET failed_login_attempts = 0, locked_until = 0 WHERE id = ?').bind(user.id).run();
+            await env.DB.prepare('UPDATE admin_users SET failed_login_attempts = 0, locked_until = 0 WHERE id = ?').bind(adminUser.id).run();
           } catch {}
         }
 
@@ -1699,10 +1709,10 @@ export default {
         const rawToken = generateSecureToken('bhd_adm_');
         const tokenHash = await hashSessionToken(rawToken);
         const expiresAt = Date.now() + 7 * 86400 * 1000; // 7 days expiration
-        const staffId = user?.id || 1;
-        const staffRole = user?.role || 'super_admin';
-        const staffName = user?.full_name || 'مدیر کل بهدون';
-        const staffPerms = user?.permissions ? JSON.parse(user.permissions) : ['*'];
+        const staffId = adminUser?.id || 1;
+        const staffRole = adminUser?.role || 'super_admin';
+        const staffName = adminUser?.full_name || 'مدیر کل بهدون';
+        const staffPerms = adminUser?.permissions ? JSON.parse(adminUser.permissions) : ['*'];
 
         if (env.DB) {
           try {
@@ -1718,13 +1728,13 @@ export default {
 
         const staff = {
           id: staffId,
-          username: user?.username || username,
+          username: adminUser?.username || username,
           fullName: staffName,
           role: staffRole,
           roleLabel: staffRole === 'super_admin' ? 'مدیر کل سیستم' : 'مدیر بخش',
           permissions: staffPerms,
-          phone: user?.phone || '09123456789',
-          avatarUrl: user?.avatar_url || null,
+          phone: adminUser?.phone || '09123456789',
+          avatarUrl: adminUser?.avatar_url || null,
           twoFactorEnabled: false,
         };
 
@@ -2076,7 +2086,7 @@ export default {
                   customerName || 'مشتری گرامی',
                   phone,
                   data.serviceId || data.service_id || 'hvac',
-                  data.serviceLabel || data.service_label || 'سرمایش و گرمایش',
+                  data.serviceLabel || data.service_label || data.service || 'سرمایش و گرمایش',
                   'تهران',
                   'تهران',
                   data.district || data.neighborhood || 'تهران',
@@ -4197,7 +4207,7 @@ export default {
       }
 
       // --- Single Customer Order Detail with Timeline, Quotes, Invoice & Anti-IDOR ---
-      if (pathname.startsWith('/api/customer/orders/') && !pathname.endsWith('/cancel') && request.method === 'GET') {
+      if ((pathname.startsWith('/api/customer/orders/') || pathname.startsWith('/api/orders/')) && !pathname.endsWith('/cancel') && request.method === 'GET') {
         const auth = getCustomerAuth(request);
         const staff = isStaffAuthed(request);
         const codeQuery = url.searchParams.get('code')?.trim() || url.searchParams.get('trackingCode')?.trim();
