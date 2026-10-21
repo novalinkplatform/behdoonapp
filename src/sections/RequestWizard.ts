@@ -122,8 +122,8 @@ export const STEPS = [
     shortTitleEn: 'Visit Time',
     question: 'چه زمانی برای حضور تکنسین در محل مناسب است؟',
     questionEn: 'When should the technician visit?',
-    hint: 'می‌توانید اعزام فوری (زیر ۴۵ دقیقه) یا روز و ساعت دلخواه را انتخاب فرمایید',
-    hintEn: 'Choose immediate dispatch under 45 mins or select your preferred date & time',
+    hint: 'می‌توانید اعزام فوری و اولویت‌دار یا روز و ساعت دلخواه را انتخاب فرمایید',
+    hintEn: 'Choose priority immediate dispatch or select your preferred date & time',
   },
   {
     id: 'finalize',
@@ -410,7 +410,7 @@ export function renderRequestWizard(
                 <span class="wizard-feature-card-icon icon-amber">${icons.bolt}</span>
                 <span class="wizard-feature-card-badge badge-amber">${pick('سریع‌ترین زمان', 'Fast Dispatch')}</span>
               </div>
-              <h3 class="wizard-feature-card-title">${pick('اعزام فوری (زیر ۴۵ دقیقه)', 'Immediate (<45 mins)')}</h3>
+              <h3 class="wizard-feature-card-title">${pick('اعزام فوری و اولویت‌دار', 'Immediate Priority Dispatch')}</h3>
               <p class="wizard-feature-card-desc">${pick('نزدیک‌ترین تکنسین متخصص بهدون بلافاصله با شما هماهنگ شده و اعزام خواهد شد.', 'Immediate dispatch of the nearest certified technician.')}</p>
               <div class="wizard-feature-card-check">
                 <span class="icon">${icons.checkCircle}</span>
@@ -559,8 +559,8 @@ export function renderRequestWizard(
             <h3 class="wizard-success-title">${pick('درخواست شما با موفقیت در بهدون ثبت شد!', 'Request submitted successfully to Behdoon!')}</h3>
             <p class="wizard-success-desc">
               ${pick(
-                'تکنسین متخصص بهدون ظرف کمتر از ۴۵ دقیقه با شما تماس گرفته و جهت انجام خدمت اعزام خواهد شد.',
-                'A Behdoon certified technician will contact you shortly and dispatch to your location.',
+                'تکنسین متخصص بهدون در اسرع وقت با شما هماهنگ شده و در زمان مقرر جهت انجام خدمت اعزام خواهد شد.',
+                'A Behdoon certified technician will contact you shortly and dispatch to your location at the agreed time.',
               )}
             </p>
 

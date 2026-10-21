@@ -196,7 +196,7 @@ export function renderArticleView(article: DynamicArticle): string {
                 </h3>
                 <p class="booking-box-desc">
                   ${pick(
-                    'استادکاران احراز هویت‌شده بهدون در تمامی مناطق ۲۲‌گانه تهران ظرف کمتر از ۴۵ دقیقه در محل شما حاضر شده و خدمات را با نرخ مصوب اتحادیه و ضمانت کتبی انجام می‌دهند.',
+                    'استادکاران احراز هویت‌شده بهدون در تمامی مناطق ۲۲‌گانه تهران در سریع‌ترین زمان ممکن در محل شما حاضر شده و خدمات را با نرخ مصوب و ضمانت کتبی انجام می‌دهند.',
                     'Certified technicians dispatch across all 22 Tehran districts with written warranty and official rates.',
                   )}
                 </p>
@@ -291,7 +291,7 @@ export function renderArticleView(article: DynamicArticle): string {
                 <div class="booking-widget-features">
                   <div class="booking-feature-row">
                     <span class="feature-icon">⏱</span>
-                    <span>${pick('اعزام سریع در کمتر از ۴۵ دقیقه', 'Under 45 mins dispatch')}</span>
+                    <span>${pick('اعزام سریع و اولویت‌بندی اعزام', 'Prompt & Priority dispatch')}</span>
                   </div>
                   <div class="booking-feature-row">
                     <span class="feature-icon">⚖</span>

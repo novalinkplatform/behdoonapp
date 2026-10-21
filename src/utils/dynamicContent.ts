@@ -1,6 +1,14 @@
 import { API_BASE_URL } from '../data/config.ts';
 import { DEFAULT_ARTICLES } from '../data/defaultArticles.ts';
 
+export interface LegalHighlight {
+  icon: string;
+  title: string;
+  titleEn: string;
+  desc: string;
+  descEn: string;
+}
+
 export interface LegalSection {
   heading: string;
   headingEn: string;
@@ -8,6 +16,10 @@ export interface LegalSection {
   paragraphsEn: string[];
   list?: string[];
   listEn?: string[];
+  tag?: string;
+  tagEn?: string;
+  callout?: string;
+  calloutEn?: string;
 }
 
 export interface LegalPage {
@@ -19,6 +31,7 @@ export interface LegalPage {
   intro: string;
   introEn: string;
   sections: LegalSection[];
+  highlights?: LegalHighlight[];
   showInHeader?: boolean;
   showInFooter?: boolean;
 }

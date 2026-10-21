@@ -82,8 +82,8 @@ export function renderCareersView(
             </h1>
             <p class="careers-main-subtitle">
               ${pick(
-                'کسب درآمد ماهیانه تا بیش از ۵۰ میلیون تومان، بدون واسطه، با تسویه حساب منظم روزانه، ساعات کاری منعطف و سفارشات پرتعداد در کلیه مناطق ۲۲‌گانه تهران.',
-                'Earn up to 50M+ Tomans monthly with zero middleman fees, instant daily settlements, flexible working hours, and steady bookings across Tehran.'
+                'کسب درآمد منصفانه و پایدار بر مبنای مهارت و فعالیت، با تسویه حساب منظم روزانه، ساعات کاری منعطف و دسترسی به سفارشات فعال در کلیه مناطق ۲۲‌گانه تهران.',
+                'Earn fair and sustainable income matching your skill and effort, with daily payouts, flexible schedule, and active bookings across Tehran.'
               )}
             </p>
           </div>

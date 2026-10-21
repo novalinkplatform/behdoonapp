@@ -133,7 +133,7 @@ function renderAppLinks(appLinks?: SiteSettings['app_links']): string {
 
 const DEFAULT_BEHDOON_SEO_PARAGRAPHS = [
   {
-    fa: 'سامانه خدمات هوشمند ساختمان بهدون (Behdoon) جامع‌ترین و مطمئن‌ترین پلتفرم آنلاین ارائه خدمات فنی، تأسیساتی و ساختمانی در کلیه مناطق ۲۲ گانه شهر تهران است. رسالت اصلی بهدون رفع دغدغه‌های همیشگی شهروندان در زمینه یافتن استادکاران قابل اعتماد، تعیین نرخ‌های شفاف بر مبنای مصوبات منصفانه اتحادیه، اعزام فوق‌سریع در زمان‌های اضطراری (کمتر از ۴۵ دقیقه) و ارائه ضمانت کتبی ۳۰ روزه برای کلیه سفارش‌های انجام‌شده می‌باشد.',
+    fa: 'سامانه خدمات هوشمند ساختمان بهدون (Behdoon) جامع‌ترین و مطمئن‌ترین پلتفرم آنلاین ارائه خدمات فنی، تأسیساتی و ساختمانی در کلیه مناطق ۲۲ گانه شهر تهران است. رسالت اصلی بهدون رفع دغدغه‌های همیشگی شهروندان در زمینه یافتن استادکاران قابل اعتماد، تعیین نرخ‌های شفاف بر مبنای مصوبات منصفانه اتحادیه، اعزام سریع و اولویت‌بندی موارد اضطراری و ارائه ضمانت کتبی ۳۰ روزه حسن انجام خدمات برای کلیه سفارش‌های انجام‌شده می‌باشد.',
     en: "Behdoon Smart Building Services Platform is Tehran's leading online destination for specialized building maintenance, HVAC servicing, sanitary plumbing, professional electrical contracting, and turn-key interior renovation. Backed by certified technicians and written warranties.",
   },
   {
@@ -197,7 +197,7 @@ export function renderFooter(settings?: SiteSettings): string {
           <div class="promise-item">
             <span class="icon promise-icon">${icons.clock}</span>
             <div class="promise-text">
-              <strong>${pick('اعزام فوری در کمتر از ۴۵ دقیقه', 'Fast Dispatch Under 45 Mins')}</strong>
+              <strong>${pick('اعزام سریع و هماهنگی به‌موقع', 'Prompt & Punctual Dispatch')}</strong>
               <span>${pick('پوشش سراسری کلیه مناطق ۲۲ گانه شهر تهران', 'Full coverage across all 22 Tehran districts')}</span>
             </div>
           </div>
@@ -233,7 +233,7 @@ export function renderFooter(settings?: SiteSettings): string {
               <span class="icon">${icons.briefcase}</span>
               <span>${pick('فرصت ویژه همکاری و اشتغال تکنسین‌ها', 'Technician Career Opportunity')}</span>
             </span>
-            <span class="recruitment-perk-pill">${pick('تسویه روزانه + درآمد بالا تا ۵۰ میلیون تومان', 'Daily Payout + Up to 50M Tomans Monthly')}</span>
+            <span class="recruitment-perk-pill">${pick('تسویه منظم روزانه + درآمد منصفانه و شفاف', 'Daily Payout + Fair Competitive Earnings')}</span>
           </div>
           <div class="recruitment-body-row">
             <div class="recruitment-text-col">
@@ -242,8 +242,8 @@ export function renderFooter(settings?: SiteSettings): string {
               </h3>
               <p class="recruitment-desc">
                 ${pick(
-                  'کسب درآمد پایدار و بالا، تسویه حساب منظم و روزانه، ساعات کاری منعطف و دریافت سفارشات مستمر در محله و مناطق انتخابی شما در شهر تهران بدون کمیسیون‌های نامتعارف.',
-                  'High monthly earnings up to 50M+ Tomans, flexible working hours, zero unfair fees, and steady client requests across your preferred districts in Tehran.'
+                  'کسب درآمد منصفانه و پایدار بر مبنای مهارت، تسویه حساب منظم روزانه، ساعات کاری منعطف و دریافت سفارشات مستمر در مناطق انتخابی شما در شهر تهران بدون کمیسیون‌های نامتعارف.',
+                  'Fair competitive earnings based on skill, daily settlements, flexible hours, and steady bookings in your preferred Tehran districts.'
                 )}
               </p>
             </div>
@@ -376,7 +376,7 @@ export function renderFooter(settings?: SiteSettings): string {
           <div class="regions-header">
             <span class="icon regions-icon">${icons.pin}</span>
             <div class="regions-header-text">
-              <h4 class="regions-title">${pick('مناطق تحت پوشش خدمات فنی و تأسیساتی بهدون در شهر تهران (اعزام فوری زیر ۴۵ دقیقه)', 'Service Areas in Tehran City (Fast Dispatch Under 45 Mins)')}</h4>
+              <h4 class="regions-title">${pick('مناطق تحت پوشش خدمات فنی و تأسیساتی بهدون در شهر تهران (اعزام سریع و هماهنگ)', 'Service Areas in Tehran City (Prompt & Punctual Dispatch)')}</h4>
               <p class="regions-desc">${pick('استقرار تیم‌های سیار متخصصین تأسیسات، لوله‌کشی، پکیج، کولر و برقکاری در کلیه مناطق ۲۲‌گانه پایتخت:', 'Mobile teams of certified HVAC, plumbing & electrical specialists ready across all 22 Tehran districts:')}</p>
             </div>
           </div>

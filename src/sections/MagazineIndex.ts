@@ -152,8 +152,8 @@ export function renderMagazineIndex(articles: DynamicArticle[]): string {
             </div>
             <p class="urgent-cta-text">
               ${pick(
-                'نیازی به مطالعه مقالات ندارید! نزدیک‌ترین تکنسین متخصص بهدون در کمتر از ۴۵ دقیقه در محل شما حاضر می‌شود.',
-                'Skip the reading! Our nearest certified technician dispatches in under 45 minutes across Tehran.',
+                'نیازی به مطالعه مقالات ندارید! نزدیک‌ترین تکنسین متخصص بهدون در سریع‌ترین زمان ممکن در محل شما حاضر می‌شود.',
+                'Skip the reading! Our nearest certified technician dispatches promptly across Tehran.',
               )}
             </p>
           </div>
