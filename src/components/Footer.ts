@@ -4,53 +4,6 @@ import { pick } from '../i18n/lang.ts';
 import { toPersianDigits } from '../utils/jalali.ts';
 import type { SiteSettings, SocialLinkSetting } from '../utils/dynamicContent.ts';
 
-export function buildFooterLinks(settings?: SiteSettings): Array<{ href: string; label: string }> {
-  const links: Array<{ href: string; label: string }> = [];
-  links.push({ href: '/', label: pick('خانه', 'Home') });
-  links.push({ href: '/services', label: pick('خدمات تخصصی ساختمان', 'Specialized Services') });
-  links.push({ href: '/orders', label: pick('پیگیری درخواست‌ها', 'Track Orders') });
-  links.push({ href: '/magazine', label: pick('مجله دانستنی‌های ساختمان', 'Building Magazine') });
-  links.push({ href: '/careers', label: pick('جذب متخصص و استخدام', 'Careers') });
-
-  const legal = settings?.legal_pages;
-  const aboutShow = legal?.about ? legal.about.showInFooter !== false : true;
-  if (aboutShow) {
-    links.push({
-      href: '/about',
-      label: pick(legal?.about?.title, legal?.about?.titleEn) || pick('درباره ما', 'About Us'),
-    });
-  }
-
-  const termsShow = legal?.terms ? legal.terms.showInFooter !== false : true;
-  if (termsShow) {
-    links.push({
-      href: '/terms',
-      label: pick(legal?.terms?.title, legal?.terms?.titleEn) || pick('قوانین و ضمانت خدمات', 'Terms & Warranty'),
-    });
-  }
-
-  const privacyShow = legal?.privacy ? legal.privacy.showInFooter !== false : true;
-  if (privacyShow) {
-    links.push({
-      href: '/privacy',
-      label: pick(legal?.privacy?.title, legal?.privacy?.titleEn) || pick('حریم خصوصی', 'Privacy Policy'),
-    });
-  }
-
-  if (Array.isArray(settings?.nav_pages)) {
-    for (const p of settings.nav_pages) {
-      if (p.showInFooter) {
-        links.push({
-          href: `/page/${encodeURIComponent(p.slug)}`,
-          label: pick(p.title, p.titleEn) || p.title,
-        });
-      }
-    }
-  }
-
-  return links;
-}
-
 const FALLBACK_SITE_NAME = { fa: 'بهدون', en: 'Behdoon' };
 
 const SOCIAL_ICON_MAP: Record<string, keyof typeof icons> = {
@@ -77,13 +30,13 @@ const DEFAULT_SOCIALS: SocialLinkSetting[] = [
 ];
 
 function renderSocialLinks(links: SocialLinkSetting[], colorStyle: string): string {
-  const activeLinks = links.length ? links : DEFAULT_SOCIALS;
+  const activeLinks = links && links.length ? links : DEFAULT_SOCIALS;
   return `
-    <div class="footer-social" ${colorStyle}>
+    <div class="footer-social" ${colorStyle} aria-label="${pick('شبکه‌های اجتماعی بهدون', 'Social media')}">
       ${activeLinks
         .map((link) => {
           const icon = link.customIconUrl
-            ? `<img src="${link.customIconUrl}" alt="${link.label}" style="width:20px;height:20px;object-fit:contain;border-radius:4px;" />`
+            ? `<img src="${link.customIconUrl}" alt="${link.label}" style="width:18px;height:18px;object-fit:contain;border-radius:4px;" />`
             : icons[SOCIAL_ICON_MAP[link.platform] ?? 'globe'];
           const isMail = link.platform === 'mail';
           return `
@@ -99,14 +52,13 @@ function renderSocialLinks(links: SocialLinkSetting[], colorStyle: string): stri
 
 function renderAppLinks(appLinks?: SiteSettings['app_links']): string {
   const defaultBadges = [
-    { label: 'کافه‌بازار', platform: 'bazaar', sub: 'دانلود مستقیم', url: 'https://cafebazaar.ir' },
-    { label: 'مایکت', platform: 'custom', sub: 'نسخه اندروید', url: 'https://myket.ir' },
-    { label: 'نسخه وب PWA', platform: 'custom', sub: 'بدون نیاز به فیلترشکن', url: '/#request' },
+    { label: 'کافه‌بازار', sub: pick('دانلود مستقیم', 'Direct Download'), url: 'https://cafebazaar.ir' },
+    { label: 'مایکت', sub: pick('نسخه اندروید', 'Android App'), url: 'https://myket.ir' },
+    { label: 'وب‌اپلیکیشن PWA', sub: pick('دسترسی فوری', 'Web App'), url: '/#request' },
   ];
   const badges = appLinks?.enabled && appLinks.links.length
     ? appLinks.links.map((l) => ({
         label: l.label || l.platform,
-        platform: l.platform,
         sub: pick('دانلود مستقیم', 'Direct Download'),
         url: l.url,
       }))
@@ -131,220 +83,87 @@ function renderAppLinks(appLinks?: SiteSettings['app_links']): string {
   `;
 }
 
-const DEFAULT_BEHDOON_SEO_PARAGRAPHS = [
-  {
-    fa: 'سامانه خدمات هوشمند ساختمان بهدون (Behdoon) جامع‌ترین و مطمئن‌ترین پلتفرم آنلاین ارائه خدمات فنی، تأسیساتی و ساختمانی در کلیه مناطق ۲۲ گانه شهر تهران است. رسالت اصلی بهدون رفع دغدغه‌های همیشگی شهروندان در زمینه یافتن استادکاران قابل اعتماد، تعیین نرخ‌های شفاف بر مبنای مصوبات منصفانه اتحادیه، اعزام سریع و اولویت‌بندی موارد اضطراری و ارائه ضمانت کتبی ۳۰ روزه حسن انجام خدمات برای کلیه سفارش‌های انجام‌شده می‌باشد.',
-    en: "Behdoon Smart Building Services Platform is Tehran's leading online destination for specialized building maintenance, HVAC servicing, sanitary plumbing, professional electrical contracting, and turn-key interior renovation. Backed by certified technicians and written warranties.",
-  },
-  {
-    fa: 'تخصص‌های مکانیکی و هیدرولیکی بهدون شامل تعمیر و سرویس دوره‌ای پکیج دیواری و زمینی تمامی برندها (ایران رادیاتور، بوتان، تاچی و...)، سرویس و راه‌اندازی کولر آبی، نصب و شارژ گاز کولر گازی و داکت اسپلیت، لوله‌کشی سرد و گرم پنج‌لایه، تشخیص ترکیدگی و نشت‌یابی لوله با پیشرفته‌ترین دستگاه‌های آکوستیک و تصویری بدون تخریب، رفع نم و رطوبت و لوله‌بازکنی شبانه‌روزی با فنر فولادی می‌باشد.',
-    en: 'Behdoon mechanical services encompass water heater & boiler repair, evaporative and AC split servicing, sanitary multi-layer piping, acoustic water leak detection without demolition, and 24/7 drain unblocking.',
-  },
-  {
-    fa: 'در حوزه برق و ابنیه، خدمات بهدون دربرگیرنده رفع اتصالی فوری شبانه‌روزی، تعویض فیوز و سیم‌کشی توکار، نصب لوستر و هالوژن، کابل‌کشی تابلو برق، نقاشی ساختمان با رنگ‌های روغنی و اکریلیک درجه یک، سرامیک‌کاری و بنایی، ایزوگام و عایق‌کاری رطوبتی پشت‌بام، کلیدسازی فوری شبانه‌روزی، تعمیر کابینت و کمد دیواری و نظافت تخصصی مشاعات و راه‌پله است.',
-    en: 'Our electrical and structural solutions include emergency short-circuit resolution, indoor rewiring, chandelier mounting, interior painting, masonry, waterproofing, 24/7 locksmith services, and facility maintenance.',
-  },
-  {
-    fa: 'تکنسین‌ها و استادکاران فعال در شبکه بهدون پس از طی مراحل گزینش چندمرحله‌ای شامل آزمون مهارت فنی‌وحرفه‌ای، سنجش اخلاق حرفه‌ای و استعلام سوءپیشینه کیفری تایید می‌شوند. فرآیند ثبت درخواست کاملاً آنلاین و کمتر از ۲ دقیقه زمان می‌برد؛ مشتریان پیش از شروع کار برآورد هزینه شفاف دریافت کرده و در پایان فاکتور رسمی معتبر به همراه کد رهگیری هوشمند دریافت می‌کنند.',
-    en: 'All service providers undergo strict background checks and skill verification. Customers receive upfront price estimates, smart tracking codes, and written 30-day workmanship warranties on all jobs.',
-  },
-];
-
 export function renderFooter(settings?: SiteSettings): string {
   const year = new Date().getFullYear();
   const siteName = settings?.site_name ?? FALLBACK_SITE_NAME;
   const brandFa = typeof siteName === 'object' ? siteName.fa || 'بهدون' : String(siteName);
   const brandEn = typeof siteName === 'object' ? siteName.en || 'Behdoon' : String(siteName);
 
-  const footerData = settings?.footer;
-  let copyrightFa = footerData?.copyright?.fa;
-  if (!copyrightFa) {
-    copyrightFa = `تمامی حقوق مادی و معنوی برای ${brandFa} محفوظ است. سامانه هوشمند خدمات فنی و تأسیسات ساختمان در شهر تهران.`;
-  } else if (brandFa && brandFa !== 'بهدون' && (copyrightFa.includes('بهدون') || copyrightFa.includes('بهبار'))) {
-    copyrightFa = copyrightFa.replace(/به[بد]ون?|به‌بار|به بار|بهبار/g, brandFa);
-  }
-
-  let copyrightEn = footerData?.copyright?.en;
-  if (!copyrightEn) {
-    copyrightEn = `All rights reserved for ${brandEn}. Smart Building & Technical Services Platform.`;
-  } else if (brandEn && brandEn.toLowerCase() !== 'behdoon' && /behdoon|behbar/i.test(copyrightEn)) {
-    copyrightEn = copyrightEn.replace(/behdoon|behbar/gi, brandEn);
-  }
-
-  const copyright = {
-    fa: copyrightFa,
-    en: copyrightEn,
-  };
-
-  const rawSeo = footerData?.seoParagraphs;
-  const sourceSeo: Array<{ fa: string; en?: string }> = Array.isArray(rawSeo) && rawSeo.length
-    ? rawSeo
-    : DEFAULT_BEHDOON_SEO_PARAGRAPHS;
-
-  const seoParagraphs = sourceSeo.map((p) => ({
-    fa: p.fa.replace(/به‌بار|به بار/g, brandFa),
-    en: p.en,
-  }));
-
   const contact = resolveContact(settings?.contact);
   const colorStyle = contact.socialIconColor ? `style="--footer-social-color:${contact.socialIconColor}"` : '';
 
   return `
     <footer class="site-footer" id="footer" itemscope itemtype="https://schema.org/WPFooter">
-      <!-- ۱. نوار تمایزها و ارزش‌های افزوده بهدون بالای فوتر -->
-      <div class="footer-promises-strip">
-        <div class="container promises-strip-inner">
-          <div class="promise-item">
-            <span class="icon promise-icon">${icons.clock}</span>
-            <div class="promise-text">
-              <strong>${pick('اعزام سریع و هماهنگی به‌موقع', 'Prompt & Punctual Dispatch')}</strong>
-              <span>${pick('پوشش سراسری کلیه مناطق ۲۲ گانه شهر تهران', 'Full coverage across all 22 Tehran districts')}</span>
-            </div>
-          </div>
-          <div class="promise-item">
-            <span class="icon promise-icon">${icons.shield}</span>
-            <div class="promise-text">
-              <strong>${pick('ضمانت کتبی ۳۰ روزه کیفیت کار', '30-Day Written Quality Warranty')}</strong>
-              <span>${pick('پیگیری رضایت تا اتمام کار و بازرسی رایگان', 'Full customer support & free re-inspection')}</span>
-            </div>
-          </div>
-          <div class="promise-item">
-            <span class="icon promise-icon">${icons.badge}</span>
-            <div class="promise-text">
-              <strong>${pick('تکنسین‌های احراز هویت شده', 'Certified & Background-Checked')}</strong>
-              <span>${pick('دارای مدرک فنی‌وحرفه‌ای و عدم سوءپیشینه', 'Verified vocational certification & clear record')}</span>
-            </div>
-          </div>
-          <div class="promise-item">
-            <span class="icon promise-icon">${icons.fileText}</span>
-            <div class="promise-text">
-              <strong>${pick('قیمت‌گذاری شفاف و منصفانه', 'Union Approved Transparent Rates')}</strong>
-              <span>${pick('صدور آنی فاکتور رسمی تفکیکی بدون هزینه مخفی', 'Instant itemized official invoice with zero hidden fee')}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- بنر ویژه جذب تکنسین و متخصصان: اگر تخصص دارید به بهدون بپیوندید -->
-      <div class="container footer-recruitment-container">
-        <div class="footer-recruitment-card">
-          <div class="recruitment-badge-row">
-            <span class="recruitment-chip">
-              <span class="icon">${icons.briefcase}</span>
-              <span>${pick('فرصت ویژه همکاری و اشتغال تکنسین‌ها', 'Technician Career Opportunity')}</span>
-            </span>
-            <span class="recruitment-perk-pill">${pick('تسویه منظم روزانه + درآمد منصفانه و شفاف', 'Daily Payout + Fair Competitive Earnings')}</span>
-          </div>
-          <div class="recruitment-body-row">
-            <div class="recruitment-text-col">
-              <h3 class="recruitment-title">
-                ${pick('اگر تخصص فنی یا تأسیساتی دارید، به جمع متخصصین بهدون بپیوندید', 'Join Behdoon Network of Certified Home Technicians')}
-              </h3>
-              <p class="recruitment-desc">
-                ${pick(
-                  'کسب درآمد منصفانه و پایدار بر مبنای مهارت، تسویه حساب منظم روزانه، ساعات کاری منعطف و دریافت سفارشات مستمر در مناطق انتخابی شما در شهر تهران بدون کمیسیون‌های نامتعارف.',
-                  'Fair competitive earnings based on skill, daily settlements, flexible hours, and steady bookings in your preferred Tehran districts.'
-                )}
-              </p>
-            </div>
-            <div class="recruitment-btn-col">
-              <a href="/careers" class="btn btn-primary recruitment-cta-btn">
-                <span>${pick('ثبت‌نام و تکمیل فرم همکاری تکنسین', 'Apply as a Specialist')}</span>
-                <span class="icon">${icons.chevronLeft}</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ۲. شبکه اصلی ۴ ستونه منظم، خوانا و تفکیک‌شده فوتر -->
       <div class="container footer-main-wrapper">
         <div class="footer-grid">
-          <!-- ستون ۱: برند، ارتباط و هویت بهدون -->
+          <!-- ستون ۱: هویت برند، معرفی کوتاه و پشتیبانی مستقیم -->
           <div class="footer-col footer-col-brand" itemscope itemtype="https://schema.org/LocalBusiness">
             <div class="footer-brand-header">
               <a href="/" class="footer-logo-link" aria-label="${brandFa}">
-                <img src="/favicon.svg" alt="${brandFa}" class="footer-brand-logo" width="38" height="38" itemprop="image" />
+                <img src="/favicon.svg" alt="${brandFa}" class="footer-brand-logo" width="36" height="36" itemprop="image" />
                 <span class="footer-brand-title" itemprop="name">${brandFa}</span>
               </a>
-              <span class="footer-brand-badge">${pick('سامانه خدمات فنی شهر تهران', 'Tehran Building Services')}</span>
+              <span class="footer-brand-badge">${pick('سامانه خدمات فنی پایتخت', 'Tehran Building Services')}</span>
             </div>
 
-            <p class="footer-brand-mission" itemprop="description">
+            <p class="footer-brand-desc" itemprop="description">
               ${pick(
-                `سامانه جامع و تخصصی ثبت آنلاین درخواست و اعزام فوری تکنسین‌های مجرب تأسیسات، سرمایش و گرمایش، لوله‌کشی، برقکاری و بازسازی ساختمان با ضمانت کتبی ۳۰ روزه و فاکتور رسمی معتبر در کلیه مناطق ۲۲ گانه شهر تهران.`,
-                `Tehran specialized platform for reliable home and building maintenance, certified plumbing, HVAC diagnostics, and professional renovation with written warranties across all 22 districts.`,
+                `سامانه آنلاین ثبت درخواست و اعزام متخصصین تأسیسات، سرمایش، گرمایش، لوله‌کشی و برقکاری در کلیه مناطق ۲۲‌گانه شهر تهران با ضمانت ۳۰ روزه حسن انجام خدمات و فاکتور رسمی معتبر.`,
+                `Tehran online platform for certified HVAC, plumbing, electrical, and repair specialists with 30-day workmanship warranties across all 22 districts.`
               )}
             </p>
 
             <div class="footer-contact-actions">
-              <a href="${contact.phoneTelHref}" class="footer-contact-card footer-phone-card" itemprop="telephone">
-                <span class="icon contact-card-icon">${icons.phone}</span>
-                <div class="contact-card-text">
-                  <span class="contact-card-sub">${pick('پشتیبانی تلفنی و اعزام ۲۴ ساعته:', '24/7 Telephone Support:')}</span>
-                  <strong class="contact-card-val" dir="ltr">${toPersianDigits(phoneNumberDisplay(contact))}</strong>
+              <a href="${contact.phoneTelHref}" class="footer-contact-pill footer-phone-pill" itemprop="telephone">
+                <span class="icon contact-pill-icon">${icons.phone}</span>
+                <div class="contact-pill-text">
+                  <span class="contact-pill-sub">${pick('پشتیبانی تلفنی و اعزام:', 'Direct Telephone:')}</span>
+                  <strong class="contact-pill-val" dir="ltr">${toPersianDigits(phoneNumberDisplay(contact))}</strong>
                 </div>
               </a>
 
-              <a href="https://wa.me/989333256885" target="_blank" rel="noopener" class="footer-contact-card footer-wa-card">
-                <span class="icon contact-card-icon">${icons.whatsappFilled || icons.whatsapp}</span>
-                <div class="contact-card-text">
-                  <span class="contact-card-sub">${pick('مشاوره و ارسال عکس در واتساپ:', 'WhatsApp Dispatch & Photo Send:')}</span>
-                  <strong class="contact-card-val" dir="ltr">۰۹۳۳۳۲۵۶۸۸۵</strong>
+              <a href="https://wa.me/989333256885" target="_blank" rel="noopener" class="footer-contact-pill footer-wa-pill">
+                <span class="icon contact-pill-icon">${icons.whatsappFilled || icons.whatsapp}</span>
+                <div class="contact-pill-text">
+                  <span class="contact-pill-sub">${pick('مشاوره و پشتیبانی واتساپ:', 'WhatsApp Support:')}</span>
+                  <strong class="contact-pill-val" dir="ltr">۰۹۳۳۳۲۵۶۸۸۵</strong>
                 </div>
               </a>
             </div>
 
             <div class="footer-social-wrapper">
-              <span class="footer-social-heading">${pick('شبکه‌های اجتماعی رسمی بهدون:', 'Connect on social media:')}</span>
+              <span class="footer-social-title">${pick('شبکه‌های اجتماعی بهدون:', 'Follow Behdoon:')}</span>
               ${renderSocialLinks(contact.socialLinks, colorStyle)}
             </div>
           </div>
 
-          <!-- ستون ۲: خدمات پرتقاضای تأسیساتی و سرمایش/گرمایش (کلمات کلیدی سئو) -->
-          <div class="footer-col">
+          <!-- ستون ۲: خدمات تخصصی منتخب (بدون شلوغی و تکرار) -->
+          <div class="footer-col footer-col-services">
             <h4 class="footer-col-title">
-              <span class="icon col-title-icon">${icons.hvac}</span>
-              <span>${pick('سرمایش، گرمایش و لوله‌کشی', 'HVAC & Plumbing Services')}</span>
+              <span class="icon col-title-icon">${icons.tool || icons.hvac}</span>
+              <span>${pick('خدمات تخصصی', 'Core Services')}</span>
             </h4>
             <ul class="footer-nav-list">
               <li><a href="/services/hvac/package">${pick('تعمیر و سرویس پکیج دیواری', 'Wall Boiler & Heating Repair')}</a></li>
-              <li><a href="/services/hvac/water-cooler">${pick('نصب و سرویس دوره‌ای کولر آبی', 'Evaporative Cooler Service')}</a></li>
-              <li><a href="/services/hvac">${pick('نصب و تعمیر کولر گازی و اسپلیت', 'AC Split Repair & Gas Refill')}</a></li>
-              <li><a href="/services/hvac/radiator">${pick('هواگیری و نصب شوفاژ و رادیاتور', 'Radiator Bleeding & Installation')}</a></li>
-              <li><a href="/services/plumbing/leak-detection">${pick('تشخیص ترکیدگی و نشت‌یابی لوله با دستگاه', 'Acoustic Pipe Leak Detection')}</a></li>
-              <li><a href="/services/plumbing/moisture-repair">${pick('رفع نم و رطوبت دیوار و سقف بدون تخریب', 'Moisture & Damp Wall Treatment')}</a></li>
-              <li><a href="/services/plumbing">${pick('لوله‌بازکنی و رفع گرفتگی لوله فاضلاب', 'Drain Cleaning & Unclogging')}</a></li>
-              <li><a href="/services/plumbing/faucets">${pick('نصب و تعمیر شیرآلات ساختمانی و توالت فرنگی', 'Faucet & Sanitary Ware Installation')}</a></li>
-              <li><a href="/services/plumbing/water-tank">${pick('نصب و تعمیر پمپ آب خانگی و منبع', 'Home Water Pump & Tank Setup')}</a></li>
+              <li><a href="/services/hvac">${pick('سرویس کولر آبی و گازی', 'AC & Evaporative Cooler Service')}</a></li>
+              <li><a href="/services/plumbing/leak-detection">${pick('نشت‌یابی با دستگاه و لوله‌کشی', 'Acoustic Pipe Leak Detection')}</a></li>
+              <li><a href="/services/electrical">${pick('برقکاری ساختمان و رفع اتصالی فوری', 'Building Rewiring & Short Circuit Fix')}</a></li>
+              <li><a href="/services/renovation">${pick('نقاشی و بازسازی ساختمان', 'Painting & Interior Renovation')}</a></li>
+              <li><a href="/services/locksmith">${pick('کلیدسازی و باز کردن قفل درب', 'Locksmith & Emergency Lock Repair')}</a></li>
+              <li class="footer-view-all-li">
+                <a href="/services" class="footer-all-services-link">
+                  <span>${pick('مشاهده کاتالوگ ۵۳ خدمت بهدون', 'View all 53 services')}</span>
+                  <span class="icon">${icons.chevronLeft}</span>
+                </a>
+              </li>
             </ul>
           </div>
 
-          <!-- ستون ۳: برق‌کاری، بازسازی و خدمات فنی ساختمان -->
-          <div class="footer-col">
-            <h4 class="footer-col-title">
-              <span class="icon col-title-icon">${icons.electrical}</span>
-              <span>${pick('برقکاری، بازسازی و خدمات فنی', 'Electrical & Construction')}</span>
-            </h4>
-            <ul class="footer-nav-list">
-              <li><a href="/services/electrical/short-circuit">${pick('رفع اتصالی برق و تعویض فیوز شبانه‌روزی', 'Emergency Short Circuit Fix')}</a></li>
-              <li><a href="/services/electrical/wiring">${pick('سیم‌کشی ساختمان و کابل‌کشی تابلو برق', 'Building Rewiring & Panels')}</a></li>
-              <li><a href="/services/electrical/chandelier">${pick('نصب لوستر، هالوژن، نور مخفی و کلید پریز', 'Chandelier & Lighting Installation')}</a></li>
-              <li><a href="/services/electrical/intercom">${pick('نصب و تعمیر آیفون تصویری و صوتی', 'Video Intercom Repair')}</a></li>
-              <li><a href="/services/renovation/painting">${pick('نقاشی ساختمان و رنگ‌آمیزی دیوار و سقف', 'Interior Painting & Wall Coating')}</a></li>
-              <li><a href="/services/renovation/tiling">${pick('کاشی‌کاری، سرامیک و بنایی کلی و جزئی', 'Tiling, Masonry & Plastering')}</a></li>
-              <li><a href="/services/renovation/roof-insulation">${pick('ایزوگام و عایق‌کاری رطوبتی پشت‌بام', 'Roof Waterproofing & Insulation')}</a></li>
-              <li><a href="/services/locksmith">${pick('کلیدسازی شبانه‌روزی و باز کردن درب ضدسرقت', '24/7 Locksmith & Lock Picking')}</a></li>
-              <li><a href="/services/carpentry">${pick('تعمیر کابینت آشپزخانه و کمد دیواری', 'Kitchen Cabinet & Carpentry')}</a></li>
-              <li><a href="/services/cleaning">${pick('نظافت راه‌پله، مشاعات و نماشویی با طناب', 'Common Area & Facade Cleaning')}</a></li>
-            </ul>
-          </div>
-
-          <!-- ستون ۴: دسترسی سریع، پرتال‌ها و دریافت اپلیکیشن -->
-          <div class="footer-col footer-col-trust">
+          <!-- ستون ۳: راهنمای مشتریان و دسترسی سریع -->
+          <div class="footer-col footer-col-nav">
             <h4 class="footer-col-title">
               <span class="icon col-title-icon">${icons.layers}</span>
-              <span>${pick('پرتال‌ها و اپلیکیشن', 'Portals & Behdoon App')}</span>
+              <span>${pick('راهنمای مشتریان', 'Customer Guide')}</span>
             </h4>
             <ul class="footer-nav-list">
               <li>
@@ -355,94 +174,51 @@ export function renderFooter(settings?: SiteSettings): string {
                 </a>
               </li>
               <li><a href="/orders">${pick('پیگیری درخواست و فاکتور آنلاین', 'Track Orders & Invoices')}</a></li>
-              <li><a href="/services">${pick('کاتالوگ کامل ۵۳ خدمت تخصصی بهدون', 'Catalog of All 53 Services')}</a></li>
-              <li><a href="/magazine">${pick('مجله و دانشنامه تخصصی ساختمان', 'Building & Tech Magazine')}</a></li>
-              <li><a href="/careers">${pick('فرصت‌های شغلی و استخدام تکنسین', 'Careers & Hiring')}</a></li>
-              <li><a href="/terms">${pick('قوانین، مقررات و ضمانت ۳۰ روزه', 'Terms & 30-Day Warranty')}</a></li>
-              <li><a href="/about">${pick('درباره مرکز خدمات ساختمانی بهدون', 'About Behdoon Services')}</a></li>
-              <li><a href="/privacy">${pick('حریم خصوصی و امنیت کاربران', 'Privacy Policy')}</a></li>
+              <li><a href="/terms">${pick('قوانین، مقررات و شرایط ضمانت', 'Terms & 30-Day Warranty')}</a></li>
+              <li><a href="/privacy">${pick('سیاست حفظ حریم خصوصی', 'Privacy Policy')}</a></li>
+              <li><a href="/about">${pick('درباره سامانه بهدون', 'About Behdoon')}</a></li>
+              <li><a href="/careers">${pick('همکاری و اشتغال متخصصین', 'Careers & Specialist Join')}</a></li>
+              <li><a href="/magazine">${pick('مجله و دانستنی‌های ساختمان', 'Home Tech Magazine')}</a></li>
             </ul>
+          </div>
 
-            <!-- دانلود اپلیکیشن موبایل بهدون -->
-            <div class="footer-app-download-section">
-              <span class="footer-section-mini-heading">${pick('دریافت مستقیم اپلیکیشن بهدون:', 'Download Behdoon App:')}</span>
+          <!-- ستون ۴: پوشش خدمات پایتخت و دریافت اپلیکیشن -->
+          <div class="footer-col footer-col-app">
+            <h4 class="footer-col-title">
+              <span class="icon col-title-icon">${icons.pin}</span>
+              <span>${pick('پوشش تهران و اپلیکیشن', 'Coverage & App')}</span>
+            </h4>
+
+            <div class="footer-coverage-card">
+              <div class="coverage-badge">
+                <span class="coverage-dot"></span>
+                <span>${pick('فعال در کلیه مناطق ۲۲‌گانه شهر تهران', 'Active Across All 22 Tehran Districts')}</span>
+              </div>
+              <p class="coverage-desc">
+                ${pick(
+                  'اعزام هماهنگ تکنسین به تمامی محله‌های شمال، غرب، شرق، مرکز و جنوب تهران با تعرفه مصوب و نظارت کیفی.',
+                  'Dispatching certified specialists to all neighborhoods of Tehran with fair pricing.'
+                )}
+              </p>
+            </div>
+
+            <div class="footer-app-box">
+              <span class="footer-app-heading">${pick('دریافت اپلیکیشن و دسترسی آسان:', 'Download App:')}</span>
               ${renderAppLinks(settings?.app_links)}
             </div>
           </div>
         </div>
 
-        <!-- ۳. بلوک ویژه سئو محلی: مناطق تحت پوشش در شهر تهران -->
-        <div class="footer-regions-card">
-          <div class="regions-header">
-            <span class="icon regions-icon">${icons.pin}</span>
-            <div class="regions-header-text">
-              <h4 class="regions-title">${pick('مناطق تحت پوشش خدمات فنی و تأسیساتی بهدون در شهر تهران (اعزام سریع و هماهنگ)', 'Service Areas in Tehran City (Prompt & Punctual Dispatch)')}</h4>
-              <p class="regions-desc">${pick('استقرار تیم‌های سیار متخصصین تأسیسات، لوله‌کشی، پکیج، کولر و برقکاری در کلیه مناطق ۲۲‌گانه پایتخت:', 'Mobile teams of certified HVAC, plumbing & electrical specialists ready across all 22 Tehran districts:')}</p>
-            </div>
-          </div>
-          <div class="regions-grid">
-            <div class="region-box">
-              <strong class="region-box-title">${pick('شمال تهران (مناطق ۱ تا ۳):', 'North Tehran:')}</strong>
-              <span class="region-box-list">${pick('تجریش، نیاوران، الهیه، ولنجک، زعفرانیه، قلهک، پاسداران، قیطریه، اندرزگو، دارآباد، فرمانیه، کامرانیه، ازگل', 'Tajrish, Niavaran, Elahiye, Velenjak, Zafaraniye, Pasdaran, Qeytariye')}</span>
-            </div>
-            <div class="region-box">
-              <strong class="region-box-title">${pick('غرب تهران (مناطق ۲، ۵، ۲۱، ۲۲):', 'West Tehran:')}</strong>
-              <span class="region-box-list">${pick('سعادت‌آباد، شهرک غرب، پونک، صادقیه، مرزداران، جنت‌آباد، گیشا، چیتگر، طرشت، ستارخان، دهکده المپیک', 'Saadat Abad, Shahrak Gharb, Punak, Sadeghiye, Marzdaran, Jannat Abad, Chitgar')}</span>
-            </div>
-            <div class="region-box">
-              <strong class="region-box-title">${pick('شرق تهران (مناطق ۴، ۸، ۱۳، ۱۴):', 'East Tehran:')}</strong>
-              <span class="region-box-list">${pick('تهرانپارس، نارمک، پیروزی، رسالت، افسریه، هنگام، تهران‌نو، نیروی هوایی، حکیمیه، مجیدیه، سرسبز', 'Tehranpars, Narmak, Piroozi, Resalat, Afsariye, Hengam, Tehran No')}</span>
-            </div>
-            <div class="region-box">
-              <strong class="region-box-title">${pick('مرکز تهران (مناطق ۶، ۷، ۱۱، ۱۲):', 'Central Tehran:')}</strong>
-              <span class="region-box-list">${pick('یوسف‌آباد، امیرآباد، سهروردی، عباس‌آباد، فاطمی، میدان انقلاب، بازار، بهارستان، مطهری، میدان ولیعصر', 'Yousef Abad, Amir Abad, Sohrevardi, Abbas Abad, Fatemi, Enqelab, Grand Bazaar')}</span>
-            </div>
-            <div class="region-box">
-              <strong class="region-box-title">${pick('جنوب تهران (مناطق ۱۵ تا ۲۰):', 'South Tehran:')}</strong>
-              <span class="region-box-list">${pick('نازی‌آباد، شوش، خانی‌آباد، راه‌آهن، شهرری، جوادیه، عبدل‌آباد، فلاح، مشیریه، مسعودیه', 'Nazi Abad, Shoush, Khani Abad, Railway, Shahr-e-Rey, Javadiyeh, Fallah')}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- ۴. بخش عمیق و کارشناسی سئو با قابلیت باز/بسته شدن آکاردئونی -->
-        <div class="footer-seo-container">
-          <div class="footer-seo-card" id="footer-seo-box">
-            <div class="footer-seo-header">
-              <span class="icon footer-seo-icon">${icons.building}</span>
-              <h3 class="footer-seo-title">${pick(`مرکز جامع و تخصصی خدمات فنی، تأسیسات و ساختمان ${brandFa} در شهر تهران`, `Comprehensive Technical Building Services by ${brandEn} in Tehran`)}</h3>
-            </div>
-            <div class="footer-seo-content" id="footer-seo-text">
-              ${seoParagraphs.map((p) => `<p>${pick(p.fa, p.en)}</p>`).join('')}
-            </div>
-            <button type="button" class="footer-seo-btn" id="footer-seo-toggle" aria-expanded="false">
-              <span class="footer-seo-toggle-label">${pick('مطالعه بیشتر درباره استانداردهای خدمات و تضمین کیفیت بهدون', 'Read more about Behdoon service standards and warranties')}</span>
-              <span class="icon chevron-icon">${icons.chevronDown}</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- ۵. نوار کپی‌رایت، پشتیبانی و بازگشت به بالا -->
+        <!-- نوار کپی‌رایت پایین: خلاصه، تمیز و بدون تکرار -->
         <div class="footer-subbar">
           <div class="footer-subbar-text">
-            <p>© ${toPersianDigits(year)} ${pick(copyright.fa, copyright.en)}</p>
+            <p>© ${toPersianDigits(year)} ${pick(`تمامی حقوق برای ${brandFa} محفوظ است. سامانه هوشمند خدمات فنی و تأسیسات ساختمان در شهر تهران.`, `All rights reserved for ${brandEn}. Building Services Platform, Tehran.`)}</p>
           </div>
 
-          <div class="footer-subbar-actions">
-            <div class="footer-quick-links">
-              <a href="/terms">${pick('قوانین و ضمانت', 'Terms')}</a>
-              <span class="sep">·</span>
-              <a href="/privacy">${pick('حریم خصوصی', 'Privacy')}</a>
-              <span class="sep">·</span>
-              <a href="/about">${pick('درباره ما', 'About')}</a>
-              <span class="sep">·</span>
-              <a href="tel:09333256885" class="footer-urgent-call">${pick('اعزام فوری شبانه‌روزی: ۰۹۳۳۳۲۵۶۸۸۵', 'Call: 09333256885')}</a>
-            </div>
-
-            <button type="button" class="footer-back-to-top" id="footer-back-to-top" title="${pick('بازگشت به بالای صفحه', 'Back to top')}" aria-label="${pick('بازگشت به بالای صفحه', 'Back to top')}">
-              <span>${pick('بازگشت به بالا', 'Back to top')}</span>
-              <span class="icon">${icons.chevronDown}</span>
-            </button>
-          </div>
+          <button type="button" class="footer-back-to-top" id="footer-back-to-top" title="${pick('بازگشت به بالای صفحه', 'Back to top')}" aria-label="${pick('بازگشت به بالای صفحه', 'Back to top')}">
+            <span>${pick('بازگشت به بالا', 'Back to top')}</span>
+            <span class="icon">${icons.chevronDown}</span>
+          </button>
         </div>
       </div>
     </footer>
@@ -454,19 +230,6 @@ export function initFooter(_settings?: SiteSettings): void {
   backToTopBtn?.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
-
-  const box = document.getElementById('footer-seo-box');
-  const toggle = document.getElementById('footer-seo-toggle') as HTMLButtonElement | null;
-  const label = toggle?.querySelector('.footer-seo-toggle-label');
-  if (box && toggle && label) {
-    toggle.addEventListener('click', () => {
-      const expanded = box.classList.toggle('is-expanded');
-      toggle.setAttribute('aria-expanded', String(expanded));
-      label.textContent = expanded
-        ? pick('بستن متن توضیحات', 'Close description')
-        : pick('مطالعه بیشتر درباره استانداردهای خدمات و تضمین کیفیت بهدون', 'Read more about Behdoon service standards and warranties');
-    });
-  }
 
   document.querySelectorAll<HTMLElement>('.site-footer .request-wizard-open-trigger').forEach((btn) => {
     btn.addEventListener('click', (e) => {

@@ -19,7 +19,7 @@ if (!cfToken) {
 }
 
 // Clean Cloudflare anycast IPs that connect directly without ISP DPI filtering
-const ips = ['104.19.192.174', '104.19.192.175', '104.19.193.29', '104.19.192.176'];
+const ips = ['104.19.193.29', '104.18.32.7', '172.64.155.249', '162.159.136.234', '104.19.192.176'];
 let ipIdx = 0;
 
 function customLookup(hostname, options, callback) {
@@ -44,6 +44,7 @@ const server = http.createServer((clientReq, clientRes) => {
   const proxyReq = https.request(targetUrl, {
     method: clientReq.method,
     headers,
+    servername: 'api.cloudflare.com',
     lookup: customLookup,
     timeout: 180000,
   }, (proxyRes) => {

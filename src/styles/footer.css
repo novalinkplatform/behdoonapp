@@ -1,335 +1,224 @@
 /* ==========================================================================
-   Behdoon Ultra-Clean, Readable & Professional Footer Styles
-   طراحی مدرن، خوانا، بدون شلوغی با تفکیک بصری استاندارد
+   Behdoon Ultra-Clean, Non-Repetitive & Professional Footer Architecture
+   فوتر خلوت، طبق عرف، بخش‌بندی شده برای موارد ضروری، بدون شلوغی و تکرار
    ========================================================================== */
 
 .site-footer {
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  color: var(--text);
+  background: var(--surface, #ffffff);
+  border-top: 1px solid var(--border, #e6e2d8);
+  color: var(--text, #22201d);
   margin-top: var(--space-8, 3.5rem);
+  padding-top: 3.5rem;
+  padding-bottom: 1.5rem;
   position: relative;
   overflow: hidden;
 }
 
-/* کنترل دقیق و هماهنگ اندازه تمام آیکون‌ها در فوتر */
-.site-footer .icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  vertical-align: middle;
-  line-height: 1;
-}
-
-.site-footer .icon svg,
-.site-footer svg {
-  width: 100%;
-  height: 100%;
-  max-width: 100%;
-  max-height: 100%;
-  display: block;
-}
-
-/* ۱. نوار تمایزها و ارزش‌های ۴گانه بهدون (Promises Strip) */
-.footer-promises-strip {
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(139, 92, 246, 0.02) 100%);
-  border-bottom: 1px solid var(--border);
-  padding-block: 1.25rem;
-}
-
-.promises-strip-inner {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
-}
-
-.promise-item {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  padding: 0.85rem 1rem;
-  background: var(--background);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
-}
-
-.promise-item:hover {
-  transform: translateY(-2px);
-  border-color: rgba(124, 58, 237, 0.35);
-  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.08);
-}
-
-.promise-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: rgba(124, 58, 237, 0.1);
-  color: var(--primary, #7c3aed);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.promise-icon svg {
-  width: 20px;
-  height: 20px;
-}
-
-.promise-text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  min-width: 0;
-}
-
-.promise-text strong {
-  font-size: 0.875rem;
-  font-weight: 800;
-  color: var(--text);
-  line-height: 1.35;
-}
-
-.promise-text span {
-  font-size: 0.75rem;
-  color: var(--muted);
-  line-height: 1.4;
-}
-
-/* ۲. بدنه اصلی فوتر در ۴ ستون متوازن و خلوت */
 .footer-main-wrapper {
-  padding-block: 3rem 1.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
 }
 
+/* ۴ ستون متوازن و تفکیک‌شده */
 .footer-grid {
   display: grid;
   grid-template-columns: 1.35fr 1fr 1fr 1.15fr;
-  gap: 2.5rem 2.25rem;
+  gap: 2.25rem;
   align-items: start;
 }
 
 .footer-col {
   display: flex;
   flex-direction: column;
-  gap: 1.15rem;
 }
 
+/* سرستون‌های استاندارد و تمیز */
 .footer-col-title {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
-  font-size: 0.98rem;
+  gap: 8px;
+  font-size: 1.02rem;
   font-weight: 800;
-  color: var(--text);
-  margin: 0;
-  padding-bottom: 0.65rem;
-  border-bottom: 2px solid rgba(124, 58, 237, 0.16);
-  position: relative;
+  color: var(--text, #22201d);
+  margin: 0 0 1.15rem;
+  line-height: 1.4;
 }
 
-.col-title-icon {
+.footer-col-title .col-title-icon {
   width: 18px;
   height: 18px;
   color: var(--primary, #7c3aed);
-  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
-.col-title-icon svg {
-  width: 17px;
-  height: 17px;
-}
-
-/* ستون ۱: شناسنامه برند و کارت‌های تماس */
-.footer-col-brand {
-  padding-inline-end: 0.5rem;
-}
-
+/* ستون ۱: هویت برند و اطلاعات شرکت */
 .footer-brand-header {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
   flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 0.85rem;
 }
 
 .footer-logo-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 8px;
   text-decoration: none;
 }
 
 .footer-brand-logo {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
 }
 
 .footer-brand-title {
-  font-size: 1.4rem;
+  font-size: 1.45rem;
   font-weight: 900;
-  color: var(--text);
-  letter-spacing: -0.02em;
+  color: var(--text, #22201d);
+  letter-spacing: -0.5px;
 }
 
 .footer-brand-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  background: rgba(124, 58, 237, 0.1);
-  color: var(--primary, #7c3aed);
-  font-size: 0.73rem;
+  font-size: 0.74rem;
   font-weight: 700;
+  background: var(--secondary-light, #ede9fe);
+  color: var(--primary-dark, #6d28d9);
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(124, 58, 237, 0.15);
 }
 
-.footer-brand-mission {
-  font-size: 0.85rem;
-  line-height: 1.85;
-  color: var(--muted);
-  text-align: justify;
-  margin: 0;
+.footer-brand-desc {
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: var(--muted, #68645e);
+  margin: 0 0 1.25rem;
 }
 
+/* دکمه‌های تماس و پشتیبانی فشرده و شیک */
 .footer-contact-actions {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
-  margin-top: 0.25rem;
+  gap: 8px;
+  margin-bottom: 1.25rem;
 }
 
-.footer-contact-card {
+.footer-contact-pill {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
-  padding: 0.75rem 1rem;
-  background: var(--background);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  gap: 10px;
+  background: var(--surface-alt, #f1efe9);
+  border: 1px solid var(--border, #e6e2d8);
+  border-radius: 10px;
+  padding: 8px 12px;
   text-decoration: none;
-  color: var(--text);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.footer-contact-card:hover {
-  transform: translateY(-2px);
+.footer-contact-pill:hover {
+  background: #ffffff;
+  border-color: var(--primary, #7c3aed);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
-.footer-phone-card {
-  background: linear-gradient(135deg, rgba(16, 158, 77, 0.08) 0%, rgba(16, 158, 77, 0.02) 100%);
-  border-color: rgba(16, 158, 77, 0.28);
-}
-
-.footer-phone-card:hover {
-  border-color: #109e4d;
-  background: rgba(16, 158, 77, 0.14);
-  box-shadow: 0 4px 14px rgba(16, 158, 77, 0.15);
-}
-
-.footer-wa-card {
-  background: linear-gradient(135deg, rgba(37, 211, 102, 0.08) 0%, rgba(37, 211, 102, 0.02) 100%);
-  border-color: rgba(37, 211, 102, 0.28);
-}
-
-.footer-wa-card:hover {
-  border-color: #25d366;
-  background: rgba(37, 211, 102, 0.14);
-  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.15);
-}
-
-.contact-card-icon {
-  width: 22px;
-  height: 22px;
-  color: #109e4d;
-  flex-shrink: 0;
-  display: inline-flex;
+.contact-pill-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
-.contact-card-icon svg {
-  width: 18px;
-  height: 18px;
+.footer-phone-pill .contact-pill-icon {
+  background: rgba(124, 58, 237, 0.1);
+  color: var(--primary, #7c3aed);
 }
 
-.footer-wa-card .contact-card-icon {
-  color: #25d366;
+.footer-wa-pill .contact-pill-icon {
+  background: rgba(37, 211, 102, 0.15);
+  color: #16a34a;
 }
 
-.contact-card-text {
+.contact-pill-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.contact-pill-text {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 2px;
 }
 
-.contact-card-sub {
+.contact-pill-sub {
   font-size: 0.72rem;
-  color: var(--muted);
+  color: var(--muted, #68645e);
+  font-weight: 600;
 }
 
-.contact-card-val {
-  font-size: 0.98rem;
+.contact-pill-val {
+  font-size: 0.95rem;
   font-weight: 800;
-  color: var(--text);
-  letter-spacing: 0.02em;
+  color: var(--text, #22201d);
+  direction: ltr;
+  text-align: right;
 }
 
+/* شبکه‌های اجتماعی */
 .footer-social-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
-  margin-top: 0.4rem;
+  gap: 6px;
 }
 
-.footer-social-heading {
-  font-size: 0.76rem;
+.footer-social-title {
+  font-size: 0.78rem;
   font-weight: 700;
-  color: var(--muted);
+  color: var(--muted, #68645e);
 }
 
 .footer-social {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .footer-social a {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: var(--background);
-  border: 1px solid var(--border);
-  color: var(--muted);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--surface-alt, #f1efe9);
+  border: 1px solid var(--border, #e6e2d8);
+  color: var(--text, #22201d);
+  transition: all 0.2s ease;
+  text-decoration: none;
 }
 
 .footer-social a:hover {
-  color: #ffffff;
   background: var(--primary, #7c3aed);
   border-color: var(--primary, #7c3aed);
+  color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35);
 }
 
-.footer-social a .icon {
-  width: 18px;
-  height: 18px;
+.footer-social a svg {
+  width: 16px;
+  height: 16px;
 }
 
-/* لیست لینک‌های ناوبری ستون ۲ و ۳ */
+/* لیست لینک‌های ناوبری و خدمات */
 .footer-nav-list {
   list-style: none;
   padding: 0;
@@ -342,11 +231,13 @@
 .footer-nav-list li a {
   display: inline-flex;
   align-items: center;
-  font-size: 0.85rem;
-  color: var(--muted);
+  gap: 6px;
+  color: var(--muted, #68645e);
+  font-size: 0.88rem;
+  font-weight: 600;
   text-decoration: none;
-  transition: all 0.2s ease;
-  line-height: 1.6;
+  transition: all 0.15s ease;
+  padding-block: 2px;
 }
 
 .footer-nav-list li a:hover {
@@ -354,165 +245,124 @@
   transform: translateX(-4px);
 }
 
+/* دکمه ویژه ثبت درخواست */
 .footer-highlight-cta {
-  display: inline-flex;
+  display: inline-flex !important;
   align-items: center;
-  gap: 0.5rem;
+  gap: 6px;
   color: var(--primary, #7c3aed) !important;
   font-weight: 800 !important;
-  font-size: 0.88rem !important;
-}
-
-.footer-highlight-cta .icon {
-  width: 16px;
-  height: 16px;
-  color: var(--primary, #7c3aed);
 }
 
 .footer-highlight-cta .badge-tag {
-  display: inline-block;
-  padding: 2px 7px;
-  border-radius: 6px;
-  background: #ea580c;
-  color: #ffffff;
-  font-size: 0.65rem;
+  background: #fef3c7;
+  color: #b45309;
+  font-size: 0.68rem;
+  padding: 1px 6px;
+  border-radius: 4px;
   font-weight: 800;
-  margin-inline-start: 4px;
 }
 
-.footer-all-services-li {
-  margin-top: 0.35rem;
-  padding-top: 0.5rem;
-  border-top: 1px dashed var(--border);
+/* لینک مشاهده همه خدمات */
+.footer-view-all-li {
+  margin-top: 0.4rem;
+  padding-top: 0.4rem;
+  border-top: 1px dashed var(--border, #e6e2d8);
 }
 
 .footer-all-services-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   color: var(--primary, #7c3aed) !important;
-  font-weight: 800 !important;
   font-size: 0.84rem !important;
-}
-
-.footer-mgmt-li {
-  margin-top: 0.35rem;
-  padding-top: 0.5rem;
-  border-top: 1px dashed var(--border);
-}
-
-.footer-management-link {
-  color: #9333ea !important;
-  font-size: 0.82rem !important;
   font-weight: 700 !important;
 }
 
-/* ستون ۴: نمادهای اعتبار، اپ و پوشش تهران */
-.footer-col-trust {
-  gap: 1.15rem;
+.footer-all-services-link .icon {
+  width: 14px;
+  height: 14px;
 }
 
-.footer-trust-seals-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+/* ستون ۴: پوشش تهران و اپلیکیشن */
+.footer-coverage-card {
+  background: var(--surface-alt, #f1efe9);
+  border: 1px solid var(--border, #e6e2d8);
+  border-radius: 12px;
+  padding: 1rem 1.15rem;
+  margin-bottom: 1.25rem;
 }
 
-.footer-trust-seals {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.55rem;
-}
-
-.trust-seal-item {
+.coverage-badge {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.55rem 0.65rem;
-  background: var(--background);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  gap: 7px;
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--goose-green, #008080);
 }
 
-.trust-seal-item:hover {
-  border-color: rgba(124, 58, 237, 0.35);
-  transform: translateY(-1px);
-}
-
-.seal-icon {
-  width: 22px;
-  height: 22px;
-  color: var(--primary, #7c3aed);
+.coverage-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--goose-green, #008080);
+  box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.2);
   flex-shrink: 0;
 }
 
-.seal-meta {
+.coverage-desc {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--muted, #68645e);
+  margin: 6px 0 0;
+}
+
+/* نشان‌های دانلود اپلیکیشن */
+.footer-app-box {
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
-  min-width: 0;
+  gap: 8px;
 }
 
-.seal-meta strong {
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.seal-meta span {
-  font-size: 0.64rem;
-  color: var(--muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.footer-app-download-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.footer-section-mini-heading {
-  font-size: 0.76rem;
+.footer-app-heading {
+  font-size: 0.78rem;
   font-weight: 700;
-  color: var(--muted);
+  color: var(--muted, #68645e);
 }
 
 .footer-app-badges {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .footer-app-chip {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.5rem 0.65rem;
-  background: var(--background);
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  gap: 10px;
+  background: var(--surface-alt, #f1efe9);
+  border: 1px solid var(--border, #e6e2d8);
+  border-radius: 9px;
+  padding: 6px 10px;
   text-decoration: none;
-  color: var(--text);
   transition: all 0.2s ease;
 }
 
 .footer-app-chip:hover {
-  border-color: var(--primary);
-  background: rgba(124, 58, 237, 0.05);
+  background: #ffffff;
+  border-color: var(--primary, #7c3aed);
   transform: translateY(-1px);
 }
 
 .app-chip-icon {
-  width: 18px;
-  height: 18px;
-  color: var(--primary, #7c3aed);
-  flex-shrink: 0;
-  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--primary, #7c3aed);
+  flex-shrink: 0;
 }
 
 .app-chip-icon svg {
@@ -523,313 +373,59 @@
 .app-chip-text {
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
-  min-width: 0;
+  gap: 1px;
 }
 
 .app-chip-sub {
-  font-size: 0.65rem;
-  color: var(--muted);
-  white-space: nowrap;
+  font-size: 0.68rem;
+  color: var(--muted, #68645e);
+  font-weight: 500;
 }
 
 .app-chip-title {
-  font-size: 0.78rem;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-.footer-tehran-coverage-badge {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 0.85rem;
-  background: rgba(124, 58, 237, 0.05);
-  border: 1px dashed rgba(124, 58, 237, 0.28);
-  border-radius: 10px;
-  color: var(--primary, #7c3aed);
-  font-size: 0.78rem;
-  font-weight: 700;
-  line-height: 1.4;
-}
-
-.footer-tehran-coverage-badge .icon {
-  width: 16px;
-  height: 16px;
-  color: var(--primary, #7c3aed);
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.footer-tehran-coverage-badge .icon svg {
-  width: 15px;
-  height: 15px;
-}
-
-/* ۲.۵. بلوک سئو محلی مناطق تحت پوشش در شهر تهران */
-.footer-regions-card {
-  background: var(--background);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 1.25rem 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
-  width: 100%;
-}
-
-.regions-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.65rem;
-}
-
-.regions-icon {
-  width: 20px;
-  height: 20px;
-  color: var(--primary, #7c3aed);
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.regions-icon svg {
-  width: 18px;
-  height: 18px;
-}
-
-.regions-header-text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.regions-title {
-  font-size: 0.92rem;
-  font-weight: 800;
-  color: var(--text);
-  margin: 0;
-}
-
-.regions-desc {
-  font-size: 0.78rem;
-  color: var(--muted);
-  margin: 0;
-  line-height: 1.5;
-}
-
-.regions-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 0.65rem;
-  margin-top: 0.25rem;
-}
-
-.region-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 0.65rem 0.85rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  font-size: 0.78rem;
-  line-height: 1.6;
-}
-
-.region-box-title {
-  color: var(--primary, #7c3aed);
-  font-weight: 800;
-  font-size: 0.8rem;
-}
-
-.region-box-list {
-  color: var(--text);
-  opacity: 0.88;
-  font-size: 0.75rem;
-  line-height: 1.65;
-}
-
-/* ۳. باکس سئو آکاردئونی شیک و خلوت */
-.footer-seo-container {
-  width: 100%;
-}
-
-.footer-seo-card {
-  background: var(--background);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 1.25rem 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
-}
-
-.footer-seo-header {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-}
-
-.footer-seo-icon {
-  width: 20px;
-  height: 20px;
-  color: var(--primary, #7c3aed);
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.footer-seo-icon svg {
-  width: 18px;
-  height: 18px;
-}
-
-.footer-seo-title {
-  font-size: 0.92rem;
-  font-weight: 800;
-  color: var(--text);
-  margin: 0;
-}
-
-.footer-seo-content {
-  max-height: 56px;
-  overflow: hidden;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.footer-seo-content::after {
-  content: '';
-  position: absolute;
-  inset-block-end: 0;
-  inset-inline: 0;
-  height: 36px;
-  background: linear-gradient(to top, var(--background), transparent);
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.footer-seo-card.is-expanded .footer-seo-content {
-  max-height: 800px;
-}
-
-.footer-seo-card.is-expanded .footer-seo-content::after {
-  opacity: 0;
-}
-
-.footer-seo-content p {
   font-size: 0.82rem;
-  line-height: 1.95;
-  color: var(--muted);
-  text-align: justify;
-  margin: 0;
+  font-weight: 800;
+  color: var(--text, #22201d);
 }
 
-.footer-seo-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--primary, #7c3aed);
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  align-self: flex-start;
-  transition: color 0.2s ease;
-}
-
-.footer-seo-btn:hover {
-  color: #6d28d9;
-}
-
-.footer-seo-btn .chevron-icon {
-  width: 15px;
-  height: 15px;
-  transition: transform 0.3s ease;
-}
-
-.footer-seo-card.is-expanded .footer-seo-btn .chevron-icon {
-  transform: rotate(180deg);
-}
-
-/* ۴. نوار کپی‌رایت زیرین (Subbar) */
+/* نوار کپی‌رایت پایین */
 .footer-subbar {
+  border-top: 1px solid var(--border, #e6e2d8);
+  margin-top: 2.75rem;
+  padding-top: 1.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 1rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border);
-  font-size: 0.79rem;
-  color: var(--muted);
 }
 
 .footer-subbar-text p {
   margin: 0;
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
-.footer-subbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  flex-wrap: wrap;
-}
-
-.footer-quick-links {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.footer-quick-links a {
-  color: var(--muted);
-  text-decoration: none;
-  font-size: 0.8rem;
-  transition: color 0.2s ease;
-}
-
-.footer-quick-links a:hover {
-  color: var(--primary, #7c3aed);
-}
-
-.footer-urgent-call {
-  color: #109e4d !important;
-  font-weight: 800;
+  font-size: 0.84rem;
+  color: var(--muted, #68645e);
+  line-height: 1.6;
 }
 
 .footer-back-to-top {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.4rem 0.85rem;
-  background: var(--background);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  color: var(--text);
-  font-size: 0.75rem;
+  gap: 6px;
+  background: var(--surface-alt, #f1efe9);
+  border: 1px solid var(--border, #e6e2d8);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
   font-weight: 700;
+  color: var(--text, #22201d);
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
 }
 
 .footer-back-to-top:hover {
+  background: var(--primary, #7c3aed);
   border-color: var(--primary, #7c3aed);
-  color: var(--primary, #7c3aed);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(124, 58, 237, 0.15);
+  color: #ffffff;
 }
 
 .footer-back-to-top .icon {
@@ -842,324 +438,32 @@
    Responsive Breakpoints
    ========================================================================== */
 
-@media (max-width: 1024px) {
-  .promises-strip-inner {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
+@media (max-width: 992px) {
   .footer-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 2.25rem 1.75rem;
-  }
-
-  .footer-col-brand {
-    padding-inline-end: 0;
+    gap: 2rem;
   }
 }
 
-@media (max-width: 680px) {
-  .footer-promises-strip {
-    padding-block: 0.85rem;
-  }
-
-  .promises-strip-inner {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-  }
-
-  .promise-item {
-    padding: 0.55rem 0.65rem;
-    gap: 0.5rem;
-    border-radius: 10px;
-  }
-
-  .promise-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-  }
-
-  .promise-icon svg {
-    width: 15px;
-    height: 15px;
-  }
-
-  .promise-text strong {
-    font-size: 0.74rem;
-    line-height: 1.25;
-  }
-
-  .promise-text span {
-    font-size: 0.65rem;
-    line-height: 1.25;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .footer-main-wrapper {
-    padding-block: 1.75rem 1.25rem;
-    gap: 1.5rem;
+@media (max-width: 600px) {
+  .site-footer {
+    padding-top: 2.5rem;
+    padding-bottom: 5.5rem; /* فضای خالی برای Bottom Nav در موبایل */
   }
 
   .footer-grid {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  .footer-col-title {
-    font-size: 0.92rem;
-    padding-bottom: 0.45rem;
-  }
-
-  .footer-contact-actions {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
-  }
-
-  .footer-contact-card {
-    padding: 0.6rem 0.8rem;
-    gap: 0.65rem;
-    border-radius: 10px;
-  }
-
-  .contact-card-icon {
-    width: 20px;
-    height: 20px;
-  }
-
-  .contact-card-icon svg {
-    width: 17px;
-    height: 17px;
-  }
-
-  .contact-card-val {
-    font-size: 0.88rem;
-  }
-
-  .footer-social {
-    gap: 0.45rem;
-  }
-
-  .footer-social a {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-  }
-
-  .footer-social a .icon {
-    width: 16px;
-    height: 16px;
-  }
-
-  .footer-social a .icon svg {
-    width: 15px;
-    height: 15px;
-  }
-
-  .footer-app-badges {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.45rem;
-  }
-
-  .footer-app-chip {
-    padding: 0.45rem 0.55rem;
-    gap: 0.45rem;
-    border-radius: 8px;
-  }
-
-  .app-chip-icon {
-    width: 16px;
-    height: 16px;
-  }
-
-  .app-chip-icon svg {
-    width: 15px;
-    height: 15px;
-  }
-
-  .app-chip-title {
-    font-size: 0.72rem;
-  }
-
-  .app-chip-sub {
-    font-size: 0.6rem;
-  }
-
-  .footer-seo-card {
-    padding: 1rem 1.15rem;
-    border-radius: 12px;
-  }
-
-  .footer-seo-title {
-    font-size: 0.85rem;
+    gap: 2rem;
   }
 
   .footer-subbar {
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
     gap: 0.75rem;
-    padding-top: 1.25rem;
-  }
-
-  .footer-subbar-actions {
-    flex-direction: column;
-    gap: 0.65rem;
-    width: 100%;
-  }
-
-  .footer-quick-links {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.35rem;
-    font-size: 0.76rem;
   }
 
   .footer-back-to-top {
     width: 100%;
     justify-content: center;
-    padding: 0.5rem;
   }
 }
-
-/* ==========================================================================
-   Technician Recruitment CTA Banner in Footer
-   ========================================================================== */
-.footer-recruitment-container {
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.footer-recruitment-card {
-  background: linear-gradient(135deg, rgba(5, 150, 105, 0.08) 0%, rgba(16, 185, 129, 0.03) 50%, rgba(15, 23, 42, 0.02) 100%);
-  border: 1.5px solid rgba(5, 150, 105, 0.35);
-  border-radius: 16px;
-  padding: 1.5rem 1.75rem;
-  box-shadow: 0 4px 20px rgba(5, 150, 105, 0.06);
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
-}
-
-.footer-recruitment-card:hover {
-  border-color: rgba(5, 150, 105, 0.6);
-  box-shadow: 0 8px 30px rgba(5, 150, 105, 0.12);
-}
-
-.recruitment-badge-row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.recruitment-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: #ecfdf5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
-  border-radius: 20px;
-  padding: 4px 12px;
-  font-size: 0.78rem;
-  font-weight: 700;
-}
-
-.recruitment-chip .icon {
-  width: 14px;
-  height: 14px;
-}
-
-.recruitment-perk-pill {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #059669;
-  background: rgba(5, 150, 105, 0.08);
-  padding: 4px 10px;
-  border-radius: 20px;
-}
-
-.recruitment-body-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-}
-
-.recruitment-text-col {
-  flex: 1;
-  min-width: 0;
-}
-
-.recruitment-title {
-  margin: 0 0 0.35rem;
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: var(--text);
-  line-height: 1.4;
-}
-
-.recruitment-desc {
-  margin: 0;
-  font-size: 0.85rem;
-  color: var(--muted);
-  line-height: 1.6;
-}
-
-.recruitment-btn-col {
-  flex-shrink: 0;
-}
-
-.recruitment-cta-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  color: #ffffff !important;
-  font-weight: 700;
-  font-size: 0.92rem;
-  padding: 0.75rem 1.4rem;
-  border-radius: 12px;
-  text-decoration: none;
-  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.recruitment-cta-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.45);
-  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
-}
-
-.recruitment-cta-btn .icon {
-  width: 16px;
-  height: 16px;
-  transition: transform 0.2s ease;
-}
-
-.recruitment-cta-btn:hover .icon {
-  transform: translateX(-3px);
-}
-
-@media (max-width: 768px) {
-  .recruitment-body-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
-  }
-
-  .recruitment-title {
-    font-size: 1.02rem;
-  }
-
-  .recruitment-cta-btn {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
