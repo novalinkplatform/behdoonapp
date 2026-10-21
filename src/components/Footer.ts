@@ -94,6 +94,61 @@ export function renderFooter(settings?: SiteSettings): string {
 
   return `
     <footer class="site-footer" id="footer" itemscope itemtype="https://schema.org/WPFooter">
+      <!-- بنر استخدام و پیوستن متخصصین به بهدون (بالای فوتر) -->
+      <aside class="footer-specialist-banner-wrapper" aria-label="${pick('همکاری متخصصین و تکنسین‌ها با بهدون', 'Join Behdoon Specialists')}">
+        <div class="container">
+          <div class="footer-specialist-banner">
+            <div class="specialist-banner-info">
+              <div class="specialist-banner-badge">
+                <span class="icon">${icons.badge || icons.shield}</span>
+                <span>${pick('فرصت همکاری ویژه تکنسین‌ها و استادکاران فنی تهران', 'Tehran Master Technicians Network')}</span>
+              </div>
+              <h3 class="specialist-banner-title">
+                ${pick(`متخصص فنی یا استادکار ساختمانی هستید؟ به جمع متخصصین ${brandFa} بپیوندید`, `Are You a Master Technician? Join ${brandEn}`)}
+              </h3>
+              <p class="specialist-banner-desc">
+                ${pick(
+                  'کسب درآمد منصفانه و پایدار با تسویه حساب منظم روزانه، ساعات کاری منعطف، پوشش بیمه حوادث و دریافت مداوم سفارشات در محدوده سکونت خودتان.',
+                  'Earn steady daily income with flexible hours, insurance coverage, and continuous local bookings.'
+                )}
+              </p>
+              <div class="specialist-banner-perks">
+                <div class="banner-perk-item">
+                  <span class="icon perk-check-icon">${icons.checkCircle || icons.check}</span>
+                  <span>${pick('تسویه حساب روزانه و منظم', 'Daily Payouts')}</span>
+                </div>
+                <div class="banner-perk-item">
+                  <span class="icon perk-check-icon">${icons.checkCircle || icons.check}</span>
+                  <span>${pick('ساعات و محله‌های کاری دلخواه', 'Flexible Zones & Hours')}</span>
+                </div>
+                <div class="banner-perk-item">
+                  <span class="icon perk-check-icon">${icons.checkCircle || icons.check}</span>
+                  <span>${pick('پوشش بیمه حوادث و مسئولیت', 'Accident Insurance')}</span>
+                </div>
+                <div class="banner-perk-item">
+                  <span class="icon perk-check-icon">${icons.checkCircle || icons.check}</span>
+                  <span>${pick('سفارشات مداوم بدون نیاز به تبلیغات', 'Nonstop Verified Bookings')}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="specialist-banner-actions">
+              <a href="/careers" class="specialist-banner-cta-btn">
+                <span class="icon">${icons.worker || icons.user}</span>
+                <span>${pick('ثبت‌نام و تکمیل فرم درخواست همکاری', 'Apply as a Technician')}</span>
+              </a>
+              <a href="tel:09333256885" class="specialist-banner-phone-link">
+                <span class="icon">${icons.phone}</span>
+                <div class="phone-link-text">
+                  <span class="phone-sub">${pick('واحد جذب و استخدام متخصصین:', 'Recruitment Line:')}</span>
+                  <strong class="phone-num" dir="ltr">۰۹۳۳۳۲۵۶۸۸۵</strong>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </aside>
+
       <div class="container footer-main-wrapper">
         <div class="footer-grid">
           <!-- ستون ۱: هویت برند، معرفی کوتاه و پشتیبانی مستقیم -->

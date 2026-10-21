@@ -40,6 +40,7 @@ function renderApp(settings: Awaited<ReturnType<typeof loadSettings>>): void {
 }
 
 async function init(): Promise<void> {
+  document.body.classList.add('is-careers-page');
   initBehaviorTracking();
   const settings = await loadSettings();
   forceSiteLanguageIfSingleMode(settings.language_mode);
