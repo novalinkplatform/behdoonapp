@@ -1,18 +1,21 @@
+# Static 301 Redirects
 /demo  /  301
 /demo/  /  301
 /preview  /  301
 /track  /orders  301
 /hvac  /services/hvac  301
 /hvac/*  /services/hvac  301
-/services  /services.html  200
-/services/*  /services.html  200
-/management  /management.html  200
-/management/*  /management.html  200
 /admin  /management  301
 /admin/*  /management  301
-/magazine/:slug  /article-template.html  200
-/magazine/*  /article-template.html  200
-/p/:slug  /page-template.html  200
-/p/*  /page-template.html  200
-/page/:slug  /page-template.html  200
-/page/*  /page-template.html  200
+
+# Clean Static Pages (200 Rewrites)
+/management  /management.html  200
+/orders  /orders.html  200
+/profile  /profile.html  200
+/careers  /careers.html  200
+/about  /about.html  200
+/privacy  /privacy.html  200
+/terms  /terms.html  200
+/magazine  /magazine.html  200
+/services  /services.html  200
+/offline  /offline.html  200

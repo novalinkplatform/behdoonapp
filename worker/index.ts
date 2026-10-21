@@ -8688,6 +8688,25 @@ export default {
       }
     }
 
+    // --- Canonical Host & Protocol Redirection (SEO: 301 www to apex) ---
+    if (url.hostname.toLowerCase().startsWith('www.')) {
+      const cleanHost = url.hostname.replace(/^www\./i, '');
+      const targetUrl = new URL(url.pathname + url.search, `https://${cleanHost}`);
+      return Response.redirect(targetUrl.toString(), 301);
+    }
+
+    // --- Google Search Console Instant HTML Verification File Handler ---
+    const googleVerifyMatch = pathname.match(/^\/(google[a-z0-9]+\.html)$/i);
+    if (googleVerifyMatch) {
+      return new Response(`google-site-verification: ${googleVerifyMatch[1]}`, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'public, max-age=86400',
+        },
+      });
+    }
+
     // --- Canonical Management Route (Redirect /admin to /management) ---
     if (pathname === '/admin' || pathname.startsWith('/admin/')) {
       const targetUrl = new URL('/management' + url.search, url.origin);
@@ -8713,20 +8732,21 @@ export default {
     }
 
     async function serveHtmlWithMeta(assetPath: string, req: Request): Promise<Response> {
-      const assetUrl = new URL(assetPath, url.origin);
-      const assetReq = new Request(assetUrl.toString(), {
-        method: 'GET',
-        headers: {
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        },
-      });
+      const assetUrl = new URL(assetPath, req.url);
+      const assetReq = new Request(assetUrl.toString(), req);
       const res = await env.ASSETS.fetch(assetReq);
-      if (!res.ok) return res;
+      if (!res.ok) {
+        const notOkHeaders = new Headers(res.headers);
+        notOkHeaders.set('X-Debug-Asset-Fail', `${assetPath}:${res.status}`);
+        return new Response(res.body, { status: res.status, headers: notOkHeaders });
+      }
 
       const headers = new Headers(res.headers);
       headers.set('Content-Type', 'text/html; charset=utf-8');
       headers.set('Link', '<https://behdoon.ir/og-image.jpg>; rel="image_src"');
       headers.set('Vary', 'Accept-Encoding');
+      headers.set('X-Debug-Asset-Hit', assetPath);
+      headers.set('X-Robots-Tag', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
       if (req.method === 'HEAD') {
         return new Response(null, {
           status: res.status,
@@ -8754,11 +8774,25 @@ export default {
       return serveHtmlWithMeta(`${normalizedPath}.html`, request);
     }
 
-    if (normalizedPath === '/services' || normalizedPath.startsWith('/services/')) {
+    if (normalizedPath === '/services') {
+      return serveHtmlWithMeta('/services.html', request);
+    }
+
+    if (normalizedPath.startsWith('/services/')) {
+      const cleanSub = normalizedPath.slice('/services/'.length).replace(/\.html$/i, '').replace(/\/+$/, '');
+      const specificRes = await serveHtmlWithMeta(`/services/${cleanSub}.html`, request);
+      if (specificRes.ok) {
+        return specificRes;
+      }
       return serveHtmlWithMeta('/services.html', request);
     }
 
     if (normalizedPath.startsWith('/magazine/') && !normalizedPath.match(/\.(css|js|png|jpg|jpeg|svg|webp|ico|json|txt|xml)$/i)) {
+      const cleanSlug = normalizedPath.slice('/magazine/'.length).replace(/\.html$/i, '').replace(/\/+$/, '');
+      const articleRes = await serveHtmlWithMeta(`/magazine/${cleanSlug}.html`, request);
+      if (articleRes.ok) {
+        return articleRes;
+      }
       return serveHtmlWithMeta('/article-template.html', request);
     }
 
