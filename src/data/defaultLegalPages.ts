@@ -82,12 +82,12 @@ export const DEFAULT_LEGAL_PAGES: Record<string, LegalPage> = {
         tag: 'شفافیت هزینه',
         tagEn: 'Estimates',
         paragraphs: [
-          'تکنسین موظف است پس از حضور در محل و پیش از آغاز هرگونه عملیات اجرایی پرهزینه، دستگاه یا تأسیسات را مورد بررسی و عیب‌یابی دقیق قرار دهد و برآورد هزینه (اجرت و قطعات احتمالی) را بر اساس نرخ مصوب به کارفرما اعلام نماید.',
+          'تکنسین موظف است پس از حضور در محل و پیش از آغاز هرگونه عملیات اجرایی پرهزینه، دستگاه یا تأسیسات را مورد بررسی و عیب‌یابی دقیق قرار دهد و برآورد دقیق هزینه (اجرت و قطعات احتمالی) را به صورت شفاف و منصفانه به کارفرما اعلام نماید.',
           'شروع عملیات اجرایی صرفاً پس از تایید و رضایت کارفرما انجام می‌پذیرد و تکنسین مجاز به تحمیل هزینه خارج از توافق یا اضافه بر فاکتور نمی‌باشد.',
           'در صورتی که کارفرما پس از عیب‌یابی اولیه و اعلام هزینه، به هر دلیلی تمایلی به ادامه کار نداشته باشد، حق انصراف محفوظ بوده و صرفاً هزینه مصوب ایاب‌وذهاب و کارشناسی طبق عرف صنفی محاسبه می‌گردد.',
         ],
         paragraphsEn: [
-          'Upon arrival, the technician inspects the system and presents a transparent cost estimate based on union rates before starting work.',
+          'Upon arrival, the technician inspects the system and presents a transparent cost estimate before starting work.',
           'No repair commences without explicit customer consent, and off-invoice charges are strictly prohibited.',
           'If the customer declines work following initial diagnostics, only standard diagnostic and travel fees apply.',
         ],
@@ -476,13 +476,13 @@ export const DEFAULT_LEGAL_PAGES: Record<string, LegalPage> = {
           'Behdoon operations are guided by three fundamental commitments:',
         ],
         list: [
-          'شفافیت کامل در هزینه‌ها: ارزیابی و عیب‌یابی در محل، اعلام برآورد دقیق و صدور فاکتور رسمی تفکیکی بر اساس نرخ مصوب',
+          'شفافیت کامل در هزینه‌ها: ارزیابی و عیب‌یابی در محل، اعلام برآورد دقیق و صدور فاکتور رسمی تفکیکی',
           'مسئولیت‌پذیری و ضمانت خدمات: ارائه ۳۰ روز ضمانت حسن انجام کار و پیگیری واحد نظارت کیفی برای رفع هرگونه نقص احتمالی',
           'احراز صلاحیت و اطمینان‌بخشی: اعزام متخصصین دارای مدارک مهارتی و استعلامات هویتی و قانونی جهت آسودگی خاطر کارفرما',
           'پشتیبانی و پاسخگویی مداوم: امکان پیگیری بلادرنگ سفارشات و ارتباط مستقیم با شماره پشتیبانی ۰۹۳۳۳۲۵۶۸۸۵',
         ],
         listEn: [
-          'Transparent pricing: diagnostics on site, upfront estimates, and itemized union-guided invoicing',
+          'Transparent pricing: diagnostics on site, upfront estimates, and itemized official invoicing',
           'Workmanship warranty: 30-day coverage for completed repairs with technical re-inspection',
           'Vetted expertise: certified technicians with identity verifications for total peace of mind',
           'Dedicated support: real-time order tracking and prompt phone assistance via 09333256885',

@@ -196,8 +196,8 @@ export function renderArticleView(article: DynamicArticle): string {
                 </h3>
                 <p class="booking-box-desc">
                   ${pick(
-                    'استادکاران احراز هویت‌شده بهدون در تمامی مناطق ۲۲‌گانه تهران در سریع‌ترین زمان ممکن در محل شما حاضر شده و خدمات را با نرخ مصوب و ضمانت کتبی انجام می‌دهند.',
-                    'Certified technicians dispatch across all 22 Tehran districts with written warranty and official rates.',
+                    'استادکاران احراز هویت‌شده بهدون در تمامی مناطق ۲۲‌گانه تهران در سریع‌ترین زمان ممکن در محل شما حاضر شده و خدمات را با تعرفه منصفانه، فاکتور رسمی و ضمانت کتبی انجام می‌دهند.',
+                    'Certified technicians dispatch across all 22 Tehran districts with written warranty and transparent official pricing.',
                   )}
                 </p>
               </div>

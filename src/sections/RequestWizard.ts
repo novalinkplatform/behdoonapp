@@ -466,7 +466,7 @@ export function renderRequestWizard(
                 <span class="icon" style="color: #059669;">${icons.box}</span>
                 <div>
                   <strong>${pick('هزینه قطعات و لوازم مصرفی:', 'Parts & Materials:')}</strong>
-                  <p id="wizard-parts-estimate-desc">${pick('بر اساس فاکتور خرید و نرخ مصوب اتحادیه', 'Based on official purchase receipt')}</p>
+                  <p id="wizard-parts-estimate-desc">${pick('بر اساس فاکتور خرید معتبر فروشگاهی', 'Based on official purchase receipt')}</p>
                 </div>
               </div>
               <span class="wizard-price-value" id="wizard-parts-estimate-val" style="color: #059669;">بر اساس فاکتور خرید</span>
@@ -941,7 +941,7 @@ export function initRequestWizard(
       if (state.wantsParts) {
         partsValEl.textContent = pick('بر اساس فاکتور خرید', 'Per store receipt');
         partsValEl.style.color = '#059669';
-        partsDescEl.textContent = pick('بر اساس فاکتور خرید معتبر و نرخ مصوب صنف', 'Based on official store receipt & union rates');
+        partsDescEl.textContent = pick('بر اساس فاکتور خرید معتبر فروشگاهی', 'Based on official store receipt');
       } else {
         partsValEl.textContent = pick('صفر تومان (بدون قطعه)', '0 Toman (No parts)');
         partsValEl.style.color = '#64748b';

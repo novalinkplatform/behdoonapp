@@ -198,7 +198,7 @@ function updateSeoMeta(route: ReturnType<typeof resolveCurrentRoute>, siteName: 
   } else if (route.type === 'category' && route.category) {
     const cat = route.category;
     title = `${cat.title} در تهران | خدمات تخصصی با ضمانت کتبی | ${brand}`;
-    description = `${cat.metaDesc || cat.subtitle || ''} اعزام فوری متخصصین تأسیسات در کلیه مناطق تهران با نرخ مصوب، فاکتور رسمی و ضمانت کتبی کیفیت بهدون.`;
+    description = `${cat.metaDesc || cat.subtitle || ''} اعزام فوری متخصصین تأسیسات در کلیه مناطق تهران با تعرفه منصفانه، فاکتور رسمی و ضمانت کتبی کیفیت بهدون.`;
     canonicalUrl = `${origin}/services/${cat.slug}`;
 
     // BreadcrumbList Schema

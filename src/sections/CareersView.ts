@@ -56,6 +56,7 @@ const CERTIFICATION_OPTIONS = [
 ];
 
 const MILITARY_OPTIONS = [
+  { id: 'no_card', label: 'بدون کارت پایان خدمت / عدم نیاز', labelEn: 'Without Military Card / Not Required' },
   { id: 'completed', label: 'دارای کارت پایان خدمت', labelEn: 'Military Service Completed' },
   { id: 'permanent_exemption', label: 'معافیت دائم (پزشکی / کفالت / ایثارگری)', labelEn: 'Permanent Exemption' },
   { id: 'educational_exemption', label: 'معافیت تحصیلی فعال', labelEn: 'Educational Exemption' },
@@ -289,7 +290,7 @@ export function renderCareersView(
                     </label>
                     <div class="select-wrapper">
                       <select id="careers-military">
-                        ${MILITARY_OPTIONS.map((m) => `<option value="${m.id}">${pick(m.label, m.labelEn)}</option>`).join('')}
+                        ${MILITARY_OPTIONS.map((m, idx) => `<option value="${m.id}" ${idx === 0 ? 'selected' : ''}>${pick(m.label, m.labelEn)}</option>`).join('')}
                       </select>
                       <span class="icon select-chevron">${icons.chevronDown}</span>
                     </div>
@@ -461,8 +462,8 @@ export function renderCareersView(
                   <input type="checkbox" id="careers-commitment" required checked />
                   <span>
                     ${pick(
-                      'متعهد به رعایت شئونات اخلاقی، پوشش فرم رسمی بهدون، حضور به‌موقع در آدرس مشتری، دریافت دستمزد صرفاً بر اساس نرخنامه مصوب و ارائه خدمات با کیفیت هستم.',
-                      'I commit to professional ethics, on-time arrival, union-approved rates, and quality workmanship.'
+                      'متعهد به رعایت شئونات اخلاقی، پوشش فرم رسمی بهدون، حضور به‌موقع در آدرس مشتری، دریافت دستمزد منصفانه طبق فاکتور معتبر و ارائه خدمات با کیفیت هستم.',
+                      'I commit to professional ethics, on-time arrival, fair transparent pricing, and quality workmanship.'
                     )}
                   </span>
                 </label>
@@ -550,7 +551,7 @@ export function initCareersView(): void {
     const ageLabel = ageSelect?.selectedOptions?.[0]?.textContent?.trim() || '۲۶ تا ۳۵ سال';
 
     const militarySelect = document.getElementById('careers-military') as HTMLSelectElement | null;
-    const militaryLabel = militarySelect?.selectedOptions?.[0]?.textContent?.trim() || 'کارت پایان خدمت';
+    const militaryLabel = militarySelect?.selectedOptions?.[0]?.textContent?.trim() || 'بدون کارت پایان خدمت';
 
     const opt = positionSelect!.selectedOptions?.[0];
     const isOther = positionSelect!.value === 'other';

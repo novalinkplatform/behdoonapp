@@ -47,7 +47,7 @@ const ssrFooterHtml = `
     <div style="max-width:960px;margin:0 auto;text-align:right;">
       <h3 style="font-size:1.15rem;font-weight:900;color:#133458;margin-bottom:0.75rem;">بهدون؛ سامانه هوشمند خدمات فنی و تأسیسات ساختمان در شهر تهران</h3>
       <p style="font-size:0.88rem;color:#475569;line-height:1.85;margin-bottom:0.75rem;text-align:justify;">
-        بهدون (Behdoon) پلتفرم تخصصی ثبت آنلاین درخواست و اعزام سریع تکنسین‌های احراز صلاحیت‌شده در تمامی مناطق ۲۲‌گانه شهر تهران است. هدف بهدون ایجاد دسترسی آسان، شفافیت کامل قیمت‌ها، امنیت خاطر خانواده‌ها و ارتقای استاندارد خدمات فنی ساختمان است. کلیه خدمات بر اساس نرخ مصوب اتحادیه، صدور فاکتور رسمی معتبر و نظارت مستمر واحد کنترل کیفیت پشتیبانی می‌شوند.
+        بهدون (Behdoon) پلتفرم تخصصی ثبت آنلاین درخواست و اعزام سریع تکنسین‌های احراز صلاحیت‌شده در تمامی مناطق ۲۲‌گانه شهر تهران است. هدف بهدون ایجاد دسترسی آسان، شفافیت کامل قیمت‌ها، امنیت خاطر خانواده‌ها و ارتقای استاندارد خدمات فنی ساختمان است. کلیه خدمات بر اساس تعرفه منصفانه و شفاف، صدور فاکتور رسمی معتبر و نظارت مستمر واحد کنترل کیفیت پشتیبانی می‌شوند.
       </p>
       <p style="font-size:0.88rem;color:#475569;line-height:1.85;margin-bottom:1.25rem;text-align:justify;">
         گستره خدمات فعال بهدون شامل عیب‌یابی و تعمیر تخصصی پکیج و رادیاتور، سرویس و راه‌اندازی کولر آبی و گازی، تشخیص دقیق ترکیدگی و نشت‌یابی لوله با دستگاه بدون تخریب، لوله‌کشی و لوله‌بازکنی شبانه‌روزی، برق‌کاری و رفع اتصالی فوری ساختمان، نقاشی و بازسازی دکوراسیون، نجاری و کابینت تا کلیدسازی سیار است. با استقرار شبکه‌ای متخصصین در سراسر پایتخت، نزدیک‌ترین کارشناس در کوتاه‌ترین زمان در محل شما حاضر خواهد شد.
@@ -165,7 +165,7 @@ for (const article of articles) {
         <section style="margin-top:3rem;background:#f1f5f9;border-radius:16px;padding:2rem;text-align:center;">
           <h3 style="font-size:1.35rem;font-weight:800;color:#133458;margin-bottom:0.75rem;">نیاز به متخصص تأسیسات در تهران دارید؟</h3>
           <p style="font-size:0.95rem;color:#475569;max-width:650px;margin:0 auto 1.5rem;line-height:1.7;">
-            تکنسین‌های بهدون در کلیه مناطق ۲۲‌گانه شهر تهران آماده اعزام، عیب‌یابی و انجام خدمات با نرخ مصوب اتحادیه و گارانتی کتبی هستند.
+            تکنسین‌های بهدون در کلیه مناطق ۲۲‌گانه شهر تهران آماده اعزام، عیب‌یابی و انجام خدمات با تعرفه منصفانه و گارانتی کتبی هستند.
           </p>
           <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
             <a href="/#request" style="background:#8B1C31;color:#ffffff;padding:0.75rem 1.75rem;border-radius:10px;text-decoration:none;font-weight:800;">ثبت آنلاین درخواست تکنسین</a>
@@ -216,7 +216,7 @@ for (const [catKey, cat] of Object.entries(services)) {
   const catSlug = cat.slug || catKey;
   const catTitle = escapeHtml(cat.title || `${catKey} در تهران`);
   const metaTitle = escapeHtml(`${cat.title || catKey} در تهران | خدمات تخصصی بهدون`);
-  const metaDesc = escapeHtml(cat.metaDesc || `ثبت آنلاین و اعزام فوری متخصصین ${catTitle} در سراسر تهران با ضمانت کتبی ۳۰ روزه کیفیت و نرخ مصوب اتحادیه.`);
+  const metaDesc = escapeHtml(cat.metaDesc || `ثبت آنلاین و اعزام فوری متخصصین ${catTitle} در سراسر تهران با ضمانت کتبی ۳۰ روزه کیفیت و تعرفه شفاف و منصفانه.`);
   const canonicalUrl = `${siteOrigin}/services/${catSlug}`;
 
   const subServices = Array.isArray(cat.subServices) ? cat.subServices : [];
@@ -260,7 +260,7 @@ for (const [catKey, cat] of Object.entries(services)) {
         </div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid #f1f5f9;padding-top:1rem;margin-top:0.5rem;">
-        <span style="font-size:0.85rem;color:#475569;">پایه اجرت: <strong style="color:#059669;">${sub.basePrice ? (sub.basePrice).toLocaleString('fa-IR') + ' تومان' : 'طبق نرخنامه مصوب'}</strong></span>
+        <span style="font-size:0.85rem;color:#475569;">پایه اجرت: <strong style="color:#059669;">${sub.basePrice ? (sub.basePrice).toLocaleString('fa-IR') + ' تومان' : 'برآورد مشخص و شفاف'}</strong></span>
         <a href="/#request" style="background:#8B1C31;color:#ffffff;padding:0.4rem 1rem;border-radius:8px;font-size:0.82rem;font-weight:700;text-decoration:none;">ثبت درخواست</a>
       </div>
     </article>
@@ -406,7 +406,7 @@ for (const [catKey, cat] of Object.entries(services)) {
           <h1 style="font-size:1.85rem;font-weight:900;color:#133458;margin:0.75rem 0 1rem;">${escapeHtml(sub.title)} در تهران</h1>
           <p style="font-size:1.02rem;color:#475569;line-height:1.8;margin-bottom:1.5rem;">${subMetaDesc}</p>
           <div style="background:#f8fafc;border-radius:12px;padding:1.25rem;margin-bottom:2rem;display:flex;gap:2rem;flex-wrap:wrap;">
-            <div><span style="color:#64748b;font-size:0.85rem;">پایه اجرت:</span> <strong style="color:#059669;font-size:1.1rem;">${sub.basePrice ? sub.basePrice.toLocaleString('fa-IR') + ' تومان' : 'طبق نرخنامه مصوب'}</strong></div>
+            <div><span style="color:#64748b;font-size:0.85rem;">پایه اجرت:</span> <strong style="color:#059669;font-size:1.1rem;">${sub.basePrice ? sub.basePrice.toLocaleString('fa-IR') + ' تومان' : 'برآورد منصفانه و شفاف'}</strong></div>
             <div><span style="color:#64748b;font-size:0.85rem;">ضمانت کیفیت:</span> <strong style="color:#133458;">${sub.guaranteeDays || 30} روز ضمانت کتبی</strong></div>
             <div><span style="color:#64748b;font-size:0.85rem;">زمان اعزام و انجام:</span> <strong style="color:#133458;">${sub.estimatedTime || '۳۰ الی ۶۰ دقیقه'}</strong></div>
           </div>

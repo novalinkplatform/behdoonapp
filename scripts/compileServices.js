@@ -964,7 +964,7 @@ processedCategories.hvac = {
   aliases: ['hvac', 'سرمایش-گرمایش', 'cooling-heating', 'تهویه-مطبوع'],
   title: 'سرمایش و گرمایش ساختمان در تهران | نصب، تعمیر و سرویس تخصصی بهدون',
   titleEn: 'HVAC & Climate Systems in Tehran | Repair, Service & Installation | Behdoon',
-  metaDesc: 'خدمات تخصصی سرمایش و گرمایش در کلیه مناطق تهران با ضمانت کتبی. تعمیر و سرویس پکیج، کولر آبی، رادیاتور شوفاژ، آبگرمکن و کولر گازی توسط تکنسین‌های مجرب بهدون با نرخ مصوب اتحادیه.',
+  metaDesc: 'خدمات تخصصی سرمایش و گرمایش در کلیه مناطق تهران با ضمانت کتبی. تعمیر و سرویس پکیج، کولر آبی، رادیاتور شوفاژ، آبگرمکن و کولر گازی توسط تکنسین‌های مجرب بهدون با تعرفه منصفانه و ضمانت کتبی.',
   subtitle: 'آسایش دمایی و تهویه استاندارد ساختمان شما با تیم فنی بهدون؛ اعزام فوری تکنسین‌های متخصص در کمتر از ۴۵ دقیقه در سراسر تهران همراه با گارانتی معتبر قطعات و خدمات.',
   subtitleEn: 'Full climate control & heating services across all 22 districts of Tehran; emergency technician dispatch in under 45 minutes.',
   icon: `<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v18m-4-14h8m-8 10h8M6 8a6 6 0 1112 0 6 6 0 01-12 0z"/></svg>`,
@@ -983,7 +983,7 @@ processedCategories.hvac = {
     features: s.features || [
       'اعزام فوری تکنسین متخصص زیر ۴۵ دقیقه در تهران',
       'تجهیزات مدرن و عیب‌یابی دقیق در محل',
-      'شفافیت هزینه بر اساس نرخنامه اتحادیه',
+      'شفافیت هزینه بر اساس تعرفه منصفانه و شفاف',
       'ضمانت کتبی کیفیت خدمات بهدون'
     ],
     detailHtml: cleanHtml(s.detail || s.detailHtml)

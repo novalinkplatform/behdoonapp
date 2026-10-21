@@ -276,8 +276,8 @@ export function renderFooter(settings?: SiteSettings): string {
           <div class="footer-seo-content">
             <p>
               ${pick(
-                'بهدون (Behdoon) پلتفرم تخصصی ثبت آنلاین درخواست و اعزام سریع تکنسین‌های احراز صلاحیت‌شده در تمامی مناطق ۲۲‌گانه شهر تهران است. هدف بهدون ایجاد شفافیت کامل قیمت‌ها، دسترسی آسان خانواده‌ها و ساکنان پایتخت به متخصصین متعهد و ارتقای استاندارد خدمات فنی ساختمان است. کلیه خدمات بهدون بر اساس نرخنامه مصوب اتحادیه، صدور فاکتور رسمی معتبر و نظارت مستمر واحد کنترل کیفیت پشتیبانی می‌شوند.',
-                'Behdoon is Tehran’s premier on-demand platform for certified home maintenance and building repair services across all 22 municipal districts with approved union rates and official invoices.'
+                'بهدون (Behdoon) پلتفرم تخصصی ثبت آنلاین درخواست و اعزام سریع تکنسین‌های احراز صلاحیت‌شده در تمامی مناطق ۲۲‌گانه شهر تهران است. هدف بهدون ایجاد شفافیت کامل قیمت‌ها، دسترسی آسان خانواده‌ها و ساکنان پایتخت به متخصصین متعهد و ارتقای استاندارد خدمات فنی ساختمان است. کلیه خدمات بهدون بر اساس تعرفه منصفانه و شفاف، صدور فاکتور رسمی معتبر و نظارت مستمر واحد کنترل کیفیت پشتیبانی می‌شوند.',
+                'Behdoon is Tehran’s premier on-demand platform for certified home maintenance and building repair services across all 22 municipal districts with fair transparent pricing and official invoices.'
               )}
             </p>
             <p>
@@ -307,7 +307,7 @@ export function renderFooter(settings?: SiteSettings): string {
               <span class="icon seo-pill-icon">${icons.fileText}</span>
               <div class="seo-pill-text">
                 <strong>${pick('تعرفه شفاف و فاکتور رسمی', 'Transparent Official Invoice')}</strong>
-                <span>${pick('نرخ مصوب بدون هزینه‌های نامتعارف', 'Approved rates without extra fees')}</span>
+                <span>${pick('هزینه‌های منصفانه بدون مبالغ نامتعارف', 'Fair pricing without extra fees')}</span>
               </div>
             </div>
             <div class="footer-seo-pill">
