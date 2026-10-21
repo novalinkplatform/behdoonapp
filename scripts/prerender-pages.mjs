@@ -42,6 +42,33 @@ function writeHtmlWithDir(filePath, html) {
   writeFileSync(filePath, html, 'utf8');
 }
 
+const ssrFooterHtml = `
+  <footer style="margin-top:3.5rem;padding:2.5rem 1.5rem;border-top:1px dashed #cbd5e1;background:#f8fafc;border-radius:16px;">
+    <div style="max-width:960px;margin:0 auto;text-align:right;">
+      <h3 style="font-size:1.15rem;font-weight:900;color:#133458;margin-bottom:0.75rem;">بهدون؛ سامانه هوشمند خدمات فنی و تأسیسات ساختمان در شهر تهران</h3>
+      <p style="font-size:0.88rem;color:#475569;line-height:1.85;margin-bottom:0.75rem;text-align:justify;">
+        بهدون (Behdoon) پلتفرم تخصصی ثبت آنلاین درخواست و اعزام سریع تکنسین‌های احراز صلاحیت‌شده در تمامی مناطق ۲۲‌گانه شهر تهران است. هدف بهدون ایجاد دسترسی آسان، شفافیت کامل قیمت‌ها، امنیت خاطر خانواده‌ها و ارتقای استاندارد خدمات فنی ساختمان است. کلیه خدمات بر اساس نرخ مصوب اتحادیه، صدور فاکتور رسمی معتبر و نظارت مستمر واحد کنترل کیفیت پشتیبانی می‌شوند.
+      </p>
+      <p style="font-size:0.88rem;color:#475569;line-height:1.85;margin-bottom:1.25rem;text-align:justify;">
+        گستره خدمات فعال بهدون شامل عیب‌یابی و تعمیر تخصصی پکیج و رادیاتور، سرویس و راه‌اندازی کولر آبی و گازی، تشخیص دقیق ترکیدگی و نشت‌یابی لوله با دستگاه بدون تخریب، لوله‌کشی و لوله‌بازکنی شبانه‌روزی، برق‌کاری و رفع اتصالی فوری ساختمان، نقاشی و بازسازی دکوراسیون، نجاری و کابینت تا کلیدسازی سیار است. با استقرار شبکه‌ای متخصصین در سراسر پایتخت، نزدیک‌ترین کارشناس در کوتاه‌ترین زمان در محل شما حاضر خواهد شد.
+      </p>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;font-size:0.8rem;font-weight:700;">
+        <a href="/services/hvac/package" style="color:#8B1C31;text-decoration:none;background:#ffffff;padding:4px 12px;border-radius:20px;border:1px solid #e2e8f0;">تعمیر پکیج دیواری تهران</a>
+        <a href="/services/hvac/water-cooler" style="color:#133458;text-decoration:none;background:#ffffff;padding:4px 12px;border-radius:20px;border:1px solid #e2e8f0;">سرویس کولر آبی</a>
+        <a href="/services/plumbing/leak-detection" style="color:#133458;text-decoration:none;background:#ffffff;padding:4px 12px;border-radius:20px;border:1px solid #e2e8f0;">نشت‌یابی لوله با دستگاه</a>
+        <a href="/services/electrical" style="color:#133458;text-decoration:none;background:#ffffff;padding:4px 12px;border-radius:20px;border:1px solid #e2e8f0;">برقکاری فوری ساختمان</a>
+        <a href="/services/renovation" style="color:#133458;text-decoration:none;background:#ffffff;padding:4px 12px;border-radius:20px;border:1px solid #e2e8f0;">نقاشی و بازسازی ساختمان</a>
+        <a href="/services/locksmith" style="color:#133458;text-decoration:none;background:#ffffff;padding:4px 12px;border-radius:20px;border:1px solid #e2e8f0;">کلیدسازی شبانه‌روزی</a>
+        <a href="/magazine" style="color:#133458;text-decoration:none;background:#ffffff;padding:4px 12px;border-radius:20px;border:1px solid #e2e8f0;">مجله دانستنی‌های تأسیسات</a>
+      </div>
+      <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid #e2e8f0;font-size:0.8rem;color:#64748b;display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
+        <span>© تمامی حقوق برای بهدون محفوظ است. سامانه هوشمند خدمات فنی و تأسیسات ساختمان تهران.</span>
+        <span>پشتیبانی شبانه‌روزی: ۰۹۳۳۳۲۵۶۸۸۵</span>
+      </div>
+    </div>
+  </footer>
+`;
+
 console.log(`[prerender-pages] Starting pre-rendering for ${articles.length} articles and ${Object.keys(services).length} service categories...`);
 
 // ----------------------------------------------------
@@ -147,6 +174,7 @@ for (const article of articles) {
         </section>
       </article>
     </main>
+    ${ssrFooterHtml}
   `;
 
   let html = articleTemplate;
@@ -277,6 +305,7 @@ for (const [catKey, cat] of Object.entries(services)) {
         </div>
       </section>
     </main>
+    ${ssrFooterHtml}
   `;
 
   let html = servicesTemplate;
@@ -387,6 +416,7 @@ for (const [catKey, cat] of Object.entries(services)) {
           </div>
         </article>
       </main>
+      ${ssrFooterHtml}
     `;
     subHtml = subHtml.replace(/<div id="app">[\s\S]*?<\/div>\s*<div class="app-loading-overlay"/i, `<div id="app">${subSsrApp}</div>\n    <div class="app-loading-overlay"`);
 

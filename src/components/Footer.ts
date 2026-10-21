@@ -209,6 +209,76 @@ export function renderFooter(settings?: SiteSettings): string {
           </div>
         </div>
 
+        <!-- متن حرفه‌ای معرفی بهدون و سئوی جامع در فوتر -->
+        <section class="footer-seo-intro" aria-labelledby="footer-seo-heading" itemscope itemtype="https://schema.org/AboutPage">
+          <div class="footer-seo-header">
+            <h3 id="footer-seo-heading" class="footer-seo-title">
+              <span class="icon seo-title-icon">${icons.badge || icons.shield}</span>
+              <span>${pick('بهدون؛ سامانه هوشمند خدمات فنی و تأسیسات ساختمان در شهر تهران', 'Behdoon: Smart Platform for Building & Technical Services in Tehran')}</span>
+            </h3>
+          </div>
+
+          <div class="footer-seo-content">
+            <p>
+              ${pick(
+                'بهدون (Behdoon) پلتفرم تخصصی ثبت آنلاین درخواست و اعزام سریع تکنسین‌های احراز صلاحیت‌شده در تمامی مناطق ۲۲‌گانه شهر تهران است. هدف بهدون ایجاد شفافیت کامل قیمت‌ها، دسترسی آسان خانواده‌ها و ساکنان پایتخت به متخصصین متعهد و ارتقای استاندارد خدمات فنی ساختمان است. کلیه خدمات بهدون بر اساس نرخنامه مصوب اتحادیه، صدور فاکتور رسمی معتبر و نظارت مستمر واحد کنترل کیفیت پشتیبانی می‌شوند.',
+                'Behdoon is Tehran’s premier on-demand platform for certified home maintenance and building repair services across all 22 municipal districts with approved union rates and official invoices.'
+              )}
+            </p>
+            <p>
+              ${pick(
+                'گستره خدمات فعال بهدون شامل عیب‌یابی و تعمیر تخصصی پکیج دیواری و رادیاتور، سرویس و راه‌اندازی کولر آبی و گازی، تشخیص دقیق ترکیدگی و نشت‌یابی لوله با دستگاه بدون تخریب، لوله‌کشی و لوله‌بازکنی شبانه‌روزی، برق‌کاری و رفع اتصالی فوری ساختمان، نقاشی و بازسازی دکوراسیون، نجاری و کابینت تا رگلاژ پنجره دوجداره و کلیدسازی سیار است. با استقرار شبکه‌ای متخصصین در شمال، غرب، شرق، مرکز و جنوب تهران، نزدیک‌ترین کارشناس در کوتاه‌ترین زمان در محل شما حاضر خواهد شد.',
+                'Our verified specialist network covers HVAC, wall boiler repairs, water heater services, plumbing, acoustic leak detection, emergency electrical troubleshooting, painting, interior renovations, and locksmith services with rapid dispatch.'
+              )}
+            </p>
+          </div>
+
+          <div class="footer-seo-features">
+            <div class="footer-seo-pill">
+              <span class="icon seo-pill-icon">${icons.shield}</span>
+              <div class="seo-pill-text">
+                <strong>${pick('ضمانت ۳۰ روزه کیفیت', '30-Day Quality Warranty')}</strong>
+                <span>${pick('رفع نقص احتمالی بدون هزینه مجدد', 'Free revisit if any issue arises')}</span>
+              </div>
+            </div>
+            <div class="footer-seo-pill">
+              <span class="icon seo-pill-icon">${icons.bolt}</span>
+              <div class="seo-pill-text">
+                <strong>${pick('اعزام سریع در ۲۲ منطقه تهران', 'Rapid Dispatch in Tehran')}</strong>
+                <span>${pick('نزدیک‌ترین متخصص با زمان‌بندی دقیق', 'Closest technician right on time')}</span>
+              </div>
+            </div>
+            <div class="footer-seo-pill">
+              <span class="icon seo-pill-icon">${icons.fileText}</span>
+              <div class="seo-pill-text">
+                <strong>${pick('تعرفه شفاف و فاکتور رسمی', 'Transparent Official Invoice')}</strong>
+                <span>${pick('نرخ مصوب بدون هزینه‌های نامتعارف', 'Approved rates without extra fees')}</span>
+              </div>
+            </div>
+            <div class="footer-seo-pill">
+              <span class="icon seo-pill-icon">${icons.worker}</span>
+              <div class="seo-pill-text">
+                <strong>${pick('متخصصین تایید صلاحیت‌شده', 'Certified Technicians')}</strong>
+                <span>${pick('گواهی مهارت و عدم سوءپیشینه', 'Background-checked with trade license')}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-seo-quicklinks">
+            <span class="seo-quicklinks-title">${pick('دسترسی سریع به خدمات پرتقاضا:', 'Popular Services:')}</span>
+            <div class="seo-tags-list">
+              <a href="/services/hvac/package" class="seo-tag">${pick('تعمیر پکیج دیواری تهران', 'Boiler Repair')}</a>
+              <a href="/services/hvac/water-cooler" class="seo-tag">${pick('سرویس کولر آبی', 'Evaporative Cooler')}</a>
+              <a href="/services/plumbing/leak-detection" class="seo-tag">${pick('نشت‌یابی با دستگاه', 'Leak Detection')}</a>
+              <a href="/services/plumbing" class="seo-tag">${pick('لوله‌کشی آب و فاضلاب', 'Plumbing')}</a>
+              <a href="/services/electrical" class="seo-tag">${pick('برقکاری و رفع اتصالی', 'Electrical Fix')}</a>
+              <a href="/services/renovation" class="seo-tag">${pick('نقاشی و بازسازی ساختمان', 'Painting & Renovation')}</a>
+              <a href="/services/locksmith" class="seo-tag">${pick('کلیدسازی شبانه‌روزی', 'Locksmith')}</a>
+              <a href="/magazine" class="seo-tag">${pick('مجله و دانستنی‌های ساختمان', 'Building Magazine')}</a>
+            </div>
+          </div>
+        </section>
+
         <!-- نوار کپی‌رایت پایین: خلاصه، تمیز و بدون تکرار -->
         <div class="footer-subbar">
           <div class="footer-subbar-text">
