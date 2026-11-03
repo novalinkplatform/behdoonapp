@@ -232,6 +232,43 @@ function updateBrowserUrl(screen: AdminScreen, editingDetailId: number | null = 
   }
 }
 
+const SCREEN_TITLES: Record<AdminScreen, string> = {
+  home: 'مرکز فرماندهی',
+  ai: 'هوشواره هوشمند بهدون',
+  dashboard: 'داشبورد جامع',
+  dashboardOrders: 'تحلیل سفارش‌ها',
+  dashboardVisitors: 'آمار بازدیدکنندگان',
+  dashboardStaff: 'عملکرد تکنسین‌ها',
+  requests: 'مدیریت درخواست‌ها',
+  pipeline: 'مراحل و پایپ‌لاین سفارش‌ها',
+  map: 'نقشه هوشمند درخواست‌ها',
+  chat: 'چت و پشتیبانی آنلاین',
+  content: 'مدیریت محتوا',
+  magazine: 'مجله و مقالات تخصصی',
+  'magazine-editor': 'ویرایشگر مقاله',
+  stories: 'استوری‌های تصویری',
+  testimonials: 'نظرات مشتریان',
+  sliders: 'اسلایدر و بنرها',
+  seo: 'مدیریت سئو و متادیتا',
+  media: 'مدیریت رسانه و فایل‌ها',
+  personnel: 'مدیریت پرسنل',
+  staff: 'پرسنل و تکنسین‌ها',
+  staffHistory: 'سوابق تکنسین',
+  jobApplications: 'فرصت‌های شغلی و استخدام',
+  roles: 'سطوح دسترسی و اختیارات',
+  services: 'مدیریت خدمات و قیمت‌ها',
+  'contact-manager': 'اطلاعات تماس و ارتباطات',
+  settings: 'تنظیمات کلی سامانه',
+  plugins: 'افزونه‌ها و اتصالات',
+  activityLog: 'گزارش لاگ و رویدادها',
+  accountSecurity: 'امنیت حساب کاربری',
+  myWallet: 'کیف پول من',
+  payroll: 'حقوق و تسویه‌حساب',
+  finance: 'مدیریت مالی و تراکنش‌ها',
+  pages: 'برگه‌ها',
+  'page-editor': 'ویرایشگر برگه',
+};
+
 let currentScreen: AdminScreen = 'home';
 let viewingStaffHistory: StaffRecord | null = null;
 
@@ -251,6 +288,18 @@ function showScreen(screen: AdminScreen, editingDetailId: number | null = null, 
   if (syncUrl) {
     updateBrowserUrl(screen, editingDetailId);
   }
+
+  // بروزرسانی بردکرامب و عنوان صفحه
+  const crumbEl = document.getElementById('admin-crumb-current');
+  if (crumbEl) {
+    crumbEl.textContent = SCREEN_TITLES[screen] || 'مدیریت';
+  }
+  document.title = `${SCREEN_TITLES[screen] || 'پنل مدیریت'} · بهدون`;
+
+  // تنظیم وضعیت فعال در سایدبار
+  document.querySelectorAll<HTMLElement>('.admin-nav-item').forEach((item) => {
+    item.classList.toggle('active', item.dataset.navScreen === screen);
+  });
 
   if (screen === 'home') {
     container.innerHTML = renderHomeView(staff);
@@ -371,6 +420,73 @@ function showAdminShell(staff: StaffInfo, restore = false): void {
   const app = getApp();
   app.innerHTML = renderShell(staff);
 
+  // ناوبری با کلیک روی آیتم‌های سایدبار و بردکرامب
+  document.querySelectorAll<HTMLElement>('[data-nav-screen]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = el.dataset.navScreen as AdminScreen;
+      if (target) {
+        showScreen(target);
+        document.getElementById('admin-sidebar')?.classList.remove('is-open');
+        document.getElementById('admin-sidebar-overlay')?.classList.remove('is-open');
+      }
+    });
+  });
+
+  // منوی موبایل و پوشش تیره پشت آن
+  const menuToggle = document.getElementById('admin-menu-toggle');
+  const sidebar = document.getElementById('admin-sidebar');
+  const overlay = document.getElementById('admin-sidebar-overlay');
+  menuToggle?.addEventListener('click', () => {
+    sidebar?.classList.toggle('is-open');
+    overlay?.classList.toggle('is-open');
+  });
+  overlay?.addEventListener('click', () => {
+    sidebar?.classList.remove('is-open');
+    overlay?.classList.remove('is-open');
+  });
+
+  // جمع یا باز کردن سایدبار در دسکتاپ
+  const collapseBtn = document.getElementById('admin-sidebar-collapse-btn');
+  const layout = document.getElementById('admin-layout');
+  const isCollapsed = localStorage.getItem('behdoon_admin_sidebar_collapsed') === '1';
+  if (isCollapsed) {
+    layout?.classList.add('sidebar-collapsed');
+  }
+  collapseBtn?.addEventListener('click', () => {
+    layout?.classList.toggle('sidebar-collapsed');
+    const collapsed = layout?.classList.contains('sidebar-collapsed');
+    localStorage.setItem('behdoon_admin_sidebar_collapsed', collapsed ? '1' : '0');
+  });
+
+  // فیلتر سریع آیتم‌های سایدبار
+  const filterInput = document.getElementById('admin-nav-filter') as HTMLInputElement | null;
+  filterInput?.addEventListener('input', () => {
+    const query = filterInput.value.trim().toLowerCase();
+    document.querySelectorAll<HTMLElement>('.admin-nav-group').forEach((group) => {
+      let hasVisible = false;
+      group.querySelectorAll<HTMLElement>('.admin-nav-item').forEach((item) => {
+        const text = item.textContent?.toLowerCase() || '';
+        const match = !query || text.includes(query);
+        item.style.display = match ? 'flex' : 'none';
+        if (match) hasVisible = true;
+      });
+      group.style.display = hasVisible ? 'flex' : 'none';
+    });
+  });
+
+  // ساعت و تقویم زنده
+  function updateClock(): void {
+    const clockEl = document.getElementById('admin-clock-text');
+    if (!clockEl) return;
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+    const dateStr = now.toLocaleDateString('fa-IR', { month: 'short', day: 'numeric' });
+    clockEl.textContent = `${dateStr} · ${timeStr}`;
+  }
+  updateClock();
+  setInterval(updateClock, 30000);
+
   document.getElementById('admin-back-btn')?.addEventListener('click', () => {
     const parent = screenParent(currentScreen);
     if (parent) showScreen(parent);
@@ -386,20 +502,23 @@ function showAdminShell(staff: StaffInfo, restore = false): void {
 
   function updateThemeToggleUI(): void {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const sunIcon = document.getElementById('admin-theme-sun');
-    const moonIcon = document.getElementById('admin-theme-moon');
-    if (sunIcon && moonIcon) {
-      sunIcon.hidden = !isDark;
-      moonIcon.hidden = isDark;
-    }
+    ['admin-theme-sun', 'admin-topbar-theme-sun'].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.hidden = !isDark;
+    });
+    ['admin-theme-moon', 'admin-topbar-theme-moon'].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.hidden = isDark;
+    });
   }
 
   updateThemeToggleUI();
 
-  document.getElementById('admin-theme-toggle-btn')?.addEventListener('click', () => {
+  const handleToggleTheme = () => {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     if (isDark) {
       document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('behdoon_admin_theme', 'light');
       localStorage.setItem('behbar_admin_theme', 'light');
     } else {
       document.documentElement.setAttribute('data-theme', 'dark');
@@ -407,7 +526,10 @@ function showAdminShell(staff: StaffInfo, restore = false): void {
       localStorage.setItem('behbar_admin_theme', 'dark');
     }
     updateThemeToggleUI();
-  });
+  };
+
+  document.getElementById('admin-theme-toggle-btn')?.addEventListener('click', handleToggleTheme);
+  document.getElementById('admin-topbar-theme-toggle')?.addEventListener('click', handleToggleTheme);
 
   // کلیک روی نشان بهدون -> بازگشت به صفحه مدیریت خالص (/management/)
   document.getElementById('admin-logo-btn')?.addEventListener('click', () => {
