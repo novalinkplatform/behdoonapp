@@ -12,7 +12,7 @@ import { openCustomerInvoiceModal } from '../components/InvoiceModal.ts';
 import { toPersianDigits } from '../utils/jalali.ts';
 import { formatToman } from '../utils/format.ts';
 import { submitRequest as submitRequestApi } from '../utils/api.ts';
-import { getLastName, getLastPhone, saveLastName, saveLastPhone } from '../utils/localOrders.ts';
+import { getLastName, getLastPhone, saveLastName, saveLastPhone, saveLastAddress, getSavedAddresses } from '../utils/localOrders.ts';
 import type { SavedAddresses } from '../utils/addresses.ts';
 import { pick } from '../i18n/lang.ts';
 import { trackEvent } from '../utils/analytics.ts';
@@ -24,6 +24,7 @@ import {
   sendCustomerOtp,
   verifyCustomerOtp,
   updateCustomerProfile,
+  getCustomerAddresses,
   type CustomerInfo,
 } from '../utils/customerAuth.ts';
 import { generateShahanshahiTrackingCode } from '../utils/tracking.ts';
@@ -372,6 +373,18 @@ export function renderRequestWizard(
 
         <!-- گام ۵: مرحله بعدی ادرس -->
         <section class="request-panel" data-panel="5" hidden>
+          <!-- بخش نمایش آدرس ذخیره‌شده (در صورت وجود) -->
+          <div id="wizard-saved-addresses-container" class="wizard-saved-addresses-container" hidden>
+            <div class="wizard-saved-addresses-header">
+              <span class="wizard-saved-addresses-label">${pick('نشانی ذخیره‌شده شما', 'Your Saved Address')}</span>
+              <span class="wizard-saved-addresses-hint">${pick('کلیک روی نشانی = انتخاب و رفتن مستقیم به ادامه', 'Click to select and continue')}</span>
+            </div>
+            <div id="wizard-saved-addresses-list" class="wizard-saved-addresses-list"></div>
+            <div class="wizard-address-divider">
+              <span>${pick('یا ثبت نشانی جدید در تهران', 'Or enter a new address in Tehran')}</span>
+            </div>
+          </div>
+
           <div class="form-field">
             <label for="wizard-location-address" style="font-weight: 700; font-size: 0.92rem; color: #1e293b;">
               ${pick('نشانی دقیق، خیابان، پلاک و واحد در تهران (الزامی)', 'Street address & Unit/Plaque (Required)')}
@@ -1311,9 +1324,80 @@ export function initRequestWizard(
       lm?.refresh();
     }
 
+    if (step.id === 'address') {
+      void refreshSavedAddressesUI();
+    }
+
     if (step.id === 'finalize') {
       void syncCustomerAuthAndPricing();
     }
+  }
+
+  async function refreshSavedAddressesUI(): Promise<void> {
+    const container = document.getElementById('wizard-saved-addresses-container');
+    const listEl = document.getElementById('wizard-saved-addresses-list');
+    const addrInput = document.getElementById('wizard-location-address') as HTMLInputElement | null;
+    if (!container || !listEl || !addrInput) return;
+
+    // بازیابی آدرس‌های ذخیره‌شده از حافظه محلی
+    const localSaved = getSavedAddresses();
+    const allAddresses: string[] = [...localSaved];
+
+    // اگر مشتری وارد شده، آدرس‌های دفترچه حساب را هم اضافه کن
+    try {
+      const custAddresses = await getCustomerAddresses();
+      custAddresses.forEach((ca) => {
+        const full = [ca.address, ca.floor ? `طبقه ${ca.floor}` : '', ca.unit ? `واحد ${ca.unit}` : ''].filter(Boolean).join('، ');
+        if (full && !allAddresses.includes(full)) {
+          allAddresses.push(full);
+        }
+      });
+    } catch {}
+
+    const uniqueAddrs = Array.from(new Set(allAddresses.map((a) => a.trim()))).filter((a) => a.length >= 4);
+
+    if (uniqueAddrs.length === 0) {
+      container.hidden = true;
+      return;
+    }
+
+    container.hidden = false;
+    listEl.innerHTML = uniqueAddrs
+      .slice(0, 3)
+      .map(
+        (addr) => `
+        <button type="button" class="wizard-saved-addr-card" data-use-address="${encodeURIComponent(addr)}" title="${pick('انتخاب این نشانی و رفتن مستقیم به ادامه', 'Choose this address and continue')}">
+          <div class="saved-addr-main">
+            <div class="saved-addr-badge">
+              <span class="icon">${icons.pin}</span>
+              <span>${pick('نشانی ذخیره‌شده شما', 'Saved Address')}</span>
+            </div>
+            <div class="saved-addr-text">${addr}</div>
+          </div>
+          <div class="saved-addr-action">
+            <span>${pick('انتخاب و ادامه', 'Select & Continue')}</span>
+            <span class="icon">${icons.arrowLeft}</span>
+          </div>
+        </button>
+      `
+      )
+      .join('');
+
+    // اتصال رویداد کلیک برای انتخاب نشانی و رفتن مستقیم به ادامه
+    listEl.querySelectorAll<HTMLButtonElement>('[data-use-address]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const selectedAddress = decodeURIComponent(btn.dataset.useAddress || '');
+        if (selectedAddress) {
+          addrInput.value = selectedAddress;
+          const err = document.getElementById('wizard-address-error');
+          if (err) err.hidden = true;
+          saveLastAddress(selectedAddress);
+          // رفتن مستقیم به مرحله بعد (گام ۶: زمان‌بندی)
+          advanceStep(1);
+        }
+      });
+    });
   }
 
   function validateCurrentStep(): boolean {
@@ -1341,6 +1425,9 @@ export function initRequestWizard(
       const valid = (addrInput?.value.trim().length ?? 0) >= 3;
       const addrError = document.getElementById('wizard-address-error');
       if (addrError) addrError.hidden = valid;
+      if (valid && addrInput?.value.trim()) {
+        saveLastAddress(addrInput.value.trim());
+      }
       return valid;
     }
     if (step.id === 'schedule') {
@@ -1468,6 +1555,7 @@ export function initRequestWizard(
 
       saveLastPhone(phone);
       saveLastName(name);
+      if (address) saveLastAddress(address);
       saveCustomerSession({
         id: authenticatedCustomer?.id || Date.now(),
         phone,

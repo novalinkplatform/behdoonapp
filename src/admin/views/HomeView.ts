@@ -6,44 +6,35 @@ interface TileData {
   view: string;
   icon: string;
   title: string;
-  desc: string;
-  badge?: string;
-  badgeClass?: string;
+  desc?: string;
+  tag?: string;
 }
 
 function renderTile(tile: TileData): string {
   return `
-    <button type="button" class="op-command-card" data-home-tile="${tile.view}" title="${tile.title}">
-      <div class="op-card-header">
-        <div class="op-card-icon-wrap">
-          <span class="icon">${tile.icon}</span>
+    <button type="button" class="op-compact-tile" data-home-tile="${tile.view}" title="${tile.title}">
+      <div class="tile-icon-wrap">
+        <span class="icon">${tile.icon}</span>
+      </div>
+      <div class="tile-content">
+        <div class="tile-title-row">
+          <span class="tile-title">${tile.title}</span>
+          ${tile.tag ? `<span class="tile-tag">${tile.tag}</span>` : ''}
         </div>
-        ${tile.badge ? `<span class="op-card-badge ${tile.badgeClass || ''}">${tile.badge}</span>` : ''}
+        ${tile.desc ? `<span class="tile-desc">${tile.desc}</span>` : ''}
       </div>
-      <div class="op-card-body">
-        <h4 class="op-card-title">${tile.title}</h4>
-        <p class="op-card-desc">${tile.desc}</p>
-      </div>
-      <div class="op-card-footer">
-        <span class="op-card-action">ورود به بخش</span>
-        <span class="op-card-arrow">${icons.arrowLeft}</span>
-      </div>
+      <span class="tile-arrow">${icons.arrowLeft}</span>
     </button>
   `;
 }
 
-// مرکز فرماندهی بهدون (Mission Control & OpenDesign Command Center)
+// مرکز مدیریت شیک، مینیمال و حرفه‌ای بهدون (Clean Minimalist Mission Control)
 export function renderHomeView(staff: StaffInfo): string {
   const showContent =
     hasPermission(staff, 'content') ||
     hasPermission(staff, 'stories') ||
     hasPermission(staff, 'seo') ||
     hasPermission(staff, 'settings');
-  const showPersonnel =
-    hasPermission(staff, 'staff') ||
-    hasPermission(staff, 'recruitment') ||
-    hasPermission(staff, 'roles') ||
-    hasPermission(staff, 'wallet');
   const showSettings = hasPermission(staff, 'settings') || hasPermission(staff, 'homepage');
   const showRequests = hasPermission(staff, 'pipeline') || hasPermission(staff, 'map');
   const showFinance =
@@ -53,128 +44,96 @@ export function renderHomeView(staff: StaffInfo): string {
     hasPermission(staff, 'staff');
 
   return `
-    <div class="op-command-center">
-      <!-- هدر خوش‌آمدگویی و بنر وضعیت -->
-      <section class="op-hero-banner">
-        <div class="op-hero-content">
-          <div class="op-hero-pill">
-            <span class="op-pulse-dot"></span>
-            <span>سامانه یکپارچه مدیریت بهدون</span>
+    <div class="op-control-hub">
+      <!-- هدر مینیمال و خلوت مدیریت -->
+      <header class="op-hub-header">
+        <div class="op-hub-title-block">
+          <h2 class="op-hub-title">مرکز مدیریت بهدون</h2>
+          <span class="op-hub-sub">خوش آمدید، ${staff.fullName} (${staff.roleLabel})</span>
+        </div>
+        <div class="op-hub-status-pill">
+          <span class="op-status-dot"></span>
+          <span>سامانه فعال و آنلاین</span>
+        </div>
+      </header>
+
+      <!-- شاخص‌های کلیدی وضعیت (KPIs) - خلوت و مدرن -->
+      <section class="op-kpi-row">
+        <div class="op-kpi-item" data-home-tile="pipeline" role="button" tabindex="0">
+          <div class="kpi-mini-icon violet">${icons.columns}</div>
+          <div class="kpi-mini-body">
+            <span class="kpi-mini-label">پایپ‌لاین سفارش‌ها</span>
+            <strong class="kpi-mini-value">مراحل فعال</strong>
           </div>
-          <h2 class="op-hero-title">سلام، ${staff.fullName} عزیز 👋</h2>
-          <p class="op-hero-subtitle">
-            به مرکز کنترل و مانیتورینگ خدمات ساختمانی بهدون خوش آمدید. تمامی درخواست‌ها، سفارش‌ها، تکنسین‌ها و گزارش‌های عملکرد به صورت هوشمند و زنده در دسترس شماست.
-          </p>
-          <div class="op-hero-status-tags">
-            <span class="op-status-tag tag-success">
-              <span class="icon">${icons.checkCircle}</span>
-              <span>سیستم پایدار و آنلاین</span>
-            </span>
-            <span class="op-status-tag tag-ai">
-              <span class="icon">${icons.ai}</span>
-              <span>دستیار هوش مصنوعی آماده</span>
-            </span>
-            <span class="op-status-tag tag-neutral">
-              <span class="icon">${icons.shield}</span>
-              <span>امنیت فعال و رمزنگاری‌شده</span>
-            </span>
-          </div>
+          <span class="kpi-mini-arrow">${icons.arrowLeft}</span>
         </div>
 
-        <div class="op-hero-quick-actions">
-          <button type="button" class="op-quick-cta" data-home-tile="pipeline">
+        <div class="op-kpi-item" data-home-tile="dashboard" role="button" tabindex="0">
+          <div class="kpi-mini-icon emerald">${icons.chart}</div>
+          <div class="kpi-mini-body">
+            <span class="kpi-mini-label">داشبورد آمار</span>
+            <strong class="kpi-mini-value">گزارشات تحلیلی</strong>
+          </div>
+          <span class="kpi-mini-arrow">${icons.arrowLeft}</span>
+        </div>
+
+        <div class="op-kpi-item" data-home-tile="staff" role="button" tabindex="0">
+          <div class="kpi-mini-icon amber">${icons.users}</div>
+          <div class="kpi-mini-body">
+            <span class="kpi-mini-label">تکنسین‌ها و پرسنل</span>
+            <strong class="kpi-mini-value">مدیریت تیم</strong>
+          </div>
+          <span class="kpi-mini-arrow">${icons.arrowLeft}</span>
+        </div>
+
+        <div class="op-kpi-item" data-home-tile="chat" role="button" tabindex="0">
+          <div class="kpi-mini-icon cyan">${icons.chat}</div>
+          <div class="kpi-mini-body">
+            <span class="kpi-mini-label">پشتیبانی آنلاین</span>
+            <strong class="kpi-mini-value">چت کاربران</strong>
+          </div>
+          <span class="kpi-mini-arrow">${icons.arrowLeft}</span>
+        </div>
+      </section>
+
+      <!-- اقدامات سریع (Quick Actions) -->
+      <section class="op-quick-bar">
+        <span class="op-quick-label">دسترسی سریع:</span>
+        <div class="op-quick-pills">
+          <button type="button" class="op-pill-btn" data-home-tile="pipeline">
             <span class="icon">${icons.columns}</span>
-            <div class="cta-texts">
-              <span class="cta-title">مراحل سفارش‌ها</span>
-              <span class="cta-sub">مشاهده و انتقال کارت‌ها</span>
-            </div>
+            <span>پایپ‌لاین سفارش‌ها</span>
           </button>
-          <button type="button" class="op-quick-cta" data-home-tile="ai">
-            <span class="icon">${icons.sparkles}</span>
-            <div class="cta-texts">
-              <span class="cta-title">گفتگو با هوشواره</span>
-              <span class="cta-sub">تحلیل و مشاوره هوشمند</span>
-            </div>
+          <button type="button" class="op-pill-btn" data-home-tile="map">
+            <span class="icon">${icons.map}</span>
+            <span>نقشه زنده</span>
+          </button>
+          <button type="button" class="op-pill-btn" data-home-tile="services">
+            <span class="icon">${icons.wrench}</span>
+            <span>مدیریت خدمات</span>
+          </button>
+          <button type="button" class="op-pill-btn" data-home-tile="ai">
+            <span class="icon">${icons.ai}</span>
+            <span>هوشواره هوشمند</span>
           </button>
         </div>
       </section>
 
-      <!-- کارت‌های شاخص‌های کلیدی (KPIs) -->
-      <section class="op-kpi-grid">
-        <div class="op-kpi-card" data-home-tile="pipeline" role="button" tabindex="0">
-          <div class="kpi-icon-wrap icon-violet">
-            <span class="icon">${icons.columns}</span>
+      <!-- شبکه‌ی دسته‌بندی‌شده و مرتب بخش‌ها (خلوت و بدون متن‌های اضافه) -->
+      <div class="op-sections-container">
+        <!-- ستون ۱: عملیات، سفارش‌ها و خدمات -->
+        <div class="op-group-column">
+          <div class="op-group-header">
+            <span class="op-group-title">عملیات و سفارش‌ها</span>
           </div>
-          <div class="kpi-info">
-            <span class="kpi-label">مراحل و وضعیت سفارش‌ها</span>
-            <h3 class="kpi-value">پایپ‌لاین فعال</h3>
-            <span class="kpi-trend trend-positive">مدیریت کارت‌ها به تفکیک مرحله</span>
-          </div>
-        </div>
-
-        <div class="op-kpi-card" data-home-tile="dashboard" role="button" tabindex="0">
-          <div class="kpi-icon-wrap icon-emerald">
-            <span class="icon">${icons.chart}</span>
-          </div>
-          <div class="kpi-info">
-            <span class="kpi-label">گزارشات و تحلیل جامع</span>
-            <h3 class="kpi-value">داشبورد آمار</h3>
-            <span class="kpi-trend trend-positive">نمودار سفارش‌ها و بازدیدها</span>
-          </div>
-        </div>
-
-        <div class="op-kpi-card" data-home-tile="staff" role="button" tabindex="0">
-          <div class="kpi-icon-wrap icon-amber">
-            <span class="icon">${icons.users}</span>
-          </div>
-          <div class="kpi-info">
-            <span class="kpi-label">تکنسین‌ها و پرسنل</span>
-            <h3 class="kpi-value">مدیریت متخصصین</h3>
-            <span class="kpi-trend trend-neutral">نظارت بر عملکرد و اعزام</span>
-          </div>
-        </div>
-
-        <div class="op-kpi-card" data-home-tile="chat" role="button" tabindex="0">
-          <div class="kpi-icon-wrap icon-cyan">
-            <span class="icon">${icons.chat}</span>
-          </div>
-          <div class="kpi-info">
-            <span class="kpi-label">ارتباط آنلاین با مشتریان</span>
-            <h3 class="kpi-value">چت پشتیبانی</h3>
-            <span class="kpi-trend trend-positive">پاسخگویی لحظه‌ای به مراجعین</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- شبکه‌ی دسته‌بندی‌شده کارت‌های دسترسی سریع (Command Categories) -->
-      <div class="op-sections-stack">
-        <!-- دسته ۱: پیشخوان و عملیات -->
-        <div class="op-category-block">
-          <div class="op-block-header">
-            <div class="op-block-title-wrap">
-              <span class="op-block-icon">${icons.layers}</span>
-              <h3 class="op-block-title">عملیات، مانیتورینگ و سفارش‌ها</h3>
-            </div>
-            <span class="op-block-count">بخش‌های عملیاتی</span>
-          </div>
-          <div class="op-cards-grid">
-            ${renderTile({
-              view: 'dashboard',
-              icon: icons.chart,
-              title: 'داشبورد تحلیلی',
-              desc: 'مشاهده نمودارهای مالی، نرخ تبدیل و آمار لحظه‌ای کل سامانه',
-              badge: 'تحلیلی',
-              badgeClass: 'badge-primary',
-            })}
+          <div class="op-group-tiles">
             ${
               showRequests
                 ? renderTile({
                     view: 'pipeline',
                     icon: icons.columns,
-                    title: 'مراحل سفارش‌ها (پایپ‌لاین)',
-                    desc: 'کنترل چرخه عمر درخواست‌ها از ثبت اولیه تا پایان و صدور فاکتور',
-                    badge: 'زنده',
-                    badgeClass: 'badge-live',
+                    title: 'پایپ‌لاین و مراحل سفارش‌ها',
+                    desc: 'کنترل چرخه عمر درخواست‌ها و تکنسین‌ها',
                   })
                 : ''
             }
@@ -184,7 +143,7 @@ export function renderHomeView(staff: StaffInfo): string {
                     view: 'map',
                     icon: icons.map,
                     title: 'نقشه هوشمند درخواست‌ها',
-                    desc: 'موقعیت مکانی پروژه‌ها، تراکم محله‌های تهران و اعزام نزدیک‌ترین متخصص',
+                    desc: 'پایش موقعیت سفارش‌ها روی نقشه تهران',
                   })
                 : ''
             }
@@ -193,46 +152,50 @@ export function renderHomeView(staff: StaffInfo): string {
                 ? renderTile({
                     view: 'services',
                     icon: icons.wrench,
-                    title: 'مدیریت خدمات و دسته‌ها',
-                    desc: 'تعریف خدمات ساختمانی جدید، برآورد هزینه‌ها، توضیحات و گارانتی‌ها',
+                    title: 'مدیریت خدمات و قیمت‌ها',
+                    desc: 'تعریف خدمات ساختمانی، اجرت‌ها و گارانتی',
+                  })
+                : ''
+            }
+            ${
+              hasPermission(staff, 'chat')
+                ? renderTile({
+                    view: 'chat',
+                    icon: icons.chat,
+                    title: 'چت و گفتگوی آنلاین',
+                    desc: 'پاسخگویی سریع به مراجعین و مشتریان',
+                  })
+                : ''
+            }
+            ${
+              showSettings
+                ? renderTile({
+                    view: 'contact-manager',
+                    icon: icons.phone,
+                    title: 'اطلاعات تماس و شبکه‌ها',
+                    desc: 'شماره‌های پشتیبانی، شعب و شبکه‌های اجتماعی',
                   })
                 : ''
             }
           </div>
         </div>
 
-        <!-- دسته ۲: محتوا، ارتباطات و تعامل -->
+        <!-- ستون ۲: محتوا، مجله و بازاریابی -->
         ${
-          showContent || hasPermission(staff, 'chat')
+          showContent
             ? `
-          <div class="op-category-block">
-            <div class="op-block-header">
-              <div class="op-block-title-wrap">
-                <span class="op-block-icon">${icons.message}</span>
-                <h3 class="op-block-title">محتوا، مجله و ارتباط با کاربران</h3>
-              </div>
-              <span class="op-block-count">تولید محتوا و ارتباطات</span>
+          <div class="op-group-column">
+            <div class="op-group-header">
+              <span class="op-group-title">محتوا و وب‌سایت</span>
             </div>
-            <div class="op-cards-grid">
-              ${
-                hasPermission(staff, 'chat')
-                  ? renderTile({
-                      view: 'chat',
-                      icon: icons.chat,
-                      title: 'چت و پشتیبانی آنلاین',
-                      desc: 'گفتگوی دوطرفه مستقیم با مراجعین سایت و راهنمایی سریع',
-                      badge: 'فعال',
-                      badgeClass: 'badge-info',
-                    })
-                  : ''
-              }
+            <div class="op-group-tiles">
               ${
                 hasPermission(staff, 'content')
                   ? renderTile({
                       view: 'magazine',
                       icon: icons.article,
                       title: 'مجله و مقالات تخصصی',
-                      desc: 'انتشار مقالات سئو، نکات آموزشی ساختمان و افزایش ورودی گوگل',
+                      desc: 'تولید و انتشار مطالب آموزشی و سئو',
                     })
                   : ''
               }
@@ -241,8 +204,8 @@ export function renderHomeView(staff: StaffInfo): string {
                   ? renderTile({
                       view: 'stories',
                       icon: icons.story,
-                      title: 'استوری‌های تصویری',
-                      desc: 'نمایش ویدیوها و تصاویر نمونه‌کارهای اجرا شده در بالای سایت',
+                      title: 'استوری‌های تعاملی',
+                      desc: 'ویدیوها و تصاویر قبل/بعد از پروژه',
                     })
                   : ''
               }
@@ -252,17 +215,37 @@ export function renderHomeView(staff: StaffInfo): string {
                       view: 'testimonials',
                       icon: icons.message,
                       title: 'نظرات و رضایت مشتریان',
-                      desc: 'بررسی و تایید دیدگاه‌های ثبت‌شده کارفرمایان و ارزیابی کیفیت',
+                      desc: 'بررسی دیدگاه‌ها و بازخوردهای دریافتی',
                     })
                   : ''
               }
               ${
-                showSettings
+                hasPermission(staff, 'content') || hasPermission(staff, 'settings')
                   ? renderTile({
-                      view: 'contact-manager',
-                      icon: icons.phone,
-                      title: 'ارتباطات و شبکه‌های اجتماعی',
-                      desc: 'تنظیم شماره‌های تماس اضطراری، ساعات کاری و آدرس شعب',
+                      view: 'sliders',
+                      icon: icons.image,
+                      title: 'اسلایدر و بنرهای تبلیغاتی',
+                      desc: 'بنرهای صفحه اصلی دسکتاپ و موبایل',
+                    })
+                  : ''
+              }
+              ${
+                hasPermission(staff, 'seo')
+                  ? renderTile({
+                      view: 'seo',
+                      icon: icons.seo,
+                      title: 'مدیریت سئو و متادیتا',
+                      desc: 'تنظیمات اسکیمای گوگل و رتبه کلمات کلیدی',
+                    })
+                  : ''
+              }
+              ${
+                hasPermission(staff, 'content') || hasPermission(staff, 'settings')
+                  ? renderTile({
+                      view: 'media',
+                      icon: icons.image,
+                      title: 'مدیریت رسانه و فایل‌ها',
+                      desc: 'آرشیو تصاویر، اسناد و فایل‌های آپلودشده',
                     })
                   : ''
               }
@@ -272,94 +255,57 @@ export function renderHomeView(staff: StaffInfo): string {
             : ''
         }
 
-        <!-- دسته ۳: پرسنل، کارمندان و مالی -->
-        ${
-          showPersonnel || showFinance
-            ? `
-          <div class="op-category-block">
-            <div class="op-block-header">
-              <div class="op-block-title-wrap">
-                <span class="op-block-icon">${icons.users}</span>
-                <h3 class="op-block-title">پرسنل، استخدام و امور مالی</h3>
-              </div>
-              <span class="op-block-count">تیم و حسابداری</span>
-            </div>
-            <div class="op-cards-grid">
-              ${
-                hasPermission(staff, 'staff')
-                  ? renderTile({
-                      view: 'staff',
-                      icon: icons.users,
-                      title: 'تکنسین‌ها و همکاران',
-                      desc: 'فهرست کارمندان و متخصصین فنی، سوابق تسویه و اطلاعات تماس',
-                    })
-                  : ''
-              }
-              ${
-                hasPermission(staff, 'recruitment')
-                  ? renderTile({
-                      view: 'jobApplications',
-                      icon: icons.briefcase,
-                      title: 'فرصت‌های شغلی و استخدام',
-                      desc: 'بررسی فرم‌های ثبت‌نامی متخصصین جدید و مصاحبه همکاری',
-                      badge: 'جذب',
-                      badgeClass: 'badge-emerald',
-                    })
-                  : ''
-              }
-              ${
-                showFinance
-                  ? renderTile({
-                      view: 'finance',
-                      icon: icons.finance,
-                      title: 'مدیریت مالی و تراکنش‌ها',
-                      desc: 'گزارش سود و زیان، تراکنش‌های پرداخت آنلاین و مانده‌حساب‌ها',
-                    })
-                  : ''
-              }
-              ${
-                hasPermission(staff, 'roles')
-                  ? renderTile({
-                      view: 'roles',
-                      icon: icons.lock,
-                      title: 'نقش‌ها و اختیارات دسترسی',
-                      desc: 'تعریف نقش‌های کاربری، کنترل سطح دسترسی به بخش‌های مختلف پنل',
-                    })
-                  : ''
-              }
-              ${
-                hasPermission(staff, 'wallet')
-                  ? renderTile({
-                      view: 'payroll',
-                      icon: icons.wallet,
-                      title: 'حقوق و تسویه‌حساب',
-                      desc: 'محاسبه دستمزد تکنسین‌ها، کارمزدها و فیش‌های تسویه دوره‌ای',
-                    })
-                  : ''
-              }
-            </div>
+        <!-- ستون ۳: پرسنل، مالی و سامانه -->
+        <div class="op-group-column">
+          <div class="op-group-header">
+            <span class="op-group-title">پرسنل، مالی و تنظیمات</span>
           </div>
-        `
-            : ''
-        }
-
-        <!-- دسته ۴: سامانه، هوش مصنوعی و تنظیمات زیرساخت -->
-        <div class="op-category-block">
-          <div class="op-block-header">
-            <div class="op-block-title-wrap">
-              <span class="op-block-icon">${icons.settings}</span>
-              <h3 class="op-block-title">هوش مصنوعی، سئو و تنظیمات سامانه</h3>
-            </div>
-            <span class="op-block-count">پیکربندی کلان</span>
-          </div>
-          <div class="op-cards-grid">
+          <div class="op-group-tiles">
+            ${
+              hasPermission(staff, 'staff')
+                ? renderTile({
+                    view: 'staff',
+                    icon: icons.users,
+                    title: 'کارمندان و تکنسین‌ها',
+                    desc: 'پرونده پرسنل فنی و سوابق فعالیت',
+                  })
+                : ''
+            }
+            ${
+              hasPermission(staff, 'recruitment')
+                ? renderTile({
+                    view: 'jobApplications',
+                    icon: icons.briefcase,
+                    title: 'فرصت‌های شغلی و استخدام',
+                    desc: 'بررسی متقاضیان پیوستن به تیم متخصصین',
+                  })
+                : ''
+            }
+            ${
+              showFinance
+                ? renderTile({
+                    view: 'finance',
+                    icon: icons.finance,
+                    title: 'مدیریت مالی و تراکنش‌ها',
+                    desc: 'تراکنش‌ها، تسویه‌حساب‌ها و گزارش سود',
+                  })
+                : ''
+            }
+            ${
+              hasPermission(staff, 'wallet')
+                ? renderTile({
+                    view: 'payroll',
+                    icon: icons.wallet,
+                    title: 'حقوق و تسویه‌حساب',
+                    desc: 'محاسبه کارمزدها و فیش‌های تسویه',
+                  })
+                : ''
+            }
             ${renderTile({
               view: 'ai',
               icon: icons.ai,
               title: 'هوشواره هوشمند بهدون',
-              desc: 'دستیار خودکار هوش مصنوعی برای تحلیل درخواست‌ها و پیشنهاد استراتژی',
-              badge: 'AI Pro',
-              badgeClass: 'badge-ai',
+              desc: 'دستیار خودکار هوش مصنوعی و تحلیلگر',
             })}
             ${
               showSettings
@@ -367,17 +313,7 @@ export function renderHomeView(staff: StaffInfo): string {
                     view: 'settings',
                     icon: icons.settings,
                     title: 'تنظیمات کلی سامانه',
-                    desc: 'عنوان سایت، رنگ‌بندی تم، اطلاعات حقوقی، پیامک و تنظیمات پایه',
-                  })
-                : ''
-            }
-            ${
-              hasPermission(staff, 'seo')
-                ? renderTile({
-                    view: 'seo',
-                    icon: icons.seo,
-                    title: 'مدیریت سئو و اسکیمای گوگل',
-                    desc: 'بررسی رتبه کلمات کلیدی، فایل sitemap.xml و بهینه‌سازی موتورهای جستجو',
+                    desc: 'پیکربندی هویت، پیامک و تنظیمات سایت',
                   })
                 : ''
             }
@@ -386,8 +322,8 @@ export function renderHomeView(staff: StaffInfo): string {
                 ? renderTile({
                     view: 'plugins',
                     icon: icons.plugin,
-                    title: 'افزونه‌ها و اتصالات خارجی',
-                    desc: 'درگاه‌های پرداخت، وب‌سرویس پیامکی کاوه‌نگار و وب‌هوک‌ها',
+                    title: 'افزونه‌ها و اتصالات',
+                    desc: 'درگاه‌های پرداخت و وب‌سرویس‌ها',
                   })
                 : ''
             }
@@ -396,8 +332,8 @@ export function renderHomeView(staff: StaffInfo): string {
                 ? renderTile({
                     view: 'activityLog',
                     icon: icons.history,
-                    title: 'گزارش لاگ و فعالیت‌ها',
-                    desc: 'ثبت رویدادهای سیستمی، لاگین کاربران و تغییرات برای حسابرسی امنیتی',
+                    title: 'گزارش رویدادها و لاگ',
+                    desc: 'تاریخچه لاگین‌ها و تغییرات سیستمی',
                   })
                 : ''
             }
@@ -416,10 +352,8 @@ export function renderRequestsHomeView(staff: StaffInfo): string {
       renderTile({
         view: 'pipeline',
         icon: icons.columns,
-        title: 'مراحل و جریان درخواست‌ها',
-        desc: 'مشاهده ستون‌های پایپ‌لاین، جابجایی کارت‌های وضعیت و کنترل اعزام تکنسین',
-        badge: 'زنده',
-        badgeClass: 'badge-live',
+        title: 'مراحل و پایپ‌لاین سفارش‌ها',
+        desc: 'کنترل چرخه عمر درخواست‌ها و اعزام تکنسین',
       })
     );
   }
@@ -429,7 +363,7 @@ export function renderRequestsHomeView(staff: StaffInfo): string {
         view: 'map',
         icon: icons.map,
         title: 'نقشه جغرافیایی سفارش‌ها',
-        desc: 'مشاهده موقعیت مکانی پروژه‌های ساختمانی در سطح شهر تهران روی نقشه تعاملی',
+        desc: 'پایش موقعیت سفارش‌ها در سطح شهر تهران روی نقشه',
       })
     );
   }
@@ -439,7 +373,7 @@ export function renderRequestsHomeView(staff: StaffInfo): string {
         <h3 class="op-subview-title">مدیریت و پیگیری درخواست‌ها</h3>
         <p class="op-subview-desc">بخش‌های مرتبط با گردش کار و مسیریابی سفارش‌های مشتریان</p>
       </div>
-      <div class="op-cards-grid">${tiles.join('')}</div>
+      <div class="op-subview-tiles">${tiles.join('')}</div>
     </div>
   `;
 }
@@ -452,16 +386,16 @@ export function renderContentHomeView(staff: StaffInfo): string {
       renderTile({
         view: 'magazine',
         icon: icons.article,
-        title: 'مجله و وبلاگ تخصصی',
-        desc: 'نوشتن و ویرایش مقالات، درج برچسب‌ها و جذب ترافیک ارگانیک',
+        title: 'مجله و مقالات تخصصی',
+        desc: 'انتشار مقالات سئو و آموزش‌های ساختمانی',
       })
     );
     tiles.push(
       renderTile({
         view: 'testimonials',
         icon: icons.message,
-        title: 'دیدگاه‌ها و رضایت کارفرمایان',
-        desc: 'مدیریت نظرات منتشر شده و امتیازدهی به کیفیت انجام خدمات',
+        title: 'دیدگاه‌ها و نظرات مشتریان',
+        desc: 'بررسی نظرات و امتیازدهی به کیفیت خدمات',
       })
     );
   }
@@ -471,7 +405,7 @@ export function renderContentHomeView(staff: StaffInfo): string {
         view: 'stories',
         icon: icons.story,
         title: 'استوری‌های تعاملی',
-        desc: 'ویدیوها و تصاویر قبل/بعد از پروژه برای نمایش در صفحه اصلی',
+        desc: 'ویدیوها و تصاویر قبل/بعد از پروژه',
       })
     );
   }
@@ -481,7 +415,7 @@ export function renderContentHomeView(staff: StaffInfo): string {
         view: 'sliders',
         icon: icons.image,
         title: 'اسلایدر و بنرها',
-        desc: 'تنظیم بنرهای گرافیکی دسکتاپ و موبایل همراه با لینک مقصد',
+        desc: 'تنظیم بنرهای گرافیکی و لینک‌های مقصد',
       })
     );
     tiles.push(
@@ -489,7 +423,7 @@ export function renderContentHomeView(staff: StaffInfo): string {
         view: 'media',
         icon: icons.image,
         title: 'مدیریت فایل و رسانه‌ها',
-        desc: 'آپلود تصاویر، آیکون‌ها و مدیریت فضای ذخیره‌سازی رسانه‌ای',
+        desc: 'آپلود تصاویر و مدیریت فضای رسانه‌ای',
       })
     );
   }
@@ -499,7 +433,7 @@ export function renderContentHomeView(staff: StaffInfo): string {
         view: 'seo',
         icon: icons.seo,
         title: 'مدیریت سئو و متادیتا',
-        desc: 'تنظیم تایتل، دیسکریپشن و اسکیمای ساختاریافته گوگل برای تمام صفحات',
+        desc: 'اسکیمای گوگل و بهینه‌سازی کلمات کلیدی',
       })
     );
   }
@@ -507,9 +441,9 @@ export function renderContentHomeView(staff: StaffInfo): string {
     <div class="op-subview-wrapper">
       <div class="op-subview-header">
         <h3 class="op-subview-title">مدیریت محتوا و وب‌سایت</h3>
-        <p class="op-subview-desc">ابزارهای انتشار مقالات، رسانه‌ها، دیدگاه‌ها و بهینه‌سازی ظاهر سایت</p>
+        <p class="op-subview-desc">ابزارهای انتشار مقالات، رسانه‌ها، دیدگاه‌ها و سئو</p>
       </div>
-      <div class="op-cards-grid">${tiles.join('')}</div>
+      <div class="op-subview-tiles">${tiles.join('')}</div>
     </div>
   `;
 }
@@ -523,7 +457,7 @@ export function renderPersonnelHomeView(staff: StaffInfo): string {
         view: 'staff',
         icon: icons.users,
         title: 'پرسنل و تکنسین‌ها',
-        desc: 'ثبت اطلاعات تکنسین‌های فنی، تخصیص تخصص‌ها و پیگیری وضعیت فعالیت',
+        desc: 'اطلاعات پرسنل، تخصص‌ها و وضعیت فعالیت',
       })
     );
   }
@@ -532,8 +466,8 @@ export function renderPersonnelHomeView(staff: StaffInfo): string {
       renderTile({
         view: 'jobApplications',
         icon: icons.briefcase,
-        title: 'درخواست‌های همکاری و استخدام',
-        desc: 'بررسی متقاضیان پیوستن به ناوگان بهدون و بررسی رزومه‌ها',
+        title: 'فرصت‌های شغلی و استخدام',
+        desc: 'بررسی درخواست‌های همکاری و رزومه‌ها',
       })
     );
   }
@@ -542,8 +476,8 @@ export function renderPersonnelHomeView(staff: StaffInfo): string {
       renderTile({
         view: 'roles',
         icon: icons.lock,
-        title: 'نقش‌ها و اختیارات',
-        desc: 'تعریف سطوح مجوز دسترسی مدیریتی برای حفاظت از اطلاعات حساس',
+        title: 'نقش‌ها و اختیارات دسترسی',
+        desc: 'تعریف سطوح دسترسی مدیریتی کاربران',
       })
     );
   }
@@ -552,8 +486,8 @@ export function renderPersonnelHomeView(staff: StaffInfo): string {
       renderTile({
         view: 'activityLog',
         icon: icons.history,
-        title: 'گزارش فعالیت کاربران',
-        desc: 'ردگیری تاریخچه لاگین‌ها، ویرایش‌ها و اقدامات انجام‌شده در پنل',
+        title: 'گزارش رویدادها و لاگ',
+        desc: 'ردگیری تاریخچه لاگین‌ها و ویرایش‌ها',
       })
     );
   }
@@ -563,7 +497,7 @@ export function renderPersonnelHomeView(staff: StaffInfo): string {
         view: 'payroll',
         icon: icons.wallet,
         title: 'حقوق و تسویه‌حساب',
-        desc: 'محاسبه کارمزدها، پورسانت و صدور فیش‌های تسویه هفتگی و ماهانه',
+        desc: 'محاسبه کارمزدها و فیش‌های تسویه دوره‌ای',
       })
     );
   }
@@ -571,9 +505,9 @@ export function renderPersonnelHomeView(staff: StaffInfo): string {
     <div class="op-subview-wrapper">
       <div class="op-subview-header">
         <h3 class="op-subview-title">مدیریت پرسنل و منابع انسانی</h3>
-        <p class="op-subview-desc">ساماندهی تکنسین‌های فنی، پرونده‌های استخدامی و مجوزهای دسترسی</p>
+        <p class="op-subview-desc">ساماندهی تکنسین‌های فنی، استخدام و سطوح دسترسی</p>
       </div>
-      <div class="op-cards-grid">${tiles.join('')}</div>
+      <div class="op-subview-tiles">${tiles.join('')}</div>
     </div>
   `;
 }
@@ -585,28 +519,28 @@ export function renderDashboardHomeView(): string {
       view: 'dashboardOrders',
       icon: icons.chart,
       title: 'تحلیل آمار سفارش‌ها',
-      desc: 'روند رشد درخواست‌ها، پرطرفدارترین خدمات و زمان‌های اوج ثبت سفارش',
+      desc: 'روند رشد درخواست‌ها و خدمات پرطرفدار',
     }),
     renderTile({
       view: 'dashboardVisitors',
       icon: icons.eye,
       title: 'آمار بازدیدکنندگان',
-      desc: 'حجم ترافیک روزانه، مبادی ورودی کاربران و نرخ تعامل با صفحات',
+      desc: 'حجم ترافیک روزانه و مبادی ورودی',
     }),
     renderTile({
       view: 'dashboardStaff',
       icon: icons.users,
       title: 'عملکرد کارمندان و تکنسین‌ها',
-      desc: 'ارزیابی سرعت پاسخگویی، امتیاز رضایت و میزان پروژه‌های تکمیل‌شده',
+      desc: 'سرعت پاسخگویی و امتیاز رضایت کارفرمایان',
     }),
   ];
   return `
     <div class="op-subview-wrapper">
       <div class="op-subview-header">
-        <h3 class="op-subview-title">آمار، شاخص‌ها و تحلیل‌های مدیریتی</h3>
-        <p class="op-subview-desc">گزارش‌های تفکیکی از رفتار کاربران، نرخ تکمیل سفارش‌ها و بهره‌وری تیم</p>
+        <h3 class="op-subview-title">آمار و تحلیل‌های مدیریتی</h3>
+        <p class="op-subview-desc">گزارش‌های رفتار کاربران، نرخ سفارش‌ها و عملکرد تیم</p>
       </div>
-      <div class="op-cards-grid">${tiles.join('')}</div>
+      <div class="op-subview-tiles">${tiles.join('')}</div>
     </div>
   `;
 }

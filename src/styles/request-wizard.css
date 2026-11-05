@@ -3826,3 +3826,142 @@ body.modal-open {
     text-align: center;
   }
 }
+
+/* ==========================================================================
+   Saved Address Quick Selection Card
+   ========================================================================== */
+.wizard-saved-addresses-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  background: rgba(124, 58, 237, 0.04);
+  border: 1px solid rgba(124, 58, 237, 0.15);
+  border-radius: var(--radius-lg);
+}
+
+.wizard-saved-addresses-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.wizard-saved-addresses-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.wizard-saved-addresses-hint {
+  font-size: 0.74rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.wizard-saved-addresses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wizard-saved-addr-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1.5px solid rgba(124, 58, 237, 0.22);
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.05);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: right;
+  width: 100%;
+}
+
+.wizard-saved-addr-card:hover {
+  border-color: var(--primary);
+  background: #fbf9fe;
+  box-shadow: 0 6px 18px rgba(124, 58, 237, 0.12);
+  transform: translateY(-2px);
+}
+
+.saved-addr-main {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+.saved-addr-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.saved-addr-badge .icon {
+  width: 13px;
+  height: 13px;
+}
+
+.saved-addr-text {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.5;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.saved-addr-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
+  transition: transform var(--transition-fast);
+}
+
+.wizard-saved-addr-card:hover .saved-addr-action {
+  transform: translateX(-3px);
+}
+
+.saved-addr-action .icon {
+  width: 14px;
+  height: 14px;
+}
+
+.wizard-address-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.wizard-address-divider::before,
+.wizard-address-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px dashed var(--border);
+}
+
+.wizard-address-divider span {
+  padding: 0 8px;
+}

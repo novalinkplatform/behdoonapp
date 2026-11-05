@@ -6,6 +6,18 @@
 [data-theme="dark"] {
   color-scheme: dark;
 
+  /* متغیرهای پایه Tidewell در حالت تاریک (Dark Petrol & Slate) */
+  --mat: #0b151a;
+  --shell: #0e1c24;
+  --main: #0b151a;
+  --surface: #13232b;
+  --surface-2: #192d37;
+  --ink: #f1f6f7;
+  --ink-2: #9db2bc;
+  --ink-3: #6b828d;
+  --line: #1c323d;
+  --line-2: #243d4a;
+
   /* پالت بنفش و کریستالی تیره */
   --primary: #a78bfa;
   --primary-hover: #c4b5fd;

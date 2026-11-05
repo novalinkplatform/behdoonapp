@@ -21,27 +21,19 @@ interface NavGroup {
 export function renderShell(staff: StaffInfo): string {
   const groups: NavGroup[] = [
     {
-      title: 'پیشخوان و تحلیل',
+      title: 'پیشخوان و عملیات',
       items: [
-        { screen: 'home', label: 'مرکز فرماندهی', icon: icons.home },
+        { screen: 'home', label: 'مرکز مدیریت', icon: icons.home },
+        { screen: 'pipeline', label: 'پایپ‌لاین سفارش‌ها', icon: icons.columns, permission: 'pipeline' },
+        { screen: 'map', label: 'نقشه درخواست‌ها', icon: icons.map, permission: 'map' },
         { screen: 'dashboard', label: 'داشبورد تحلیلی', icon: icons.chart, permission: 'dashboard' },
-        { screen: 'dashboardOrders', label: 'آمار سفارش‌ها', icon: icons.chart, permission: 'dashboard' },
-        { screen: 'dashboardVisitors', label: 'بازدیدکنندگان', icon: icons.eye, permission: 'dashboard' },
-        { screen: 'dashboardStaff', label: 'عملکرد تکنسین‌ها', icon: icons.users, permission: 'dashboard' },
-      ],
-    },
-    {
-      title: 'عملیات و سفارش‌ها',
-      items: [
-        { screen: 'pipeline', label: 'پیگیری مراحل سفارش', icon: icons.columns, permission: 'pipeline', badge: 'زنده', badgeClass: 'badge-live' },
-        { screen: 'map', label: 'نقشه هوشمند درخواست‌ها', icon: icons.map, permission: 'map' },
       ],
     },
     {
       title: 'خدمات و ارتباطات',
       items: [
         { screen: 'services', label: 'مدیریت خدمات و قیمت‌ها', icon: icons.wrench, permission: 'settings' },
-        { screen: 'chat', label: 'گفتگوی آنلاین پشتیبانی', icon: icons.chat, permission: 'chat', badge: 'فعال', badgeClass: 'badge-info' },
+        { screen: 'chat', label: 'چت و پشتیبانی برخط', icon: icons.chat, permission: 'chat' },
         { screen: 'contact-manager', label: 'اطلاعات تماس و شبکه‌ها', icon: icons.phone, permission: 'settings' },
       ],
     },
@@ -50,28 +42,23 @@ export function renderShell(staff: StaffInfo): string {
       items: [
         { screen: 'magazine', label: 'مجله و مقالات تخصصی', icon: icons.article, permission: 'content' },
         { screen: 'stories', label: 'استوری‌های تصویری', icon: icons.story, permission: 'stories' },
-        { screen: 'testimonials', label: 'نظرات و رضایت مشتریان', icon: icons.message, permission: 'content' },
-        { screen: 'sliders', label: 'اسلایدر و بنرهای تبلیغاتی', icon: icons.image, permission: 'content' },
-        { screen: 'seo', label: 'بهینه‌سازی سئو و متادیتا', icon: icons.seo, permission: 'seo' },
-        { screen: 'media', label: 'مدیریت فایل و چندرسانه‌ای', icon: icons.image, permission: 'content' },
+        { screen: 'testimonials', label: 'نظرات مشتریان', icon: icons.message, permission: 'content' },
+        { screen: 'sliders', label: 'اسلایدر و بنرها', icon: icons.image, permission: 'content' },
+        { screen: 'seo', label: 'بهینه‌سازی سئو', icon: icons.seo, permission: 'seo' },
+        { screen: 'media', label: 'مدیریت فایل و رسانه', icon: icons.image, permission: 'content' },
       ],
     },
     {
-      title: 'پرسنل و مالی',
+      title: 'پرسنل، مالی و سامانه',
       items: [
-        { screen: 'staff', label: 'تکنسین‌ها و کارمندان', icon: icons.users, permission: 'staff' },
-        { screen: 'jobApplications', label: 'درخواست‌های استخدام و جذب', icon: icons.briefcase, permission: 'recruitment' },
-        { screen: 'roles', label: 'سطوح دسترسی و اختیارات', icon: icons.lock, permission: 'roles' },
+        { screen: 'staff', label: 'تکنسین‌ها و همکاران', icon: icons.users, permission: 'staff' },
+        { screen: 'jobApplications', label: 'فرصت‌های شغلی و استخدام', icon: icons.briefcase, permission: 'recruitment' },
         { screen: 'finance', label: 'مدیریت مالی و تراکنش‌ها', icon: icons.finance, permission: 'dashboard' },
         { screen: 'payroll', label: 'حقوق و تسویه‌حساب', icon: icons.wallet, permission: 'wallet' },
-      ],
-    },
-    {
-      title: 'سامانه و هوش مصنوعی',
-      items: [
-        { screen: 'ai', label: 'هوشواره هوشمند بهدون', icon: icons.ai, badge: 'AI', badgeClass: 'badge-ai' },
-        { screen: 'plugins', label: 'افزونه‌ها و اتصالات', icon: icons.plugin, permission: 'plugins' },
+        { screen: 'roles', label: 'سطوح دسترسی و اختیارات', icon: icons.lock, permission: 'roles' },
+        { screen: 'ai', label: 'هوشواره هوشمند بهدون', icon: icons.ai },
         { screen: 'settings', label: 'تنظیمات کلی سامانه', icon: icons.settings, permission: 'settings' },
+        { screen: 'plugins', label: 'افزونه‌ها و اتصالات', icon: icons.plugin, permission: 'plugins' },
         { screen: 'activityLog', label: 'گزارش رویدادها و لاگ', icon: icons.history, permission: 'staff' },
       ],
     },
@@ -95,19 +82,23 @@ export function renderShell(staff: StaffInfo): string {
       <!-- لایه پس‌زمینه برای سایدبار در موبایل -->
       <div class="admin-sidebar-overlay" id="admin-sidebar-overlay"></div>
 
-      <!-- نوار ناوبری جانبی فوق حرفه‌ای (OpenDesign Sidebar) -->
+      <!-- نوار ناوبری جانبی Tidewell (Slate / Deep Petrol) -->
       <aside class="admin-sidebar" id="admin-sidebar">
         <div class="admin-sidebar-header">
-          <div class="admin-brand" id="admin-logo-btn" role="button" tabindex="0" title="صفحه اصلی مدیریت">
+          <div class="admin-brand" id="admin-logo-btn" role="button" tabindex="0" title="پیشخوان مدیریت بهدون">
             <div class="admin-brand-icon">
-              <img class="admin-logo-mark" src="/favicon.svg" alt="بهدون" />
+              <svg viewBox="0 0 26 26" fill="none" class="admin-brand-mark-svg">
+                <path d="M4 15.5c2.6-2.2 5.2-2.2 7.8 0s5.2 2.2 7.8 0" stroke="#eef8fa" stroke-width="2.4" stroke-linecap="round"/>
+                <path d="M4 20.5c2.6-2.2 5.2-2.2 7.8 0s5.2 2.2 7.8 0" stroke="#eef8fa" stroke-opacity=".55" stroke-width="2.4" stroke-linecap="round"/>
+                <path d="M13 4.5l4.2 6.2H8.8z" fill="#eef8fa"/>
+              </svg>
             </div>
             <div class="admin-brand-info">
               <span class="admin-brand-name">بهدون</span>
-              <span class="admin-brand-badge">نسخه ۱.۰ · فعال</span>
+              <span class="admin-brand-badge">مدیریت عملیات و خدمات</span>
             </div>
           </div>
-          <button type="button" class="admin-sidebar-toggle-btn" id="admin-sidebar-collapse-btn" title="تغییر حالت سایدبار" aria-label="بستن یا باز کردن سایدبار">
+          <button type="button" class="admin-sidebar-toggle-btn" id="admin-sidebar-collapse-btn" title="تغییر اندازه سایدبار" aria-label="بستن یا باز کردن سایدبار">
             <span class="icon">${icons.sidebarToggle}</span>
           </button>
         </div>
@@ -115,7 +106,8 @@ export function renderShell(staff: StaffInfo): string {
         <div class="admin-sidebar-search">
           <div class="admin-search-wrapper">
             <span class="icon">${icons.search}</span>
-            <input type="text" id="admin-nav-filter" placeholder="جستجوی سریع بخش‌ها..." autocomplete="off" />
+            <input type="text" id="admin-nav-filter" placeholder="جستجوی سریع..." autocomplete="off" />
+            <span class="kbd"><kbd>Ctrl</kbd><kbd>K</kbd></span>
           </div>
         </div>
 
@@ -142,6 +134,19 @@ export function renderShell(staff: StaffInfo): string {
           `
             )
             .join('')}
+
+          <!-- باکس ارتقاء وضعیت Tidewell / بهدون پلاس -->
+          <div class="admin-sidebar-upgrade">
+            <div class="upgrade-head">
+              <span class="upgrade-icon">${icons.crown}</span>
+              <h4 class="upgrade-title">بهدون پلاس</h4>
+            </div>
+            <p class="upgrade-desc">تسویه هوشمند، پایش آنلاین تکنسین‌ها و گزارش‌گیری پیشرفته</p>
+            <div class="upgrade-status-pill">
+              <span class="upgrade-dot"></span>
+              <span>سامانه فعال و متصل</span>
+            </div>
+          </div>
         </nav>
 
         <div class="admin-sidebar-footer">
@@ -153,7 +158,7 @@ export function renderShell(staff: StaffInfo): string {
             </div>
           </div>
           <div class="admin-sidebar-quick-actions">
-            <button type="button" class="admin-sidebar-icon-btn admin-theme-toggle" id="admin-theme-toggle-btn" title="تغییر تم (روشن بنفش شیشه‌ای / بنفش تیره لوکس)" aria-label="تغییر تم">
+            <button type="button" class="admin-sidebar-icon-btn admin-theme-toggle" id="admin-theme-toggle-btn" title="تغییر تم" aria-label="تغییر تم">
               <span class="icon icon-theme-sun" id="admin-theme-sun" hidden>${icons.sun}</span>
               <span class="icon icon-theme-moon" id="admin-theme-moon">${icons.moon}</span>
             </button>
@@ -164,9 +169,9 @@ export function renderShell(staff: StaffInfo): string {
         </div>
       </aside>
 
-      <!-- بخش اصلی محتوا (Main Wrapper) -->
+      <!-- بخش اصلی محتوا (Main Canvas) -->
       <div class="admin-main-wrapper">
-        <!-- تاپ‌بار مدرن و واکنش‌گرا -->
+        <!-- تاپ‌بار استاندارد Tidewell -->
         <header class="admin-topbar">
           <div class="admin-topbar-start">
             <button type="button" class="admin-mobile-menu-btn" id="admin-menu-toggle" aria-label="منوی گزینه‌ها">
@@ -179,22 +184,22 @@ export function renderShell(staff: StaffInfo): string {
             </button>
 
             <nav class="admin-breadcrumbs" id="admin-breadcrumbs" aria-label="مسیر جاری">
-              <span class="breadcrumb-item" data-nav-screen="home" role="button" tabindex="0" title="بازگشت به مرکز فرماندهی">
+              <span class="breadcrumb-item" data-nav-screen="home" role="button" tabindex="0" title="بازگشت به پیشخوان">
                 <span class="icon">${icons.home}</span>
-                <span>پیشخوان</span>
+                <span>بهدون</span>
               </span>
               <span class="breadcrumb-separator">/</span>
-              <span class="breadcrumb-current" id="admin-crumb-current">مرکز فرماندهی</span>
+              <span class="breadcrumb-current" id="admin-crumb-current">پیشخوان مدیریت</span>
             </nav>
           </div>
 
           <div class="admin-topbar-end">
             <div class="admin-topbar-clock" id="admin-topbar-clock" title="زمان محلی سرور">
-              <span class="icon">${icons.clock}</span>
+              <span class="topbar-live-dot"></span>
               <span id="admin-clock-text">--:--</span>
             </div>
 
-            <a href="/" target="_blank" rel="noopener" class="admin-topbar-action-link" title="مشاهده صفحه اصلی وب‌سایت در تب جدید">
+            <a href="/" target="_blank" rel="noopener" class="admin-topbar-action-link" title="مشاهده وب‌سایت بهدون">
               <span class="icon">${icons.externalLink}</span>
               <span class="action-text">مشاهده وب‌سایت</span>
             </a>
@@ -209,7 +214,7 @@ export function renderShell(staff: StaffInfo): string {
         ${staff.licenseLocked ? renderLicenseLockBanner() : ''}
         ${staff.username === 'test' ? renderDemoAccountBanner() : ''}
 
-        <!-- کانتینر پویا برای نمایش ویوها -->
+        <!-- کانتینر پویا برای نمایش ویوها با بوم اسلیت Tidewell -->
         <main class="admin-main-content">
           <div id="view-container" class="admin-view-container"></div>
         </main>
