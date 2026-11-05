@@ -1,12 +1,12 @@
 /* ==========================================================
-   Tidewell Overview Dashboard Styles — Behdoon Admin
-   (Kombai Reference ID: kombai:import-screen:dashboards-web-382)
+   Tidewell Compact & Minimalist Dashboard Styles — Behdoon
+   (Refined Fintech Scale: 12px-13.5px base, Zero Clutter)
    ========================================================== */
 
 .dash-view {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: 12px;
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
@@ -15,44 +15,64 @@
 /* Page Head */
 .page-head {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: var(--space-3);
+  gap: 12px;
   flex-wrap: wrap;
+  padding: 2px 0 6px;
 }
 
-.page-head h1 {
+.page-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.page-main-title {
   margin: 0;
-  font-size: 1.55rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--ink);
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 
-.page-head p {
-  margin: 4px 0 0;
-  color: var(--ink-2);
-  font-size: 0.88rem;
+.page-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: var(--positive-soft);
+  color: var(--positive);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.live-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--positive);
+  box-shadow: 0 0 0 2px rgba(35, 128, 90, 0.2);
 }
 
 .head-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .btn-ghost {
-  height: 40px;
-  padding: 0 14px;
-  border-radius: 10px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 6px;
   border: 1px solid var(--line-2);
   background: var(--surface);
   color: var(--ink);
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.88rem;
+  gap: 6px;
+  font-size: 0.78rem;
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -65,20 +85,20 @@
 }
 
 .btn-ghost svg {
-  width: 16px;
-  height: 16px;
+  width: 13px;
+  height: 13px;
   color: var(--ink-2);
 }
 
-/* Sub-nav Pill Bar */
+/* Sub-nav Pill Bar (Compact & Sleek) */
 .dash-subnav {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px;
+  gap: 4px;
+  padding: 2px;
   background-color: var(--surface-2);
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 8px;
   overflow-x: auto;
   width: fit-content;
 }
@@ -86,10 +106,10 @@
 .dash-subnav-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: 10px;
-  font-size: 0.85rem;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.78rem;
   font-weight: 500;
   color: var(--ink-2);
   background: transparent;
@@ -108,30 +128,30 @@
 .dash-subnav-btn.is-active {
   color: #f1f6f7;
   background: linear-gradient(100deg, #24353e 0%, var(--nav-active) 60%, #0b151a 100%);
-  box-shadow: 0 4px 12px rgba(15, 27, 33, 0.15);
+  box-shadow: 0 2px 6px rgba(15, 27, 33, 0.12);
   font-weight: 600;
 }
 
 .dash-subnav-btn .icon {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
-/* Loading & Error States */
+/* Loading & Empty States */
 .dash-loading {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 60px 20px;
+  gap: 8px;
+  padding: 40px 16px;
   color: var(--ink-2);
-  font-size: 0.92rem;
+  font-size: 0.82rem;
 }
 
 .dash-spinner {
-  width: 22px;
-  height: 22px;
-  border: 2.5px solid var(--line-2);
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--line-2);
   border-top-color: var(--primary);
   border-radius: 50%;
   animation: dashSpin 0.7s linear infinite;
@@ -143,23 +163,23 @@
 
 .dash-empty {
   color: var(--ink-3);
-  font-size: 0.88rem;
+  font-size: 0.8rem;
   text-align: center;
-  padding: 32px 16px;
+  padding: 24px 12px;
   margin: 0;
 }
 
 /* ==========================================================
-   Tidewell 3 Stat Cards
+   Tidewell 3 Stat Cards (Compact & Crisp)
    ========================================================== */
 .stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  gap: 12px;
 }
 
 .stat {
-  border-radius: var(--radius-lg);
+  border-radius: 10px;
   border: 1px solid var(--line);
   background: var(--surface);
   overflow: hidden;
@@ -175,7 +195,7 @@
 }
 
 .stat-top {
-  padding: 20px 20px 22px;
+  padding: 12px 14px;
   position: relative;
   flex: 1;
   display: flex;
@@ -184,14 +204,14 @@
 
 .stat-head {
   display: flex;
-  gap: 14px;
-  align-items: flex-start;
+  gap: 10px;
+  align-items: center;
 }
 
 .stat-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   flex: none;
   display: grid;
   place-items: center;
@@ -201,28 +221,29 @@
 }
 
 .stat-icon svg {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
+}
+
+.stat-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
 }
 
 .stat h3 {
-  margin: 2px 0 2px;
-  font-size: 1.15rem;
+  margin: 0;
+  font-size: 0.86rem;
   font-weight: 600;
   color: var(--ink);
-  letter-spacing: -0.01em;
-}
-
-.stat .sub {
-  margin: 0;
-  font-size: 0.84rem;
-  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .more {
-  position: absolute;
-  top: 18px;
-  left: 18px;
   background: none;
   border: 0;
   color: var(--ink-3);
@@ -231,55 +252,62 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-right: auto;
 }
 
 .more svg {
-  width: 18px;
-  height: 18px;
+  width: 14px;
+  height: 14px;
 }
 
 .stat-amount {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: auto;
-  padding-top: 26px;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 2px;
 }
 
 .stat-amount .value {
-  font-size: 1.65rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.01em;
   line-height: 1.1;
   color: var(--ink);
+}
+
+.stat-unit {
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: var(--ink-2);
 }
 
 .delta {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  height: 22px;
-  padding: 0 8px;
-  border-radius: 11px;
-  font-size: 0.74rem;
+  gap: 3px;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 9px;
+  font-size: 0.68rem;
   font-weight: 600;
   background: var(--positive-soft);
   color: var(--positive);
 }
 
 .delta svg {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
 }
 
 .stat-foot {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
-  height: 44px;
+  padding: 0 14px;
+  height: 32px;
   border-top: 1px solid var(--line);
-  font-size: 0.88rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: var(--ink-2);
   background: var(--surface);
@@ -288,23 +316,27 @@
   transition: color var(--transition-fast);
 }
 
+.stat-foot:hover {
+  color: var(--ink);
+}
+
 .stat-foot svg {
-  width: 16px;
-  height: 16px;
+  width: 13px;
+  height: 13px;
   color: var(--ink);
   transition: transform var(--transition-fast);
 }
 
 .stat:hover .stat-foot svg {
-  transform: translateX(-4px);
+  transform: translateX(-3px);
 }
 
-/* Featured Stat Card (Deep Petrol Gradient Mesh) */
+/* Featured Stat Card */
 .stat.featured .stat-top {
   color: #eef7f9;
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 48px 48px,
-    linear-gradient(0deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(0deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0 / 32px 32px,
     radial-gradient(120% 140% at 85% 0%, #1d7e97 0%, transparent 60%),
     linear-gradient(135deg, #116a83 0%, var(--primary) 50%, var(--primary-600) 100%);
 }
@@ -317,10 +349,6 @@
 
 .stat.featured h3 {
   color: #ffffff;
-}
-
-.stat.featured .sub {
-  color: rgba(238, 247, 249, 0.8);
 }
 
 .stat.featured .more {
@@ -337,54 +365,48 @@
 }
 
 /* ==========================================================
-   Tidewell Split Section: Wallets + Cash Flow Chart
+   Tidewell Split Section (Compact)
    ========================================================== */
 .split {
   display: grid;
-  grid-template-columns: minmax(0, 0.84fr) minmax(0, 1.25fr);
-  gap: 20px;
+  grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr);
+  gap: 12px;
 }
 
 .panel {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: var(--radius-xl);
-  padding: 22px 20px 20px;
+  border-radius: 12px;
+  padding: 12px 14px;
   box-shadow: var(--shadow-card);
   min-width: 0;
 }
 
 .panel-head {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
+  margin-bottom: 8px;
 }
 
 .panel-head h2 {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: 0.86rem;
   font-weight: 600;
   color: var(--ink);
-  letter-spacing: -0.01em;
-}
-
-.panel-head .muted {
-  margin: 4px 0 0;
-  font-size: 0.84rem;
-  color: var(--ink-2);
 }
 
 .btn-pill {
-  height: 36px;
-  padding: 0 14px;
-  border-radius: 18px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 13px;
   border: 1px solid var(--line-2);
   background: var(--surface);
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.84rem;
+  gap: 5px;
+  font-size: 0.74rem;
   font-weight: 500;
   color: var(--ink);
   white-space: nowrap;
@@ -399,49 +421,48 @@
 }
 
 .btn-pill svg {
-  width: 15px;
-  height: 15px;
+  width: 12px;
+  height: 12px;
   color: var(--primary);
 }
 
-/* Operational Category Cards (Wallets equivalent) */
-.wallets {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 24px;
-}
-
-.wallet {
-  background: var(--surface-2);
-  border-radius: var(--radius-lg);
-  padding: 14px 14px;
-  border: 1px solid var(--line);
+/* Compact Service Category Rows (Zero Visual Bloat) */
+.wallets-compact-list {
   display: flex;
   flex-direction: column;
+  gap: 5px;
 }
 
-.wallet-head {
+.wallet-compact-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--ink);
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.wallet-compact-row:hover {
+  background: var(--surface);
+  border-color: var(--line-2);
+  transform: translateX(-2px);
 }
 
 .wallet-icon {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
   display: grid;
   place-items: center;
   flex: none;
 }
 
 .wallet-icon svg {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
 }
 
 .wallet-icon.flame {
@@ -464,52 +485,37 @@
   color: #23805a;
 }
 
-.wallet-head button {
-  margin-right: auto;
-  background: none;
-  border: 0;
-  color: var(--ink-3);
-  padding: 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-}
-
-.wallet-head button svg {
-  width: 16px;
-  height: 16px;
-}
-
-.wallet .amt {
-  margin: 14px 0 4px;
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-}
-
-.wallet .limit {
-  margin: 0;
-  font-size: 0.74rem;
-  color: var(--ink-2);
-}
-
-.wallet .state {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  margin-top: 10px;
+.wallet-compact-name {
   font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink);
+  flex: 1;
+}
+
+.wallet-compact-rate {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--primary);
+  background: var(--primary-soft);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.wallet-compact-status {
+  font-size: 0.7rem;
   color: var(--positive);
   font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.wallet .state::before {
+.wallet-compact-status::before {
   content: "";
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background-color: var(--positive);
+  background: var(--positive);
 }
 
 /* Cash Flow & Demand Chart Panel */
@@ -521,43 +527,47 @@
 .cash-head {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
+  align-items: center;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
+.cash-title-col {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
 .cash-head .label {
-  font-size: 0.88rem;
+  font-size: 0.78rem;
   color: var(--ink-2);
   margin: 0;
 }
 
 .cash-head .total {
-  margin: 4px 0 0;
-  font-size: 1.85rem;
+  font-size: 1.15rem;
   font-weight: 700;
-  letter-spacing: -0.025em;
-  line-height: 1.1;
   color: var(--ink);
+  letter-spacing: -0.01em;
 }
 
 .seg {
   display: flex;
-  gap: 6px;
+  gap: 4px;
 }
 
 .seg button {
-  height: 36px;
-  padding: 0 14px;
-  border-radius: 18px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 13px;
   border: 1px solid var(--line-2);
   background: var(--surface);
-  font-size: 0.85rem;
+  font-size: 0.74rem;
   font-weight: 500;
   color: var(--ink);
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   cursor: pointer;
   font-family: inherit;
   transition: all var(--transition-fast);
@@ -571,29 +581,28 @@
 
 .seg button.on::before {
   content: "";
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
   background: currentColor;
 }
 
-/* Tidewell Chart Grid */
+/* Tidewell Chart Grid (Tightened Height) */
 .chart {
   position: relative;
-  margin-top: 24px;
+  margin-top: 10px;
   flex: 1;
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
-  grid-template-rows: minmax(240px, 1fr) auto;
-  column-gap: 12px;
+  grid-template-columns: 36px minmax(0, 1fr);
+  grid-template-rows: minmax(140px, 1fr) auto;
+  column-gap: 8px;
 }
 
 .y-axis {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin: -8px 0;
-  font-size: 0.78rem;
+  font-size: 0.68rem;
   color: var(--ink-2);
   text-align: left;
 }
@@ -602,16 +611,16 @@
   position: relative;
   display: grid;
   grid-template-columns: repeat(14, minmax(0, 1fr));
-  gap: 8px;
+  gap: 6px;
   align-items: end;
   background-image: linear-gradient(to bottom, var(--line) 1px, transparent 1px);
-  background-size: 100% 20%;
+  background-size: 100% 33%;
   border-bottom: 1px solid var(--line);
 }
 
 .bar {
   position: relative;
-  border-radius: 8px 8px 3px 3px;
+  border-radius: 6px 6px 2px 2px;
   background: linear-gradient(180deg, #d6e8ec 0%, rgba(214, 232, 236, 0.15) 100%);
   cursor: pointer;
   transition: background var(--transition-fast);
@@ -629,7 +638,7 @@
   content: "";
   position: absolute;
   left: 50%;
-  top: 8px;
+  top: 6px;
   bottom: 25%;
   width: 2px;
   transform: translateX(-50%);
@@ -641,34 +650,34 @@
   position: absolute;
   left: 50%;
   top: 0;
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  transform: translate(-50%, -4px);
+  transform: translate(-50%, -3px);
   background: var(--primary);
-  border: 2.5px solid #f4fafb;
-  box-shadow: 0 2px 6px rgba(13, 92, 114, 0.4);
+  border: 2px solid #f4fafb;
+  box-shadow: 0 1px 4px rgba(13, 92, 114, 0.4);
 }
 
 .tip {
   position: absolute;
-  left: calc(100% - 10px);
-  top: -16px;
+  left: calc(100% - 6px);
+  top: -12px;
   z-index: 10;
-  min-width: 190px;
-  padding: 10px 14px;
-  border-radius: 10px;
+  min-width: 140px;
+  padding: 8px 10px;
+  border-radius: 8px;
   background: #13232b;
   color: #e9f1f3;
   box-shadow: var(--shadow-pop);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   pointer-events: none;
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 .tip .date {
   color: #aebdc3;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   display: block;
   font-weight: 600;
 }
@@ -677,8 +686,8 @@
   margin: 0;
   display: grid;
   grid-template-columns: auto auto;
-  column-gap: 16px;
-  row-gap: 3px;
+  column-gap: 10px;
+  row-gap: 2px;
 }
 
 .tip dt {
@@ -695,48 +704,48 @@
   grid-column: 2;
   display: grid;
   grid-template-columns: repeat(14, minmax(0, 1fr));
-  gap: 8px;
-  margin-top: 10px;
-  font-size: 0.75rem;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 0.68rem;
   color: var(--ink-2);
   text-align: center;
 }
 
 /* ==========================================================
-   Tidewell Recent Activities Panel (Status-Dot Table)
+   Tidewell Recent Activities Panel (Tight Status-Dot Table)
    ========================================================== */
 .activities {
-  padding: 22px 22px 14px;
+  padding: 12px 14px;
 }
 
 .act-head {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
+  margin-bottom: 8px;
 }
 
 .act-head h2 {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: 0.86rem;
   font-weight: 600;
   color: var(--ink);
   flex: 1;
-  letter-spacing: -0.01em;
 }
 
 .act-search {
   display: flex;
   align-items: center;
-  gap: 8px;
-  width: 280px;
+  gap: 6px;
+  width: 220px;
   max-width: 100%;
-  height: 40px;
-  padding: 0 14px;
-  border-radius: 10px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 6px;
   border: 1px solid var(--line-2);
   color: var(--ink);
-  font-size: 0.84rem;
+  font-size: 0.78rem;
   background: var(--surface);
 }
 
@@ -746,28 +755,28 @@
   background: transparent;
   outline: none;
   font-family: inherit;
-  font-size: 0.84rem;
+  font-size: 0.78rem;
   color: var(--ink);
 }
 
 .act-search svg {
-  width: 16px;
-  height: 16px;
+  width: 13px;
+  height: 13px;
   color: var(--ink-2);
   flex-shrink: 0;
 }
 
 .act-filter {
-  height: 40px;
-  padding: 0 14px;
-  border-radius: 10px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 6px;
   border: 1px solid var(--line-2);
   background: var(--surface);
   color: var(--ink);
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.84rem;
+  gap: 6px;
+  font-size: 0.78rem;
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -780,23 +789,23 @@
 }
 
 .act-filter svg {
-  width: 15px;
-  height: 15px;
+  width: 13px;
+  height: 13px;
   color: var(--ink-2);
 }
 
 .table-wrap {
-  margin-top: 16px;
+  margin-top: 8px;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: 8px;
   overflow-x: auto;
 }
 
 table.tidewell-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 820px;
-  font-size: 0.88rem;
+  min-width: 720px;
+  font-size: 0.78rem;
 }
 
 table.tidewell-table thead th {
@@ -804,16 +813,16 @@ table.tidewell-table thead th {
   font-weight: 600;
   color: var(--ink-2);
   background: var(--surface-2);
-  height: 46px;
-  padding: 0 16px;
+  height: 32px;
+  padding: 0 10px;
   white-space: nowrap;
   border-bottom: 1px solid var(--line);
-  font-size: 0.8rem;
+  font-size: 0.74rem;
 }
 
 table.tidewell-table tbody td {
-  height: 56px;
-  padding: 0 16px;
+  height: 38px;
+  padding: 0 10px;
   border-top: 1px solid var(--line);
   white-space: nowrap;
   color: var(--ink);
@@ -826,36 +835,37 @@ table.tidewell-table tbody tr:hover {
 .act {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .act-logo {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
   display: grid;
   place-items: center;
   flex: none;
 }
 
 .act-logo svg {
-  width: 17px;
-  height: 17px;
+  width: 13px;
+  height: 13px;
 }
 
 .act-title-col {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .act-title {
   font-weight: 600;
   color: var(--ink);
+  font-size: 0.78rem;
 }
 
 .act-sub {
-  font-size: 0.74rem;
+  font-size: 0.68rem;
   color: var(--ink-2);
 }
 
@@ -864,23 +874,23 @@ table.tidewell-table tbody tr:hover {
   font-weight: 600;
   color: var(--primary);
   background: var(--primary-soft);
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 0.78rem;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.72rem;
 }
 
 .status-dot-cell {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  font-size: 0.82rem;
+  gap: 5px;
+  font-size: 0.74rem;
   font-weight: 600;
 }
 
 .status-dot-cell::before {
   content: "";
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--positive);
 }
@@ -898,7 +908,7 @@ table.tidewell-table tbody tr:hover {
 }
 
 td.menu-cell {
-  width: 44px;
+  width: 36px;
   text-align: center;
 }
 
@@ -906,9 +916,9 @@ td.menu-cell {
   background: none;
   border: none;
   color: var(--ink-3);
-  padding: 4px;
+  padding: 2px;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 4px;
   transition: all var(--transition-fast);
   display: inline-flex;
   align-items: center;
@@ -921,27 +931,23 @@ td.menu-cell {
 }
 
 .menu-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
 /* ==========================================================
    Responsive Adaptations
    ========================================================== */
-@media (max-width: 1200px) {
+@media (max-width: 1024px) {
   .split {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 768px) {
   .stats {
     grid-template-columns: minmax(0, 1fr);
-    gap: 16px;
-  }
-
-  .wallets {
-    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
   }
 
   .act-search {

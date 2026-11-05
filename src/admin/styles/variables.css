@@ -91,10 +91,10 @@
   --shadow-lift: 0 18px 36px -22px rgba(10, 52, 66, 0.35);
   --ring: 0 0 0 3px rgba(13, 92, 114, 0.22);
 
-  /* ساختار و ابعاد */
-  --sidebar-width: 280px;
-  --sidebar-collapsed-width: 76px;
-  --topbar-height: 64px;
+  /* ساختار و ابعاد فشرده و استاندارد */
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 68px;
+  --topbar-height: 50px;
 
   /* ترنزیشن‌ها */
   --ease: cubic-bezier(0.16, 1, 0.3, 1);

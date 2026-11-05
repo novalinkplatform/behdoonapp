@@ -19,17 +19,20 @@ function escapeHtml(str: string): string {
 type DashboardSubTab = 'overview' | 'orders' | 'visitors' | 'staff';
 
 // ==========================================
-// پیشخوان جامع نظارتی Tidewell — بهدون
+// پیشخوان فشرده، خلوت و مدرن Tidewell — بهدون
 // ==========================================
 
 export function renderDashboardView(): string {
   return `
     <div class="dash-view">
-      <!-- هدر پیشخوان Tidewell -->
+      <!-- هدر فشرده و خلوت -->
       <div class="page-head">
-        <div>
-          <h1>پیشخوان جامع و مانیتورینگ</h1>
-          <p>وضعیت تجمیعی گردش کار، سفارش‌ها و جریان مالی بهدون تا این لحظه</p>
+        <div class="page-title-row">
+          <h1 class="page-main-title">پیشخوان مدیریت</h1>
+          <span class="page-status-pill">
+            <span class="live-pulse-dot"></span>
+            <span>آنلاین</span>
+          </span>
         </div>
         <div class="head-actions">
           <button type="button" class="btn-ghost" id="dash-month-btn">
@@ -38,28 +41,28 @@ export function renderDashboardView(): string {
           </button>
           <button type="button" class="btn-ghost" id="dash-refresh-btn">
             <span class="icon">${icons.refresh}</span>
-            <span>به‌روزرسانی داده‌ها</span>
+            <span>تازه‌سازی</span>
           </button>
         </div>
       </div>
 
-      <!-- بار زیرمنو جهت دسترسی به تحلیل‌های جزئی‌تر -->
+      <!-- تب‌های فشرده ساب‌منو -->
       <nav class="dash-subnav" id="dash-subnav" aria-label="بخش‌های پیشخوان">
         <button type="button" class="dash-subnav-btn is-active" data-dash-tab="overview">
           <span class="icon">${icons.chart}</span>
-          <span>نمای کلی (Overview)</span>
+          <span>نمای کلی</span>
         </button>
         <button type="button" class="dash-subnav-btn" data-dash-tab="orders">
           <span class="icon">${icons.columns}</span>
-          <span>تحلیل تقاضا و سفارش‌ها</span>
+          <span>سفارش‌ها و تقاضا</span>
         </button>
         <button type="button" class="dash-subnav-btn" data-dash-tab="visitors">
           <span class="icon">${icons.eye}</span>
-          <span>پایش ترافیک و مراجعین</span>
+          <span>ترافیک و بازدید</span>
         </button>
         <button type="button" class="dash-subnav-btn" data-dash-tab="staff">
           <span class="icon">${icons.users}</span>
-          <span>عملکرد تکنسین‌ها</span>
+          <span>تکنسین‌ها</span>
         </button>
       </nav>
 
@@ -68,7 +71,7 @@ export function renderDashboardView(): string {
       <div class="dash-body" id="dash-body">
         <div class="dash-loading">
           <span class="dash-spinner"></span>
-          <span>در حال دریافت اطلاعات هوشمند پیشخوان...</span>
+          <span>در حال دریافت اطلاعات...</span>
         </div>
       </div>
     </div>
@@ -90,7 +93,7 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
     bodyEl.innerHTML = `
       <div class="dash-loading">
         <span class="dash-spinner"></span>
-        <span>در حال پایش اطلاعات عملیات و جریان مالی...</span>
+        <span>در حال پایش اطلاعات...</span>
       </div>
     `;
 
@@ -112,9 +115,9 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
       const completedCount = kpis ? kpis.completedOrders : (stats?.byStatus?.find((s) => s.status === 'completed')?.count ?? 0);
       const totalRevenue = kpis ? kpis.platformRevenue : (stats?.completedRevenue ?? 0);
 
-      const recentOrders = requests.slice(0, 7);
+      const recentOrders = requests.slice(0, 6);
 
-      // آماده‌سازی داده‌های نمودار میله‌ای Tidewell
+      // داده‌های نمودار میله‌ای
       const dailyData = (stats?.daily && stats.daily.length > 0)
         ? stats.daily.slice(-14)
         : [
@@ -128,29 +131,28 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
           ];
 
       const maxDailyCount = Math.max(...dailyData.map((d) => d.count), 1);
-      const activeBarIndex = Math.min(dailyData.length - 1, 2); // ستون برجسته
+      const activeBarIndex = Math.min(dailyData.length - 1, 2);
 
       const html = `
-        <!-- ۳ کارت شاخص Tidewell -->
+        <!-- ۳ کارت شاخص فشرده Tidewell -->
         <section class="stats">
-          <!-- کارت ۱: برجسته (Featured) با شیب گرادیان پترول مشبک -->
+          <!-- کارت ۱: برجسته (Featured) پترول مشبک -->
           <article class="stat featured">
             <div class="stat-top">
               <div class="stat-head">
                 <div class="stat-icon">${icons.wallet}</div>
-                <div>
-                  <h3>گردش کل و درآمد عملیاتی</h3>
-                  <p class="sub">تسویه سفارش‌ها و تراکنش‌های انجام‌شده</p>
+                <div class="stat-title-wrap">
+                  <h3>گردش کل و درآمد</h3>
+                  <span class="delta">+۱۲.۴٪ <span class="icon">${icons.arrowUp}</span></span>
                 </div>
+                <button type="button" class="more" aria-label="گزینه‌ها" data-dash-nav="finance">${icons.dotsHorizontal}</button>
               </div>
-              <button type="button" class="more" aria-label="گزینه‌ها" data-dash-nav="finance">${icons.dotsHorizontal}</button>
               <div class="stat-amount">
                 <span class="value">${formatToman(totalRevenue)}</span>
-                <span class="delta">+۱۲.۴٪ <span class="icon">${icons.arrowUp}</span></span>
               </div>
             </div>
             <div class="stat-foot" data-dash-nav="finance" role="button" tabindex="0">
-              <span>مشاهده گزارش‌های مالی و تسویه</span>
+              <span>گزارش مالی و تسویه</span>
               <span class="icon">${icons.arrowLeft}</span>
             </div>
           </article>
@@ -160,114 +162,93 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
             <div class="stat-top">
               <div class="stat-head">
                 <div class="stat-icon">${icons.columns}</div>
-                <div>
-                  <h3>سفارش‌های در حال اقدام</h3>
-                  <p class="sub">اعزام فوری تکنسین در ۲۲ منطقه تهران</p>
+                <div class="stat-title-wrap">
+                  <h3>سفارش‌های فعال</h3>
+                  <span class="delta">${toPersianDigits(pendingCount)} در انتظار</span>
                 </div>
+                <button type="button" class="more" aria-label="گزینه‌ها" data-dash-nav="pipeline">${icons.dotsHorizontal}</button>
               </div>
-              <button type="button" class="more" aria-label="گزینه‌ها" data-dash-nav="pipeline">${icons.dotsHorizontal}</button>
               <div class="stat-amount">
-                <span class="value">${toPersianDigits(inProgressCount)} <span style="font-size:0.95rem;font-weight:500;">خدمت فعال</span></span>
-                <span class="delta">${toPersianDigits(pendingCount)} در انتظار</span>
+                <span class="value">${toPersianDigits(inProgressCount)} <span class="stat-unit">خدمت در جریان</span></span>
               </div>
             </div>
             <div class="stat-foot" data-dash-nav="pipeline" role="button" tabindex="0">
-              <span>مشاهده مراحل در پایپ‌لاین</span>
+              <span>مشاهده در پایپ‌لاین</span>
               <span class="icon">${icons.arrowLeft}</span>
             </div>
           </article>
 
-          <!-- کارت ۳: خدمات انجام‌شده با ضمانت کیفیت -->
+          <!-- کارت ۳: خدمات انجام‌شده -->
           <article class="stat">
             <div class="stat-top">
               <div class="stat-head">
                 <div class="stat-icon">${icons.checkCircle}</div>
-                <div>
-                  <h3>خدمات انجام‌شده با ضمانت</h3>
-                  <p class="sub">اتمام خدمت با ۱۰۰٪ رضایت و ضمانت کتبی</p>
+                <div class="stat-title-wrap">
+                  <h3>خدمات تکمیل‌شده</h3>
+                  <span class="delta">ضمانت ۱۰۰٪</span>
                 </div>
+                <button type="button" class="more" aria-label="گزینه‌ها" data-dash-nav="staff">${icons.dotsHorizontal}</button>
               </div>
-              <button type="button" class="more" aria-label="گزینه‌ها" data-dash-nav="staff">${icons.dotsHorizontal}</button>
               <div class="stat-amount">
-                <span class="value">${toPersianDigits(completedCount)} <span style="font-size:0.95rem;font-weight:500;">سفارش</span></span>
-                <span class="delta">۱۰۰٪ تضمین</span>
+                <span class="value">${toPersianDigits(completedCount)} <span class="stat-unit">سفارش پایان‌یافته</span></span>
               </div>
             </div>
             <div class="stat-foot" data-dash-nav="staff" role="button" tabindex="0">
-              <span>پایش عملکرد تکنسین‌ها</span>
+              <span>پایش تکنسین‌ها</span>
               <span class="icon">${icons.arrowLeft}</span>
             </div>
           </article>
         </section>
 
-        <!-- بخش ۲ ستونه Tidewell: کیف‌پول‌ها/حوزه‌های خدمات و نمودار تقاضا -->
+        <!-- بخش ۲ ستونه فشرده: حوزه‌ها و نمودار تقاضا -->
         <section class="split">
-          <!-- پنل راست (RTL): حوزه‌های تخصصی خدمات (Currency Wallets equivalent) -->
+          <!-- حوزه‌های تخصصی خدمات (فشرده و افقی) -->
           <article class="panel">
             <div class="panel-head">
-              <div>
-                <h2>حوزه‌های تخصصی خدمات</h2>
-                <p class="muted">پوشش لحظه‌ای تقاضا در ۲۲ منطقه تهران</p>
-              </div>
+              <h2>حوزه‌های خدمات و تقاضا</h2>
               <button type="button" class="btn-pill" data-dash-nav="services">
                 <span class="icon">${icons.wrench}</span>
-                <span>مدیریت خدمات</span>
+                <span>خدمات</span>
               </button>
             </div>
 
-            <div class="wallets">
-              <div class="wallet">
-                <div class="wallet-head">
-                  <span class="wallet-icon flame">${icons.flame}</span>
-                  <span>سرمایش و گرمایش</span>
-                  <button type="button" aria-label="بیشتر" data-dash-nav="services">${icons.dotsVertical}</button>
-                </div>
-                <p class="amt">${toPersianDigits(35)}٪ <span style="font-size:0.75rem;font-weight:500;">سهم تقاضا</span></p>
-                <p class="limit">پکیج، چیلر، رادیاتور</p>
-                <span class="state">فعال و آماده اعزام</span>
+            <div class="wallets-compact-list">
+              <div class="wallet-compact-row" data-dash-nav="services">
+                <span class="wallet-icon flame">${icons.flame}</span>
+                <span class="wallet-compact-name">سرمایش و گرمایش</span>
+                <span class="wallet-compact-rate">${toPersianDigits(35)}٪</span>
+                <span class="wallet-compact-status">فعال</span>
               </div>
 
-              <div class="wallet">
-                <div class="wallet-head">
-                  <span class="wallet-icon water">${icons.droplet}</span>
-                  <span>آب و فاضلاب</span>
-                  <button type="button" aria-label="بیشتر" data-dash-nav="services">${icons.dotsVertical}</button>
-                </div>
-                <p class="amt">${toPersianDigits(28)}٪ <span style="font-size:0.75rem;font-weight:500;">سهم تقاضا</span></p>
-                <p class="limit">اعزام فوری ۲۰ دقیقه‌ای</p>
-                <span class="state">فعال و آماده اعزام</span>
+              <div class="wallet-compact-row" data-dash-nav="services">
+                <span class="wallet-icon water">${icons.droplet}</span>
+                <span class="wallet-compact-name">آب و فاضلاب</span>
+                <span class="wallet-compact-rate">${toPersianDigits(28)}٪</span>
+                <span class="wallet-compact-status">فعال</span>
               </div>
 
-              <div class="wallet">
-                <div class="wallet-head">
-                  <span class="wallet-icon zap">${icons.zap}</span>
-                  <span>برق و هوشمند</span>
-                  <button type="button" aria-label="بیشتر" data-dash-nav="services">${icons.dotsVertical}</button>
-                </div>
-                <p class="amt">${toPersianDigits(22)}٪ <span style="font-size:0.75rem;font-weight:500;">سهم تقاضا</span></p>
-                <p class="limit">سیم‌کشی و آیفون تصویری</p>
-                <span class="state">فعال و آماده اعزام</span>
+              <div class="wallet-compact-row" data-dash-nav="services">
+                <span class="wallet-icon zap">${icons.zap}</span>
+                <span class="wallet-compact-name">برق و روشنایی</span>
+                <span class="wallet-compact-rate">${toPersianDigits(22)}٪</span>
+                <span class="wallet-compact-status">فعال</span>
               </div>
 
-              <div class="wallet">
-                <div class="wallet-head">
-                  <span class="wallet-icon wrench">${icons.wrench}</span>
-                  <span>سرویس‌های دوره‌ای</span>
-                  <button type="button" aria-label="بیشتر" data-dash-nav="services">${icons.dotsVertical}</button>
-                </div>
-                <p class="amt">${toPersianDigits(15)}٪ <span style="font-size:0.75rem;font-weight:500;">سهم تقاضا</span></p>
-                <p class="limit">قراردادهای دوره‌ای مجتمع‌ها</p>
-                <span class="state">فعال و آماده اعزام</span>
+              <div class="wallet-compact-row" data-dash-nav="services">
+                <span class="wallet-icon wrench">${icons.wrench}</span>
+                <span class="wallet-compact-name">سرویس‌های دوره‌ای</span>
+                <span class="wallet-compact-rate">${toPersianDigits(15)}٪</span>
+                <span class="wallet-compact-status">فعال</span>
               </div>
             </div>
           </article>
 
-          <!-- پنل چپ (RTL): نمودار میله‌ای جریان مالی و تقاضا (Cash Flow Chart) -->
+          <!-- نمودار میله‌ای جریان مالی -->
           <article class="panel cash">
             <div class="cash-head">
-              <div>
-                <p class="label">جریان درآمدی و تقاضای کل (۱۴ روز اخیر)</p>
-                <p class="total">${formatToman(totalRevenue)}</p>
+              <div class="cash-title-col">
+                <span class="label">جریان درآمدی (۱۴ روز اخیر)</span>
+                <span class="total">${formatToman(totalRevenue)}</span>
               </div>
               <div class="seg" role="tablist">
                 <button type="button" role="tab" class="on">روزانه</button>
@@ -277,18 +258,15 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
 
             <div class="chart">
               <div class="y-axis" aria-hidden="true">
-                <span>${toPersianDigits(50)}k</span>
                 <span>${toPersianDigits(40)}k</span>
-                <span>${toPersianDigits(30)}k</span>
                 <span>${toPersianDigits(20)}k</span>
-                <span>${toPersianDigits(10)}k</span>
                 <span>۰</span>
               </div>
 
               <div class="plot">
                 ${dailyData
                   .map((item, idx) => {
-                    const heightPercent = Math.min(95, Math.max(18, Math.round((item.count / maxDailyCount) * 90)));
+                    const heightPercent = Math.min(95, Math.max(16, Math.round((item.count / maxDailyCount) * 88)));
                     const isActive = idx === activeBarIndex;
                     return `
                       <div class="bar ${isActive ? 'active' : ''}" style="height:${heightPercent}%" title="${formatDayLabel(item.day)}: ${toPersianDigits(item.count)} تقاضا">
@@ -297,11 +275,10 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
                             ? `
                           <span class="dot"></span>
                           <div class="tip">
-                            <span class="date">${formatDayLabel(item.day)} - نقطه اوج تقاضا</span>
+                            <span class="date">${formatDayLabel(item.day)}</span>
                             <dl>
-                              <dt>کل درخواست‌ها</dt><dd>${toPersianDigits(item.count)} سفارش</dd>
-                              <dt>کاربران آنلاین</dt><dd>${toPersianDigits(analytics?.activeOnline ?? 14)} فعال</dd>
-                              <dt>تضمین کیفیت</dt><dd>ضمانت کتبی</dd>
+                              <dt>سفارش‌ها</dt><dd>${toPersianDigits(item.count)}</dd>
+                              <dt>آنلاین</dt><dd>${toPersianDigits(analytics?.activeOnline ?? 14)}</dd>
                             </dl>
                           </div>
                         `
@@ -320,13 +297,13 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
           </article>
         </section>
 
-        <!-- پنل جدول فعالیت‌های اخیر (Status-Dot Table) -->
+        <!-- پنل جدول فعالیت‌های اخیر (فشرده و خطی) -->
         <section class="panel activities">
           <div class="act-head">
-            <h2>فعالیت‌های اخیر و آخرین سفارش‌ها</h2>
+            <h2>سفارش‌های اخیر</h2>
             <div class="act-search">
               <span class="icon">${icons.search}</span>
-              <input type="text" id="dash-order-search" placeholder="جستجوی سفارش‌ها و پرداخت‌ها..." />
+              <input type="text" id="dash-order-search" placeholder="جستجو..." />
             </div>
             <button type="button" class="act-filter" data-dash-nav="pipeline">
               <span class="icon">${icons.filter}</span>
@@ -338,14 +315,13 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
             <table class="tidewell-table">
               <thead>
                 <tr>
-                  <th style="width: 44px; text-align: center;"><input type="checkbox" style="cursor: pointer;" aria-label="انتخاب همه" /></th>
-                  <th>فعالیت و نام متقاضی</th>
+                  <th>خدمت و متقاضی</th>
                   <th>کد رهگیری</th>
-                  <th>تاریخ ثبت</th>
+                  <th>تاریخ</th>
                   <th>موقعیت</th>
                   <th>برآورد هزینه</th>
-                  <th>وضعیت سفارش</th>
-                  <th style="width: 44px;"></th>
+                  <th>وضعیت</th>
+                  <th style="width: 36px;"></th>
                 </tr>
               </thead>
               <tbody>
@@ -353,7 +329,7 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
                   recentOrders.length === 0
                     ? `
                   <tr>
-                    <td colspan="8" class="dash-empty">هنوز سفارشی در سامانه بهدون ثبت نشده است.</td>
+                    <td colspan="7" class="dash-empty">سفارشی ثبت نشده است.</td>
                   </tr>
                 `
                     : recentOrders
@@ -385,15 +361,14 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
 
                           return `
                         <tr>
-                          <td style="text-align: center;"><input type="checkbox" style="cursor: pointer;" aria-label="انتخاب سفارش" /></td>
                           <td>
                             <div class="act">
                               <span class="act-logo" style="background:${logoBg}; color:${logoColor};">
                                 ${iconSvg}
                               </span>
                               <div class="act-title-col">
-                                <span class="act-title">${escapeHtml(order.customerName || 'مشتری محترم')}</span>
-                                <span class="act-sub">${escapeHtml(order.serviceLabel || 'خدمات ساختمانی')}</span>
+                                <span class="act-title">${escapeHtml(order.customerName || 'مشتری')}</span>
+                                <span class="act-sub">${escapeHtml(order.serviceLabel || 'خدمات')}</span>
                               </div>
                             </div>
                           </td>
@@ -405,7 +380,7 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
                             <span class="${statusDotClass}">${statusLabel}</span>
                           </td>
                           <td class="menu-cell">
-                            <button type="button" class="menu-btn" data-dash-nav="pipeline" title="مشاهده جزئیات سفارش" aria-label="مشاهده در پایپ‌لاین">
+                            <button type="button" class="menu-btn" data-dash-nav="pipeline" title="مشاهده" aria-label="مشاهده">
                               ${icons.dotsHorizontal}
                             </button>
                           </td>
@@ -422,7 +397,7 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
 
       bodyEl.innerHTML = html;
 
-      // جستجوی برخط در جدول سفارش‌ها
+      // جستجوی برخط
       const searchInput = document.getElementById('dash-order-search') as HTMLInputElement | null;
       if (searchInput) {
         searchInput.addEventListener('input', (e) => {
@@ -435,7 +410,7 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
         });
       }
 
-      // ناوبری هوشمند با دکمه‌ها
+      // ناوبری هوشمند
       bodyEl.querySelectorAll<HTMLElement>('[data-dash-nav]').forEach((el) => {
         el.addEventListener('click', () => {
           const target = el.dataset.dashNav;
@@ -443,7 +418,7 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
         });
       });
     } catch (err) {
-      bodyEl.innerHTML = `<p class="error-text">${err instanceof Error ? err.message : 'بارگذاری پیشخوان با خطا مواجه شد.'}</p>`;
+      bodyEl.innerHTML = `<p class="error-text">${err instanceof Error ? err.message : 'خطا در بارگذاری.'}</p>`;
     }
   }
 
@@ -462,42 +437,42 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
       const completed = stats.byStatus.find((s) => s.status === 'completed')?.count ?? 0;
 
       bodyEl.innerHTML = `
-        <div class="stats" style="margin-bottom: 24px;">
+        <div class="stats" style="margin-bottom: 16px;">
           <div class="stat">
             <div class="stat-top">
               <span class="sub">کل درخواست‌ها</span>
-              <span class="value" style="font-size:2rem; margin-top:12px;">${toPersianDigits(stats.total)}</span>
+              <span class="value" style="font-size:1.35rem; margin-top:6px;">${toPersianDigits(stats.total)}</span>
             </div>
           </div>
           <div class="stat">
             <div class="stat-top">
-              <span class="sub">خدمات در حال انجام</span>
-              <span class="value" style="font-size:2rem; margin-top:12px; color: var(--primary);">${toPersianDigits(inProgress)}</span>
+              <span class="sub">در حال انجام</span>
+              <span class="value" style="font-size:1.35rem; margin-top:6px; color: var(--primary);">${toPersianDigits(inProgress)}</span>
             </div>
           </div>
           <div class="stat">
             <div class="stat-top">
-              <span class="sub">سفارش‌های پایان‌یافته</span>
-              <span class="value" style="font-size:2rem; margin-top:12px; color: var(--positive);">${toPersianDigits(completed)}</span>
+              <span class="sub">پایان‌یافته</span>
+              <span class="value" style="font-size:1.35rem; margin-top:6px; color: var(--positive);">${toPersianDigits(completed)}</span>
             </div>
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
           <div class="panel">
-            <h3 style="margin-top:0; font-size:1.1rem; color:var(--ink);">روند درخواست‌ها (۱۴ روز اخیر)</h3>
+            <h3 style="margin-top:0; font-size:0.88rem; color:var(--ink);">روند درخواست‌ها (۱۴ روز اخیر)</h3>
             ${renderLineChart(stats.daily.map((d) => ({ label: formatDayLabel(d.day), value: d.count })))}
           </div>
           <div class="panel">
-            <h3 style="margin-top:0; font-size:1.1rem; color:var(--ink);">وضعیت درخواست‌ها</h3>
+            <h3 style="margin-top:0; font-size:0.88rem; color:var(--ink);">وضعیت درخواست‌ها</h3>
             ${renderBarChart(stats.byStatus.map((s) => ({ label: STATUS_LABELS[s.status] ?? s.status, value: s.count })))}
           </div>
           <div class="panel">
-            <h3 style="margin-top:0; font-size:1.1rem; color:var(--ink);">نوع خدمات پرتقاضا</h3>
+            <h3 style="margin-top:0; font-size:0.88rem; color:var(--ink);">نوع خدمات پرتقاضا</h3>
             ${renderBarChart(stats.byService.map((s) => ({ label: s.service_label, value: s.count })))}
           </div>
           <div class="panel">
-            <h3 style="margin-top:0; font-size:1.1rem; color:var(--ink);">مناطق پرتقاضای تهران</h3>
+            <h3 style="margin-top:0; font-size:0.88rem; color:var(--ink);">مناطق پرتقاضای تهران</h3>
             ${stats.topCities.length ? renderBarChart(stats.topCities.map((c) => ({ label: c.city, value: c.count }))) : '<p class="dash-empty">داده‌ای ثبت نشده است.</p>'}
           </div>
         </div>
@@ -512,7 +487,7 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
     bodyEl.innerHTML = `
       <div class="dash-loading">
         <span class="dash-spinner"></span>
-        <span>در حال بارگذاری آمار بازدید و ترافیک...</span>
+        <span>در حال بارگذاری آمار بازدید...</span>
       </div>
     `;
 
@@ -520,47 +495,44 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
       const analytics = await fetchAnalytics();
 
       bodyEl.innerHTML = `
-        <div class="stats" style="margin-bottom: 24px;">
+        <div class="stats" style="margin-bottom: 16px;">
           <div class="stat featured">
             <div class="stat-top">
-              <span class="sub">کاربران آنلاین لحظه‌ای</span>
-              <span class="value" style="font-size:2.2rem; margin-top:10px;">${toPersianDigits(analytics.activeOnline ?? 0)}</span>
-              <span class="sub" style="margin-top:4px;">فعال در ۱۵ دقیقه گذشته</span>
+              <span class="sub">آنلاین لحظه‌ای</span>
+              <span class="value" style="font-size:1.35rem; margin-top:6px;">${toPersianDigits(analytics.activeOnline ?? 0)}</span>
             </div>
           </div>
           <div class="stat">
             <div class="stat-top">
               <span class="sub">بازدید امروز</span>
-              <span class="value" style="font-size:2rem; margin-top:10px;">${toPersianDigits(analytics.todayViews ?? 0)}</span>
-              <span class="sub" style="margin-top:4px;">${toPersianDigits(analytics.todayVisitors ?? 0)} بازدیدکننده یکتا</span>
+              <span class="value" style="font-size:1.35rem; margin-top:6px;">${toPersianDigits(analytics.todayViews ?? 0)}</span>
             </div>
           </div>
           <div class="stat">
             <div class="stat-top">
-              <span class="sub">نرخ تبدیل به سفارش</span>
-              <span class="value" style="font-size:2rem; margin-top:10px; color:var(--positive);">${toPersianDigits(analytics.conversionRate ?? 0)}٪</span>
-              <span class="sub" style="margin-top:4px;">نسبت سفارش به مراجعین</span>
+              <span class="sub">نرخ تبدیل</span>
+              <span class="value" style="font-size:1.35rem; margin-top:6px; color:var(--positive);">${toPersianDigits(analytics.conversionRate ?? 0)}٪</span>
             </div>
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
           <div class="panel">
-            <h3 style="margin-top:0; font-size:1.1rem; color:var(--ink);">روند بازدید (۱۴ روز اخیر)</h3>
-            ${analytics.daily.length ? renderLineChart(analytics.daily.map((d) => ({ label: formatDayLabel(d.day), value: d.count }))) : '<p class="dash-empty">هنوز بازدیدی ثبت نشده است.</p>'}
+            <h3 style="margin-top:0; font-size:0.88rem; color:var(--ink);">روند بازدید (۱۴ روز اخیر)</h3>
+            ${analytics.daily.length ? renderLineChart(analytics.daily.map((d) => ({ label: formatDayLabel(d.day), value: d.count }))) : '<p class="dash-empty">بازدیدی ثبت نشده است.</p>'}
           </div>
           <div class="panel">
-            <h3 style="margin-top:0; font-size:1.1rem; color:var(--ink);">صفحات پربازدید</h3>
+            <h3 style="margin-top:0; font-size:0.88rem; color:var(--ink);">صفحات پربازدید</h3>
             ${analytics.topPages.length ? renderBarChart(analytics.topPages.map((p) => ({ label: p.path, value: p.count }))) : '<p class="dash-empty">داده‌ای وجود ندارد.</p>'}
           </div>
           <div class="panel">
-            <h3 style="margin-top:0; font-size:1.1rem; color:var(--ink);">دستگاه‌های کاربران</h3>
+            <h3 style="margin-top:0; font-size:0.88rem; color:var(--ink);">دستگاه‌های کاربران</h3>
             ${analytics.byDevice.length ? renderBarChart(analytics.byDevice.map((d) => ({ label: DEVICE_LABELS[d.device] ?? d.device, value: d.count }))) : '<p class="dash-empty">داده‌ای وجود ندارد.</p>'}
           </div>
         </div>
       `;
     } catch (err) {
-      bodyEl.innerHTML = `<p class="error-text">${err instanceof Error ? err.message : 'دریافت آمار بازدید ناموفق بود.'}</p>`;
+      bodyEl.innerHTML = `<p class="error-text">${err instanceof Error ? err.message : 'خطا در آمار بازدید.'}</p>`;
     }
   }
 
@@ -569,7 +541,7 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
     bodyEl.innerHTML = `
       <div class="dash-loading">
         <span class="dash-spinner"></span>
-        <span>در حال بارگذاری عملکرد پرسنل...</span>
+        <span>در حال بارگذاری تکنسین‌ها...</span>
       </div>
     `;
 
@@ -578,21 +550,18 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
 
       bodyEl.innerHTML = `
         <div class="panel activities">
-          <div class="panel-head" style="margin-bottom: 16px;">
-            <div>
-              <h2>عملکرد تکنسین‌ها و مأموریت‌های ثبت‌شده</h2>
-              <p class="muted">پایش نرخ موفقیت و تکمیل مأموریت‌های خدمات در تهران</p>
-            </div>
+          <div class="panel-head" style="margin-bottom: 12px;">
+            <h2>عملکرد تکنسین‌ها</h2>
           </div>
           <div class="table-wrap">
             <table class="tidewell-table">
               <thead>
                 <tr>
-                  <th>نام تکنسین / همکار</th>
-                  <th>نقش و حوزه تخصص</th>
-                  <th>کل مأموریت‌های اختصاص‌یافته</th>
-                  <th>سفارش‌های انجام‌شده</th>
-                  <th>ضمانت کیفیت</th>
+                  <th>نام تکنسین</th>
+                  <th>تخصص</th>
+                  <th>مأموریت‌ها</th>
+                  <th>انجام‌شده</th>
+                  <th>کیفیت</th>
                 </tr>
               </thead>
               <tbody>
@@ -604,14 +573,14 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
                     <tr>
                       <td><strong>${escapeHtml(s.name)}</strong></td>
                       <td><span class="act-ref">${escapeHtml(s.role_label)}</span></td>
-                      <td>${toPersianDigits(s.total)} مأموریت</td>
-                      <td><strong style="color: var(--positive);">${toPersianDigits(s.completed)} خدمت</strong></td>
-                      <td><span class="status-dot-cell">۱۰۰٪ گارانتی</span></td>
+                      <td>${toPersianDigits(s.total)}</td>
+                      <td><strong style="color: var(--positive);">${toPersianDigits(s.completed)}</strong></td>
+                      <td><span class="status-dot-cell">تضمین ۱۰۰٪</span></td>
                     </tr>
                   `,
                         )
                         .join('')
-                    : '<tr><td colspan="5" class="dash-empty">هنوز مأموریتی اختصاص داده نشده است.</td></tr>'
+                    : '<tr><td colspan="5" class="dash-empty">هنوز مأموریتی ثبت نشده است.</td></tr>'
                 }
               </tbody>
             </table>
@@ -619,7 +588,7 @@ export function initDashboardView(onNavigate: (view: string) => void): void {
         </div>
       `;
     } catch (err) {
-      bodyEl.innerHTML = `<p class="error-text">${err instanceof Error ? err.message : 'دریافت عملکرد پرسنل ناموفق بود.'}</p>`;
+      bodyEl.innerHTML = `<p class="error-text">${err instanceof Error ? err.message : 'خطا در عملکرد پرسنل.'}</p>`;
     }
   }
 

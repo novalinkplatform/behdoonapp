@@ -7,7 +7,8 @@ body {
   font-family: var(--font-family);
   background-color: var(--surface);
   color: var(--text);
-  line-height: 1.7;
+  font-size: 13px;
+  line-height: 1.45;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;

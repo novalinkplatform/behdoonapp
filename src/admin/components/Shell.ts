@@ -95,7 +95,6 @@ export function renderShell(staff: StaffInfo): string {
             </div>
             <div class="admin-brand-info">
               <span class="admin-brand-name">بهدون</span>
-              <span class="admin-brand-badge">مدیریت عملیات و خدمات</span>
             </div>
           </div>
           <button type="button" class="admin-sidebar-toggle-btn" id="admin-sidebar-collapse-btn" title="تغییر اندازه سایدبار" aria-label="بستن یا باز کردن سایدبار">
@@ -135,18 +134,6 @@ export function renderShell(staff: StaffInfo): string {
             )
             .join('')}
 
-          <!-- باکس ارتقاء وضعیت Tidewell / بهدون پلاس -->
-          <div class="admin-sidebar-upgrade">
-            <div class="upgrade-head">
-              <span class="upgrade-icon">${icons.crown}</span>
-              <h4 class="upgrade-title">بهدون پلاس</h4>
-            </div>
-            <p class="upgrade-desc">تسویه هوشمند، پایش آنلاین تکنسین‌ها و گزارش‌گیری پیشرفته</p>
-            <div class="upgrade-status-pill">
-              <span class="upgrade-dot"></span>
-              <span>سامانه فعال و متصل</span>
-            </div>
-          </div>
         </nav>
 
         <div class="admin-sidebar-footer">

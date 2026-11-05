@@ -21,7 +21,6 @@ function renderTile(tile: TileData): string {
           <span class="tile-title">${tile.title}</span>
           ${tile.tag ? `<span class="tile-tag">${tile.tag}</span>` : ''}
         </div>
-        ${tile.desc ? `<span class="tile-desc">${tile.desc}</span>` : ''}
       </div>
       <span class="tile-arrow">${icons.arrowLeft}</span>
     </button>
